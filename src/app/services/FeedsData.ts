@@ -838,7 +838,7 @@ declare namespace FeedsData {
     thumbnail: string,
     duration: string,
     width: string,
-    height:string,
+    height: string,
   }
 
   type FeedsAudio = {
@@ -847,5 +847,18 @@ declare namespace FeedsData {
     size: string,
     thumbnail: string,
     duration: string,
+  }
+
+  type ChannelCollections = {
+    "tokenId": string,
+    "nodeId": string,
+    "did": string,
+    "name": string,
+    "description": string,
+    "url": string,
+    "feedsUrlHash": string,
+    "ownerName": string,
+    "ownerDid": string,
+    "curQuantity": string,
   }
 }

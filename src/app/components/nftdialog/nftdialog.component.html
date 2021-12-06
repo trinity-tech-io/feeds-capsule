@@ -3,7 +3,7 @@
     <ion-col size="12" class="paytitle">
        <p class="paytitle">{{ title }}</p>
     </ion-col>
-    <ion-col size="12" style="display:flex;justify-content: center;">
+    <ion-col size="12" style="display:flex;justify-content: center;" *ngIf="imgUri!=null">
            <img src={{imgUri}} style="max-height:200px;border-radius:10px;object-fit:contain;width:auto;" id="nftThumbnail"/>
     </ion-col>
   </ion-row>

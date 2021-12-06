@@ -291,4 +291,8 @@ export class FeedspreferencesPage implements OnInit {
       );
     });
   }
+
+  mintChannel(){
+    this.native.navigateForward(['/galleriachannel'],{ queryParams:{"nodeId": this.nodeId,"channelId": this.feedId }});
+  }
 }

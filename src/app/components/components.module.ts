@@ -19,6 +19,7 @@ import { NftdisclaimerComponent } from './nftdisclaimer/nftdisclaimer.component'
 
 import { MyfeedsComponent } from './myfeeds/myfeeds.component';
 import { FollowingComponent } from './following/following.component';
+import { ChannelcollectionsitemComponent } from './channelcollectionsitem/channelcollectionsitem.component';
 import { LikesComponent } from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
@@ -72,6 +73,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     ServerpromptComponent,
     MyfeedsComponent,
     FollowingComponent,
+    ChannelcollectionsitemComponent,
     LikesComponent,
     CommentComponent,
     SwitchfeedComponent,
@@ -103,6 +105,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     ServerpromptComponent,
     MyfeedsComponent,
     FollowingComponent,
+    ChannelcollectionsitemComponent,
     LikesComponent,
     CommentComponent,
     SwitchfeedComponent,

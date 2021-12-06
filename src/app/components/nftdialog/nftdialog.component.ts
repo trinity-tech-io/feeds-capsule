@@ -36,11 +36,11 @@ export class NftdialogComponent implements OnInit {
   public imgBase64: string = '';
   public curAssItem: any = {};
   private orderId: any = '';
-  public imgUri:string = "";
+  public imgUri: string = "";
   private popoverDialog: any;
-  private assetType:string = "";
-  private didUri:string = null;
-  private maxSize:number = 5 * 1024 * 1024;
+  private assetType: string = "";
+  private didUri: string = null;
+  private maxSize: number = 5 * 1024 * 1024;
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -54,13 +54,13 @@ export class NftdialogComponent implements OnInit {
     private popupProvider: PopupProvider,
     private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.title = this.navParams.get('title');
     this.menuType = this.navParams.get('menuType');
     let assItem = this.navParams.get('assItem');
-    console.log("assItem",assItem);
+    console.log("assItem", assItem);
     this.curAssItem = assItem;
     let curAmount = assItem.fixedAmount || null;
     if (curAmount != null) {
@@ -94,7 +94,7 @@ export class NftdialogComponent implements OnInit {
     }
   }
 
-  async handleBurnNfts(){
+  async handleBurnNfts() {
 
     this.quantity = this.quantity || '';
     if (this.quantity === '') {
@@ -112,8 +112,8 @@ export class NftdialogComponent implements OnInit {
       return;
     }
     await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.burningNFTSDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
-    let sId =setTimeout(()=>{
+    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.burningNFTSDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    let sId = setTimeout(() => {
       this.nftContractControllerService.getSticker().cancelBurnProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
       clearTimeout(sId);
@@ -124,19 +124,19 @@ export class NftdialogComponent implements OnInit {
     let tokenNum = this.quantity.toString();
 
     this.nftContractControllerService.getSticker()
-    .burnNfs(tokenId,tokenNum)
-    .then(()=>{
-      this.nftContractControllerService.getSticker().cancelBurnProcess();
-      this.events.publish(FeedsEvent.PublishType.endLoading);
-      this.events.publish(FeedsEvent.PublishType.nftUpdateList,{type:"burn",assItem:this.assItem,burnNum:tokenNum});
-      clearTimeout(sId);
-      this.native.toast("common.burnNFTSSuccess");
-    }).catch(()=>{
-      this.nftContractControllerService.getSticker().cancelBurnProcess();
-      this.events.publish(FeedsEvent.PublishType.endLoading);
-      clearTimeout(sId);
-      this.native.toastWarn("common.burnNFTSFailed");
-    });
+      .burnNfs(tokenId, tokenNum)
+      .then(() => {
+        this.nftContractControllerService.getSticker().cancelBurnProcess();
+        this.events.publish(FeedsEvent.PublishType.endLoading);
+        this.events.publish(FeedsEvent.PublishType.nftUpdateList, { type: "burn", assItem: this.assItem, burnNum: tokenNum });
+        clearTimeout(sId);
+        this.native.toast("common.burnNFTSSuccess");
+      }).catch(() => {
+        this.nftContractControllerService.getSticker().cancelBurnProcess();
+        this.events.publish(FeedsEvent.PublishType.endLoading);
+        clearTimeout(sId);
+        this.native.toastWarn("common.burnNFTSFailed");
+      });
   }
 
   handleCreatedList() {
@@ -174,16 +174,16 @@ export class NftdialogComponent implements OnInit {
     this.sellCollectibles(tokenId, 'created');
   }
 
- async sellCollectibles(tokenId: any, type: string) {
+  async sellCollectibles(tokenId: any, type: string) {
     await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.sellingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
+    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.sellingOrderDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
     this.didUri = await this.getDidUri();
-    if(this.didUri === null){
-       this.native.toast("common.didUriNull");
-       this.events.publish(FeedsEvent.PublishType.endLoading);
-       return;
+    if (this.didUri === null) {
+      this.native.toast("common.didUriNull");
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+      return;
     }
-    let sId =setTimeout(()=>{
+    let sId = setTimeout(() => {
       this.nftContractControllerService.getPasar().cancelCreateOrderProcess();
       this.nftContractControllerService.getSticker().cancelSetApprovedProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
@@ -295,7 +295,7 @@ export class NftdialogComponent implements OnInit {
 
         orderIndex = await this.nftContractControllerService
           .getPasar()
-          .createOrderForSale(tokenId, this.quantity, salePrice,this.didUri);
+          .createOrderForSale(tokenId, this.quantity, salePrice, this.didUri);
 
         if (!orderIndex || orderIndex == -1) {
           reject('Create Order error');
@@ -319,12 +319,12 @@ export class NftdialogComponent implements OnInit {
         const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         this.orderId = item.saleOrderId;
-        if(item.type === "video"){
+        if (item.type === "video") {
           await this.getSetChannel(tokenId);
           resolve(item);
-        }else if(item.type === "audio"){
+        } else if (item.type === "audio") {
           resolve(item);
-        }else{
+        } else {
           await this.getSetChannel(tokenId);
           resolve(item);
         }
@@ -351,42 +351,42 @@ export class NftdialogComponent implements OnInit {
     let version = this.assItem['version'] || "1";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       imgUri = this.assItem['thumbnail'] || "";
       kind = this.assItem["kind"];
       size = this.assItem["originAssetSize"];
-    }else if(version === "2"){
-      let jsonData  = this.assItem['data'] || "";
-      if(jsonData != ""){
+    } else if (version === "2") {
+      let jsonData = this.assItem['data'] || "";
+      if (jsonData != "") {
         imgUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
-      }else{
+      } else {
         imgUri = "";
       }
     }
-    if(imgUri === ""){
+    if (imgUri === "") {
       this.imgUri = "";
       return;
     }
     if (!size)
-    size = '0';
+      size = '0';
     if (kind === "gif" && parseInt(size) <= this.maxSize) {
-        imgUri = this.assItem['asset'];
+      imgUri = this.assItem['asset'];
     }
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('feeds:image:') > -1){
+    } else if (imgUri.indexOf('feeds:image:') > -1) {
       imgUri = imgUri.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
-   this.imgUri = imgUri;
+    this.imgUri = imgUri;
   }
 
   async getSetChannel(tokenId: any) {
     let setChannel = this.feedService.getCollectibleStatus();
-    let isTipToast:boolean = false;
+    let isTipToast: boolean = false;
     for (let key in setChannel) {
       let value = setChannel[key] || '';
       if (value) {
@@ -398,14 +398,14 @@ export class NftdialogComponent implements OnInit {
     }
 
 
-    if(isTipToast){
+    if (isTipToast) {
       this.native.toast("CreatenewpostPage.tipMsg1");
     }
   }
 
   async sendPost(tokenId: any, nodeId: string, channelId: number) {
     let tempPostId = this.feedService.generateTempPostId();
-     this.imgBase64 = await this.compressImage(this.imgUri);
+    this.imgBase64 = await this.compressImage(this.imgUri);
     this.publishPostThrowMsg(tokenId, nodeId, channelId, tempPostId);
   }
 
@@ -440,7 +440,7 @@ export class NftdialogComponent implements OnInit {
     let nftContent = {};
     nftContent['version'] = '1.0';
     nftContent['imageThumbnail'] = imgThumbs;
-    nftContent['text'] = this.assItem.name+ " - "+ this.assItem.description;
+    nftContent['text'] = this.assItem.name + " - " + this.assItem.description;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
     nftContent['nftImageType'] = this.assetType;
@@ -462,13 +462,13 @@ export class NftdialogComponent implements OnInit {
     return new Promise((resolve, reject) => {
       try {
         let img = new Image();
-        img.crossOrigin='*';
+        img.crossOrigin = '*';
         img.crossOrigin = "Anonymous";
         img.src = path;
-        img.onload = () =>{
+        img.onload = () => {
           let maxWidth = img.width / 4;
           let maxHeight = img.height / 4;
-          let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
+          let imgBase64 = UtilService.resizeImg(img, maxWidth, maxHeight, 1);
           resolve(imgBase64);
         };
       } catch (err) {
@@ -478,7 +478,7 @@ export class NftdialogComponent implements OnInit {
     });
   }
 
-  async getDidUri(){
+  async getDidUri() {
     return await this.feedService.getDidUri();
   }
 }

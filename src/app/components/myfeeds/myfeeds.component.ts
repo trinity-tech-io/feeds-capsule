@@ -18,6 +18,7 @@ export class MyfeedsComponent implements OnInit {
   @Input() followers:any = 0;
   @Output() toFeedPage = new EventEmitter();
   @Output() subsciptions = new EventEmitter();
+  @Output() chanelCollections = new EventEmitter();
   public popover: any = '';
   constructor(
     private feedService: FeedService,
@@ -102,5 +103,9 @@ export class MyfeedsComponent implements OnInit {
 
   clickFollowing() {
     this.subsciptions.emit();
+  }
+
+  clickChanelCollections() {
+    this.chanelCollections.emit();
   }
 }

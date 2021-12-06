@@ -17,6 +17,7 @@ import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 
 import _ from 'lodash';
+import { Params , ActivatedRoute } from '@angular/router';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
 const TAG: string = 'GalleriachannelPage';
@@ -30,10 +31,8 @@ export class GalleriachannelPage implements OnInit {
   private throwMsgTransDataLimit = 4 * 1000 * 1000;
   private transDataChannel: FeedsData.TransDataChannel =
     FeedsData.TransDataChannel.MESSAGE;
-  public assetBase64: string = '';
   public nftName: string = '';
   public nftDescription: string = '';
-  public curPublishtoPasar: boolean = true;
   /**single  multiple*/
   public issueRadionType: string = 'single';
   public nftRoyalties: string = '';
@@ -57,9 +56,13 @@ export class GalleriachannelPage implements OnInit {
   public loadingMaxNumber:string = "";
   private realFile: any = null;
   public  maxAvatarSize:number = 5 * 1024 * 1024;
-  public  assetType:string = "general";
-  public  adult:boolean = false;
   private didUri:string = null;
+  private nodeId: string = null;
+  private channelId: string = null;
+  private feedsUrl: string = null;
+  private channel: any = {};
+  private avatarObj: any = {};
+  private tippingAddress: any = {};
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -73,12 +76,38 @@ export class GalleriachannelPage implements OnInit {
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private nftContractHelperService: NFTContractHelperService
+    private nftContractHelperService: NFTContractHelperService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+
+    this.activatedRoute.queryParams.subscribe((params: Params) => {
+      this.nodeId = params.nodeId;
+      this.channelId = params.channelId;
+      console.log("===nodeId===",this.nodeId);
+      console.log("===channelId===",this.channelId);
+    });
+  }
 
   ionViewWillEnter() {
+
+    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    if (server != null) {
+      this.feedsUrl = server.feedsUrl + '/' + this.channelId;
+    }
+
+    let elaAddress = server['elaAddress'] || null;
+
+    if(elaAddress != null){
+      this.tippingAddress["elaMain"] = elaAddress;
+    }else{
+      this.tippingAddress["elaMain"] = null;
+    }
+
+    this.channel = this.feedService.getChannelFromId(this.nodeId, Number(this.channelId));
+    this.nftName = this.channel["name"];
+    this.nftDescription = this.channel["introduction"];
 
     if (this.walletConnectControllerService.getAccountAddress() == '')
       this.walletConnectControllerService.connect();
@@ -132,12 +161,6 @@ export class GalleriachannelPage implements OnInit {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
-  clickPublishtoPasar() {
-    this.zone.run(() => {
-      this.curPublishtoPasar = !this.curPublishtoPasar;
-    });
-  }
-
   //@Deprecated
   // addAsset() {
   //   this.addImg(0)
@@ -186,36 +209,27 @@ export class GalleriachannelPage implements OnInit {
 
     this.loadingCurNumber = "1";
     this.loadingMaxNumber = "3";
-    if(this.curPublishtoPasar){
-      this.loadingMaxNumber = "5";
-    }
+    this.loadingMaxNumber = "5";
+
     this.loadingText = "common.uploadingData"
     this.isLoading = true;
-
-    let tokenId = '';
-    let jsonHash = '';
+    let tokenId = this.getTokenId();
     this.uploadData()
       .then(async(result) => {
         Logger.log(TAG, 'Upload Result', result);
         this.loadingCurNumber = "1";
         this.loadingText = "common.uploadDataSuccess";
 
-        tokenId = result.tokenId;
-        jsonHash = result.jsonHash;
+        let jsonHash = result.jsonHash;
         this.loadingCurNumber = "2";
         this.loadingText = "common.mintingData";
-        let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
-
         let didUri = await this.getDidUri();
-        return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString(),didUri);
+        return this.mintContract(tokenId, jsonHash, this.nftQuantity,"0",didUri);
       })
       .then(mintResult => {
-        if (mintResult != '' && this.curPublishtoPasar) {
           this.loadingCurNumber = "3";
           this.loadingText = "common.settingApproval";
           return this.handleSetApproval();
-        }
-        return SKIP;
       })
       .then(setApprovalResult => {
         if (setApprovalResult == SKIP) return -1;
@@ -238,9 +252,9 @@ export class GalleriachannelPage implements OnInit {
           this.loadingText = "common.checkingCollectibleResult";
         }
         //Finish
-        if(!this.curPublishtoPasar){
-          this.handleCace('created',tokenId);
-        }
+        //if(!this.curPublishtoPasar){
+          //this.handleCace('created',tokenId);
+        //}
         //this.native.hideLoading();
         this.isLoading = false;
         clearTimeout(sid);
@@ -307,11 +321,11 @@ export class GalleriachannelPage implements OnInit {
   //   });
   // }
 
-  sendIpfsImage(file: any): Promise<string> {
+  sendIpfsImage(file: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      // let blob = this.dataURLtoBlob(file);
+      let blob = this.dataURLtoBlob(file);
       let formData = new FormData();
-      formData.append('', file);
+      formData.append('', blob);
       Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
@@ -321,13 +335,12 @@ export class GalleriachannelPage implements OnInit {
             reject("Upload Image error, hash is null")
             return;
           }
-
-          // this.assetBase64 = file;
-          this.imageObj['imgSize'] = result['Size'];
-          let tokenId = '0x' + UtilService.SHA256(hash);
-          this.imageObj['imgHash'] = 'feeds:image:' + hash;
-
-          resolve(tokenId);
+          let kind = blob.type.replace("image/","");
+          console.log("===kind==",kind);
+          let size = blob.size;
+          console.log("===size==",size);
+          let cid = 'feeds:image:' + hash;
+          resolve({"cid": cid , "size": size,"kind":kind});
         })
         .catch(err => {
           reject('Upload image error, error is ' + JSON.stringify(err));
@@ -352,7 +365,8 @@ export class GalleriachannelPage implements OnInit {
           }
 
           this.thumbnail = thumbnailBase64;
-          this.imageObj['thumbnail'] = 'feeds:image:' + hash;
+          this.avatarObj['thumbnail'] = 'feeds:image:' + hash;
+          console.log("===this.avatarObj====",this.avatarObj);
           resolve('');
         })
         .catch(err => {
@@ -363,22 +377,21 @@ export class GalleriachannelPage implements OnInit {
 
   sendIpfsJSON(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let type = "galleria";
-      let thumbnail = this.imageObj['thumbnail'];
-      if(this.assetType === "avatar"){
-         type = "avatar";
-         thumbnail = this.imageObj['imgHash'];
-      }
+      let type = "feeds-channel";
       let ipfsJSON = {
-        version: '1',
+        version: '2',
         type: type,
+        ownerName: this.channel['owner_name'],
+        nodeId: this.nodeId,
         name: this.nftName,
         description: this.nftDescription,
-        image: this.imageObj['imgHash'],
-        kind: this.imageObj['imgFormat'],
-        size: this.imageObj['imgSize'],
-        thumbnail: thumbnail,
-        adult: this.adult
+        tippingAddress:this.tippingAddress,
+        entry: {
+          url: this.feedsUrl,
+          location: "feeds-service",//feeds-service/hive
+          version: "1.0"
+        },
+        avatar: this.avatarObj
       };
 
       let formData = new FormData();
@@ -437,23 +450,12 @@ export class GalleriachannelPage implements OnInit {
   //   });
   // }
 
-  removeImg() {
-    this.thumbnail = '';
-    this.assetBase64 = '';
-    this.realFile = null;
-  }
-
   checkParms() {
     let accountAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     if (accountAddress === '') {
       this.native.toastWarn('common.connectWallet');
       return;
-    }
-
-    if (this.thumbnail === '') {
-      this.native.toastWarn('MintnftPage.nftAssetPlaceholder');
-      return false;
     }
 
     if (this.nftName === '') {
@@ -466,56 +468,56 @@ export class GalleriachannelPage implements OnInit {
       return false;
     }
 
-    if (
-      this.curPublishtoPasar &&
-      this.issueRadionType === 'oneTimeIssue' &&
-      this.nftFixedAmount === null
-    ) {
-      this.native.toastWarn('MintnftPage.nftFixedAmount');
-      return false;
-    }
+    // if (
+    //   this.curPublishtoPasar &&
+    //   this.issueRadionType === 'oneTimeIssue' &&
+    //   this.nftFixedAmount === null
+    // ) {
+    //   this.native.toastWarn('MintnftPage.nftFixedAmount');
+    //   return false;
+    // }
 
-    if (
-      this.curPublishtoPasar &&
-      this.issueRadionType === 'oneTimeIssue' &&
-      !this.number(this.nftFixedAmount)
-    ) {
-      this.native.toastWarn('common.amountError');
-      return false;
-    }
+    // if (
+    //   this.curPublishtoPasar &&
+    //   this.issueRadionType === 'oneTimeIssue' &&
+    //   !this.number(this.nftFixedAmount)
+    // ) {
+    //   this.native.toastWarn('common.amountError');
+    //   return false;
+    // }
 
-    if (
-      this.curPublishtoPasar &&
-      this.issueRadionType === 'oneTimeIssue' &&
-      this.nftFixedAmount <= 0
-    ) {
-      this.native.toastWarn('MintnftPage.priceErrorMsg');
-      return;
-    }
+    // if (
+    //   this.curPublishtoPasar &&
+    //   this.issueRadionType === 'oneTimeIssue' &&
+    //   this.nftFixedAmount <= 0
+    // ) {
+    //   this.native.toastWarn('MintnftPage.priceErrorMsg');
+    //   return;
+    // }
 
-    if (
-      this.curPublishtoPasar &&
-      this.issueRadionType === 'reIssueable' &&
-      this.nftMinimumAmount === null
-    ) {
-      this.native.toastWarn('MintnftPage.nftMinimumAmount');
-      return false;
-    }
+    // if (
+    //   this.curPublishtoPasar &&
+    //   this.issueRadionType === 'reIssueable' &&
+    //   this.nftMinimumAmount === null
+    // ) {
+    //   this.native.toastWarn('MintnftPage.nftMinimumAmount');
+    //   return false;
+    // }
     let regNumber = /^\+?[1-9][0-9]*$/;
-    if (this.nftRoyalties === '') {
-      this.native.toastWarn('MintnftPage.nftRoyaltiesPlaceholder');
-      return false;
-    }
+    // if (this.nftRoyalties === '') {
+    //   this.native.toastWarn('MintnftPage.nftRoyaltiesPlaceholder');
+    //   return false;
+    // }
 
-    if (this.nftRoyalties!="0"&&regNumber.test(this.nftRoyalties) == false) {
-      this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
-      return false;
-    }
+    // if (this.nftRoyalties!="0"&&regNumber.test(this.nftRoyalties) == false) {
+    //   this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+    //   return false;
+    // }
 
-    if(parseInt(this.nftRoyalties)<0 || parseInt(this.nftRoyalties)>15){
-      this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
-      return false;
-    }
+    // if(parseInt(this.nftRoyalties)<0 || parseInt(this.nftRoyalties)>15){
+    //   this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
+    //   return false;
+    // }
 
     if (this.nftQuantity === '') {
       this.native.toastWarn('MintnftPage.nftQuantityPlaceholder');
@@ -654,10 +656,6 @@ export class GalleriachannelPage implements OnInit {
         img.onload = () =>{
           let maxWidth = img.width / 4;
           let maxHeight = img.height / 4;
-          if(this.assetType === "avatar"){
-            maxWidth = img.width;
-            maxHeight = img.height;
-          }
          let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
          resolve(imgBase64);
         };
@@ -731,18 +729,17 @@ export class GalleriachannelPage implements OnInit {
     nftContent['text'] = this.nftName+" - "+ this.nftDescription;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
-    nftContent['nftImageType'] = this.assetType;
 
-    this.feedService.declarePost(
-      nodeId,
-      channelId,
-      JSON.stringify(nftContent),
-      false,
-      tempPostId,
-      this.transDataChannel,
-      this.assetBase64,
-      '',
-    );
+    // this.feedService.declarePost(
+    //   nodeId,
+    //   channelId,
+    //   JSON.stringify(nftContent),
+    //   false,
+    //   tempPostId,
+    //   this.transDataChannel,
+    //   this.assetBase64,
+    //   '',
+    // );
   }
 
   number(text: any) {
@@ -752,26 +749,21 @@ export class GalleriachannelPage implements OnInit {
 
   uploadData(): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      // let pathObj = this.handlePath(this.imagePath);
-      // let fileName = pathObj['fileName'];
-      // let filePath = pathObj['filepath']
-      // let file = null;
-      let tokenId = "";
-      // this.getFlieObj(fileName, filePath).then((fileBase64) => {
-      //   file = fileBase64;
-      //   return this.sendIpfsImage(file);
-      // })
-
+      this.realFile = this.handleChannelAvatar();
       if (this.realFile == null)
         console.log("Not select image");
-      this.sendIpfsImage(this.realFile).then((cid) => {
-        tokenId = cid;
-        return this.sendIpfsThumbnail(this.thumbnail);
-      }).then(() => {
+      this.sendIpfsImage(this.realFile).then((realFileObj:any) => {
+        this.avatarObj["image"] = realFileObj.cid;
+        this.avatarObj["size"] = realFileObj.size;
+        this.avatarObj["kind"] = realFileObj.kind;
+        return this.sendIpfsThumbnail(this.realFile);
+      })
+      .then(() => {
         return this.sendIpfsJSON();
       }).then((jsonHash) => {
-        resolve({ tokenId: tokenId, jsonHash: jsonHash });
-      }).catch((error) => {
+        resolve({ jsonHash: jsonHash });
+      })
+      .catch((error) => {
         reject('upload file error');
       });
     });
@@ -861,9 +853,6 @@ export class GalleriachannelPage implements OnInit {
 
     let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     let imageType = "image";
-    if(this.assetType === "avatar"){
-       imageType = "avatar";
-    }
     let item:any = {};
     switch (type) {
       case 'created':
@@ -883,7 +872,6 @@ export class GalleriachannelPage implements OnInit {
           createTime: createTime * 1000,
           moreMenuType: 'created',
           sellerAddr: accAddress,//所有者
-          adult: this.adult
         };
         slist.push(item);
         break;
@@ -891,84 +879,11 @@ export class GalleriachannelPage implements OnInit {
         item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
         let orderSellerDidObj = this.feedService.getDidUriJson();
         item.orderSellerDidObj = orderSellerDidObj;
-        item.adult = this.adult;
         slist.push(item);
         this.event.publish(FeedsEvent.PublishType.mintNft);
         break;
     }
     this.nftPersistenceHelper.setCollectiblesMap(accAddress, slist);
-  }
-
-  handleImg() {
-    let imgUri = this.thumbnail;
-    if(this.imageObj['imgFormat'] === "gif"){
-        imgUri = this.assetBase64;
-    }
-    return imgUri;
-  }
-
-
-  async onChange(event) {
-
-    Logger.log(TAG, 'Image change', event);
-    this.realFile = event.target.files[0];
-
-    Logger.log("Real File is", event.target.files[0]);
-
-    //add avatar
-    if(this.assetType === "avatar"){
-      let fileSize = this.realFile.size;
-      if(fileSize > this.maxAvatarSize){
-        this.native.toastWarn("MintnftPage.fileTypeDes2");
-        event.target.value = null;
-        return false;
-      }
-    }
-
-    let fileName = this.realFile.name;
-    let index = fileName.lastIndexOf(".");
-    let imgFormat = fileName.substr(index + 1);
-    this.imageObj['imgFormat'] = imgFormat;
-
-    this.createImagePreview(this.realFile,event);
-  }
-
-  createImagePreview(file:any,inputEvent?:any) {
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-    reader.onload = async event => {
-      try {
-        //add avatar
-        if(this.assetType === "avatar"){
-          let image = new Image();
-          image.onload = async ()=>{
-          let width = image.width;
-          let height = image.height;
-          if(width!=600 || height!=600){
-            this.native.toastWarn("MintnftPage.fileTypeDes1");
-            inputEvent.target.value = null;
-            return false;
-          }
-          this.assetBase64 = event.target.result.toString();
-          this.thumbnail = await this.compressImage(this.assetBase64);
-         }
-         image.src = event.target.result.toString();
-        }else{
-          this.assetBase64 = event.target.result.toString();
-          this.thumbnail = await this.compressImage(this.assetBase64);
-        }
-      } catch (error) {
-        Logger.error('Get image thumbnail error', error);
-      }
-    }
-  }
-
-  handleMintEvent(event:any){
-    event.target.value = null;
-    document.getElementById("mintfile").onchange = (event)=>{
-      this.onChange(event);
-    };
   }
 
  async getDidUri(){
@@ -977,10 +892,19 @@ export class GalleriachannelPage implements OnInit {
     return didUri;
   }
 
-  clickAdult(){
-    this.zone.run(() => {
-      this.adult = !this.adult;
-    });
+  getTokenId() {
+   let tokenId  = "0x"+UtilService.SHA256(this.feedsUrl);
+   return tokenId;
+  }
+
+  handleChannelAvatar(){
+    let channelAvatar = this.feedService.parseChannelAvatar(this.channel['avatar']);
+    if(channelAvatar.startsWith("data:image")){
+        return channelAvatar;
+    }
+    return null;
+
+
   }
 
 }

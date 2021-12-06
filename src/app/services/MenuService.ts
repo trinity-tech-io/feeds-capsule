@@ -29,6 +29,8 @@ export class MenuService {
   public buyMenu: any = null;
   public createdMenu: any = null;
   public shareOnSaleMenu: any = null;
+  public saveImageMenu: any = null;
+  public channelCollectionsMenu: any = null;
   constructor(
     private feedService: FeedService,
     private actionSheetController: ActionSheetController,
@@ -40,7 +42,7 @@ export class MenuService {
     private nftContractControllerService: NFTContractControllerService,
     private events: Events,
     private dataHelper: DataHelper
-  ) {}
+  ) { }
 
   async showChannelMenu(
     nodeId: string,
@@ -518,7 +520,7 @@ export class MenuService {
       this.popover.dismiss();
     }
     that.native
-      .showLoading('common.waitMoment', () => {}, 50000)
+      .showLoading('common.waitMoment', () => { }, 50000)
       .then(() => {
         that.feedService.deletePost(
           that.nodeId,
@@ -559,11 +561,11 @@ export class MenuService {
           icon: 'list-circle',
           handler: () => {
             let accountAddress =
-            this.nftContractControllerService.getAccountAddress() || '';
-          if (accountAddress === '') {
-            this.native.toastWarn('common.connectWallet');
-            return false;
-          }
+              this.nftContractControllerService.getAccountAddress() || '';
+            if (accountAddress === '') {
+              this.native.toastWarn('common.connectWallet');
+              return false;
+            }
             openNft(that);
           },
         },
@@ -666,7 +668,7 @@ export class MenuService {
       this.popover.dismiss();
     }
     that.native
-      .showLoading('common.waitMoment', () => {}, 50000)
+      .showLoading('common.waitMoment', () => { }, 50000)
       .then(() => {
         that.feedService.deleteComment(
           that.nodeId,
@@ -788,7 +790,7 @@ export class MenuService {
           icon: 'information-circle',
           handler: () => {
             this.dataHelper.setAssetPageAssetItem(assItem);
-            this.native.navigateForward(['assetdetails'],{});
+            this.native.navigateForward(['assetdetails'], {});
           },
         },
         {
@@ -822,13 +824,13 @@ export class MenuService {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    that.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.cancelingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
-    let sId = setTimeout(()=>{
+    that.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.cancelingOrderDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    let sId = setTimeout(() => {
       that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
       clearTimeout(sId);
       that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
-    },Config.WAIT_TIME_CANCEL_ORDER)
+    }, Config.WAIT_TIME_CANCEL_ORDER)
 
     that.doCancelOrder(that)
       .then(() => {
@@ -939,7 +941,7 @@ export class MenuService {
           icon: 'information-circle',
           handler: () => {
             this.dataHelper.setAssetPageAssetItem(assItem);
-            this.native.navigateForward(['assetdetails'],{});
+            this.native.navigateForward(['assetdetails'], {});
           },
         },
         {
@@ -1028,5 +1030,53 @@ export class MenuService {
     } catch (error) {
     }
     this.native.hideLoading();
+  }
+
+  async showChannelCollectionsMenu(channelItem: FeedsData.ChannelCollections) {
+    this.channelCollectionsMenu = await this.actionSheetController.create({
+      cssClass: 'editPost',
+      buttons: [
+        {
+          text: this.translate.instant('CollectionsPage.onSale'),
+          icon: 'create',
+          handler: () => {
+            this.viewHelper.showNftPrompt(
+              channelItem,
+              'CollectionsPage.putOnSale',
+              'created',
+            );
+          },
+        },
+        {
+          text: this.translate.instant('common.burnNFTs'),
+          role: 'destructive',
+          icon: 'trash',
+          handler: () => {
+            this.viewHelper.showNftPrompt(
+              channelItem,
+              'common.burnNFTs',
+              'burn',
+            );
+          },
+        },
+        {
+          text: this.translate.instant('common.cancel'),
+          role: 'cancel',
+          icon: 'close-circle',
+          handler: () => {
+            if (this.channelCollectionsMenu != null) {
+              this.channelCollectionsMenu.dismiss();
+            }
+          },
+        },
+      ],
+    });
+
+    this.channelCollectionsMenu.onWillDismiss().then(() => {
+      if (this.channelCollectionsMenu != null) {
+        this.channelCollectionsMenu = null;
+      }
+    });
+    await this.channelCollectionsMenu.present();
   }
 }

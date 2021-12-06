@@ -172,7 +172,7 @@ export class PasarAssistService {
     return this.listPasarOrderFromService(pageNum, pageSize, orderState, blockNumber, isAsc, endBlockBumber, sortType, safeMode);
   }
 
-  listOwnSticker() {
+  listOwnSticker(type:string) {
     return new Promise(async (resolve, reject) => {
       try {
         let url = '';
@@ -189,7 +189,7 @@ export class PasarAssistService {
           return;
         }
 
-        url = url + '?owner=' + accountAddress;
+        url = url + '?owner=' + accountAddress+type;
 
         const result = await this.httpService.httpGet(url);
 
@@ -264,7 +264,7 @@ export class PasarAssistService {
       }
     }
   }
-  
+
    */
   parseDidResult(data: any): FeedsData.DidObj {
     if (!data || !data.did) {
