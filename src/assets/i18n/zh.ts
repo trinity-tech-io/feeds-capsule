@@ -653,6 +653,7 @@ export const zh = {
     title: '频道设置',
     des: '在探索Feeds中显示',
     des1: '发布收藏品到频道',
+    des2: '创建频道收藏品'
   } /***NFT*/,
   MintnftPage: {
     title: '创建收藏品',
@@ -896,11 +897,15 @@ export const zh = {
   WhitelistPage: {
     title: '已验证原创者'
   },
-  AssistpasarPage:{
-    title: 'Assist Pasar API',
-    assistProviderDes: '用于读取数据的辅助 Assist Pasar 服务',
+  AssistpasarPage: {
+    title: "Assist Pasar API",
+    assistProviderDes: "用于读取数据的辅助 Assist Pasar 服务",
   },
   ProfilenftimagePage: {
     title: "选择收藏品"
+  },
+  ChannelcollectionsPage: {
+    title: "频道收藏品"
   }
+
 };

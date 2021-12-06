@@ -239,6 +239,10 @@ const routes: Routes = [
     path: 'gallerialist',
     loadChildren: () => import('./pages/gallerialist/gallerialist.module').then( m => m.GallerialistPageModule)
   },
+  {
+    path: 'channelcollections',
+    loadChildren: () => import('./pages/channelcollections/channelcollections.module').then( m => m.ChannelcollectionsPageModule)
+  },
 ];
 
 @NgModule({

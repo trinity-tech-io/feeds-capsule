@@ -2059,6 +2059,16 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(['subscriptions'], '');
   }
 
+  chanelCollections() {
+    let account = this.walletConnectControllerService.getAccountAddress() || null;
+    if(account === null){
+      this.walletConnectControllerService.connect();
+      return;
+    }
+    this.clearData();
+    this.native.navigateForward(['channelcollections'], '');
+  }
+
   async getOwnNftSum() {
     let accAddress =
       this.nftContractControllerService.getAccountAddress() || '';

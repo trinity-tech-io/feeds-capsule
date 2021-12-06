@@ -653,6 +653,7 @@ export const en = {
     title: 'Channel Preferences',
     des: 'Show in Explore Feeds',
     des1: 'Publish Collectible to Channel',
+    des2: 'Create channel collection'
   } /***NFT*/,
   MintnftPage: {
     title: 'Create Collectible',
@@ -897,10 +898,13 @@ export const en = {
     title: 'Verified Creators'
   },
   AssistpasarPage:{
-    title: 'Assist Pasar API',
-    assistProviderDes: 'Secondary assist pasar service for reading data'
+    title: "Assist Pasar API",
+    assistProviderDes: "Secondary assist pasar service for reading data"
   },
   ProfilenftimagePage: {
     title: "Select Collectibles"
+  },
+  ChannelcollectionsPage: {
+    title: "Channel Collections"
   }
 };
