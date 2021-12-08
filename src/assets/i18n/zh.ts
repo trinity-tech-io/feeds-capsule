@@ -905,7 +905,17 @@ export const zh = {
     title: "选择收藏品"
   },
   ChannelcollectionsPage: {
-    title: "频道收藏品"
-  }
+    title: "频道收藏品",
 
+  },
+  GalleriachannelPage: {
+    title: "频道收藏品",
+    publicGallericaFailed: "公开到探索频道失败",
+    mintingData: '创建NFT Collectible过程中',
+    settingApproval: '等待授权委托Collectible到Galleria合约处理',
+    creatingOrder: '创建出售订单过程中',
+    createOrderSuccess: '创建出售订单成功',
+    createOrderFail: '创建出售订单失败',
+    checkingCollectibleResult: '等待创建的Collectible在合约中生效',
+ }
 };

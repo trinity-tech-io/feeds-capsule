@@ -8,6 +8,7 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { MenuService } from 'src/app/services/MenuService';
 import { Events } from 'src/app/services/events.service';
+import { CarrierService } from 'src/app/services/CarrierService';
 
 @Component({
   selector: 'app-channelcollections',
@@ -31,7 +32,8 @@ export class ChannelcollectionsPage implements OnInit {
     private nftContractHelperService: NFTContractHelperService,
     private ipfsService: IPFSService,
     private menuService: MenuService,
-    private events: Events
+    private events: Events,
+    private carrierService: CarrierService,
   ) { }
 
   ngOnInit() {
@@ -41,6 +43,7 @@ export class ChannelcollectionsPage implements OnInit {
     this.initTitle();
     this.addEvent();
     this.getChannelCollectionsList();
+    console.log("=channelCollectionsList=",this.channelCollectionsList)
   }
 
   ionViewWillLeave() {
@@ -65,44 +68,41 @@ export class ChannelcollectionsPage implements OnInit {
       this.channelCollectionsList = [];
       return;
     }
-    let channelCollections: FeedsData.ChannelCollections = {
-      tokenId: '',
-      nodeId: '',
-      did: '',
-      name: '',
-      description: '',
-      url: '',
-      feedsUrlHash: '',
-      ownerName: '',
-      ownerDid: '',
-      curQuantity: '1'
-    };
     for(let index = 0; index<list.length;index++){
+      let channelCollections: FeedsData.ChannelCollections = {
+        tokenId: '',
+        nodeId: '',
+        did: '',
+        name: '',
+        description: '',
+        url: '',
+        feedsUrlHash: '',
+        ownerName: '',
+        ownerDid: '',
+        curQuantity: '1',
+      };
       let item = list[index];
-      console.log("==item==",item)
       channelCollections.tokenId = item.tokenId;
       channelCollections.name = item.name;
       channelCollections.description = item.description;
       channelCollections.feedsUrlHash = item.tokenIdHex.replace("0x","");
       channelCollections.ownerDid = item.tokenDid.did;
-      console.log("===tokenId==",channelCollections.tokenId);
 
     let tokenInfo =  await this.nftContractControllerService
       .getSticker().tokenInfo(channelCollections.tokenId);
 
     let tokenUri = tokenInfo[3]; //tokenUri
     tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
-    console.log("==tokenUri==",tokenUri);
     const tokenJson = await this.ipfsService
     .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
     let url: string = tokenJson["entry"]["url"];
     channelCollections.url = url;
-    channelCollections.nodeId = tokenJson["nodeId"];
-    channelCollections.ownerName = tokenJson["ownerName"];
+    channelCollections.ownerName = "";
     let urlArr = url.replace("feeds://","").split("/");
     channelCollections.did = urlArr[0];
-    console.log("=====tokenJson====",tokenJson);
-    console.log("==========channelCollections=========",channelCollections);
+    let carrierAddress = urlArr[1];
+    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
+    channelCollections.nodeId = nodeId;
     this.channelCollectionsList.push(channelCollections);
     }
     this.isLoadingData = false;
