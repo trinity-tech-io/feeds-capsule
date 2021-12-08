@@ -8,13 +8,13 @@
     </ion-col>
   </ion-row>
   <ion-row class="borderbottom" >
-    <ion-col size="12" *ngIf="menuType!='burn'">
+    <ion-col size="12" *ngIf="menuType!='burn'&& assetType!='feeds-channel'">
       <p class="key">{{ 'CollectionsPage.price' | translate }}</p>
     </ion-col>
-    <ion-col size="8" *ngIf="menuType!='burn'">
+    <ion-col size="8" *ngIf="menuType!='burn' && assetType!='feeds-channel'">
       <ion-input type="number" clearInput [placeholder]="'CollectionsPage.price' | translate" [(ngModel)]="amount" class="nameValue"></ion-input>
     </ion-col>
-    <ion-col size="4" class="logo" *ngIf="menuType!='burn'">
+    <ion-col size="4" class="logo" *ngIf="menuType!='burn' && assetType!='feeds-channel'">
           <span>ELA</span> <img src="/assets/images/solidEla.svg" *ngIf="!theme.darkMode">
               <img src="/assets/images/darkmode/solidEla.svg" *ngIf="theme.darkMode">
     </ion-col>

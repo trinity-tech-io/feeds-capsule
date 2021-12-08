@@ -236,10 +236,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then( m => m.GalleriachannelPageModule)
   },
   {
-    path: 'gallerialist',
-    loadChildren: () => import('./pages/gallerialist/gallerialist.module').then( m => m.GallerialistPageModule)
-  },
-  {
     path: 'channelcollections',
     loadChildren: () => import('./pages/channelcollections/channelcollections.module').then( m => m.ChannelcollectionsPageModule)
   },
