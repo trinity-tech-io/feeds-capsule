@@ -34,16 +34,9 @@ export class GalleriachannelPage implements OnInit {
   public nftName: string = '';
   public nftDescription: string = '';
   /**single  multiple*/
-  public issueRadionType: string = 'single';
   public nftRoyalties: string = '';
   public nftQuantity: string = '1';
-  public nftFixedAmount: number = null;
-  public nftMinimumAmount: number = null;
-  /**fixedPrice highestBid */
-  public sellMethod: string = 'fixedPrice';
-  public expirationDate: string = '';
-  public maxExpirationDate: string = '';
-  public minExpirationDate: string = '';
+
   public fileName: string = '';
   public thumbnail: string = '';
   private imageObj: any = {};
@@ -60,7 +53,7 @@ export class GalleriachannelPage implements OnInit {
   private nodeId: string = null;
   private channelId: string = null;
   private feedsUrl: string = null;
-  private channel: any = {};
+  public channel: any = {};
   private avatarObj: any = {};
   private tippingAddress: any = {};
   constructor(
@@ -85,8 +78,6 @@ export class GalleriachannelPage implements OnInit {
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       this.nodeId = params.nodeId;
       this.channelId = params.channelId;
-      console.log("===nodeId===",this.nodeId);
-      console.log("===channelId===",this.channelId);
     });
   }
 
@@ -102,7 +93,7 @@ export class GalleriachannelPage implements OnInit {
     if(elaAddress != null){
       this.tippingAddress["elaMain"] = elaAddress;
     }else{
-      this.tippingAddress["elaMain"] = null;
+      this.tippingAddress["elaMain"] = "";
     }
 
     this.channel = this.feedService.getChannelFromId(this.nodeId, Number(this.channelId));
@@ -112,13 +103,6 @@ export class GalleriachannelPage implements OnInit {
     if (this.walletConnectControllerService.getAccountAddress() == '')
       this.walletConnectControllerService.connect();
 
-    this.minExpirationDate = UtilService.dateFormat(new Date());
-    this.expirationDate = UtilService.dateFormat(
-      new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-    );
-    this.maxExpirationDate = UtilService.dateFormat(
-      new Date(new Date().getTime() + 10 * 365 * 24 * 60 * 60 * 1000),
-    );
     this.initTile();
     this.addEvent();
   }
@@ -145,7 +129,7 @@ export class GalleriachannelPage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('MintnftPage.title'),
+      this.translate.instant('GalleriachannelPage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
@@ -160,26 +144,6 @@ export class GalleriachannelPage implements OnInit {
   removeEvent() {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
-
-  //@Deprecated
-  // addAsset() {
-  //   this.addImg(0)
-  //     .then((imagePath) => {
-  //       this.imagePath = imagePath;
-  //       let pathObj = this.handlePath(this.imagePath);
-  //       let fileName = pathObj['fileName'];
-  //       let filePath = pathObj['filepath'];
-  //       let index = fileName.lastIndexOf(".");
-  //       let imgFormat = fileName.substr(index+1);
-  //       this.imageObj['imgFormat'] = imgFormat;
-  //       return this.getFlieObj(fileName, filePath);
-  //     }).then((fileBase64) => {
-  //       this.assetBase64 = fileBase64;
-  //       return this.compressImage(fileBase64);
-  //     }).then((compressBase64) => {
-  //       this.thumbnail = compressBase64;
-  //     });
-  // }
 
   mint() {
     if (!this.checkParms()) {
@@ -222,34 +186,31 @@ export class GalleriachannelPage implements OnInit {
 
         let jsonHash = result.jsonHash;
         this.loadingCurNumber = "2";
-        this.loadingText = "common.mintingData";
+        this.loadingText = "GalleriachannelPage.mintingData";
         let didUri = await this.getDidUri();
         return this.mintContract(tokenId, jsonHash, this.nftQuantity,"0",didUri);
       })
       .then(mintResult => {
           this.loadingCurNumber = "3";
-          this.loadingText = "common.settingApproval";
+          this.loadingText = "GalleriachannelPage.settingApproval";
           return this.handleSetApproval();
       })
       .then(setApprovalResult => {
         if (setApprovalResult == SKIP) return -1;
-        //this.native.changeLoadingDesc("common.creatingOrder");
         this.loadingCurNumber = "4";
-        this.loadingText = "common.creatingOrder";
+        this.loadingText = "GalleriachannelPage.creatingOrder";
         return this.handleCreateOrder(tokenId);
       })
       .then(orderIndex => {
         if (orderIndex == -1) return SKIP;
-        //this.native.changeLoadingDesc("common.checkingCollectibleResult");
         this.loadingCurNumber = "5";
-        this.loadingText = "common.checkingCollectibleResult";
-        console.log("===tokenInfo====",orderIndex);
+        this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
         //return this.handleOrderResult(tokenId, orderIndex);
       })
       .then((status) => {
         if(status === SKIP){
           this.loadingCurNumber = "3";
-          this.loadingText = "common.checkingCollectibleResult";
+          this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
         }
         //Finish
         //if(!this.curPublishtoPasar){
@@ -279,51 +240,13 @@ export class GalleriachannelPage implements OnInit {
           return;
         }
 
-        this.native.toast_trans('common.publicPasarFailed');
+        this.native.toast_trans('GalleriachannelPage.publicGallericaFailed');
       });
   }
 
-  // getFlieObj(fileName: string, filepath: string): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     this.file
-  //     .resolveLocalFilesystemUrl(filepath)
-  //     .then((dirEntry: DirectoryEntry) => {
-  //       dirEntry.getFile(
-  //         fileName,
-  //         { create: true, exclusive: false },
-  //         fileEntry => {
-  //           fileEntry.file(
-  //             file => {
-  //               let fileReader = new FileReader();
-  //               fileReader.onloadend = (event: any) => {
-  //                 this.zone.run(() => {
-  //                   let assetBase64 = fileReader.result.toString();
-  //                   resolve(assetBase64);
-  //                 });
-  //               };
-  //               fileReader.onprogress = (event: any) => {
-  //                 this.zone.run(() => {});
-  //               };
-  //               fileReader.readAsDataURL(file);
-  //             },
-  //             () => {},
-  //           );
-  //         },
-  //         () => {
-  //           reject('error');
-  //         },
-  //       );
-  //     })
-  //     .catch(dirEntryErr => {
-  //       reject(dirEntryErr);
-  //       Logger.error(TAG, 'Get File object error', dirEntryErr)
-  //     });
-  //   });
-  // }
-
   sendIpfsImage(file: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      let blob = this.dataURLtoBlob(file);
+      let blob = UtilService.dataURLtoBlob(file);
       let formData = new FormData();
       formData.append('', blob);
       Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
@@ -336,9 +259,7 @@ export class GalleriachannelPage implements OnInit {
             return;
           }
           let kind = blob.type.replace("image/","");
-          console.log("===kind==",kind);
           let size = blob.size;
-          console.log("===size==",size);
           let cid = 'feeds:image:' + hash;
           resolve({"cid": cid , "size": size,"kind":kind});
         })
@@ -350,7 +271,7 @@ export class GalleriachannelPage implements OnInit {
 
   sendIpfsThumbnail(thumbnailBase64: string) {
     return new Promise(async (resolve, reject) => {
-      let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
+      let thumbnailBlob = UtilService.dataURLtoBlob(thumbnailBase64);
       let formData = new FormData();
       formData.append('', thumbnailBlob);
       Logger.log(TAG, 'Send thumbnail, formdata length is', formData.getAll('').length);
@@ -366,7 +287,6 @@ export class GalleriachannelPage implements OnInit {
 
           this.thumbnail = thumbnailBase64;
           this.avatarObj['thumbnail'] = 'feeds:image:' + hash;
-          console.log("===this.avatarObj====",this.avatarObj);
           resolve('');
         })
         .catch(err => {
@@ -381,8 +301,6 @@ export class GalleriachannelPage implements OnInit {
       let ipfsJSON = {
         version: '2',
         type: type,
-        ownerName: this.channel['owner_name'],
-        nodeId: this.nodeId,
         name: this.nftName,
         description: this.nftDescription,
         tippingAddress:this.tippingAddress,
@@ -415,41 +333,6 @@ export class GalleriachannelPage implements OnInit {
     });
   }
 
-  dataURLtoBlob(dataurl: string) {
-    let arr = dataurl.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-  }
-
-  //@Deprecated
-  // addImg(type: number): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     this.camera.openCamera(
-  //       100,
-  //       1,
-  //       type,
-  //       (imgPath: any) => {
-  //         resolve(imgPath);
-  //       },
-  //       (err: any) => {
-  //         Logger.error(TAG, 'Add img err', err);
-  //         let imgUrl = this.assetBase64 || '';
-  //         if (!imgUrl) {
-  //           this.native.toast_trans('common.noImageSelected');
-  //           reject(err);
-  //           return;
-  //         }
-  //       }
-  //     );
-  //   });
-  // }
-
   checkParms() {
     let accountAddress =
       this.nftContractControllerService.getAccountAddress() || '';
@@ -457,68 +340,15 @@ export class GalleriachannelPage implements OnInit {
       this.native.toastWarn('common.connectWallet');
       return;
     }
-
     if (this.nftName === '') {
       this.native.toastWarn('MintnftPage.nftNamePlaceholder');
       return false;
     }
-
     if (this.nftDescription === '') {
       this.native.toastWarn('MintnftPage.nftDescriptionPlaceholder');
       return false;
     }
-
-    // if (
-    //   this.curPublishtoPasar &&
-    //   this.issueRadionType === 'oneTimeIssue' &&
-    //   this.nftFixedAmount === null
-    // ) {
-    //   this.native.toastWarn('MintnftPage.nftFixedAmount');
-    //   return false;
-    // }
-
-    // if (
-    //   this.curPublishtoPasar &&
-    //   this.issueRadionType === 'oneTimeIssue' &&
-    //   !this.number(this.nftFixedAmount)
-    // ) {
-    //   this.native.toastWarn('common.amountError');
-    //   return false;
-    // }
-
-    // if (
-    //   this.curPublishtoPasar &&
-    //   this.issueRadionType === 'oneTimeIssue' &&
-    //   this.nftFixedAmount <= 0
-    // ) {
-    //   this.native.toastWarn('MintnftPage.priceErrorMsg');
-    //   return;
-    // }
-
-    // if (
-    //   this.curPublishtoPasar &&
-    //   this.issueRadionType === 'reIssueable' &&
-    //   this.nftMinimumAmount === null
-    // ) {
-    //   this.native.toastWarn('MintnftPage.nftMinimumAmount');
-    //   return false;
-    // }
     let regNumber = /^\+?[1-9][0-9]*$/;
-    // if (this.nftRoyalties === '') {
-    //   this.native.toastWarn('MintnftPage.nftRoyaltiesPlaceholder');
-    //   return false;
-    // }
-
-    // if (this.nftRoyalties!="0"&&regNumber.test(this.nftRoyalties) == false) {
-    //   this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
-    //   return false;
-    // }
-
-    // if(parseInt(this.nftRoyalties)<0 || parseInt(this.nftRoyalties)>15){
-    //   this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
-    //   return false;
-    // }
-
     if (this.nftQuantity === '') {
       this.native.toastWarn('MintnftPage.nftQuantityPlaceholder');
       return false;
@@ -529,14 +359,6 @@ export class GalleriachannelPage implements OnInit {
       return false;
     }
     return true;
-  }
-
-  radioChange() {
-    if (this.issueRadionType === 'single') {
-      this.nftQuantity = '1';
-    } else {
-      this.nftQuantity = '';
-    }
   }
 
   handlePath(fileUri: string) {
@@ -639,14 +461,13 @@ export class GalleriachannelPage implements OnInit {
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       this.handleCace('onSale', tokenId, orderIndex);
-      await this.getSetChannel(tokenId,orderIndex);
       resolve(SUCCESS);
     });
   }
 
   // 压缩图片
-  compressImage(path: any): Promise<string> {
-
+  compressImage(path: any,isCompress?: string): Promise<string> {
+    isCompress = isCompress || null;
     return new Promise((resolve, reject) => {
       try {
         let img = new Image();
@@ -654,8 +475,12 @@ export class GalleriachannelPage implements OnInit {
         img.crossOrigin = "Anonymous";
         img.src = path;
         img.onload = () =>{
-          let maxWidth = img.width / 4;
-          let maxHeight = img.height / 4;
+          let maxWidth = img.width;
+          let maxHeight = img.height;
+          if(isCompress!=null){
+            maxWidth = img.width / 4;
+            maxHeight = img.height / 4;
+          }
          let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
          resolve(imgBase64);
         };
@@ -666,82 +491,6 @@ export class GalleriachannelPage implements OnInit {
     });
   }
 
-  async getSetChannel(tokenId: any,orderIndex:any) {
-
-    let order = await this.nftContractControllerService
-    .getPasar()
-    .getSellerOrderByIndex(orderIndex);
-    this.orderId = order[0];
-
-    let setChannel = this.feedService.getCollectibleStatus();
-    let isTipToast:boolean = false;
-    for (let key in setChannel) {
-      let value = setChannel[key] || '';
-      if (value) {
-        isTipToast = true;
-        let nodeId = key.split('_')[0];
-        let channelId = parseInt(key.split('_')[1]);
-        await this.sendPost(tokenId, nodeId, channelId);
-      }
-    }
-
-    if(isTipToast){
-      this.native.toast("CreatenewpostPage.tipMsg1");
-    }
-  }
-
-  async sendPost(tokenId: any, nodeId: string, channelId: number) {
-    let tempPostId = this.feedService.generateTempPostId();
-    this.publishPostThrowMsg(tokenId, nodeId, channelId, tempPostId);
-  }
-
-  async publishPostThrowMsg(
-    tokenId: any,
-    nodeId: string,
-    channelId: number,
-    tempPostId: number,
-  ) {
-    let imgSize = this.thumbnail.length;
-    if (imgSize > this.throwMsgTransDataLimit) {
-      this.transDataChannel = FeedsData.TransDataChannel.SESSION;
-      let memo: FeedsData.SessionMemoData = {
-        feedId: channelId,
-        postId: 0,
-        commentId: 0,
-        tempId: tempPostId,
-      };
-      this.feedService.restoreSession(nodeId, memo);
-    } else {
-      this.transDataChannel = FeedsData.TransDataChannel.MESSAGE;
-    }
-
-    let imgThumbs: FeedsData.ImgThumb[] = [];
-    let imgThumb: FeedsData.ImgThumb = {
-      index: 0,
-      imgThumb: this.thumbnail,
-      imgSize: imgSize,
-    };
-    imgThumbs.push(imgThumb);
-
-    let nftContent = {};
-    nftContent['version'] = '1.0';
-    nftContent['imageThumbnail'] = imgThumbs;
-    nftContent['text'] = this.nftName+" - "+ this.nftDescription;
-    nftContent['nftTokenId'] = tokenId;
-    nftContent['nftOrderId'] = this.orderId;
-
-    // this.feedService.declarePost(
-    //   nodeId,
-    //   channelId,
-    //   JSON.stringify(nftContent),
-    //   false,
-    //   tempPostId,
-    //   this.transDataChannel,
-    //   this.assetBase64,
-    //   '',
-    // );
-  }
-
   number(text: any) {
     var numPattern = /^(([1-9]\d*)|\d)(.\d{1,9})?$/;
     return numPattern.test(text);
@@ -749,9 +498,11 @@ export class GalleriachannelPage implements OnInit {
 
   uploadData(): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      this.realFile = this.handleChannelAvatar();
-      if (this.realFile == null)
-        console.log("Not select image");
+      this.realFile = await this.handleChannelAvatar();
+      if (this.realFile == null){
+        reject('upload file error');
+          return;
+      }
       this.sendIpfsImage(this.realFile).then((realFileObj:any) => {
         this.avatarObj["image"] = realFileObj.cid;
         this.avatarObj["size"] = realFileObj.size;
@@ -897,14 +648,26 @@ export class GalleriachannelPage implements OnInit {
    return tokenId;
   }
 
-  handleChannelAvatar(){
-    let channelAvatar = this.feedService.parseChannelAvatar(this.channel['avatar']);
+ async handleChannelAvatar(){
+
+    let channelAvatar: string = this.feedService.parseChannelAvatar(this.channel['avatar']);
     if(channelAvatar.startsWith("data:image")){
-        return channelAvatar;
+         return channelAvatar;
     }
-    return null;
 
+    if(channelAvatar.startsWith("assets/images/profile")){
+       console.log("channelAvatar",channelAvatar);
+       let url = "http://localhost/"+channelAvatar;
+       let avatar = await UtilService.downloadFileFromUrl(url);
+       let avatarBase64 = await UtilService.blobToDataURL(avatar);
+      return avatarBase64;
+    }
 
+    if(channelAvatar.startsWith("https://")){
+      let avatar = await UtilService.downloadFileFromUrl(channelAvatar);
+      let avatarBase64 = await UtilService.blobToDataURL(avatar);
+      return avatarBase64;
+    }
   }
 
 }
