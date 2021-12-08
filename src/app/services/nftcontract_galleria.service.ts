@@ -115,6 +115,11 @@ export class NFTContractGalleriaService {
     clearInterval(this.checkCreatePanelInterval);
   }
 
+  cancelRemovePanelProcess() {
+    if (!this.checkRemovePanelInterval) return;
+    clearInterval(this.checkRemovePanelInterval);
+  }
+
   checkCreatePanelState(tokenId:string, callback: (tokenInfo: any) => void) {
     try{
       this.checkCreatePanelNum = 0;

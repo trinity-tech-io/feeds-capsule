@@ -184,7 +184,9 @@ export const zh = {
     parseing: '解析中',
     dataStorage: '数据缓存',
     cleanPasarData: '清除Pasar缓存数据',
-    cleanPasarDataTip: '清除Pasar缓存数据后，需要重启应用'
+    cleanPasarDataTip: '清除Pasar缓存数据后，需要重启应用',
+    unpublished: "未公开",
+    published: "已公开"
   },
   app: {
     profileDetails: '档案详情',

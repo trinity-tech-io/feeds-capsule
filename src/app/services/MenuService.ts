@@ -31,6 +31,7 @@ export class MenuService {
   public shareOnSaleMenu: any = null;
   public saveImageMenu: any = null;
   public channelCollectionsMenu: any = null;
+  public channelCollectionsPublishedMenu: any = null;
   constructor(
     private feedService: FeedService,
     private actionSheetController: ActionSheetController,
@@ -820,6 +821,40 @@ export class MenuService {
     }
   }
 
+  cancelChannelCollectionMenu() {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
+  }
+
+  async confirmChannelCollectionMenu(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
+    that.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.cancelingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
+    let sId = setTimeout(()=>{
+      that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();
+      this.events.publish(FeedsEvent.PublishType.endLoading);
+      clearTimeout(sId);
+      that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
+    },Config.WAIT_TIME_CANCEL_ORDER)
+
+    that.doCancelChannelOrder(that)
+      .then(() => {
+        that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();;
+        that.events.publish(FeedsEvent.PublishType.endLoading);
+        clearTimeout(sId);
+        that.native.toast_trans('common.cancelSuccessfully');
+      })
+      .catch(() => {
+        // cancel order error
+        that.events.publish(FeedsEvent.PublishType.endLoading);
+        clearTimeout(sId);
+        that.native.toast_trans('common.cancellationFailed');
+        that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
+      });
+  }
+
   async confirmOnSaleMenu(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
@@ -874,6 +909,30 @@ export class MenuService {
     });
 
   }
+
+
+  async cancelChannelOrder(that: any, panelId: string) {
+  return await that.nftContractControllerService.getGalleria().removePanel(panelId);
+  }
+
+  async doCancelChannelOrder(that: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let panelId = this.assItem['panelId'] || '';
+      if (panelId === '') {
+        reject('error');
+        return;
+      }
+      let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
+      if (cancelStatus===null) {
+        reject('error');
+        return;
+      }
+      that.events.publish(FeedsEvent.PublishType.nftCancelChannelOrder, this.assItem);
+      resolve('Success');
+    });
+
+  }
+
 
   async showBuyMenu(assItem: any) {
     this.buyMenu = await this.actionSheetController.create({
@@ -1078,5 +1137,46 @@ export class MenuService {
       }
     });
     await this.channelCollectionsMenu.present();
+  }
+
+  async showChannelCollectionsPublishedMenu(channelItem: FeedsData.ChannelCollections) {
+    this.assItem = channelItem || '';
+    this.channelCollectionsPublishedMenu = await this.actionSheetController.create({
+      cssClass: 'editPost',
+      buttons: [
+        {
+          text: this.translate.instant('BidPage.cancelOrder'),
+          role: 'destructive',
+          icon: 'arrow-redo-circle',
+          handler: () => {
+            this.popover = this.popupProvider.ionicConfirm(
+              this,
+              'BidPage.cancelOrder',
+              'BidPage.cancelOrder',
+              this.cancelChannelCollectionMenu,
+              this.confirmChannelCollectionMenu,
+              './assets/images/shanchu.svg',
+            );
+          },
+        },
+        {
+          text: this.translate.instant('common.cancel'),
+          role: 'cancel',
+          icon: 'close-circle',
+          handler: () => {
+            if (this.channelCollectionsPublishedMenu != null) {
+              this.channelCollectionsPublishedMenu.dismiss();
+            }
+          },
+        },
+      ],
+    });
+
+    this.channelCollectionsPublishedMenu.onWillDismiss().then(() => {
+      if (this.channelCollectionsPublishedMenu!= null) {
+        this.channelCollectionsPublishedMenu = null;
+      }
+    });
+    await this.channelCollectionsPublishedMenu.present();
   }
 }

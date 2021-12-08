@@ -1,5 +1,5 @@
 <app-titlebar></app-titlebar>
-<ion-content>
+<ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
         <ion-refresher-content
           class="refresh"
@@ -8,12 +8,29 @@
           refreshingSpinner="circles"
           refreshingText="{{'common.beingRefresh'|translate}}">
         </ion-refresher-content>
-      </ion-refresher>
+    </ion-refresher>
+
+    <div *ngIf="!isLoadingData&&channelCollectionList.length === 0" class="empty-container">
+      <img src="./assets/images/empty-feeds-icon.svg">
+      <h1>{{ 'FollowingComponent.allempty' | translate }}</h1>
+      <p>{{ 'FollowingComponent.emptyDes' | translate }}</p>
+    </div>
+
+    <ion-list *ngIf="!isLoadingData&&channelCollectionList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode" style="padding-top:5px;">
+      <ion-item
+      class="channelCollectionsAvatar"
+      id = {{getChannelAvatarUri(channel)}}
+      *ngFor="let channel of channelCollectionList"
+      [class.removeBorder]="channel === channelCollectionList[channelCollectionList.length - 1]"
+      lines="none"
+    >
     <app-channelcollectionsitem
-    *ngIf="!isLoadingData"
-    [channelCollectionList] = "channelCollectionsList"
+    style="width: 100%;"
+    [channelCollection] = "channel"
     (clickMore) = "clickMore($event)"
     ></app-channelcollectionsitem>
+    </ion-item>
+    </ion-list>
 </ion-content>
 <app-nftloading
  *ngIf="isLoading"

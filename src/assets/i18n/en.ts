@@ -184,7 +184,9 @@ export const en = {
     parseing: 'Parseing',
     dataStorage: 'Data storage',
     cleanPasarData: 'Clear Pasar data',
-    cleanPasarDataTip: 'Need to restart app after clearing Pasar data'
+    cleanPasarDataTip: 'Need to restart app after clearing Pasar data',
+    unpublished: "Unpublished",
+    published: "Published"
   },
   app: {
     profileDetails: 'Profile Details',

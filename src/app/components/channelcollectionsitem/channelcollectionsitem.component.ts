@@ -7,27 +7,44 @@ import { ThemeService } from '../../services/theme.service';
   styleUrls: ['./channelcollectionsitem.component.scss'],
 })
 export class ChannelcollectionsitemComponent implements OnInit {
-  @Input() channelCollectionList: FeedsData.ChannelCollections [] = [];
+  @Input() channelCollection: FeedsData.ChannelCollections;
   @Output() clickMore = new EventEmitter();
+  public channelCollectionAvatar: string = "./assets/icon/reserve.svg";
+  public channelCollectionAvatarId: string = "";
+  public statusDes = "";
   constructor(
     public theme: ThemeService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getChannelAvatarId();
+    this.getStatusDes();
+  }
 
-  menuMore(channelItem: FeedsData.ChannelCollections){
-    let obj = { channelItem: channelItem};
-    console.log("=====obj=====",obj);
+  getStatusDes() {
+    let channelStatus = this.channelCollection.status || "0";
+    if(channelStatus === "0"){
+      this.statusDes = "common.unpublished"
+    }else{
+      this.statusDes = "common.published"
+    }
+  }
+
+  menuMore(){
+    let obj = { channelItem: this.channelCollection};
     this.clickMore.emit(obj);
   }
 
-  parseAvatar(avatar: string) {
-    avatar = avatar || "";
-    if(avatar === ""){
-      avatar = "./assets/icon/reserve.svg"
+  getChannelAvatarId() {
+    let channelAvatar = this.channelCollection.avatar.image;
+    let channelAvatarUri = "";
+    if (channelAvatar.indexOf('feeds:imgage:') > -1) {
+      channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
+      this.channelCollectionAvatarId = channelAvatarUri;
+    } else if (channelAvatar.indexOf('feeds:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('feeds:image:', '');
     }
-    return avatar;
+    this.channelCollectionAvatarId = "channelCollectionsPage-avatar-"+channelAvatarUri;
   }
-
 
 }
