@@ -1064,13 +1064,48 @@ refreshChannelCollectionAvatar(){
 }
 
 filterChannelCollection(){
+
+
   let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
   let channelCollectionList =  _.cloneDeep(publishedActivePanelList);
   let ownerDid = this.feedService.getDidUriJson().did;
-  let channelCollectionPageList = _.filter(channelCollectionList,(item: FeedsData.ChannelCollections)=>{
+  let channelCollectionPageList = [];
+  channelCollectionPageList = _.filter(channelCollectionList,(item: FeedsData.ChannelCollections)=>{
         return item.ownerDid != ownerDid;
   });
+
+  this.followedList = this.feedService.getChannelsList() || [];
+  this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+  this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+
+  channelCollectionPageList = _.filter(channelCollectionPageList, (feed: any) => {
+    return this.handleChannelShow(feed);
+  });
+
   return channelCollectionPageList;
+}
+
+handleChannelShow(feed: any) {
+  let feedNodeId = feed['nodeId'];
+  let feedUrl = feed['url'];
+  let feedId = feedUrl.split('/')[4];
+  let followFeed = _.filter(this.followedList, (item: any) => {
+    return feedNodeId == item['nodeId'] && feedId == item['id'];
+  });
+
+  if (followFeed.length > 0) {
+    return false;
+  }
+
+  let addingFeed = _.filter(this.addingChanneList, (item: any) => {
+    return feedNodeId == item['nodeId'] && feedId == item['feedId'];
+  });
+
+  if (addingFeed.length > 0) {
+    return false;
+  }
+
+  return true;
 }
 
 }
