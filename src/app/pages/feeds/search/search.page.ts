@@ -16,6 +16,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
+import { CarrierService } from 'src/app/services/CarrierService';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -49,6 +53,8 @@ export class SearchPage implements OnInit {
   public curtotalNum: number = 0;
   private clientHeight: number = 0;
   private pasarGridisLoadimage: any = {};
+  private channelCollectionList: any = [];//所有的
+  public  channelCollectionPageList: any = [];//页面显示用
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -63,6 +69,7 @@ export class SearchPage implements OnInit {
   //   "follower": 5
   // }
   constructor(
+    private nftContractControllerService: NFTContractControllerService,
     private feedService: FeedService,
     private events: Events,
     private zone: NgZone,
@@ -77,6 +84,9 @@ export class SearchPage implements OnInit {
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
     private dataHelper: DataHelper,
+    private nftContractHelperService: NFTContractHelperService,
+    private ipfsService: IPFSService,
+    private carrierService: CarrierService
   ) {}
 
   ngOnInit() {
@@ -181,9 +191,10 @@ export class SearchPage implements OnInit {
       this.pageNum = 1;
       this.initData('', true);
     } else {
+      this.channelCollectionPageList = this.dataHelper.getPublishedActivePanelList();
       this.httpAllData = _.cloneDeep(discoverfeeds);
       this.discoverSquareList = _.cloneDeep(discoverfeeds);
-      this.refreshDiscoverSquareFeedAvatar()
+      this.refreshDiscoverSquareFeedAvatar();
     }
     this.developerMode = this.feedService.getDeveloperMode();
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -476,7 +487,9 @@ export class SearchPage implements OnInit {
       .catch(err => {});
   }
 
-  initData(events: any, isLoading: boolean = true) {
+ async initData(events: any, isLoading: boolean = true) {
+    await this.getActivePanelList();
+    this.channelCollectionPageList = this.channelCollectionList;
     this.isLoading = true;
     this.httpService
       .ajaxGet(
@@ -891,6 +904,55 @@ getAvatar(feedsUrlHash: string){
     reject(null)
   })
  });
+}
+
+async getActivePanelList(){
+  let activePanelCount = await this.nftContractControllerService.getGalleria().getActivePanelCount();
+  for (let index = 0; index < activePanelCount; index++) {
+    try {
+      const item:any = await this.nftContractControllerService.getGalleria().getActivePanelByIndex(index);
+      /*userAddr:2*/
+      let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+      channelCollections.panelId = item[0];
+      channelCollections.userAddr = item[2]
+      channelCollections.type = "feeds-channel";
+      channelCollections.status = "1";
+      channelCollections.tokenId = item[3];
+    let tokenInfo =  await this.nftContractControllerService
+      .getSticker().tokenInfo(channelCollections.tokenId);
+    let tokenUri = tokenInfo[3]; //tokenUri
+    tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
+    const tokenJson = await this.ipfsService
+    .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
+    let url: string = tokenJson["entry"]["url"];
+    let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
+    channelCollections.name = tokenJson["name"];
+    channelCollections.description = tokenJson["description"];
+    channelCollections.avatar = avatar;
+    channelCollections.url = url;
+    let didUriJSON = this.feedService.getDidUriJson();
+    channelCollections.ownerDid = didUriJSON.did;
+    let result = await this.feedService.resolveDidObject(didUriJSON.did);
+    let didName = result["name"] || "";
+    channelCollections.ownerName = didName;
+    let urlArr = url.replace("feeds://","").split("/");
+    channelCollections.did = urlArr[0];
+    let carrierAddress = urlArr[1];
+    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
+    channelCollections.nodeId = nodeId;
+    this.channelCollectionList.push(channelCollections);
+    this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
+    } catch (error) {
+      console.error("Get Sale item error", error);
+    }
+  }
+}
+
+clickChannelCollection(channelCollection: FeedsData.ChannelCollections){
+
+}
+
+subscribeChannelCollection(channelCollection: FeedsData.ChannelCollections){
 }
 
 }

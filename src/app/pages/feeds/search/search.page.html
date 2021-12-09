@@ -55,6 +55,43 @@
             <ion-ripple-effect></ion-ripple-effect>
           </ion-row>
         </ion-item>
+        <!-- channel Collection -->
+        <ion-item
+        *ngFor="let channelCollection of channelCollectionPageList"
+        lines="none">
+        <ion-row class="channel-row ion-activatable ripple">
+          <ion-col
+            size="2.5"
+            class="left-col"
+            (click)="clickChannelCollection(channelCollection)"
+          >
+            <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+              <img src="./assets/icon/reserve.svg" >
+              <div class="offline"></div>
+            </div>
+          </ion-col>
+          <ion-col
+            size="6.5"
+            class="middle-col"
+            (click)="clickChannelCollection(channelCollection)"
+          >
+            <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channelCollection.name }}</ion-label>
+            <ion-row>
+              <p class="ownerName">{{channelCollection.ownerName}}</p>
+            </ion-row>
+            <ion-row>
+              <p  class="des" [class.white]="theme.darkMode">{{ channelCollection.description }}</p>
+            </ion-row>
+          </ion-col>
+          <ion-col size="3" class="right-col">
+            <ion-button  class="unsubscribed" fill="outline" (click)="subscribeChannelCollection(channelCollection)">
+              <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </ion-item>
       <!---unfollowedFeed--->
       <ion-item
       *ngFor="let feed of unfollowedFeed"
