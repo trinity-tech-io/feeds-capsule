@@ -14,6 +14,7 @@ let TAG: string = 'DataHelper';
 export class DataHelper {
   private openBarcodeScanner: boolean = false;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
+  private ownChannelCollection: any = {};
   private isShowAdult: boolean = true;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
@@ -128,7 +129,7 @@ export class DataHelper {
   constructor(
     private storageService: StorageService,
     private events: Events
-  ) {}
+  ) { }
 
   ////subscribedChannelsMap
   getSubscribedFeedsList(): FeedsData.Channels[] {
@@ -878,7 +879,7 @@ export class DataHelper {
     this.saveData(FeedsData.PersistenceKey.likeCommentMap, this.likeCommentMap);
   }
 
-  getCommentFromLikedComment() {}
+  getCommentFromLikedComment() { }
 
   initLikedCommentMap() {
     this.likeCommentMap = {};
@@ -2666,11 +2667,11 @@ export class DataHelper {
     return this.feedsSortType;
   }
 
-  setNftDidList(nftDidList: any){
-     this.nftDidList = nftDidList;
+  setNftDidList(nftDidList: any) {
+    this.nftDidList = nftDidList;
   }
 
-  getNftDidList(){
+  getNftDidList() {
     return this.nftDidList;
   }
 
@@ -2806,20 +2807,29 @@ export class DataHelper {
     return this.bidPageAssetItem;
   }
 
-    ////
-    setAssetPageAssetItem(assetItem: FeedsData.NFTItem) {
-      this.assetPageAssetItem = assetItem;
-    }
+  ////
+  setAssetPageAssetItem(assetItem: FeedsData.NFTItem) {
+    this.assetPageAssetItem = assetItem;
+  }
 
-    getAssetPageAssetItem(): FeedsData.NFTItem {
-      return this.assetPageAssetItem;
-    }
+  getAssetPageAssetItem(): FeedsData.NFTItem {
+    return this.assetPageAssetItem;
+  }
 
   setOpenBarcodeScanner(openBarcodeScanner: boolean) {
-     this.openBarcodeScanner = openBarcodeScanner;
+    this.openBarcodeScanner = openBarcodeScanner;
   }
 
   getOpenBarcodeScanner() {
-      return this.openBarcodeScanner;
+    return this.openBarcodeScanner;
+  }
+
+  setOwnChannelCollection(ownChannelCollection: any) {
+    this.ownChannelCollection = ownChannelCollection;
+    this.saveData("feeds.galleric.own.channel.collection", ownChannelCollection);
+  }
+
+  getOwnChannelCollection() {
+    return this.ownChannelCollection;
   }
 }

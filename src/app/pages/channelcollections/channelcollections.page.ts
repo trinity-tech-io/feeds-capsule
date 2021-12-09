@@ -13,7 +13,10 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
+import { UtilService } from 'src/app/services/utilService';
+import { FeedService } from 'src/app/services/FeedService';
 @Component({
   selector: 'app-channelcollections',
   templateUrl: './channelcollections.page.html',
@@ -45,6 +48,8 @@ export class ChannelcollectionsPage implements OnInit {
     private fileHelperService: FileHelperService,
     private zone: NgZone,
     private walletConnectControllerService: WalletConnectControllerService,
+    private dataHelper: DataHelper,
+    private feedService: FeedService,
     public theme: ThemeService
   ) { }
 
@@ -57,8 +62,17 @@ export class ChannelcollectionsPage implements OnInit {
     this.accountAddress = this.walletConnectControllerService.getAccountAddress() || "";
     this.initTitle();
     this.addEvent();
-    this.native.showLoading('common.waitMoment');
-    this.getChannelCollectionsList();
+    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
+    let channelCollectionList  = ownChannelCollection[this.accountAddress] || [];
+    if(channelCollectionList.length === 0){
+      this.native.showLoading('common.waitMoment');
+      this.getChannelCollectionsList();
+    }else{
+      this.channelCollectionList = channelCollectionList;
+      this.isLoadingData = false;
+      this.refreshChannelCollectionAvatar();
+    }
+
   }
 
   ionViewWillLeave() {
@@ -75,57 +89,70 @@ export class ChannelcollectionsPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
- async getChannelCollectionsList() {
+ async getChannelCollectionsList(event?:any) {
+    event = event || null;
+    this.isLoadingData = true;
     this.channelCollectionList = [];
-    let type = "&types=feeds-channel";
-    let result:any  = await this.pasarAssistService.listOwnSticker(type);
-    let list = result.data.result || [];
-    if(list.length === 0){
-      this.channelCollectionList = [];
-      return;
-    }
-    for(let index = 0; index<list.length;index++){
-      let channelCollections: FeedsData.ChannelCollections = this.getChannelCollections()
-      let item = list[index];
-      channelCollections.status = "0";
-      channelCollections.userAddr = this.accountAddress;
-      channelCollections.panelId = "";
-      channelCollections.tokenId = item.tokenId;
-      channelCollections.type = item.type;
-      channelCollections.name = item.name;
-      channelCollections.description = item.description;
-      channelCollections.feedsUrlHash = item.tokenIdHex.replace("0x","");
-      channelCollections.ownerDid = item.tokenDid.did;
-
-    let tokenInfo =  await this.nftContractControllerService
-      .getSticker().tokenInfo(channelCollections.tokenId);
-
-    let tokenUri = tokenInfo[3]; //tokenUri
-    tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
-    const tokenJson = await this.ipfsService
-    .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
-    let url: string = tokenJson["entry"]["url"];
-    let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
-    channelCollections.avatar = avatar;
-    channelCollections.url = url;
-    channelCollections.ownerName = "";
-    let urlArr = url.replace("feeds://","").split("/");
-    channelCollections.did = urlArr[0];
-    let carrierAddress = urlArr[1];
-    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
-    channelCollections.nodeId = nodeId;
-    this.channelCollectionList.push(channelCollections);
-    }
+    await this.getUnActivePanelList();
     await this.getActivePanelList();
-    console.log("====this.channelCollectionList====",this.channelCollectionList);
     this.isLoadingData = false;
     this.refreshChannelCollectionAvatar();
-    this.native.hideLoading();
+    if(event!=null){
+      event.target.complete();
+    }else{
+      this.native.hideLoading();
+    }
+    this.handleCace();
   }
 
-  doRefresh(event) {
-    this.refreshChannelCollectionAvatar();
-    event.target.complete();
+  handleCace() {
+    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
+    ownChannelCollection[this.accountAddress] = this.channelCollectionList;
+    this.dataHelper.setOwnChannelCollection(ownChannelCollection);
+  }
+  async getUnActivePanelList(){
+  let type = "&types=feeds-channel";
+  let result:any  = await this.pasarAssistService.listOwnSticker(type);
+  let list = result.data.result || [];
+  if(list.length === 0){
+    this.channelCollectionList = [];
+    return;
+  }
+  for(let index = 0; index<list.length;index++){
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections()
+    let item = list[index];
+    channelCollections.status = "0";
+    channelCollections.userAddr = this.accountAddress;
+    channelCollections.panelId = "";
+    channelCollections.tokenId = item.tokenId;
+    channelCollections.type = item.type;
+    channelCollections.name = item.name;
+    channelCollections.description = item.description;
+    channelCollections.ownerDid = item.tokenDid.did;
+
+  let tokenInfo =  await this.nftContractControllerService
+    .getSticker().tokenInfo(channelCollections.tokenId);
+
+  let tokenUri = tokenInfo[3]; //tokenUri
+  tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
+  const tokenJson = await this.ipfsService
+  .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
+  let url: string = tokenJson["entry"]["url"];
+  let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
+  channelCollections.avatar = avatar;
+  channelCollections.url = url;
+  channelCollections.ownerName = "";
+  let urlArr = url.replace("feeds://","").split("/");
+  channelCollections.did = urlArr[0];
+  let carrierAddress = urlArr[1];
+  let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
+  channelCollections.nodeId = nodeId;
+  this.channelCollectionList.push(channelCollections);
+  }
+  }
+
+  doRefresh(event: any) {
+   this.getChannelCollectionsList(event);
   }
 
   clickMore(parm: any) {
@@ -160,33 +187,40 @@ export class ChannelcollectionsPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder,(channelCollections: FeedsData.ChannelCollections)=>{
-        console.log("====channelCollections====",channelCollections);
         let tokenId = channelCollections.tokenId;
         let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
           return item.tokenId === tokenId;
         });
-        console.log("==itemIndex==",itemIndex);
         let newChannelCollections = _.cloneDeep(channelCollections);
             newChannelCollections.panelId = "";
             newChannelCollections.status = "0";
         this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
-        console.log("==channelCollectionList==",this.channelCollectionList);
         this.refreshChannelCollectionAvatar();
+        this.handleCace();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
+      let type = obj["type"] || "";
       let tokenId = obj['tokenId'];
+      if(type === "burn"){
+        let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
+          return item.tokenId === tokenId;
+        });
+        this.channelCollectionList.splice(itemIndex,1);
+        this.refreshChannelCollectionAvatar();
+        this.handleCace();
+        return;
+      }
       let panelId = obj['panelId'];
       let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
         return item.tokenId === tokenId;
       });
-
       let newChannelCollections = _.cloneDeep(this.channelCollectionList[itemIndex]);
       newChannelCollections.panelId = panelId;
       newChannelCollections.status = "1";
       this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
-      console.log("==channelCollectionList==",this.channelCollectionList);
       this.refreshChannelCollectionAvatar();
+      this.handleCace();
     });
   }
 
@@ -204,7 +238,6 @@ export class ChannelcollectionsPage implements OnInit {
   setChannelCollectionAvatar(){
     let discoverSquareFeed = document.getElementsByClassName("channelCollectionsAvatar") || [];
     let len = discoverSquareFeed.length;
-    console.log("==len==",len);
     for(let itemIndex = 0;itemIndex<len;itemIndex++){
       let item = discoverSquareFeed[itemIndex];
       let arr = item.getAttribute("id").split("-");
@@ -283,7 +316,7 @@ export class ChannelcollectionsPage implements OnInit {
         const item:any = await this.nftContractControllerService.getGalleria().getActivePanelByIndex(index);
         /*userAddr:2*/
         if(this.accountAddress === item[2]){
-        let channelCollections: FeedsData.ChannelCollections = this.getChannelCollections();
+        let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
         channelCollections.panelId = item[0];
         channelCollections.userAddr = item[2]
         channelCollections.type = "feeds-channel";
@@ -301,6 +334,8 @@ export class ChannelcollectionsPage implements OnInit {
       channelCollections.description = tokenJson["description"];
       channelCollections.avatar = avatar;
       channelCollections.url = url;
+      let didUriJSON = this.feedService.getDidUriJson();
+      channelCollections.ownerDid = didUriJSON.did;
       channelCollections.ownerName = "";
       let urlArr = url.replace("feeds://","").split("/");
       channelCollections.did = urlArr[0];
@@ -315,29 +350,4 @@ export class ChannelcollectionsPage implements OnInit {
     }
   }
 
-  getChannelCollections() {
-    let channelCollections: FeedsData.ChannelCollections = {
-      tokenId: '',
-      nodeId: '',
-      did: '',
-      name: '',
-      description: '',
-      url: '',
-      feedsUrlHash: '',
-      ownerName: '',
-      ownerDid: '',
-      curQuantity: '1',
-      avatar: {
-        image: '',
-        size: 0,
-        kind: '',
-        thumbnail: ''
-      },
-      type: '',
-      status: '0',
-      panelId: '',
-      userAddr: ''
-    };
-    return channelCollections;
-  }
 }

@@ -480,10 +480,10 @@ export class UtilService {
       s2 = arg2.toString();
     try {
       m += s1.split('.')[1].length;
-    } catch (e) {}
+    } catch (e) { }
     try {
       m += s2.split('.')[1].length;
-    } catch (e) {}
+    } catch (e) { }
     return (
       (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) /
       Math.pow(10, m)
@@ -498,10 +498,10 @@ export class UtilService {
       r2: any;
     try {
       t1 = arg1.toString().split('.')[1].length;
-    } catch (e) {}
+    } catch (e) { }
     try {
       t2 = arg2.toString().split('.')[1].length;
-    } catch (e) {}
+    } catch (e) { }
     r1 = Number(arg1.toString().replace('.', ''));
     r2 = Number(arg2.toString().replace('.', ''));
     return (r1 / r2) * Math.pow(10, t2 - t1);
@@ -522,52 +522,52 @@ export class UtilService {
  * @param maxHeight 期望的最大高
  * @returns [number,number] 宽高
  */
-public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:any){
-  let newWidth = imgWidth,
+  public static zoomImgSize(imgWidth: any, imgHeight: any, maxWidth: any, maxHeight: any) {
+    let newWidth = imgWidth,
       newHeight = imgHeight;
-  if (imgWidth / imgHeight >= maxWidth / maxHeight) {
+    if (imgWidth / imgHeight >= maxWidth / maxHeight) {
       if (imgWidth > maxWidth) {
-          newWidth = maxWidth;
-          newHeight = (imgHeight * maxWidth) / imgWidth;
+        newWidth = maxWidth;
+        newHeight = (imgHeight * maxWidth) / imgWidth;
       }
-  } else {
+    } else {
       if (imgHeight > maxHeight) {
-          newHeight = maxHeight;
-          newWidth = (imgWidth * maxHeight) / imgHeight;
+        newHeight = maxHeight;
+        newWidth = (imgWidth * maxHeight) / imgHeight;
       }
-  }
-  if (newWidth > maxWidth || newHeight > maxHeight) {
+    }
+    if (newWidth > maxWidth || newHeight > maxHeight) {
       //不满足预期,递归再次计算
       return this.zoomImgSize(newWidth, newHeight, maxWidth, maxHeight);
-  }
-  return [newWidth, newHeight];
- };
+    }
+    return [newWidth, newHeight];
+  };
 
- /**
- * 压缩图片
- * @param img img对象
- * @param maxWidth 最大宽
- * @param maxHeight 最大高
- * @param quality 压缩质量
- * @returns {string|*} 返回base64
- */
- public static resizeImg(img:any, maxWidth:any, maxHeight:any, quality = 1):any{
+  /**
+  * 压缩图片
+  * @param img img对象
+  * @param maxWidth 最大宽
+  * @param maxHeight 最大高
+  * @param quality 压缩质量
+  * @returns {string|*} 返回base64
+  */
+  public static resizeImg(img: any, maxWidth: any, maxHeight: any, quality = 1): any {
     const imageData: string = img.src;
-    if (!imageData.startsWith("https")&&imageData.length < maxWidth * maxHeight) {
-        return imageData;
+    if (!imageData.startsWith("https") && imageData.length < maxWidth * maxHeight) {
+      return imageData;
     }
     const imgWidth = img.width;
     const imgHeight = img.height;
     if (imgWidth <= 0 || imgHeight <= 0) {
-        return imageData;
+      return imageData;
     }
     const canvasSize = this.zoomImgSize(imgWidth, imgHeight, maxWidth, maxHeight);
     const canvas = document.createElement('canvas');
     canvas.width = canvasSize[0];
     canvas.height = canvasSize[1];
     canvas.getContext('2d')
-        .drawImage(img, 0, 0, canvas.width,
-            canvas.height);
+      .drawImage(img, 0, 0, canvas.width,
+        canvas.height);
     return canvas.toDataURL('image/*', quality);
   };
 
@@ -588,7 +588,7 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
     return new Promise(async (resolve, reject) => {
       try {
         let file = new FileReader();
-        file.onload = (e)=> {
+        file.onload = (e) => {
           resolve(e.target.result);
         }
         file.readAsDataURL(blob);
@@ -610,33 +610,33 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
     return new Blob([u8arr], { type: mime });
   }
 
-  public static dec2hex(str:string){
-    let dec:any = str.toString().split('') || [],
-    sum = [],
-    hex = [],
-    i:any,
-    s:any
-    while(dec.length){
-        s = 1 * dec.shift();
-        for(i = 0; s || i < sum.length; i++){
-            s += (sum[i] || 0) * 10
-            sum[i] = s % 16
-            s = (s - sum[i]) / 16
-        }
+  public static dec2hex(str: string) {
+    let dec: any = str.toString().split('') || [],
+      sum = [],
+      hex = [],
+      i: any,
+      s: any
+    while (dec.length) {
+      s = 1 * dec.shift();
+      for (i = 0; s || i < sum.length; i++) {
+        s += (sum[i] || 0) * 10
+        sum[i] = s % 16
+        s = (s - sum[i]) / 16
+      }
     }
-    while(sum.length){
-        hex.push(sum.pop().toString(16))
+    while (sum.length) {
+      hex.push(sum.pop().toString(16))
     }
     return hex.join('')
   }
 
-  public static hex2dec(str:string){
+  public static hex2dec(str: string) {
     let dec = new BigNumber(str);
-    let decStr = dec.toFormat({prefix:""});
+    let decStr = dec.toFormat({ prefix: "" });
     return decStr;
   }
 
-  public static resolveDid(did: string){
+  public static resolveDid(did: string) {
     if (!did) return '';
     let len = did.length;
     return did.substring(0, 18) + '...' + did.substring(len - 4, len);
@@ -676,4 +676,30 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
       };
     });
   }
+
+  public static getChannelCollections() {
+    let channelCollections: FeedsData.ChannelCollections = {
+      tokenId: '',
+      nodeId: '',
+      did: '',
+      name: '',
+      description: '',
+      url: '',
+      ownerName: '',
+      ownerDid: '',
+      curQuantity: '1',
+      avatar: {
+        image: '',
+        size: 0,
+        kind: '',
+        thumbnail: ''
+      },
+      type: '',
+      status: '0',
+      panelId: '',
+      userAddr: ''
+    };
+    return channelCollections;
+  }
+
 }

@@ -134,7 +134,7 @@ export class NftdialogComponent implements OnInit {
       .then(() => {
         this.nftContractControllerService.getSticker().cancelBurnProcess();
         this.events.publish(FeedsEvent.PublishType.endLoading);
-        this.events.publish(FeedsEvent.PublishType.nftUpdateList, { type: "burn", assItem: this.assItem, burnNum: tokenNum });
+        this.events.publish(FeedsEvent.PublishType.nftUpdateList, { type: "burn", assItem: this.assItem, burnNum: tokenNum, tokenId: this.assItem.tokenID });
         clearTimeout(sId);
         this.native.toast("common.burnNFTSSuccess");
       }).catch(() => {

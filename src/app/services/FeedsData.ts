@@ -856,7 +856,6 @@ declare namespace FeedsData {
     "name": string,
     "description": string,
     "url": string,
-    "feedsUrlHash": string,
     "ownerName": string,
     "ownerDid": string,
     "curQuantity": string,
