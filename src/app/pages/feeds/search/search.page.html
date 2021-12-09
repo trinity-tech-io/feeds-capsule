@@ -58,6 +58,8 @@
         <!-- channel Collection -->
         <ion-item
         *ngFor="let channelCollection of channelCollectionPageList"
+        class="channelCollectionFeeds"
+        id = {{handleChannelCollectionId(channelCollection)}}
         lines="none">
         <ion-row class="channel-row ion-activatable ripple">
           <ion-col
@@ -66,8 +68,8 @@
             (click)="clickChannelCollection(channelCollection)"
           >
             <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-              <img src="./assets/icon/reserve.svg" >
-              <div class="offline"></div>
+              <img src="./assets/icon/reserve.svg" id={{handleCollectionImgId(channelCollection)}}>
+              <!-- <div class="offline"></div> -->
             </div>
           </ion-col>
           <ion-col

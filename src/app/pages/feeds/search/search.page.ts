@@ -20,6 +20,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -54,7 +55,9 @@ export class SearchPage implements OnInit {
   private clientHeight: number = 0;
   private pasarGridisLoadimage: any = {};
   private channelCollectionList: any = [];//所有的
+  private channelCollectionsAvatarisLoad: any = {};
   public  channelCollectionPageList: any = [];//页面显示用
+
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -86,7 +89,8 @@ export class SearchPage implements OnInit {
     private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
     private ipfsService: IPFSService,
-    private carrierService: CarrierService
+    private carrierService: CarrierService,
+    private fileHelperService: FileHelperService
   ) {}
 
   ngOnInit() {
@@ -191,7 +195,8 @@ export class SearchPage implements OnInit {
       this.pageNum = 1;
       this.initData('', true);
     } else {
-      this.channelCollectionPageList = this.dataHelper.getPublishedActivePanelList();
+      this.channelCollectionPageList = this.filterChannelCollection();
+      this.refreshChannelCollectionAvatar();
       this.httpAllData = _.cloneDeep(discoverfeeds);
       this.discoverSquareList = _.cloneDeep(discoverfeeds);
       this.refreshDiscoverSquareFeedAvatar();
@@ -489,7 +494,8 @@ export class SearchPage implements OnInit {
 
  async initData(events: any, isLoading: boolean = true) {
     await this.getActivePanelList();
-    this.channelCollectionPageList = this.channelCollectionList;
+    this.channelCollectionPageList = this.filterChannelCollection();
+    this.refreshChannelCollectionAvatar();
     this.isLoading = true;
     this.httpService
       .ajaxGet(
@@ -802,6 +808,7 @@ export class SearchPage implements OnInit {
 
 ionScroll(){
   this.native.throttle(this.setDiscoverSquareFeedAvatar(), 200, this, true);
+  this.native.throttle(this.setChannelCollectionAvatar(), 200, this, true);
 }
 
 setDiscoverSquareFeedAvatar(){
@@ -948,11 +955,122 @@ async getActivePanelList(){
   }
 }
 
-clickChannelCollection(channelCollection: FeedsData.ChannelCollections){
-
+clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
+   let avatarId = this.handleCollectionImgId(channelCollections);
+   let feedsAvatar = document.getElementById(avatarId).getAttribute("src") || "";
+   let newChannelCollections: any = channelCollections;
+   newChannelCollections.feedsAvatar = feedsAvatar;
+   this.removeSubscribe();
+   this.native.go('discoverfeedinfo', {
+     params: newChannelCollections,
+   });
 }
 
-subscribeChannelCollection(channelCollection: FeedsData.ChannelCollections){
+subscribeChannelCollection(channelCollections: FeedsData.ChannelCollections){
+  let nodeId = channelCollections.nodeId;
+  console.log("====nodeId====",nodeId);
+  let urlArr = channelCollections.url.replace("feeds://","").split("/");
+  let channelId = urlArr[2];
+  console.log("====channelId====",channelId);
+  this.subscribe(nodeId,Number(channelId));
+}
+
+handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections){
+  let channelAvatar = channelCollections.avatar.image;
+  let kind = channelCollections.avatar.kind;
+  let channelAvatarUri = "";
+  if (channelAvatar.indexOf('feeds:imgage:') > -1) {
+    channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
+  } else if (channelAvatar.indexOf('feeds:image:') > -1) {
+    channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+  }
+  return "serachPage-"+channelAvatarUri+"-"+kind;
+}
+
+handleCollectionImgId(channelCollections: FeedsData.ChannelCollections){
+  let channelAvatar = channelCollections.avatar.image;
+  let channelCollectionAvatarId = "";
+  let channelAvatarUri = "";
+  if (channelAvatar.indexOf('feeds:imgage:') > -1) {
+    channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
+    channelCollectionAvatarId = channelAvatarUri;
+  } else if (channelAvatar.indexOf('feeds:image:') > -1) {
+    channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+  }
+  channelCollectionAvatarId = "serachPage-avatar-"+channelAvatarUri;
+  return channelCollectionAvatarId;
+}
+
+setChannelCollectionAvatar(){
+  let discoverSquareFeed = document.getElementsByClassName("channelCollectionFeeds") || [];
+  let len = discoverSquareFeed.length;
+  for(let itemIndex = 0;itemIndex<len;itemIndex++){
+    let item = discoverSquareFeed[itemIndex];
+    let arr = item.getAttribute("id").split("-");
+    let avatarUri = arr[1];
+    let kind = arr[2];
+    let thumbImage =  document.getElementById('serachPage-avatar-'+avatarUri);
+    let srcStr =  thumbImage.getAttribute("src") || "";
+    let isload = this.channelCollectionsAvatarisLoad[avatarUri] || '';
+    try {
+       if (
+        avatarUri != '' &&
+         thumbImage.getBoundingClientRect().top >= -100 &&
+         thumbImage.getBoundingClientRect().top <= this.clientHeight
+       ) {
+         if(isload === ""){
+          this.channelCollectionsAvatarisLoad[avatarUri] = '12';
+          let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
+          this.fileHelperService.getNFTData(fetchUrl,avatarUri, kind).then((data) => {
+            this.zone.run(() => {
+              this.channelCollectionsAvatarisLoad[avatarUri] = '13';
+              let dataSrc = data || "";
+              if(dataSrc!=""){
+                thumbImage.setAttribute("src",data);
+              }
+            });
+          }).catch((err)=>{
+            if(this.channelCollectionsAvatarisLoad[avatarUri] === '13'){
+              this.channelCollectionsAvatarisLoad[avatarUri] = '';
+              thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+             }
+          });
+
+         }
+       }else{
+         srcStr = thumbImage.getAttribute('src') || '';
+         if (
+           thumbImage.getBoundingClientRect().top < -100 &&
+           this.channelCollectionsAvatarisLoad[avatarUri] === '13' &&
+           srcStr != './assets/icon/reserve.svg'
+         ) {
+          this.channelCollectionsAvatarisLoad[avatarUri] = '';
+           thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+         }
+       }
+    } catch (error) {
+      this.channelCollectionsAvatarisLoad[avatarUri] = '';
+     thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+    }
+  }
+}
+
+refreshChannelCollectionAvatar(){
+  let sid = setTimeout(()=>{
+    this.channelCollectionsAvatarisLoad = {};
+    this.setChannelCollectionAvatar();
+    clearTimeout(sid);
+  },100);
+}
+
+filterChannelCollection(){
+  let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
+  let channelCollectionList =  _.cloneDeep(publishedActivePanelList);
+  let ownerDid = this.feedService.getDidUriJson().did;
+  let channelCollectionPageList = _.filter(channelCollectionList,(item: FeedsData.ChannelCollections)=>{
+        return item.ownerDid != ownerDid;
+  });
+  return channelCollectionPageList;
 }
 
 }
