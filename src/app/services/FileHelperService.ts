@@ -275,6 +275,8 @@ export class FileHelperService {
         return "data:image/png;base64,";
       case "gif":
         return "data:image/gif;base64,";
+      case "svg+xml":
+         return "data:image/svg+xml;base64,";
       default:
         return "data:image/png;base64,";
     }

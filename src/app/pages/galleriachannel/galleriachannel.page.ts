@@ -15,7 +15,7 @@ import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.se
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-
+import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 import { Params , ActivatedRoute } from '@angular/router';
 const SUCCESS = 'success';
@@ -39,8 +39,6 @@ export class GalleriachannelPage implements OnInit {
 
   public fileName: string = '';
   public thumbnail: string = '';
-  private imageObj: any = {};
-  private orderId: any = '';
   public popover: any;
   public isLoading:boolean = false;
   public loadingTitle:string = "common.waitMoment";
@@ -59,7 +57,6 @@ export class GalleriachannelPage implements OnInit {
   constructor(
     private translate: TranslateService,
     private event: Events,
-    private zone: NgZone,
     private native: NativeService,
     private titleBarService: TitleBarService,
     private feedService: FeedService,
@@ -68,9 +65,8 @@ export class GalleriachannelPage implements OnInit {
     private walletConnectControllerService: WalletConnectControllerService,
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
-    private nftPersistenceHelper: NFTPersistenceHelper,
-    private nftContractHelperService: NFTContractHelperService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
@@ -201,22 +197,18 @@ export class GalleriachannelPage implements OnInit {
         this.loadingText = "GalleriachannelPage.creatingOrder";
         return this.handleCreateOrder(tokenId);
       })
-      .then(orderIndex => {
-        if (orderIndex == -1) return SKIP;
+      .then(tokenInfo => {
+        if (tokenInfo == -1) return SKIP;
         this.loadingCurNumber = "5";
         this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
-        //return this.handleOrderResult(tokenId, orderIndex);
+        let panelId = tokenInfo[0];
+        return this.handleOrderResult(tokenId,panelId);
       })
       .then((status) => {
         if(status === SKIP){
           this.loadingCurNumber = "3";
           this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
         }
-        //Finish
-        //if(!this.curPublishtoPasar){
-          //this.handleCace('created',tokenId);
-        //}
-        //this.native.hideLoading();
         this.isLoading = false;
         clearTimeout(sid);
         this.showSuccessDialog();
@@ -457,10 +449,10 @@ export class GalleriachannelPage implements OnInit {
 
   async handleOrderResult(
     tokenId: string,
-    orderIndex: number,
+    panelId: string,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      this.handleCace('onSale', tokenId, orderIndex);
+      this.handleCace(tokenId,panelId);
       resolve(SUCCESS);
     });
   }
@@ -591,50 +583,33 @@ export class GalleriachannelPage implements OnInit {
     }
   }
 
-  async handleCace(type:string,tokenId:any,orderIndex?: number){
+  async handleCace(tokenId:any,panelId:string){
     let tokenInfo = await this.nftContractControllerService
     .getSticker()
     .tokenInfo(tokenId);
     tokenId = tokenInfo[0];
-    let createTime = tokenInfo[7];
-    let creator = tokenInfo[4];//原作者
-    let royalties = UtilService.accMul(this.nftRoyalties,10000);
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
-
-    let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
-    let imageType = "image";
-    let item:any = {};
-    switch (type) {
-      case 'created':
-        item = {
-          creator: creator,//原创者
-          tokenId: tokenId,
-          asset: this.imageObj['imgHash'],
-          name: this.nftName,
-          description: this.nftDescription,
-          fixedAmount: null,
-          kind: this.imageObj['imgFormat'],
-          type: imageType,
-          royalties: royalties,
-          quantity: this.nftQuantity,
-          curQuantity: this.nftQuantity,
-          thumbnail: this.imageObj['thumbnail'],
-          createTime: createTime * 1000,
-          moreMenuType: 'created',
-          sellerAddr: accAddress,//所有者
-        };
-        slist.push(item);
-        break;
-      case 'onSale':
-        item = await this.nftContractHelperService.getSellerNFTItembyIndexFromContract(orderIndex);
-        let orderSellerDidObj = this.feedService.getDidUriJson();
-        item.orderSellerDidObj = orderSellerDidObj;
-        slist.push(item);
-        this.event.publish(FeedsEvent.PublishType.mintNft);
-        break;
-    }
-    this.nftPersistenceHelper.setCollectiblesMap(accAddress, slist);
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+    channelCollections.tokenId = tokenId;
+    channelCollections.panelId = panelId;
+    channelCollections.nodeId = this.nodeId;
+    channelCollections.name = this.nftName;
+    channelCollections.description = this.nftDescription;
+    channelCollections.url = this.feedsUrl;
+    channelCollections.ownerName = "";
+    channelCollections.avatar =  this.avatarObj;
+    let urlArr = this.feedsUrl.replace("feeds://","").split("/");
+    channelCollections.did = urlArr[0];
+    channelCollections.userAddr = accAddress;
+    let didUriJSON = this.feedService.getDidUriJson();
+    channelCollections.ownerDid = didUriJSON.did;
+    channelCollections.type = 'feeds-channel';
+    channelCollections.status =  '1';
+    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
+    let ownList = ownChannelCollection[accAddress] || [];
+       ownList.push(channelCollections);
+    this.dataHelper.setOwnChannelCollection(ownChannelCollection);
   }
 
  async getDidUri(){

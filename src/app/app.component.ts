@@ -122,6 +122,7 @@ export class MyApp {
         this.initWhiteList();
         this.initFeedsSortType();
         this.initHideAdult();
+        this.initOwnChannelCollection();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -541,6 +542,21 @@ export class MyApp {
 
     });
   }
+
+  initOwnChannelCollection(){
+    this.dataHelper.loadData('feeds.galleric.own.channel.collection').then((ownChannelCollection)=>{
+        console.log("===ownChannelCollection====",ownChannelCollection);
+          if(ownChannelCollection === null){
+            this.dataHelper.setOwnChannelCollection({});
+              return;
+          }
+         this.dataHelper.setOwnChannelCollection(ownChannelCollection);
+    }).catch((err)=>{
+
+    });
+  }
+
+
 
   ajaxGetWhiteList(isLoading: boolean){
     this.httpService.ajaxGet(ApiUrl.getWhiteList,isLoading).then((result:any)=>{
