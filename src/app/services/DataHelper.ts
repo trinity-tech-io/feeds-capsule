@@ -14,6 +14,7 @@ let TAG: string = 'DataHelper';
 export class DataHelper {
   private openBarcodeScanner: boolean = false;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
+  private publishedActivePanelList: any = [];
   private ownChannelCollection: any = {};
   private isShowAdult: boolean = true;
   private nftDidList: any = null;
@@ -2831,5 +2832,14 @@ export class DataHelper {
 
   getOwnChannelCollection() {
     return this.ownChannelCollection;
+  }
+
+  setPublishedActivePanelList(publishedActivePanelList: any) {
+    this.publishedActivePanelList = publishedActivePanelList;
+    this.saveData("feeds.published.activePanel.list", this.publishedActivePanelList);
+  }
+
+  getPublishedActivePanelList() {
+    return this.publishedActivePanelList;
   }
 }
