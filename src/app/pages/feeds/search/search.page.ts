@@ -56,7 +56,8 @@ export class SearchPage implements OnInit {
   private pasarGridisLoadimage: any = {};
   private channelCollectionList: any = [];//所有的
   private channelCollectionsAvatarisLoad: any = {};
-  public  channelCollectionPageList: any = [];//页面显示用
+  public channelCollectionPageList: any = [];//页面显示用
+  public searchChannelCollectionPageList: any = [];//搜索使用
 
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
@@ -254,6 +255,7 @@ export class SearchPage implements OnInit {
             discoverfeeds,
           );
         }
+        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
         this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
         return;
       }
@@ -294,14 +296,25 @@ export class SearchPage implements OnInit {
         -1,
     );
 
+    this.channelCollectionPageList = this.searchChannelCollectionPageList.filter(
+      (feed: FeedsData.ChannelCollections)=> feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
+    );
+
+    if(this.channelCollectionPageList.length > 0){
+        this.refreshChannelCollectionAvatar();
+    }
+
     this.unfollowedFeed = this.searchUnfollowedFeed.filter(
       feed => feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
     );
 
+
     this.discoverSquareList = this.searchSquareList.filter(
       feed => feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
     );
-    this.refreshDiscoverSquareFeedAvatar();
+    if(this.discoverSquareList.length > 0 ){
+      this.refreshDiscoverSquareFeedAvatar();
+    }
   }
 
   doRefresh(event) {
@@ -572,6 +585,17 @@ export class SearchPage implements OnInit {
     });
 
     if (addingFeed.length > 0) {
+      return false;
+    }
+
+    let channelCollectionPageList = _.filter(this.channelCollectionPageList,(item: FeedsData.ChannelCollections)=>{
+        let url = item.url;
+        let urlArr = url.replace("feeds://","").split("/");
+        let channelId = urlArr[2];
+        return feedNodeId == item['nodeId'] && feedId == channelId;
+    });
+
+    if(channelCollectionPageList.length > 0){
       return false;
     }
 
