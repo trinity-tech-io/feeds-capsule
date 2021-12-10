@@ -120,6 +120,7 @@ private appInstanceDID: DIDPlugin.DID
   }
 
   generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
+    let self = this ; 
     return new Promise(async (resolver, reject) => {
       Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', challeng)
       if (
@@ -168,17 +169,20 @@ private appInstanceDID: DIDPlugin.DID
       let realm = parseResult.payload['iss'] as string;
 
       let name = (parseResult.payload['name'] as string) || '';
-      // let didAccess = new DID.DIDAccess();
-      // this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
-      // this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
+      let didAccess = new DID.DIDAccess();
+      this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
+      this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
       console.log("this.appIdCredential");
 
       this.appIdCredential = await this.getAppIdCredentialFromStorage(
         this.appIdCredential,
       );
+      console.log("=============1 ");
+
       this.appIdCredential = await this.checkAppIdCredentialStatus(
         this.appIdCredential,
       );
+      console.log("=============2 ");
 
       Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
       if (!this.appIdCredential) {
@@ -186,7 +190,11 @@ private appInstanceDID: DIDPlugin.DID
         resolver(null)
         return
       }
+      console.log("=============3 ");
+
       this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword,async presentation => {
+        console.log("=============4 ");
+
         if (presentation) {
           // Generate the back end authentication JWT
           Logger.log(TAG,
@@ -449,11 +457,14 @@ private appInstanceDID: DIDPlugin.DID
     appIdCredential: DIDPlugin.VerifiableCredential,
   ): Promise<DIDPlugin.VerifiableCredential> {
     return new Promise(async (resolve, reject) => {
+      console.log('-------------------------- 1');
+
       if (this.checkCredentialValid(appIdCredential)) {
         Logger.log(TAG, 'Credential valid , credential is ', appIdCredential);
         resolve(appIdCredential);
         return;
       }
+      console.log('-------------------------- 2');
 
       Logger.warn(TAG, 'Credential invalid, Getting app identity credential');
       let didAccess = new DID.DIDAccess();
@@ -464,13 +475,17 @@ private appInstanceDID: DIDPlugin.DID
           resolve(mAppIdCredential);
           return;
         }
+        console.log('-------------------------- 3');
 
         mAppIdCredential = await didAccess.generateAppIdCredential();
+        console.log('-------------------------- 31');
+
         if (mAppIdCredential) {
           Logger.log(TAG, 'Generate app identity credential, credential is ', mAppIdCredential);
           resolve(mAppIdCredential);
           return;
         }
+        console.log('-------------------------- 4');
 
         let error =
           'Get app identity credential error, credential is ' +

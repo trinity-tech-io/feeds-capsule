@@ -212,18 +212,11 @@ export class SettingsPage implements OnInit {
   }
 
   async navIPFSProvider() {
-
-      console.log("this.resolverUrl")
       // console.log(this.resolverUrl)
       // const resolverUrl = "https://api.elastos.io/eid"
-      const resolverUrl = "https://api-testnet.elastos.io/eid"
-      const provider = "https://hive-testnet1.trinity-tech.io:443"
-      console.log("getInstanceDIDDoc=============")
-      console.log("=========================")
-
-      console.log()
+      const resolverUrl = "https://api.elastos.io/eid"
+      const provider = "https://hive1.trinity-tech.io:443"
       let didString = (await this.standardAuthService.getInstanceDID()).getDIDString()
-      console.log("didString ====== {}", didString)
 
       const appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
       const userDid =  (await this.dataHelper.getSigninData()).did
@@ -231,10 +224,7 @@ export class SettingsPage implements OnInit {
       let vaultSubscriptionService : VaultSubscriptionService = new VaultSubscriptionService(context, provider);
 
       let vaultInfo = await vaultSubscriptionService.subscribe()
-    // // this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
-
-    // const context = await this.hiveService.create()
-    console.log("context   ", context)
+    // this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
   navDeveloper() {
