@@ -334,8 +334,8 @@ export class ChannelcollectionsPage implements OnInit {
       channelCollections.description = tokenJson["description"];
       channelCollections.avatar = avatar;
       channelCollections.url = url;
-      let didUriJSON = this.feedService.getDidUriJson();
-      channelCollections.ownerDid = didUriJSON.did;
+      const signinData = this.feedService.getSignInData();
+      channelCollections.ownerDid = signinData.did;
       channelCollections.ownerName = "";
       let urlArr = url.replace("feeds://","").split("/");
       channelCollections.did = urlArr[0];

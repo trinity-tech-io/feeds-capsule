@@ -602,8 +602,8 @@ export class GalleriachannelPage implements OnInit {
     let urlArr = this.feedsUrl.replace("feeds://","").split("/");
     channelCollections.did = urlArr[0];
     channelCollections.userAddr = accAddress;
-    let didUriJSON = this.feedService.getDidUriJson();
-    channelCollections.ownerDid = didUriJSON.did;
+    const signinData = this.feedService.getSignInData();
+    channelCollections.ownerDid = signinData.did;
     channelCollections.type = 'feeds-channel';
     channelCollections.status =  '1';
     let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
@@ -613,9 +613,7 @@ export class GalleriachannelPage implements OnInit {
   }
 
  async getDidUri(){
-    let didUriJSON = this.feedService.getDidUriJson();
-    let didUri = await this.ipfsService.generateDidUri(didUriJSON);
-    return didUri;
+    return await this.feedService.getDidUri();
   }
 
   getTokenId() {
