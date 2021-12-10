@@ -151,6 +151,7 @@ export class SearchPage implements OnInit {
           this.addingChanneList =
             this.feedService.getToBeAddedFeedsList() || [];
           this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+          this.channelCollectionPageList = this.filterChannelCollection();
           this.discoverSquareList = this.filterdiscoverSquareList(
             this.discoverSquareList,
           );
@@ -389,6 +390,21 @@ export class SearchPage implements OnInit {
           that.addingChanneList =
             that.feedService.getToBeAddedFeedsList() || [];
           that.searchAddingChanneList = _.cloneDeep(that.addingChanneList);
+
+          let channelCollectionPageList = _.filter(that.channelCollectionPageList, feed => {
+            let feedNodeId = feed['nodeId'];
+            let feedUrl = feed['url'];
+            let feedId = feedUrl.split('/')[4];
+            return feedNodeId == nodeId && feedId == srcfeedId;
+          });
+
+          if(channelCollectionPageList.length>0){
+            let feed = channelCollectionPageList[0];
+            that.channelCollectionPageList.push(feed);
+            that.searchChannelCollectionPageList = _.cloneDeep(that.channelCollectionPageList);
+            return;
+          }
+
           let feedlist = _.filter(that.httpAllData, feed => {
             let feedNodeId = feed['nodeId'];
             let feedUrl = feed['url'];
@@ -938,6 +954,7 @@ getAvatar(feedsUrlHash: string){
 }
 
 async getActivePanelList(){
+  try{
   let activePanelCount = await this.nftContractControllerService.getGalleria().getActivePanelCount();
   for (let index = 0; index < activePanelCount; index++) {
     try {
@@ -979,6 +996,10 @@ async getActivePanelList(){
       console.error("Get Sale item error", error);
     }
   }
+  }catch (error) {
+    this.channelCollectionList = [];
+    this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
+  }
 }
 
 clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
@@ -993,12 +1014,24 @@ clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
 }
 
 subscribeChannelCollection(channelCollections: FeedsData.ChannelCollections){
-  let nodeId = channelCollections.nodeId;
-  console.log("====nodeId====",nodeId);
-  let urlArr = channelCollections.url.replace("feeds://","").split("/");
-  let channelId = urlArr[2];
-  console.log("====channelId====",channelId);
-  this.subscribe(nodeId,Number(channelId));
+
+  let feedUrl = channelCollections.url;
+  let followers = 0;
+  let feedName = channelCollections.name;
+  let desc = channelCollections.description;
+  let ownerName = channelCollections.ownerName;
+  //let avatarId = this.handleCollectionImgId(channelCollections);
+  let avatar = channelCollections.avatar.image;
+  console.log("===avatar===="+avatar);
+  this.feedService
+  .addFeed(feedUrl,avatar,followers, feedName, ownerName, desc)
+  .then(isSuccess => {
+    if (isSuccess) {
+      this.zone.run(() => {
+      });
+    }
+  })
+  .catch(err => {});
 }
 
 handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections){
