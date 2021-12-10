@@ -945,7 +945,7 @@ async getActivePanelList(){
       /*userAddr:2*/
       let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
       channelCollections.panelId = item[0];
-      channelCollections.userAddr = item[2]
+      channelCollections.userAddr = item[2];
       channelCollections.type = "feeds-channel";
       channelCollections.status = "1";
       channelCollections.tokenId = item[3];
@@ -961,9 +961,11 @@ async getActivePanelList(){
     channelCollections.description = tokenJson["description"];
     channelCollections.avatar = avatar;
     channelCollections.url = url;
-    const signinData = this.feedService.getSignInData();
-    channelCollections.ownerDid = signinData.did;
-    let result = await this.feedService.resolveDidObjectForName(signinData.did);
+    let didUri = this.nftContractHelperService.parseTokenUri(item[6]);
+    const didJson: any = await this.ipfsService
+    .nftGet(this.ipfsService.getNFTGetUrl() + didUri);
+    channelCollections.ownerDid = didJson.did;
+    let result = await this.feedService.resolveDidObjectForName(channelCollections.ownerDid);
     let didName = result["name"] || "";
     channelCollections.ownerName = didName;
     let urlArr = url.replace("feeds://","").split("/");
@@ -1097,7 +1099,6 @@ filterChannelCollection(){
   channelCollectionPageList = _.filter(channelCollectionList,(item: FeedsData.ChannelCollections)=>{
         return item.ownerDid != ownerDid;
   });
-
   this.followedList = this.feedService.getChannelsList() || [];
   this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
   this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
@@ -1105,7 +1106,7 @@ filterChannelCollection(){
   channelCollectionPageList = _.filter(channelCollectionPageList, (feed: any) => {
     return this.handleChannelShow(feed);
   });
-
+  this.searchChannelCollectionPageList = _.cloneDeep(channelCollectionPageList);
   return channelCollectionPageList;
 }
 
@@ -1120,7 +1121,6 @@ handleChannelShow(feed: any) {
   if (followFeed.length > 0) {
     return false;
   }
-
   let addingFeed = _.filter(this.addingChanneList, (item: any) => {
     return feedNodeId == item['nodeId'] && feedId == item['feedId'];
   });
