@@ -961,9 +961,9 @@ async getActivePanelList(){
     channelCollections.description = tokenJson["description"];
     channelCollections.avatar = avatar;
     channelCollections.url = url;
-    let didUriJSON = this.feedService.getDidUriJson();
-    channelCollections.ownerDid = didUriJSON.did;
-    let result = await this.feedService.resolveDidObject(didUriJSON.did);
+    const signinData = this.feedService.getSignInData();
+    channelCollections.ownerDid = signinData.did;
+    let result = await this.feedService.resolveDidObjectForName(signinData.did);
     let didName = result["name"] || "";
     channelCollections.ownerName = didName;
     let urlArr = url.replace("feeds://","").split("/");
@@ -1089,10 +1089,10 @@ refreshChannelCollectionAvatar(){
 
 filterChannelCollection(){
 
-
   let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
   let channelCollectionList =  _.cloneDeep(publishedActivePanelList);
-  let ownerDid = this.feedService.getDidUriJson().did;
+  const signinData = this.feedService.getSignInData();
+  let ownerDid = signinData.did;
   let channelCollectionPageList = [];
   channelCollectionPageList = _.filter(channelCollectionList,(item: FeedsData.ChannelCollections)=>{
         return item.ownerDid != ownerDid;
