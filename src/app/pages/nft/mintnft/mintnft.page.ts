@@ -316,8 +316,13 @@ export class MintnftPage implements OnInit {
   sendIpfsImage(file: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       // let blob = this.dataURLtoBlob(file);
+
+      console.log('nft file=============', file);
+      console.log('nft file type=============', typeof (file));
       let formData = new FormData();
       formData.append('', file);
+
+      console.log('nft formData=============', formData);
       Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
@@ -343,9 +348,14 @@ export class MintnftPage implements OnInit {
 
   sendIpfsThumbnail(thumbnailBase64: string) {
     return new Promise(async (resolve, reject) => {
-      let thumbnailBlob = this.dataURLtoBlob(thumbnailBase64);
+      let thumbnailBlob = UtilService.base64ToBlob(thumbnailBase64);
+      console.log('sendIpfsThumbnail file=============', thumbnailBlob);
+      console.log('sendIpfsThumbnail file type=============', typeof (thumbnailBlob));
+
       let formData = new FormData();
       formData.append('', thumbnailBlob);
+      console.log('sendIpfsThumbnail formData=============', formData);
+
       Logger.log(TAG, 'Send thumbnail, formdata length is', formData.getAll('').length);
 
       this.ipfsService
@@ -408,17 +418,6 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  dataURLtoBlob(dataurl: string) {
-    let arr = dataurl.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-  }
 
   //@Deprecated
   // addImg(type: number): Promise<any> {
@@ -991,5 +990,4 @@ export class MintnftPage implements OnInit {
       this.adult = !this.adult;
     });
   }
-
 }

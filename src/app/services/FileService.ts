@@ -6,18 +6,30 @@ let TAG: string = 'Feeds-FileService';
 export class FileService {
   constructor() { }
 
-  resolveLocalFileSystemURL(): Promise<DirectoryEntry> {
+  resolveUserFileSystemUrl(dirPath: string): Promise<DirectoryEntry> {
     return new Promise((resolve, reject) => {
       window.resolveLocalFileSystemURL(
-        cordova.file.dataDirectory,
+        dirPath,
         (dirEntry: DirectoryEntry) => {
           resolve(dirEntry);
         },
         (error: FileError) => {
-          Logger.error(TAG, 'Rresolve localFileSystemURL error ', error);
+          Logger.error(TAG, 'Rresolve userFileSystemURL error ', error);
           reject(error);
         },
       );
+    });
+  }
+
+  resolveLocalFileSystemURL(): Promise<DirectoryEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const dirEntry = await this.resolveUserFileSystemUrl(cordova.file.dataDirectory);
+        resolve(dirEntry);
+      } catch (error) {
+        Logger.error(TAG, 'Rresolve LocalFileSystemURL error ', error);
+        reject(error);
+      }
     });
   }
 

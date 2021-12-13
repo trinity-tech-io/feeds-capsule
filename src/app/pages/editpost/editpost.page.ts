@@ -385,7 +385,7 @@ export class EditPostPage implements OnInit {
     }
 
     if (this.imgUrl != '') {
-      this.feedService.compress(this.imgUrl).then(imageThumb => {
+      UtilService.compress(this.imgUrl).then(imageThumb => {
         this.editState = FeedsData.EditState.TextImageChange;
         let content = this.feedService.createOneImgContent(
           this.newPost,

@@ -5831,23 +5831,6 @@ export class FeedService {
     );
   }
 
-  compress(imgData: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (imgData.length < 50 * 1000) {
-        resolve(imgData);
-        return;
-      }
-      let image = new Image(); //新建一个img标签（不嵌入DOM节点，仅做canvas操作)
-      image.src = imgData; //让该标签加载base64格式的原图
-      image.onload = () =>{
-        let maxWidth = image.width / 4;
-        let maxHeight = image.height / 4;
-        let imgBase64 = UtilService.resizeImg(image,maxWidth,maxHeight,1);
-        resolve(imgBase64);
-       };
-    });
-  }
-
   createContent(
     text: string,
     imageThumb: FeedsData.ImgThumb[],
