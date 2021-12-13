@@ -11,10 +11,8 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
-import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 import { Params , ActivatedRoute } from '@angular/router';
@@ -141,13 +139,13 @@ export class GalleriachannelPage implements OnInit {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
-  mint() {
+ async mint() {
     if (!this.checkParms()) {
       // show params error
       return;
     }
 
-    this.doMint();
+   await this.doMint();
   }
 
   async doMint() {
@@ -187,11 +185,14 @@ export class GalleriachannelPage implements OnInit {
         return this.mintContract(tokenId, jsonHash, this.nftQuantity,"0",didUri);
       })
       .then(mintResult => {
+          if(mintResult === ""){
+              return SKIP;
+          }
           this.loadingCurNumber = "3";
-          this.loadingText = "GalleriachannelPage.settingApproval";
-          return this.handleSetApproval();
+            this.loadingText = "GalleriachannelPage.settingApproval";
+            return  this.handleSetApproval();
       })
-      .then(setApprovalResult => {
+      .then( setApprovalResult => {
         if (setApprovalResult == SKIP) return -1;
         this.loadingCurNumber = "4";
         this.loadingText = "GalleriachannelPage.creatingOrder";
@@ -202,7 +203,7 @@ export class GalleriachannelPage implements OnInit {
         this.loadingCurNumber = "5";
         this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
         let panelId = tokenInfo[0];
-        return this.handleOrderResult(tokenId,panelId);
+        return  this.handleOrderResult(tokenId,panelId);
       })
       .then((status) => {
         if(status === SKIP){
@@ -432,7 +433,7 @@ export class GalleriachannelPage implements OnInit {
     return new Promise(async (resolve, reject) => {
       let tokenInfo = null;
       try {
-         tokenInfo = await this.nftContractControllerService
+          tokenInfo = await this.nftContractControllerService
           .getGalleria()
           .createPanel(tokenId,this.nftQuantity,this.didUri);
       } catch (error) {
