@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './ApiUrl';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Logger } from './logger';
+const TAG: string = "IPFSService";
+
 @Injectable()
 export class IPFSService {
   private baseNFTIPFSUrl = ApiUrl.IPFS_TEST_SERVER;
@@ -48,4 +51,26 @@ export class IPFSService {
     return this.getBaseNFTIPFSUrl() + ApiUrl.IPFS_NFT_ADD;
   }
 
+  uploadData(value: string | Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let formData = new FormData();
+      console.log('value type', typeof (value));
+      console.log('value ', value);
+      formData.append('', value);
+      Logger.log(TAG, 'Send data to ipfs, formdata length is', formData.getAll('').length);
+      this.nftPost(formData)
+        .then(result => {
+          console.log("===result===", result);
+          let hash = result['Hash'] || null;
+          if (!hash) {
+            reject("Upload Data error, hash is null")
+            return;
+          }
+          resolve(hash);
+        })
+        .catch(err => {
+          reject('Upload Data error, error is ' + JSON.stringify(err));
+        });
+    });
+  }
 }

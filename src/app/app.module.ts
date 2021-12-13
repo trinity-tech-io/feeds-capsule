@@ -74,6 +74,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { UserDIDService } from 'src/app/services/userdid.service';
+import { PostHelperService } from 'src/app/services/post_helper.service';
 
 
 import * as Sentry from '@sentry/browser';
@@ -211,6 +212,7 @@ export function TranslateLoaderFactory() {
     NFTContractHelperService,
     PasarAssistService,
     UserDIDService,
+    PostHelperService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],

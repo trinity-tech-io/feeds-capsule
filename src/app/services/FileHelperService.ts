@@ -75,11 +75,6 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
-        // let nftDirEntry = await this.fileService.getDirectory(
-        //   rootDirEntry,
-        //   nftPath,
-        //   true
-        // );
         let orderDirEntry = await this.fileService.getDirectory(
           rootDirEntry,
           tokenJsonPath,
@@ -122,7 +117,7 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
-      reader.onload = async event => {
+      reader.onloadend = async event => {
         try {
           const result = event.target.result.toString();
           resolve(result);
@@ -245,13 +240,84 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       const reader = new FileReader();
       reader.readAsText(blob);
-      reader.onload = async event => {
+      reader.onloadend = async event => {
         try {
           const result = event.target.result.toString();
           resolve(result);
         } catch (error) {
           reject(error);
         }
+      }
+    });
+  }
+
+  getUserDirEntry(dirPath: string): Promise<DirectoryEntry> {
+    return this.fileService.resolveUserFileSystemUrl(dirPath);
+  }
+
+  getUserFileEntry(dirPath: string, fileName: string, options: Flags = { create: true, exclusive: false }): Promise<FileEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const dirEntry = await this.getUserDirEntry(dirPath);
+        console.log('====dirEntry====', dirEntry);
+        if (!dirEntry) {
+          const error = 'User dir entry is null';
+          Logger.error(TAG, error);
+          reject(error);
+          return;
+        }
+        dirEntry.getFile(fileName, options,
+          (fileEntry: FileEntry) => {
+            console.log('====fileEntry====', fileEntry);
+            if (!fileEntry) {
+              const error = 'User file entry is null';
+              Logger.error(TAG, error);
+              reject(error);
+              return;
+            }
+            resolve(fileEntry);
+          }, (error: FileError) => {
+            const errorMsg = 'Get user file entry is error';
+            Logger.error(TAG, errorMsg, error);
+            reject(error);
+          })
+      } catch (error) {
+        const errorMsg = 'Get user file entry error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  getUserFile(dirPath: string, fileName: string): Promise<File> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let fileEntry = await this.getUserFileEntry(dirPath, fileName);
+        let file = await this.fileService.getFileData(fileEntry);
+        console.log('====file====', file);
+        resolve(file);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getUserFileBase64Data(dirPath: string, fileName: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const file = await this.getUserFile(dirPath, fileName);
+        const result = await this.transBlobToBase64(file);
+        if (!result) {
+          const error = 'Get user file base64 data null';
+          Logger.error(TAG, error);
+          reject(error);
+          return;
+        }
+        resolve(result);
+      } catch (error) {
+        const errorMsg = 'Get user file base64 data error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
       }
     });
   }

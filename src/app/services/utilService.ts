@@ -616,4 +616,39 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
     return did.substring(0, 18) + '...' + did.substring(len - 4, len);
   }
 
+
+  public static base64ToBlob(base64Data: string): Blob {
+    const defaultType = 'image/png';
+    let arr = base64Data.split(',');
+    let mime = arr[0].match(/:(.*?);/)[1] || defaultType;
+    let bytes = atob(arr[1]);
+    let n = bytes.length || 0;
+
+    let u8Array = new Uint8Array(n);
+    while (n--) {
+      u8Array[n] = bytes.charCodeAt(n);
+    }
+
+    return new Blob([u8Array], {
+      type: mime
+    });
+  }
+
+  public static compress(imgData: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (imgData.length < 50 * 1000) {
+        resolve(imgData);
+        return;
+      }
+      let image = new Image(); //新建一个img标签（不嵌入DOM节点，仅做canvas操作)
+      image.src = imgData; //让该标签加载base64格式的原图
+      image.onload = () => {
+        let maxWidth = image.width / 4;
+        let maxHeight = image.height / 4;
+        let imgBase64 = UtilService.resizeImg(image, maxWidth, maxHeight, 1);
+        resolve(imgBase64);
+      };
+    });
+  }
+
 }

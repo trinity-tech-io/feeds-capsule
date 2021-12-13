@@ -27,6 +27,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/services/logger';
 import { MenuService } from 'src/app/services/MenuService';
 import { File } from '@ionic-native/file/ngx';
+import { FileHelperService } from 'src/app/services/FileHelperService';
+import { IPFSService } from 'src/app/services/ipfs.service';
+import { PostHelperService } from 'src/app/services/post_helper.service';
+
 let TAG: string = 'Feeds-createpost';
 
 @Component({
@@ -86,7 +90,10 @@ export class CreatenewpostPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private menuService: MenuService,
-    private file: File
+    private file: File,
+    private fileHelperService: FileHelperService,
+    private ipfsService: IPFSService,
+    private postHelperService: PostHelperService
   ) {}
 
   ngOnInit() {
@@ -275,19 +282,21 @@ export class CreatenewpostPage implements OnInit {
   prepareTempPost() {}
 
   async sendPost() {
-    let tempPostId = this.feedService.generateTempPostId();
-    if (this.imgUrl == '' && this.flieUri == '') {
-      let content = this.feedService.createContent(this.newPost, null, null);
-      this.feedService.publishPost(
-        this.nodeId,
-        this.channelId,
-        content,
-        tempPostId,
-      );
-      return;
-    }
+    this.postHelperService.publishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], [this.flieUri]);
+    // let tempPostId = this.feedService.generateTempPostId();
+    // //Only text content
+    // if (this.imgUrl == '' && this.flieUri == '') {
+    //   let content = this.feedService.createContent(this.newPost, null, null);
+    //   this.feedService.publishPost(
+    //     this.nodeId,
+    //     this.channelId,
+    //     content,
+    //     tempPostId,
+    //   );
+    //   return;
+    // }
 
-    await this.publishPostThrowMsg(tempPostId);
+    // await this.publishPostThrowMsg(tempPostId);
   }
 
   async publishPostThrowMsg(tempPostId: number) {
@@ -321,7 +330,7 @@ export class CreatenewpostPage implements OnInit {
     }
 
     if (this.imgUrl != '') {
-      let imageThumb = await this.feedService.compress(this.imgUrl);
+      let imageThumb = await UtilService.compress(this.imgUrl);
       let imgThumbs: FeedsData.ImgThumb[] = [];
       let imgThumb: FeedsData.ImgThumb = {
         index: 0,
@@ -352,6 +361,7 @@ export class CreatenewpostPage implements OnInit {
       type,
       (imageUrl: any) => {
         this.zone.run(() => {
+          console.log("======>imageUrl", imageUrl);
           this.imgUrl = imageUrl;
           this.feedService.setSelsectNftImage(imageUrl);
         });
@@ -395,7 +405,7 @@ export class CreatenewpostPage implements OnInit {
       (videosdata: any) => {
         this.zone.run(() => {
           let videodata = videosdata[0];
-          this.getVideoInfo(videodata['fullPath']);
+          this.checkVideoDuration(videodata['fullPath']);
         });
       },
       error => {
@@ -413,13 +423,12 @@ export class CreatenewpostPage implements OnInit {
     this.transcode = 0;
     this.uploadProgress = 0;
     this.totalProgress = 0;
-    this.camera
-      .getVideo()
+    this.camera.getVideo()
       .then((flieUri: string) => {
         let path = flieUri.startsWith('file://')
           ? flieUri
           : `file://${flieUri}`;
-        this.getVideoInfo(path);
+        this.checkVideoDuration(path);
       })
       .catch(err => {
         Logger.error(TAG,
@@ -429,9 +438,8 @@ export class CreatenewpostPage implements OnInit {
       });
   }
 
-  async getVideoInfo(fileUri: string) {
-    let videoInfo = await this.videoEditor.getVideoInfo({ fileUri: fileUri });
-    this.duration = videoInfo['duration'];
+  async checkVideoDuration(fileUri: string) {
+    const duration = this.postHelperService.getVideoDuration(fileUri);
     if (parseInt(this.duration) > 15) {
       this.flieUri = '';
       this.posterImg = '';
@@ -442,10 +450,11 @@ export class CreatenewpostPage implements OnInit {
       this.native.toast(this.translate.instant('common.filevideodes'));
       return;
     }
-    this.createThumbnail(fileUri);
+    // this.createThumbnail(fileUri);
   }
 
   readFile(fileName: string, filepath: string) {
+    console.log('readFile======================', filepath, fileName);
     window.resolveLocalFileSystemURL(
       filepath,
       (dirEntry: DirectoryEntry) => {
@@ -694,6 +703,11 @@ export class CreatenewpostPage implements OnInit {
   handlePath(fileUri: string) {
     let pathObj = {};
     if (this.platform.is('android')) {
+      // fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
+      // fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
+      // let lastIndex = fileUri.lastIndexOf('/');
+      // pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
+      // pathObj['filepath'] = fileUri.substring(0, lastIndex);
       fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
       fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
       let lastIndex = fileUri.lastIndexOf('/');
@@ -713,6 +727,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   readThumbnail(fileName: string, filepath: string) {
+    console.log('readThumbnail======================', filepath, fileName);
     window.resolveLocalFileSystemURL(
       filepath,
       (dirEntry: DirectoryEntry) => {
@@ -820,16 +835,33 @@ export class CreatenewpostPage implements OnInit {
 
   openGallery(that: any) {
 
-    that.handleImgUri(0,that).then((imagePath:string) => {
+    that.handleImgUri(0, that).then(async (imagePath: string) => {
 
+      // let pathObj = that.handleImgUrlPath(imagePath);
+      console.log('imagePath====>', imagePath);
       let pathObj = that.handleImgUrlPath(imagePath);
       let fileName = pathObj['fileName'];
       let filePath = pathObj['filepath'];
+      console.log('imagePath finish====>', pathObj);
+      // that.zone.run(async () => {
+      //   const file: File = await that.fileHelperService.getUserFile(filePath, fileName);
+
+      //   console.log('file', file);
+      //   that.ipfsService.uploadData(file);
+      // });
       return  that.getFlieObj(fileName, filePath, that);
 
-    }).then((fileBase64:any) => {
+    }).then((fileBase64: string) => {
 
+
+      console.log('openGallery result = ', fileBase64)
       that.zone.run(() => {
+
+        //For test
+        // const fileBlob = UtilService.base64ToBlob(fileBase64);
+        // that.ipfsService.uploadData(fileBlob);
+
+
         that.imgUrl = fileBase64;
         that.feedService.setSelsectNftImage(fileBase64);
       });
@@ -843,6 +875,7 @@ export class CreatenewpostPage implements OnInit {
       0,
       1,
       (imageUrl: any) => {
+        console.log('==========imageUrl=>>>>', imageUrl);
         that.zone.run(() => {
           that.imgUrl = imageUrl;
           that.feedService.setSelsectNftImage(imageUrl);
@@ -870,6 +903,7 @@ export class CreatenewpostPage implements OnInit {
         1,
         type,
         (imgPath: any) => {
+          console.log('handleImgUri=========>>>>', imgPath);
           resolve(imgPath);
         },
         (err: any) => {
@@ -885,41 +919,21 @@ export class CreatenewpostPage implements OnInit {
     });
   }
 
-  getFlieObj(fileName: string, filepath: string,that:any): Promise<string> {
+  getFlieObj(fileName: string, filepath: string, that: any): Promise<string> {
+    console.log('getFlieObj=====>', filepath, fileName);
     return new Promise(async (resolve, reject) => {
-      that.file
-      .resolveLocalFilesystemUrl(filepath)
-      .then((dirEntry: DirectoryEntry) => {
-        dirEntry.getFile(
-          fileName,
-          { create: true, exclusive: false },
-          fileEntry => {
-            fileEntry.file(
-              file => {
-                let fileReader = new FileReader();
-                fileReader.onloadend = (event: any) => {
-                  this.zone.run(() => {
-                    let assetBase64 = fileReader.result.toString();
-                    resolve(assetBase64);
-                  });
-                };
-                fileReader.onprogress = (event: any) => {
-                  this.zone.run(() => {});
-                };
-                fileReader.readAsDataURL(file);
-              },
-              () => {},
-            );
-          },
-          () => {
-            reject('error');
-          },
-        );
-      })
-      .catch(dirEntryErr => {
-        reject(dirEntryErr);
-        Logger.error(TAG, 'Get File object error', dirEntryErr)
-      });
+      try {
+        const base64Result = await that.fileHelperService.getUserFileBase64Data(filepath, fileName);
+        if (!base64Result) {
+          const error = 'Get File object is null';
+          Logger.error(TAG, 'Get File object error', error)
+          reject(error);
+        }
+        resolve(base64Result);
+      } catch (error) {
+        Logger.error(TAG, 'Get File object error', error)
+        reject(error);
+      }
     });
   }
 
@@ -930,9 +944,10 @@ export class CreatenewpostPage implements OnInit {
     let lastIndex = path.lastIndexOf('/');
     pathObj['fileName'] = path.substring(lastIndex + 1, fileUri.length);
     pathObj['filepath'] = path.substring(0, lastIndex);
-    pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
-      ? pathObj['filepath']
-      : `file://${pathObj['filepath']}`;
+    // pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
+    //   ? pathObj['filepath']
+    //   : `file://${pathObj['filepath']}`;
+
     return pathObj;
   }
 }

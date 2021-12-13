@@ -745,4 +745,39 @@ declare namespace FeedsData {
     type?: string
   }
 
+  // {
+  //   "version": "2.0",
+  //   "text": "xxx",
+  //   "data": [
+  //     {
+  //       "type": "image/video/audio"
+  //       "image": "imageCid",
+  //       "mime": "jpg",
+  //       "size": 123,
+  //       "thumbnail": "thumbnailCid"
+  //     }
+  //   ]
+  // }
+  type postContent = {
+    version: "2.0",
+    text: string,
+    data: mediaData[]
+  }
+
+  type mediaData = {
+    kind: string,           //"image/video/audio"
+    originMediaCid: string,
+    type: string,           //"image/jpg",
+    size: number,           //origin file size
+    thumbnailCid: string    //"thumbnailCid"
+    duration: number,
+    additionalInfo: any,
+    memo: any
+  }
+
+  type originMediaData = {
+    size: number,
+    type: string,
+    cid: string
+  }
 }
