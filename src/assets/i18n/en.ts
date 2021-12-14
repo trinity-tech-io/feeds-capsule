@@ -908,6 +908,8 @@ export const en = {
   },
   ChannelcollectionsPage: {
     title: "Channel Collections",
+    openCollections: "Open Collections",
+    cancelPublicCollections: "Cancel public collections"
   },
   GalleriachannelPage: {
      title: "Channel Collections",
@@ -918,5 +920,8 @@ export const en = {
      createOrderSuccess: 'Failed to create a sale order for the Collectible',
      createOrderFail: 'Failed to create a sale order for the Collectible',
      checkingCollectibleResult: 'Waiting for the NFT Collectible to take effect in the contract',
+     mintSuccess: 'Open collection success',
+     mintSuccessDesc: 'Congratulations on the success of the open collection',
+     mintSuccessDesc1: 'Congratulations, the collection has been published successfully. Do you want to delete the feeds on the centralized service',
   }
 };

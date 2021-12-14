@@ -176,7 +176,7 @@ export class FeedspreferencesPage implements OnInit {
         this.feedService.setFeedPublicStatus(this.feedPublicStatus);
         this.storageService.set(
           'feeds.feedPublicStatus',
-          JSON.stringify(this.feedPublicStatus),
+          JSON.stringify(this.feedPublicStatus)
         );
       }
     });
@@ -232,7 +232,7 @@ export class FeedspreferencesPage implements OnInit {
               this.feedService.setFeedPublicStatus(this.feedPublicStatus);
               this.storageService.set(
                 'feeds.feedPublicStatus',
-                JSON.stringify(this.feedPublicStatus),
+                JSON.stringify(this.feedPublicStatus)
               );
             } else {
               this.zone.run(() => {

@@ -16,6 +16,9 @@ import { Config } from 'src/app/services/config';
 import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 import { Params , ActivatedRoute } from '@angular/router';
+import { HttpService } from 'src/app/services/HttpService';
+import { ApiUrl } from 'src/app/services/ApiUrl';
+import { StorageService } from 'src/app/services/StorageService';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
 const TAG: string = 'GalleriachannelPage';
@@ -53,6 +56,7 @@ export class GalleriachannelPage implements OnInit {
   private avatarObj: any = {};
   private tippingAddress: any = {};
   constructor(
+    private httpService: HttpService,
     private translate: TranslateService,
     private event: Events,
     private native: NativeService,
@@ -64,7 +68,8 @@ export class GalleriachannelPage implements OnInit {
     private popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private activatedRoute: ActivatedRoute,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private storageService: StorageService,
   ) {}
 
   ngOnInit() {
@@ -514,14 +519,82 @@ export class GalleriachannelPage implements OnInit {
   }
 
   showSuccessDialog() {
-    this.popover = this.popupProvider.showalertdialog(
+    let feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
+    let hash = UtilService.SHA256(this.feedsUrl);
+    let status = feedPublicStatus[hash] || null;
+    let des = "GalleriachannelPage.mintSuccessDesc";
+    if(status === null) {
+      this.popover = this.popupProvider.showalertdialog(
+        this,
+        'GalleriachannelPage.mintSuccess',
+        des,
+        this.bindingCompleted,
+        'finish.svg',
+        'common.ok',
+      );
+    }else{
+     des = "GalleriachannelPage.mintSuccessDesc1";
+     this.popover = this.popupProvider.showConfirmdialog(
       this,
-      'common.mintSuccess',
-      'common.mintSuccessDesc',
-      this.bindingCompleted,
-      'finish.svg',
+      'GalleriachannelPage.mintSuccess',
+      des,
+      this.cancelButton,
+      this.okButton,
+      './assets/images/finish.svg',
       'common.ok',
+      "common.cancel"
+     );
+    }
+
+  }
+
+  cancelButton(that: any){
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
+  }
+
+  handleDiscoverfeedsCache(feedsUrl: string) {
+    let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+    let newDiscoverfeeds = _.filter(discoverfeeds,(item)=>{
+            return item.url != feedsUrl;
+    });
+    this.feedService.setDiscoverfeeds(newDiscoverfeeds);
+    this.storageService.set(
+      'feed:discoverfeeds',
+      JSON.stringify(newDiscoverfeeds),
     );
+  }
+
+  okButton(that: any) {
+    let feedPublicStatus = that.feedService.getFeedPublicStatus() || {};
+    let hash = UtilService.SHA256(that.feedsUrl);
+    that.httpService
+    .ajaxGet(ApiUrl.remove + '?feedsUrlHash=' +  hash)
+    .then(result => {
+      if (result['code'] === 200) {
+        feedPublicStatus = _.omit(feedPublicStatus, [hash]);
+        that.feedService.setFeedPublicStatus(feedPublicStatus);
+        if (this.popover != null){
+          this.popover.dismiss();
+          this.popover = null;
+          that.native.pop();
+        }
+        that.handleDiscoverfeedsCache(that.feedsUrl);
+        that.storageService.set(
+          'feeds.feedPublicStatus',
+          JSON.stringify(feedPublicStatus)
+        );
+      }
+    }).catch(()=>{
+      if (this.popover != null){
+        this.popover.dismiss();
+        this.popover = null;
+        that.native.pop();
+      }
+    });
   }
 
   showSelfCheckDialog() {

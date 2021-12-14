@@ -908,7 +908,8 @@ export const zh = {
   },
   ChannelcollectionsPage: {
     title: "频道收藏品",
-
+    openCollections: "公开收藏品",
+    cancelPublicCollections: "取消公开收藏品"
   },
   GalleriachannelPage: {
     title: "频道收藏品",
@@ -919,5 +920,8 @@ export const zh = {
     createOrderSuccess: '创建出售订单成功',
     createOrderFail: '创建出售订单失败',
     checkingCollectibleResult: '等待创建的收藏品在合约中生效',
+    mintSuccess: '公开收藏品成功',
+    mintSuccessDesc: '恭喜您，公开收藏品成功',
+    mintSuccessDesc1: '恭喜您，公开收藏品成功，是否删除中心化服务服务上的feeds',
  }
 };
