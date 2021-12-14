@@ -863,7 +863,8 @@ declare namespace FeedsData {
     "type": string,
     "status": string, /*0 未上架 1 已上架*/
     "panelId": string,
-    "userAddr": string
+    "userAddr": string,
+    "diaBalance": string
   }
 
   type GalleriaAvatar = {
