@@ -195,7 +195,8 @@ export class SearchPage implements OnInit {
     let discoverfeeds = this.feedService.getDiscoverfeeds();
     if (discoverfeeds.length === 0) {
       this.pageNum = 1;
-      this.initData('', true);
+      this.native.showLoading('common.waitMoment');
+      this.initData('', false);
     } else {
       this.channelCollectionPageList = this.filterChannelCollection();
       this.refreshChannelCollectionAvatar();
@@ -522,10 +523,10 @@ export class SearchPage implements OnInit {
   }
 
  async initData(events: any, isLoading: boolean = true) {
+    this.isLoading = true;
     await this.getActivePanelList();
     this.channelCollectionPageList = this.filterChannelCollection();
     this.refreshChannelCollectionAvatar();
-    this.isLoading = true;
     this.httpService
       .ajaxGet(
         ApiUrl.listPage +
@@ -954,6 +955,8 @@ getAvatar(feedsUrlHash: string){
 }
 
 async getActivePanelList(){
+  this.channelCollectionList = [];
+  this.channelCollectionPageList = [];
   try{
   let activePanelCount = await this.nftContractControllerService.getGalleria().getActivePanelCount();
   for (let index = 0; index < activePanelCount; index++) {
@@ -1123,7 +1126,6 @@ refreshChannelCollectionAvatar(){
 }
 
 filterChannelCollection(){
-
   let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
   let channelCollectionList =  _.cloneDeep(publishedActivePanelList);
   const signinData = this.feedService.getSignInData();

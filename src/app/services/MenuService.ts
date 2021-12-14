@@ -1096,12 +1096,12 @@ export class MenuService {
       cssClass: 'editPost',
       buttons: [
         {
-          text: this.translate.instant('CollectionsPage.onSale'),
+          text: this.translate.instant('ChannelcollectionsPage.openCollections'),
           icon: 'create',
           handler: () => {
             this.viewHelper.showNftPrompt(
               channelItem,
-              'CollectionsPage.putOnSale',
+              'ChannelcollectionsPage.openCollections',
               'created',
             );
           },
@@ -1145,14 +1145,14 @@ export class MenuService {
       cssClass: 'editPost',
       buttons: [
         {
-          text: this.translate.instant('BidPage.cancelOrder'),
+          text: this.translate.instant('ChannelcollectionsPage.cancelPublicCollections'),
           role: 'destructive',
           icon: 'arrow-redo-circle',
           handler: () => {
             this.popover = this.popupProvider.ionicConfirm(
               this,
-              'BidPage.cancelOrder',
-              'BidPage.cancelOrder',
+              'ChannelcollectionsPage.cancelPublicCollections',
+              'ChannelcollectionsPage.cancelPublicCollections',
               this.cancelChannelCollectionMenu,
               this.confirmChannelCollectionMenu,
               './assets/images/shanchu.svg',
