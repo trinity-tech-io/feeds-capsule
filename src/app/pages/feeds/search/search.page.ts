@@ -966,6 +966,7 @@ async getActivePanelList(){
       let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
       channelCollections.panelId = item[0];
       channelCollections.userAddr = item[2];
+      channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(item[2]);
       channelCollections.type = "feeds-channel";
       channelCollections.status = "1";
       channelCollections.tokenId = item[3];
@@ -1137,12 +1138,13 @@ filterChannelCollection(){
   this.followedList = this.feedService.getChannelsList() || [];
   this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
   this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-
   channelCollectionPageList = _.filter(channelCollectionPageList, (feed: any) => {
     return this.handleChannelShow(feed);
   });
-  this.searchChannelCollectionPageList = _.cloneDeep(channelCollectionPageList);
-  return channelCollectionPageList;
+  let newChannelCollectionPageList = _.orderBy(channelCollectionPageList,['diaBalance'], ['desc']);
+  console.log("channelCollectionPageList=",newChannelCollectionPageList);
+  this.searchChannelCollectionPageList = _.cloneDeep(newChannelCollectionPageList);
+  return newChannelCollectionPageList;
 }
 
 handleChannelShow(feed: any) {

@@ -697,7 +697,8 @@ export class UtilService {
       type: '',
       status: '0',
       panelId: '',
-      userAddr: ''
+      userAddr: '',
+      diaBalance: '0'
     };
     return channelCollections;
   }
