@@ -3,6 +3,7 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { NFTContractGalleriaService } from 'src/app/services/nftcontract_galleria.service';
+import { NFTContractDiamondService } from './nftcontract_diamond.service';
 import { Events } from 'src/app/services/events.service';
 import { NFTContractDiamondService } from './nftcontract_diamond.service';
 import { Utils } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/hive';
@@ -17,6 +18,7 @@ export class NFTContractControllerService {
     private nftContractStickerService: NFTContractStickerService,
     private nftContractDiamondService: NFTContractDiamondService,
     private nftContractGalleriaService: NFTContractGalleriaService,
+    private nftContractDiamondService: NFTContractDiamondService
   ) {
     this.init();
     this.initSubscribeEvent();
@@ -27,6 +29,7 @@ export class NFTContractControllerService {
     this.nftContractParsarService.init();
     this.nftContractDiamondService.init();
     this.nftContractGalleriaService.init();
+    this.nftContractDiamondService.init();
   }
 
   initSubscribeEvent() {
@@ -56,6 +59,10 @@ export class NFTContractControllerService {
 
   getGalleria(): NFTContractGalleriaService {
     return this.nftContractGalleriaService.getGalleria();
+  }
+
+  getDiamond(): NFTContractDiamondService {
+    return this.nftContractDiamondService.getDiamond();
   }
 
   getAccountAddress() {

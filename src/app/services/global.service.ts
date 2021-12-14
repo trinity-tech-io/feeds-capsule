@@ -12,6 +12,7 @@ import { Logger } from './logger';
 import { Config } from './config';
 import { ApiUrl } from './ApiUrl';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
+import { NFTContractDiamondService } from './nftcontract_diamond.service';
 
 const TAG: string = 'GlobalService';
 @Injectable()
@@ -22,6 +23,7 @@ export class GlobalService {
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
     private nftContractGalleriaService: NFTContractGalleriaService,
+    private nftContractDiamondService: NFTContractDiamondService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private nftContractDiamondService: NFTContractDiamondService,
     private nftContractControllerService: NFTContractControllerService,
@@ -35,6 +37,7 @@ export class GlobalService {
       this.ipfsService.setTESTMode(false);
       this.nftContractParsarService.setTestMode(false);
       this.nftContractGalleriaService.setTestMode(false);
+      this.nftContractDiamondService.setTestMode(false);
       this.nftContractStickerService.setTestMode(false);
       this.nftContractDiamondService.setTestMode(false);
       this.nftPersistenceHelper.setDevelopMode(false);
@@ -44,6 +47,7 @@ export class GlobalService {
       this.ipfsService.setTESTMode(true);
       this.nftContractParsarService.setTestMode(true);
       this.nftContractGalleriaService.setTestMode(true);
+      this.nftContractDiamondService.setTestMode(true);
       this.nftContractStickerService.setTestMode(true);
       this.nftContractDiamondService.setTestMode(true);
       this.nftPersistenceHelper.setDevelopMode(true);
