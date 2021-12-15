@@ -3,8 +3,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+import { NFTContractDiamondService } from 'src/app/services/nftcontract_diamond.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
-import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { Logger } from './logger';
@@ -21,7 +21,7 @@ export class GlobalService {
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private dataHelper: DataHelper,
+    private nftContractDiamondService: NFTContractDiamondService,
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
     private pasarAssistService: PasarAssistService
@@ -33,6 +33,7 @@ export class GlobalService {
       this.ipfsService.setTESTMode(false);
       this.nftContractParsarService.setTestMode(false);
       this.nftContractStickerService.setTestMode(false);
+      this.nftContractDiamondService.setTestMode(false);
       this.nftPersistenceHelper.setDevelopMode(false);
       this.walletConnectControllerService.setTestMode(false);
       Logger.log(TAG, 'Change to mainnet');
@@ -40,6 +41,7 @@ export class GlobalService {
       this.ipfsService.setTESTMode(true);
       this.nftContractParsarService.setTestMode(true);
       this.nftContractStickerService.setTestMode(true);
+      this.nftContractDiamondService.setTestMode(true);
       this.nftPersistenceHelper.setDevelopMode(true);
       this.walletConnectControllerService.setTestMode(true);
       Logger.log(TAG, 'Change to testnet');

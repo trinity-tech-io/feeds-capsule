@@ -3,7 +3,7 @@ import { WalletConnectControllerService } from 'src/app/services/walletconnect_c
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
 import { Events } from 'src/app/services/events.service';
-import { DataHelper } from 'src/app/services/DataHelper';
+import { NFTContractDiamondService } from './nftcontract_diamond.service';
 
 @Injectable()
 export class NFTContractControllerService {
@@ -12,7 +12,7 @@ export class NFTContractControllerService {
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
-    private dataHelper: DataHelper
+    private nftContractDiamondService: NFTContractDiamondService,
   ) {
     this.init();
     this.initSubscribeEvent();
@@ -21,6 +21,7 @@ export class NFTContractControllerService {
   init() {
     this.nftContractStickerService.init();
     this.nftContractParsarService.init();
+    this.nftContractDiamondService.init();
   }
 
   initSubscribeEvent() {
@@ -42,6 +43,10 @@ export class NFTContractControllerService {
 
   getPasar(): NFTContractParsarService {
     return this.nftContractParsarService.getPasar();
+  }
+
+  getDiamond(): NFTContractDiamondService {
+    return this.nftContractDiamondService.getDiamond();
   }
 
   getAccountAddress() {

@@ -2409,7 +2409,8 @@ export class DataHelper {
   loadApiProvider(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        let apiProvider = await this.loadData('feeds:apiprovidername') || Config.ELASTOS_API;
+        let elastosAPI = await this.loadData('feeds:apiprovidername');
+        let apiProvider = elastosAPI || Config.ELASTOS_API;
         this.apiProvider = apiProvider;
         resolve(this.apiProvider);
       } catch (err) {
