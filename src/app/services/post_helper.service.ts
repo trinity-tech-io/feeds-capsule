@@ -38,15 +38,20 @@ export class PostHelperService {
   //     }
   //   ]
   // }
-  publishPost(nodeId: string, channelId: number, postText: string, imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
+  preparePublishPost(nodeId: string, channelId: number, postText: string, imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
+      try {
+        const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
+        console.log('mediaDatas-=---------=-', mediaDatas);
+        const content = this.createContent(postText, mediaDatas);
+        resolve(JSON.stringify(content));
+        console.log('content-=---------=-', content);
+      } catch (error) {
+        const errorMsg = 'Prepare publish post error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
 
-      console.log('mediaDatas-=---------=-', mediaDatas);
-
-      const content = this.createContent(postText, mediaDatas);
-
-      console.log('content-=---------=-', content);
     });
   }
 
@@ -243,6 +248,7 @@ export class PostHelperService {
   }
 
   async transcodeVideo(path: string, progressCallback?: (info: number) => void): Promise<string> {
+
     const fileUri = path.startsWith('file://') ? path : `file://${path}`;
     const videoInfo: VideoInfo = await this.videoEditor.getVideoInfo({ fileUri: fileUri });
     let width: number = 0;
@@ -294,40 +300,50 @@ export class PostHelperService {
   selectvideo(progressCallback: (info: number) => void): Promise<FeedsData.videoData> {
     return new Promise(async (resolve, reject) => {
       try {
-        const videoFileUri = await this.cameraService.selectVideo();
-        console.log('videoFileUri=====>', videoFileUri);
-        const path = videoFileUri.startsWith('file://')
-          ? videoFileUri
-          : `file://${videoFileUri}`;
-        console.log('path=====>', path);
-        const duration = await this.getVideoDuration(path);
-        console.log('duration=====>', duration);
-        const isValid = this.checkVideoDurationValid(duration);
-        if (!isValid) {
-          Logger.warn('Video duration invalid');
-          resolve(null);
-          return;
-        }
-        // const videoThumbnailPath = this.handlePath(path);
-        // console.log('videoThumbnailPath', videoThumbnailPath);
-        const videoThumbnail = await this.createVideoThumbnail(path, duration);
-        console.log('videoThumbnail=====>', videoThumbnail);
-
-        const transcodeVideoPath = await this.transcodeVideo(path, (info) => {
+        const videoUri = await this.cameraService.selectVideo();
+        const videoData = await this.processVideo(videoUri, (info: number) => {
           progressCallback(info);
         });
-        const videoBase64 = await this.getVideoBase64Data(transcodeVideoPath);
-        const videoData: FeedsData.videoData = {
-          video: videoBase64,
-          thumbnail: videoThumbnail,
-          duration: duration
-        }
         resolve(videoData);
       } catch (error) {
         const errorMsg = 'Select video error';
         Logger.error(TAG, errorMsg, error);
         reject(error);
       }
+    });
+  }
+
+  processVideo(videoFileUri: string, progressCallback: (info: number) => void): Promise<FeedsData.videoData> {
+    return new Promise(async (resolve, reject) => {
+      console.log('videoFileUri=====>', videoFileUri);
+      const path = videoFileUri.startsWith('file://')
+        ? videoFileUri
+        : `file://${videoFileUri}`;
+      console.log('path=====>', path);
+      const duration = await this.getVideoDuration(path);
+      console.log('duration=====>', duration);
+      const isValid = this.checkVideoDurationValid(duration);
+      if (!isValid) {
+        Logger.warn('Video duration invalid');
+        resolve(null);
+        return;
+      }
+
+      const videoThumbnail = await this.createVideoThumbnail(path, duration);
+      console.log('videoThumbnail=====>', videoThumbnail);
+
+      const transcodeVideoPath = await this.transcodeVideo(path, (info) => {
+        progressCallback(info);
+      });
+      console.log("transcodeVideoPath=>", transcodeVideoPath);
+      const videoBase64 = await this.getVideoBase64Data(transcodeVideoPath);
+      console.log("final=>", videoBase64);
+      const videoData: FeedsData.videoData = {
+        video: videoBase64,
+        thumbnail: videoThumbnail,
+        duration: duration
+      }
+      resolve(videoData);
     });
   }
 
@@ -390,4 +406,21 @@ export class PostHelperService {
   //   Logger.error(TAG, errorMsg, err);
   //     });
   // }
+
+  recordAVideo(progressCallback: (info: number) => void): Promise<FeedsData.videoData> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const videoUri = await this.cameraService.recordAVideo();
+        const videoData = await this.processVideo(videoUri, (info: number) => {
+          progressCallback(info);
+        });
+        resolve(videoData);
+      } catch (error) {
+        const errorMsg = 'Select video error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
 }
