@@ -69,8 +69,9 @@ export class NfttransferdialogComponent implements OnInit {
     }
   }
 
-  confirm() {
-   if(this.checkParam()){
+  async confirm() {
+   let isOK = await this.checkParam();
+   if(isOK){
     let memo = this.memo || "Transfered via Feeds";
     if(memo === ""){
       this.handleTransfer();
@@ -80,7 +81,7 @@ export class NfttransferdialogComponent implements OnInit {
    }
   }
 
-  checkParam(){
+ async checkParam(){
     let ownerAddress = this.nftContractControllerService.getAccountAddress() || "";
     if(this.walletAddress === ""){
       this.native.toastWarn("common.walletAddressDes");
@@ -91,7 +92,12 @@ export class NfttransferdialogComponent implements OnInit {
        this.native.toastWarn("common.walletAddressDes1");
        return false;
     }
-
+    let recipientDiaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(this.walletAddress);
+    let sellerDiaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(ownerAddress);
+    if(parseFloat(sellerDiaBalance) <= 0.01 && parseFloat(recipientDiaBalance) <= 0.01){
+      this.native.toastWarn("common.walletAddressDes2");
+      return false;
+    }
     return true;
   }
 

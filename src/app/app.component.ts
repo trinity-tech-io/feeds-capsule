@@ -74,7 +74,6 @@ export class MyApp {
   ) {
     this.initializeApp();
     this.initProfileData();
-    this.updateElaPrice();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, () => {
       this.initProfileData();
     });
@@ -86,10 +85,11 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready()
-      .then(() => {
-        return this.dataHelper.loadApiProvider()
+      .then(async() => {
+        return await this.dataHelper.loadApiProvider();
       })
       .then(async (api) => {
+        console.log("====api===",api);
         Config.changeApi(api);
         this.feedService.initDidManager();
         this.splashScreen.hide();
@@ -195,11 +195,12 @@ export class MyApp {
   }
 
   initSetting() {
+    this.updateElaPrice();
     this.feedService.getData("feeds:elaPrice").then((elaPrice: any) => {
       if (elaPrice === null) {
-        this.setElaUsdPrice();
+        this.setElaUsdPrice("");
       } else {
-        this.feedService.setElaUsdPrice(elaPrice);
+        this.setElaUsdPrice(elaPrice);
       }
     }).catch(err => { });
 
@@ -511,17 +512,21 @@ export class MyApp {
   }
 
   updateElaPrice() {
-    this.setElaUsdPrice();
     setInterval(() => {
-      this.setElaUsdPrice();
+      this.setElaUsdPrice("");
     }, 60000 * 10);
   }
 
-  setElaUsdPrice() {
+  setElaUsdPrice(caceElaPrice: any) {
     this.httpService.getElaPrice().then((elaPrice: any) => {
       if (elaPrice != null) {
         this.feedService.setElaUsdPrice(elaPrice);
         this.feedService.setData("feeds:elaPrice", elaPrice);
+      }
+    }).catch(()=>{
+      if(caceElaPrice!=""){
+        this.feedService.setElaUsdPrice(caceElaPrice);
+        this.feedService.setData("feeds:elaPrice",caceElaPrice);
       }
     });
   }

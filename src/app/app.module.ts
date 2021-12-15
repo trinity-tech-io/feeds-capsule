@@ -61,12 +61,12 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { RewriteFrames } from '@sentry/integrations';
-import { customAnimation } from 'src/app/services/nav_anamition';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { LanguageService } from 'src/app/services/language.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
 import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.service';
+import { NFTContractDiamondService } from 'src/app/services/nftcontract_diamond.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
@@ -202,6 +202,7 @@ export function TranslateLoaderFactory() {
     BarcodeScanner,
     NFTContractParsarService,
     NFTContractStickerService,
+    NFTContractDiamondService,
     NFTContractControllerService,
     WalletConnectControllerService,
     IPFSService,
