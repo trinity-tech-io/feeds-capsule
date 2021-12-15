@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { reject } from 'lodash';
+import { Logger } from './logger';
 
+const TAG: string = 'CameraService';
 @Injectable()
 export class CameraService {
   constructor() {}
@@ -58,6 +61,66 @@ export class CameraService {
           sourceType: 0,
           mediaType: 1,
         },
+      );
+    });
+  }
+
+  selectPicture(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.openCamera(
+        30,
+        0,
+        1,
+        (imageUrl: any) => {
+          resolve(imageUrl);
+        },
+        (err: any) => {
+          reject(err);
+        },
+      );
+    });
+  }
+
+  takeAPicture(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.openCamera(
+        30,
+        0,
+        0,
+        (imageUrl: any) => {
+          resolve(imageUrl);
+        },
+        (err: any) => {
+          reject(err);
+        },
+      );
+    });
+  }
+
+  selectVideo(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileUri = await this.getVideo();
+        resolve(fileUri);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  recordAVideo(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      navigator.device.capture.captureVideo(
+        (videosdata: MediaFile[]) => {
+          let videodata = videosdata[0];
+          resolve(videodata.fullPath);
+        },
+        error => {
+          const errorMsg = 'Record new video error';
+          Logger.error(TAG, errorMsg, error);
+          reject(error);
+        },
+        { limit: 1, duration: 15 },
       );
     });
   }

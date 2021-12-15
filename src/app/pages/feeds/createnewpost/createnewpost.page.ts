@@ -1,16 +1,5 @@
-import {
-  Component,
-  OnInit,
-  NgZone,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
-import {
-  NavController,
-  ModalController,
-  Platform,
-  IonTextarea,
-} from '@ionic/angular';
+import { Component, OnInit, NgZone, ElementRef, ViewChild, } from '@angular/core';
+import { NavController, ModalController, Platform, IonTextarea, } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
@@ -72,6 +61,7 @@ export class CreatenewpostPage implements OnInit {
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
   public pictureMenu: any = null;
+  private videoData: FeedsData.videoData = null;
   constructor(
     private platform: Platform,
     private events: Events,
@@ -282,7 +272,10 @@ export class CreatenewpostPage implements OnInit {
   prepareTempPost() {}
 
   async sendPost() {
-    this.postHelperService.publishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], [this.flieUri]);
+    console.log('this.imgUrl', this.imgUrl);
+    console.log('this.flieUri', this.flieUri);
+
+    this.postHelperService.publishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
     // let tempPostId = this.feedService.generateTempPostId();
     // //Only text content
     // if (this.imgUrl == '' && this.flieUri == '') {
@@ -401,56 +394,64 @@ export class CreatenewpostPage implements OnInit {
 
   videocam() {
     this.removeVideo();
-    navigator.device.capture.captureVideo(
-      (videosdata: any) => {
-        this.zone.run(() => {
-          let videodata = videosdata[0];
-          this.checkVideoDuration(videodata['fullPath']);
-        });
-      },
-      error => {
-        Logger.error(TAG,
-          "Excute 'videocam' in createpost page is error , captureVideo error, error msg is ",
-          error
-        );
-      },
-      { limit: 1, duration: 15 },
-    );
+    // navigator.device.capture.captureVideo(
+    //   (videosdata: MediaFile[]) => {
+    //     this.zone.run(() => {
+    //       let videodata = videosdata[0];
+    //       this.postHelperService.checkVideoDurationValid(videodata.fullPath);
+    //     });
+    //   },
+    //   error => {
+    //     Logger.error(TAG,
+    //       "Excute 'videocam' in createpost page is error , captureVideo error, error msg is ",
+    //       error
+    //     );
+    //   },
+    //   { limit: 1, duration: 15 },
+    // );
+
+    this.camera.recordAVideo().then((path) => {
+
+    });
   }
 
-  selectvideo() {
+  /**
+   * 1.Get video from camera
+   * 2.Get video duration
+   * 3.Check video duration
+   * 4.Create video thumbnail
+   * 5.Transcode video
+   * 6.Creat video obj
+   */
+  async selectvideo() {
     this.removeVideo();
     this.transcode = 0;
     this.uploadProgress = 0;
     this.totalProgress = 0;
-    this.camera.getVideo()
-      .then((flieUri: string) => {
-        let path = flieUri.startsWith('file://')
-          ? flieUri
-          : `file://${flieUri}`;
-        this.checkVideoDuration(path);
-      })
-      .catch(err => {
-        Logger.error(TAG,
-          "Excute 'selectvideo' in createpost page is error , getVideo error, error msg is ",
-          err
-        );
-      });
-  }
+    let path = "";
 
-  async checkVideoDuration(fileUri: string) {
-    const duration = this.postHelperService.getVideoDuration(fileUri);
-    if (parseInt(this.duration) > 15) {
+    const videoData = await this.postHelperService.selectvideo((info: number) => {
+      this.zone.run(() => {
+        if (info > 0 && info < 1) {
+          this.transcode = parseInt((info * 100) / 2 + '');
+          this.totalProgress = this.transcode;
+        }
+      });
+    });
+    if (!videoData) {
       this.flieUri = '';
       this.posterImg = '';
       this.imgUrl = '';
       this.transcode = 0;
       this.uploadProgress = 0;
       this.totalProgress = 0;
+      this.videoData = null;
       this.native.toast(this.translate.instant('common.filevideodes'));
-      return;
     }
-    // this.createThumbnail(fileUri);
+
+    this.posterImg = videoData.thumbnail;
+    this.flieUri = videoData.video;
+    this.videoData = videoData;
   }
 
   readFile(fileName: string, filepath: string) {
@@ -685,16 +686,20 @@ export class CreatenewpostPage implements OnInit {
         quality: 30,
       })
       .then(newfileUri => {
+        console.log('newfileUri', newfileUri);
         let pathObj = this.handlePath(newfileUri);
         let fileName = pathObj['fileName'];
         let filepath = pathObj['filepath'];
+        console.log('filepath', filepath);
         this.readThumbnail(fileName, filepath);
 
         this.transcodeVideo(path).then(newfileUri => {
           this.transcode = 100;
+          console.log('newfileUri', newfileUri);
           let pathObj = this.handlePath(newfileUri);
           let fileName = pathObj['fileName'];
           let filepath = pathObj['filepath'];
+          console.log('filepath2', filepath);
           this.readFile(fileName, filepath);
         });
       });
@@ -703,11 +708,6 @@ export class CreatenewpostPage implements OnInit {
   handlePath(fileUri: string) {
     let pathObj = {};
     if (this.platform.is('android')) {
-      // fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
-      // fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
-      // let lastIndex = fileUri.lastIndexOf('/');
-      // pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
-      // pathObj['filepath'] = fileUri.substring(0, lastIndex);
       fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
       fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
       let lastIndex = fileUri.lastIndexOf('/');
@@ -834,7 +834,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
   openGallery(that: any) {
-
     that.handleImgUri(0, that).then(async (imagePath: string) => {
 
       // let pathObj = that.handleImgUrlPath(imagePath);
