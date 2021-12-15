@@ -275,8 +275,21 @@ export class CreatenewpostPage implements OnInit {
     console.log('this.imgUrl', this.imgUrl);
     console.log('this.flieUri', this.flieUri);
 
-    this.postHelperService.publishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
-    // let tempPostId = this.feedService.generateTempPostId();
+    const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
+    console.log('Content', content);
+    let tempPostId = this.feedService.generateTempPostId();
+    console.log('tempPostId', tempPostId);
+
+
+
+    //TODO
+    this.feedService.publishPost(
+      this.nodeId,
+      this.channelId,
+      content,
+      tempPostId,
+    );
+
     // //Only text content
     // if (this.imgUrl == '' && this.flieUri == '') {
     //   let content = this.feedService.createContent(this.newPost, null, null);
@@ -392,27 +405,28 @@ export class CreatenewpostPage implements OnInit {
     this.viewHelper.createTip(channelName);
   }
 
-  videocam() {
+  async videocam() {
     this.removeVideo();
-    // navigator.device.capture.captureVideo(
-    //   (videosdata: MediaFile[]) => {
-    //     this.zone.run(() => {
-    //       let videodata = videosdata[0];
-    //       this.postHelperService.checkVideoDurationValid(videodata.fullPath);
-    //     });
-    //   },
-    //   error => {
-    //     Logger.error(TAG,
-    //       "Excute 'videocam' in createpost page is error , captureVideo error, error msg is ",
-    //       error
-    //     );
-    //   },
-    //   { limit: 1, duration: 15 },
-    // );
+    this.transcode = 0;
+    this.uploadProgress = 0;
+    this.totalProgress = 0;
+    let videoData = null;
 
-    this.camera.recordAVideo().then((path) => {
+    try {
+      videoData = await this.postHelperService.recordAVideo((info: number) => {
+        this.zone.run(() => {
+          if (info > 0 && info < 1) {
+            this.transcode = parseInt((info * 100) / 2 + '');
+            this.totalProgress = this.transcode;
+          }
+        });
+      });
+    } catch (error) {
+      Logger.error(error);
+    }
 
-    });
+    console.log('videoData==>', videoData);
+    this.handleVideoData(videoData);
   }
 
   /**
@@ -438,6 +452,11 @@ export class CreatenewpostPage implements OnInit {
         }
       });
     });
+    console.log('videoData', videoData);
+    this.handleVideoData(videoData);
+  }
+
+  handleVideoData(videoData: FeedsData.videoData) {
     if (!videoData) {
       this.flieUri = '';
       this.posterImg = '';
@@ -448,124 +467,25 @@ export class CreatenewpostPage implements OnInit {
       this.videoData = null;
       this.native.toast(this.translate.instant('common.filevideodes'));
     }
+    this.transcode = 100;
+    this.totalProgress = this.transcode;
 
     this.posterImg = videoData.thumbnail;
     this.flieUri = videoData.video;
+
+    console.log('videoData', videoData);
+    let sid = setTimeout(() => {
+      this.setFullScreen();
+      let video: any = document.getElementById('videocreatepost') || '';
+      video.setAttribute('poster', this.posterImg);
+      this.setOverPlay(this.flieUri);
+      clearTimeout(sid);
+
+      console.log('this.posterImg', this.posterImg);
+      console.log('this.flieUri', this.flieUri);
+    }, 0);
+
     this.videoData = videoData;
-  }
-
-  readFile(fileName: string, filepath: string) {
-    console.log('readFile======================', filepath, fileName);
-    window.resolveLocalFileSystemURL(
-      filepath,
-      (dirEntry: DirectoryEntry) => {
-        dirEntry.getFile(
-          fileName,
-          { create: true, exclusive: false },
-          fileEntry => {
-            fileEntry.file(
-              file => {
-                let fileReader = new FileReader();
-                fileReader.onloadend = (event: any) => {
-                  this.zone.run(() => {
-                    let result = fileReader.result;
-                    if (typeof result == 'string') this.flieUri = result;
-                    else {
-                      ab2str(result, function(str) {
-                        this.flieUri = str;
-                      });
-                    }
-
-                    let sid = setTimeout(() => {
-                      this.setFullScreen();
-                      let video: any =
-                        document.getElementById('videocreatepost') || '';
-                      video.setAttribute('poster', this.posterImg);
-                      this.setOverPlay(this.flieUri);
-                      clearTimeout(sid);
-                    }, 0);
-                  });
-                };
-
-                fileReader.onprogress = (event: any) => {
-                  this.zone.run(() => {
-                    this.uploadProgress = parseInt(
-                      ((event.loaded / event.total) * 100) / 2 + '',
-                    );
-                    if (this.uploadProgress === 50) {
-                      this.totalProgress = 100;
-                    } else {
-                      this.totalProgress = 50 + this.uploadProgress;
-                    }
-                  });
-                };
-
-                fileReader.readAsDataURL(file);
-              },
-              err => {
-                Logger.error(TAG,
-                  "Excute 'readFile' in createpost page is error , readVideo error, error msg is ",
-                  err
-                );
-              },
-            );
-          },
-          err => {
-            Logger.error(TAG,
-              "Excute 'readFile' in createpost page is error , getFile error, error msg is ",
-              err
-            );
-          },
-        );
-      },
-      (err: any) => {
-        Logger.error(TAG,
-          "Excute 'readFile' in createpost page is error , path error, error msg is ",
-          err
-        );
-      },
-    );
-  }
-
-  async transcodeVideo(path: any): Promise<string> {
-    const fileUri = path.startsWith('file://') ? path : `file://${path}`;
-    const videoInfo = await this.videoEditor.getVideoInfo({ fileUri: fileUri });
-    this.duration = videoInfo['duration'];
-    let width: number = 0;
-    let height: number = 0;
-
-    // 视频比例
-    const ratio = videoInfo.width / videoInfo.height;
-
-    if (ratio > 1) {
-      width = videoInfo.width > 480 ? 480 : videoInfo.width;
-    } else if (ratio < 1) {
-      width = videoInfo.width > 360 ? 360 : videoInfo.width;
-    } else if (ratio === 1) {
-      width = videoInfo.width > 480 ? 480 : videoInfo.width;
-    }
-
-    let videoBitrate = videoInfo['bitrate'] / 2;
-
-    height = +(width / ratio).toFixed(0);
-
-    return this.videoEditor.transcodeVideo({
-      fileUri,
-      outputFileName: `${Date.now()}`,
-      outputFileType: this.videoEditor.OutputFileType.MPEG4,
-      saveToLibrary: false,
-      width,
-      height,
-      videoBitrate: videoBitrate,
-      progress: (info: number) => {
-        this.zone.run(() => {
-          if (info > 0 && info < 1) {
-            this.transcode = parseInt((info * 100) / 2 + '');
-            this.totalProgress = this.transcode;
-          }
-        });
-      },
-    });
   }
 
   removeVideo() {
@@ -675,108 +595,108 @@ export class CreatenewpostPage implements OnInit {
     }
   }
 
-  createThumbnail(path: string) {
-    this.videoEditor
-      .createThumbnail({
-        fileUri: path,
-        outputFileName: `${Date.now()}`,
-        atTime: this.duration / 10,
-        width: 320,
-        height: 480,
-        quality: 30,
-      })
-      .then(newfileUri => {
-        console.log('newfileUri', newfileUri);
-        let pathObj = this.handlePath(newfileUri);
-        let fileName = pathObj['fileName'];
-        let filepath = pathObj['filepath'];
-        console.log('filepath', filepath);
-        this.readThumbnail(fileName, filepath);
+  // createThumbnail(path: string) {
+  //   this.videoEditor
+  //     .createThumbnail({
+  //       fileUri: path,
+  //       outputFileName: `${Date.now()}`,
+  //       atTime: this.duration / 10,
+  //       width: 320,
+  //       height: 480,
+  //       quality: 30,
+  //     })
+  //     .then(newfileUri => {
+  //       console.log('newfileUri', newfileUri);
+  //       let pathObj = this.handlePath(newfileUri);
+  //       let fileName = pathObj['fileName'];
+  //       let filepath = pathObj['filepath'];
+  //       console.log('filepath', filepath);
+  //       this.readThumbnail(fileName, filepath);
 
-        this.transcodeVideo(path).then(newfileUri => {
-          this.transcode = 100;
-          console.log('newfileUri', newfileUri);
-          let pathObj = this.handlePath(newfileUri);
-          let fileName = pathObj['fileName'];
-          let filepath = pathObj['filepath'];
-          console.log('filepath2', filepath);
-          this.readFile(fileName, filepath);
-        });
-      });
-  }
+  //       this.transcodeVideo(path).then(newfileUri => {
+  //         this.transcode = 100;
+  //         console.log('newfileUri', newfileUri);
+  //         let pathObj = this.handlePath(newfileUri);
+  //         let fileName = pathObj['fileName'];
+  //         let filepath = pathObj['filepath'];
+  //         console.log('filepath2', filepath);
+  //         this.readFile(fileName, filepath);
+  //       });
+  //     });
+  // }
 
-  handlePath(fileUri: string) {
-    let pathObj = {};
-    if (this.platform.is('android')) {
-      fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
-      fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
-      let lastIndex = fileUri.lastIndexOf('/');
-      pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
-      pathObj['filepath'] = fileUri.substring(0, lastIndex);
-    } else if (this.platform.is('ios')) {
-      let lastIndex = fileUri.lastIndexOf('/');
-      pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
-      let filepath = fileUri.substring(0, lastIndex);
-      filepath = filepath.startsWith('file://')
-        ? filepath
-        : `file://${filepath}`;
-      pathObj['filepath'] = filepath;
-    }
+  // handlePath(fileUri: string) {
+  //   let pathObj = {};
+  //   if (this.platform.is('android')) {
+  //     fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
+  //     fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
+  //     let lastIndex = fileUri.lastIndexOf('/');
+  //     pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
+  //     pathObj['filepath'] = fileUri.substring(0, lastIndex);
+  //   } else if (this.platform.is('ios')) {
+  //     let lastIndex = fileUri.lastIndexOf('/');
+  //     pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
+  //     let filepath = fileUri.substring(0, lastIndex);
+  //     filepath = filepath.startsWith('file://')
+  //       ? filepath
+  //       : `file://${filepath}`;
+  //     pathObj['filepath'] = filepath;
+  //   }
 
-    return pathObj;
-  }
+  //   return pathObj;
+  // }
 
-  readThumbnail(fileName: string, filepath: string) {
-    console.log('readThumbnail======================', filepath, fileName);
-    window.resolveLocalFileSystemURL(
-      filepath,
-      (dirEntry: DirectoryEntry) => {
-        dirEntry.getFile(
-          fileName,
-          { create: true, exclusive: false },
-          fileEntry => {
-            fileEntry.file(
-              file => {
-                let fileReader = new FileReader();
-                fileReader.onloadend = (event: any) => {
-                  this.zone.run(() => {
-                    this.posterImg = fileReader.result;
-                  });
-                };
+  // readThumbnail(fileName: string, filepath: string) {
+  //   console.log('readThumbnail======================', filepath, fileName);
+  //   window.resolveLocalFileSystemURL(
+  //     filepath,
+  //     (dirEntry: DirectoryEntry) => {
+  //       dirEntry.getFile(
+  //         fileName,
+  //         { create: true, exclusive: false },
+  //         fileEntry => {
+  //           fileEntry.file(
+  //             file => {
+  //               let fileReader = new FileReader();
+  //               fileReader.onloadend = (event: any) => {
+  //                 this.zone.run(() => {
+  //                   this.posterImg = fileReader.result;
+  //                 });
+  //               };
 
-                fileReader.onprogress = (event: any) => {
-                };
+  //               fileReader.onprogress = (event: any) => {
+  //               };
 
-                fileReader.readAsDataURL(file);
-              },
-              err => {
-                Logger.error(TAG,
-                  "Excute 'readThumbnail' in createpost page is error , readFile error, error msg is ",
-                  err
-                );
-              },
-            );
-          },
-          err => {
-            Logger.error(TAG,
-              "Excute 'readThumbnail' in createpost page is error , getFile error, error msg is ",
-              err
-            );
-          },
-        );
-      },
-      (err: any) => {
-        Logger.error(TAG,
-          "Excute 'readThumbnail' in createpost page is error , path error, error msg is ",
-          err
-        );
-      },
-    );
-  }
+  //               fileReader.readAsDataURL(file);
+  //             },
+  //             err => {
+  //               Logger.error(TAG,
+  //                 "Excute 'readThumbnail' in createpost page is error , readFile error, error msg is ",
+  //                 err
+  //               );
+  //             },
+  //           );
+  //         },
+  //         err => {
+  //           Logger.error(TAG,
+  //             "Excute 'readThumbnail' in createpost page is error , getFile error, error msg is ",
+  //             err
+  //           );
+  //         },
+  //       );
+  //     },
+  //     (err: any) => {
+  //       Logger.error(TAG,
+  //         "Excute 'readThumbnail' in createpost page is error , path error, error msg is ",
+  //         err
+  //       );
+  //     },
+  //   );
+  // }
 
-  handleTotal(duration: any) {
-    return UtilService.timeFilter(duration);
-  }
+  // handleTotal(duration: any) {
+  //   return UtilService.timeFilter(duration);
+  // }
 
   clickFeedAvatar() {
     if (this.feedList.length > 1) {
