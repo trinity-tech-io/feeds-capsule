@@ -215,6 +215,11 @@ export class SettingsPage implements OnInit {
 
   async navIPFSProvider() {
       this.getAvatar()
+
+
+      const list = this.dataHelper.getSubscribedFeedsList()
+      console.log("list ==== ", list)
+
     // this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
@@ -271,10 +276,10 @@ export class SettingsPage implements OnInit {
     const scriptingService = vault.getScriptingService()
     const result = await scriptingService.callScript(scriptName, param, tarDID, tarAppDID)
     console.log("result ==== ", result)
-    const t = result["download"]["transaction_id"]
-    console.log("t ==== ", t)
-    const transaction_id = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb3dfaWQiOiI2MWI5N2YyYTJjMGVkYTIwY2M3OGJjYjYiLCJ0YXJnZXRfZGlkIjoiZGlkOmVsYXN0b3M6aWtIUDM4OUZoc3NBQURuVXdNM1JGRjQxNUYxd3ZpWjhDQyIsInRhcmdldF9hcHBfZGlkIjoiZGlkOmVsYXN0b3M6aWcxbnF5eUpod1RjdGRMeURGYlpvbVNiWlNqeU1OMXVvciJ9.PAPcjCyCeraNySMCY-Un-uinQtt1j6uoxtR9PIpMv0Q"
+    const transaction_id = result["download"]["transaction_id"]
+    console.log("t ==== ", transaction_id)
     const downresult = await scriptingService.downloadFile(transaction_id)
+    console.log("downresult === ", downresult)
   }
 
   navDeveloper() {
