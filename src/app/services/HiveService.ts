@@ -31,11 +31,10 @@ export class HiveService {
       HiveLogger.setDefaultLevel(HiveLogger.TRACE)
       DIDBackend.initialize(new DefaultDIDAdapter("mainnet"))
       AppContext.setupResolver("mainnet", HiveService.RESOLVE_CACHE)
-
       const rootDirEntry = await this.fileService.resolveLocalFileSystemURL()
       const path = rootDirEntry.fullPath
-      //Application Context
-      let self = this ;    
+
+      let self = this   
       this.context = await AppContext.build({
         getLocalDataDir(): string {
           console.log("path  TODO: =============== ", path)
