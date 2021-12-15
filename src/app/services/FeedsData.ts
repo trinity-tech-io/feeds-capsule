@@ -780,4 +780,10 @@ declare namespace FeedsData {
     type: string,
     cid: string
   }
+
+  type videoData = {
+    video: string,
+    thumbnail: string,
+    duration: number
+  }
 }
