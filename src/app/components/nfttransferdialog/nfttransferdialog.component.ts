@@ -92,9 +92,8 @@ export class NfttransferdialogComponent implements OnInit {
        this.native.toastWarn("common.walletAddressDes1");
        return false;
     }
-    let recipientDiaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(this.walletAddress);
     let sellerDiaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(ownerAddress);
-    if(parseFloat(sellerDiaBalance) <= 0.01 && parseFloat(recipientDiaBalance) <= 0.01){
+    if(parseFloat(sellerDiaBalance) < 0.01){
       this.native.toastWarn("common.walletAddressDes2");
       return false;
     }

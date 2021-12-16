@@ -179,7 +179,7 @@ export const en = {
     tranferNFTSFailed: 'Tranfer Collectible Failed',
     tranferNFTSSuccess: 'Tranfer Collectible successfully',
     walletAddressDes1: "The recipient's wallet address is consistent with the wallet address of the collection",
-    walletAddressDes2: 'As long as the transferor or recipient holds more than 0.01 DIA, the transfer action can be allowe',
+    walletAddressDes2: 'You must have at least 0.01 DIA in order to transfer collectibles.',
     didUriNull: 'Service exception, please try again later',
     parseing: 'Parseing',
     dataStorage: 'Data storage',
