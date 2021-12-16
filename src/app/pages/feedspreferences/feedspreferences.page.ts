@@ -19,6 +19,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
+import { Config } from 'src/app/services/config';
 
 @Component({
   selector: 'app-feedspreferences',
@@ -43,7 +44,13 @@ export class FeedspreferencesPage implements OnInit {
 
   public collectibleStatus = {};
 
-  private channelCollections = {};
+  private channelCollections: FeedsData.ChannelCollections = null;
+  private channelCollectionList = [];
+  public isLoading: boolean = false;
+  public loadingTitle: string = "";
+  public loadingText: string = "";
+  public loadingCurNumber: string = "";
+  public loadingMaxNumber: string = "";
 
   constructor(
     private translate: TranslateService,
@@ -222,10 +229,12 @@ export class FeedspreferencesPage implements OnInit {
   }
 
  async getPublicStatus() {
-    this.channelCollections = await this.getChannelCollectionsStatus() || {};
-    let status  = this.channelCollections["status"] || "";
-    if(status === "1"){
-       this.curFeedPublicStatus = true;
+    this.channelCollections = await this.getChannelCollectionsStatus() || null;
+    if(this.channelCollections != null){
+      let status  = this.channelCollections["status"] || "";
+      if(status === "1"){
+        this.curFeedPublicStatus = true;
+      }
       return;
     }
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
@@ -267,34 +276,160 @@ export class FeedspreferencesPage implements OnInit {
     }
   }
 
-  toggle() {
-    if (!this.curFeedPublicStatus) {
-      if (this.feedService.getConnectionStatus() !== 0) {
-        this.native.toastWarn('common.connectionError');
-        return;
-      }
+  // toggle() {
+  //   if (!this.curFeedPublicStatus) {
+  //     if (this.feedService.getConnectionStatus() !== 0) {
+  //       this.native.toastWarn('common.connectionError');
+  //       return;
+  //     }
 
-      if (!this.isShowQrcode) {
-        this.native.toastWarn('common.waitOnChain');
-        return;
-      }
+  //     if (!this.isShowQrcode) {
+  //       this.native.toastWarn('common.waitOnChain');
+  //       return;
+  //     }
 
-      if (this.developerMode) {
-        this.developerModeConfirm();
-        return;
+  //     if (this.developerMode) {
+  //       this.developerModeConfirm();
+  //       return;
+  //     }
+  //     this.publicFeeds('cancel');
+  //     return;
+  //   }
+
+  //   if (this.curFeedPublicStatus) {
+  //     if (this.feedService.getConnectionStatus() !== 0) {
+  //       this.native.toastWarn('common.connectionError');
+  //       return;
+  //     }
+  //     this.unPublicFeeds();
+  //     return;
+  //   }
+  // }
+
+   toggle(){
+    // if (!this.curFeedPublicStatus) {
+    //   if (this.feedService.getConnectionStatus() !== 0) {
+    //     this.native.toastWarn('common.connectionError');
+    //     return;
+    //   }
+
+    //   if (!this.isShowQrcode) {
+    //     this.native.toastWarn('common.waitOnChain');
+    //     return;
+    //   }
+
+    //   if (this.developerMode) {
+    //     this.developerModeConfirm();
+    //     return;
+    //   }
+    //   this.publicFeeds('cancel');
+    //   return;
+    // }
+
+    // if (this.curFeedPublicStatus) {
+    //   if (this.feedService.getConnectionStatus() !== 0) {
+    //     this.native.toastWarn('common.connectionError');
+    //     return;
+    //   }
+    //   this.unPublicFeeds();
+    //   return;
+    // }
+    let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
+    if(channelCollections != null){
+      if(channelCollections.status === "1"){//收藏品频道下架
+           this.unPublicCollectionsDialog();
+           return;
       }
-      this.publicFeeds('cancel');
-      return;
     }
+  }
 
-    if (this.curFeedPublicStatus) {
-      if (this.feedService.getConnectionStatus() !== 0) {
-        this.native.toastWarn('common.connectionError');
+  unPublicCollectionsDialog(){
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      'FeedspreferencesPage.des3',
+      'FeedspreferencesPage.des4',
+      this.cancelUnPublicCollections,
+      this.confirmUnPublicCollections,
+      './assets/images/tskth.svg',
+      'FeedspreferencesPage.des5',
+      'FeedspreferencesPage.des6',
+    );
+  }
+
+ async cancelUnPublicCollections(that: any){
+    if (this.popover != null) {
+      await this.popover.dismiss();
+      this.popover = null;
+    }
+  }
+
+  async confirmUnPublicCollections(that: any) {
+    let accountAddress =
+    that.nftContractControllerService.getAccountAddress() || '';
+  if (accountAddress === '') {
+    that.native.toastWarn('common.connectWallet');
+    return;
+  }
+    if (this.popover != null) {
+       await this.popover.dismiss();
+       this.popover = null;
+    }
+    that.isLoading = true;
+    that.loadingTitle = "common.waitMoment";
+    that.loadingText = "common.cancelingOrderDesc";
+    that.loadingCurNumber = "1";
+    that.loadingMaxNumber = "1";
+    let sId = setTimeout(()=>{
+      that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();
+      that.isLoading = false;
+      clearTimeout(sId);
+      that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
+    },Config.WAIT_TIME_CANCEL_ORDER)
+
+    that.doCancelChannelOrder(that)
+      .then(() => {
+        that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();
+        that.isLoading = false;
+        that.curFeedPublicStatus = false;
+        clearTimeout(sId);
+        that.native.toast_trans('common.cancelSuccessfully');
+      })
+      .catch(() => {
+        // cancel order error
+        that.isLoading = false;
+        clearTimeout(sId);
+        that.native.toast_trans('common.cancellationFailed');
+        that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
+      });
+  }
+
+  async doCancelChannelOrder(that: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let panelId = this.channelCollections['panelId'] || '';
+      if (panelId === '') {
+        reject('error');
         return;
       }
-      this.unPublicFeeds();
-      return;
-    }
+      let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
+      if (cancelStatus===null) {
+        reject('error');
+        return;
+      }
+
+      let tokenId = that.channelCollections.tokenId;
+      console.log("")
+      let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
+        return item.tokenId === tokenId;
+      });
+      that.channelCollectionList.splice(itemIndex,1);
+      that.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
+      resolve('Success');
+    });
+
+  }
+
+  async cancelChannelOrder(that: any, panelId: string) {
+    return await that.nftContractControllerService.getGalleria().removePanel(panelId);
   }
 
   setCollectible() {
@@ -315,7 +450,7 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   async getChannelCollectionsStatus(){
-     let publishedActivePanelList =  this.dataHelper.getPublishedActivePanelList() || [];
+     this.channelCollectionList =  this.dataHelper.getPublishedActivePanelList() || [];
      const signinData: any = this.feedService.getSignInData() || {};
      let ownerDid = signinData.did || "";
      let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
@@ -323,16 +458,17 @@ export class FeedspreferencesPage implements OnInit {
        return;
      }
      let feedsUrl = server.feedsUrl + '/' + this.feedId;
-     if(publishedActivePanelList.length === 0){
-        publishedActivePanelList = await this.getActivePanelList();
+     console.log()
+     let channelCollections: FeedsData.ChannelCollections = null;
+     if(this.channelCollectionList.length === 0){
+      this.channelCollectionList = await this.getActivePanelList();
      }
-     let channelCollections: FeedsData.ChannelCollections =  _.find(publishedActivePanelList,(item: FeedsData.ChannelCollections)=>{
-           return ownerDid === item.ownerDid && this.nodeId===item.nodeId && feedsUrl===feedsUrl;
-     });
 
-     console.log("==channelCollections==",channelCollections);
+    channelCollections = _.find(this.channelCollectionList,(item: FeedsData.ChannelCollections)=>{
+      return ownerDid === item.ownerDid && this.nodeId===item.nodeId && feedsUrl===feedsUrl;
+     });
      return channelCollections;
-  }
+    }
 
   async getActivePanelList(){
     let channelCollectionList = [];
@@ -374,16 +510,18 @@ export class FeedspreferencesPage implements OnInit {
       let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
       channelCollections.nodeId = nodeId;
       channelCollectionList.push(channelCollections);
-      this.dataHelper.setPublishedActivePanelList(channelCollectionList);
       } catch (error) {
         console.error("Get Sale item error", error);
       }
     }
+    this.dataHelper.setPublishedActivePanelList(channelCollectionList);
+    return channelCollectionList;
     }catch (error) {
       channelCollectionList = [];
       this.dataHelper.setPublishedActivePanelList(channelCollectionList);
+      return channelCollectionList;
     }
-    return channelCollectionList;
+
   }
 
 }
