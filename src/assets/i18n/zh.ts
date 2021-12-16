@@ -179,7 +179,7 @@ export const zh = {
     tranferNFTSFailed: '转让收藏品失败',
     tranferNFTSSuccess: '转让收藏品成功',
     walletAddressDes1: '收件人钱包地址与收藏品的钱包地址一致',
-    walletAddressDes2: '只要转赠方或接收方持有超过0.01 DIA，则可以允许转让行为',
+    walletAddressDes2: '您至少持有0.01DIA才能允许直接转让收藏品。',
     didUriNull: '服务异常，请稍后再试',
     parseing: '解析中',
     dataStorage: '数据缓存',
