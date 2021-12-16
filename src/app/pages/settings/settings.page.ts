@@ -18,9 +18,10 @@ import { HiveService } from 'src/app/services/HiveService';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Claims, DIDDocument, JWTParserBuilder, Logger, DID as JSDID} from '@elastosfoundation/did-js-sdk';
 // import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
-import { FilesService, ScriptingService, VaultSubscriptionService, VaultServices, QueryHasResultCondition, InsertExecutable} from "@dchagastelles/elastos-hive-js-sdk";
+import { FilesService, ScriptingService, VaultSubscriptionService, VaultServices, QueryHasResultCondition, InsertExecutable, FileUploadExecutable, Executable} from "@dchagastelles/elastos-hive-js-sdk";
 import { Console } from 'console';
 import { HttpService } from 'src/app/services/HttpService';
+import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 
 @Component({
   selector: 'app-settings',
@@ -215,58 +216,42 @@ export class SettingsPage implements OnInit {
 
   async navIPFSProvider() {
       this.getAvatar()
-
-
-      const list = this.dataHelper.getSubscribedFeedsList()
-      console.log("list ==== ", list)
-
     // this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
   async getAvatar() {
+    // 读取
     let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
     let userDid =  (await this.dataHelper.getSigninData()).did
+
     const resolverUrl = "https://api.elastos.io/eid"
     let context = await this.hiveService.creat(appinstanceDocument, userDid, resolverUrl)
-    console.log("appinstanceDocument === ", appinstanceDocument)
     // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
     const userDID =  JSDID.from(userDid)
-    console.log("userDID === ", userDID)
     const userDiddocument = await userDID.resolve()
-    console.log("userDiddocument === ", userDiddocument)
     const ccount = userDiddocument.getCredentialCount()
     const avatarDid = userDid + "#avatar"
-    console.log("avatarDid == ", avatarDid)
     const cre = userDiddocument.getCredential(avatarDid)
     const sub = cre.getSubject()
     const pro = sub.getProperty("avatar")
     const data: string = pro["data"]
     const type = pro["type"]
-    console.log("data ==== ", data)
-    console.log("type ==== ", type)
 
     const serviceDid = userDid + "#hivevault"
     const service = userDiddocument.getService(serviceDid)
     const provider = service.getServiceEndpoint() + ":443" 
-    console.log("service ==== ", service)
-    console.log("provider ==== ", provider)
     const prefix = "hive://"
     const param = data.substr(prefix.length)
     const parts = param.split("/")
     // TODO 验证parts是否大于2个 ，否则 抛出异常
-    console.log("parts === ", parts)
     const dids = parts[0].split("@")
     // TODO 验证dids是否等于2个 ，否则 抛出异常
     const star = data.length - (prefix.length + parts[0].length + 1)
     const values = parts[1].split("?")
-    console.log("values === ", values)
     // TODO 验证values是否等于2个 ，否则 抛出异常
     const scriptName = values[0]
     const paramStr = values[1]
-    console.log("paramStr ==== ", paramStr)
-
     const scriptParam = JSON.parse(paramStr.substr(7))
-    console.log("scriptParam ==== ", scriptParam)
 
     // 创建
     const tarDID = dids[0]
@@ -275,11 +260,31 @@ export class SettingsPage implements OnInit {
     const vault = new VaultServices(context, provider)
     const scriptingService = vault.getScriptingService()
     const result = await scriptingService.callScript(scriptName, param, tarDID, tarAppDID)
-    console.log("result ==== ", result)
     const transaction_id = result["download"]["transaction_id"]
-    console.log("t ==== ", transaction_id)
+    console.log("transaction_id ==== ", transaction_id)
     const downresult = await scriptingService.downloadFile(transaction_id)
     console.log("downresult === ", downresult)
+
+
+    // 存储
+    const list = this.dataHelper.getSubscribedFeedsList()
+    console.log("list ==== ", list)
+
+    const uploadName = "feeds_user_list"
+    const fileName = "feeds_file_name" 
+    let didAccess = new DID.DIDAccess()
+    let mAppIdCredential = await didAccess.getExistingAppIdentityCredential()
+    let appId = mAppIdCredential.getSubject()["appDid"]
+    console.log("appId ==== ", appId)
+
+    const uploadEx = new FileUploadExecutable(uploadName)
+    await scriptingService.registerScript(uploadName, uploadEx.setOutput(true), undefined, true, true)
+    const uploadTXID = await scriptingService.callScript(uploadName, Executable.createRunFileParams(fileName), tarDID, appId)
+    console.log("uploadResult === ", uploadTXID)
+    const txId = uploadTXID[uploadName]["transaction_id"]
+    const uploadFile = await scriptingService.uploadFile(txId, list)
+    console.log("uploadFile === ", uploadFile)
+    
   }
 
   navDeveloper() {
