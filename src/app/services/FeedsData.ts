@@ -160,6 +160,7 @@ declare namespace FeedsData {
     nftTokenId: number;
     nftOrderId: number;
     nftImageType: string,
+    mediaDatas: mediaData[]
   };
 
   type ImgThumb = {
@@ -771,6 +772,7 @@ declare namespace FeedsData {
     size: number,           //origin file size
     thumbnailCid: string    //"thumbnailCid"
     duration: number,
+    imageIndex: number,
     additionalInfo: any,
     memo: any
   }

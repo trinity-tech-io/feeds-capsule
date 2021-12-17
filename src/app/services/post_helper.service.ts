@@ -82,7 +82,7 @@ export class PostHelperService {
             const thumbnailMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(thumbnail)
             if (!originMediaData || !thumbnailMediaData)
               continue
-            const mediaData = this.createMediaData("image", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, 0, {}, {});
+            const mediaData = this.createMediaData("image", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, 0, 0, {}, {});
             mediasData.push(mediaData);
           }
         }
@@ -92,7 +92,7 @@ export class PostHelperService {
           const originMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(videoData.video);
           const thumbnailMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(videoData.thumbnail);
           if (originMediaData && thumbnailMediaData) {
-            const mediaData = this.createMediaData("video", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, videoData.duration, {}, {});
+            const mediaData = this.createMediaData("video", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, videoData.duration, 0, {}, {});
             mediasData.push(mediaData);
           }
         }
@@ -131,12 +131,13 @@ export class PostHelperService {
     });
   }
 
-  createMediaData(kind: string, originMediaCid: string, type: string, size: number, thumbnailCid: string, duration: number, additionalInfo: any, memo: any): FeedsData.mediaData {
+  createMediaData(kind: string, originMediaCid: string, type: string, size: number, thumbnailCid: string, duration: number, index: number, additionalInfo: any, memo: any): FeedsData.mediaData {
     const mediaData: FeedsData.mediaData = {
       kind: kind,
       originMediaCid: originMediaCid,
       type: type,
       size: size,
+      imageIndex: index,
       thumbnailCid: thumbnailCid,
       duration: duration,
       additionalInfo: additionalInfo,
@@ -423,4 +424,17 @@ export class PostHelperService {
     });
   }
 
+  getPostData(name: string, type: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fetchUrl = this.ipfsService.getNFTGetUrl() + name;
+        const result = await this.fileHelperService.getPostData(fetchUrl, name, type);
+        resolve(result);
+      } catch (error) {
+        const errorMsg = 'Get post data error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
 }
