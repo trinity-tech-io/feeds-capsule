@@ -15,6 +15,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { PostHelperService } from 'src/app/services/post_helper.service';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -38,7 +39,7 @@ export class PostdetailPage implements OnInit {
   public channelWName: string = '';
   public channelOwner: string = '';
   public channelWOwner: string = '';
-  public postContent: string = '';
+  public postContent: FeedsData.Content = null;
   public updatedTime: number = 0;
   public likesNum: number = 0;
   public commentsNum: number = 0;
@@ -131,6 +132,7 @@ export class PostdetailPage implements OnInit {
     public modalController: ModalController,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
+    private postHelperService: PostHelperService,
   ) {}
 
   initData(isInit: boolean) {
@@ -242,9 +244,9 @@ export class PostdetailPage implements OnInit {
     this.updatedTime = post.updated_at;
     this.likesNum = post.likes;
     this.commentsNum = post.comments;
-
+    console.log('this.postContent =>', this.postContent);
     if (this.mediaType === 1) {
-      this.getImage();
+      this.getImage(this.postContent);
     }
     if (post.content.mediaType === 2) {
       let key =
@@ -615,7 +617,7 @@ export class PostdetailPage implements OnInit {
     this.isVideoLoading = false;
     this.videoDownStatus = '';
     this.hideComment = true;
-    this.postImage = '';
+    // this.postImage = '';
     this.isFullContent = {};
     this.isOwnComment = {};
     this.feedService.closeSession(this.nodeId);
@@ -815,6 +817,8 @@ export class PostdetailPage implements OnInit {
         key = thumbkey;
       }
 
+
+
       this.feedService.getData(key).then(realImg => {
         let img = realImg || '';
         if (img != '') {
@@ -870,7 +874,22 @@ export class PostdetailPage implements OnInit {
     this.nodeStatus[this.nodeId] = status;
   }
 
-  getImage() {
+  getImage(content: FeedsData.Content) {
+    if (content.version == '2.0') {
+      this.postImage = './assets/icon/reserve.svg';//set Reserve Image
+      const mediaDatas = content.mediaDatas;
+      if (mediaDatas && mediaDatas.length > 0) {
+        const elements = mediaDatas.pop();
+        this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+          this.postImage = value;
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+            this.postImage = value;
+          })
+        });
+      }
+      return;
+    }
+
     let imageKey = this.feedService.getImageKey(
       this.nodeId,
       this.channelId,
@@ -878,6 +897,7 @@ export class PostdetailPage implements OnInit {
       0,
       0,
     );
+
     let thumbkey =
       this.feedService.getImgThumbKeyStrFromId(
         this.nodeId,

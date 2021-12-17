@@ -8,6 +8,7 @@ const TAG: string = 'Feeds-FileHelperService';
 const carrierPath: string = '/carrier/';
 // const nftPath: string = 'nft'
 const orderPath: string = '/data/';
+const postDataPath: string = '/postData/';
 const tokenJsonPath: string = '/tokenJson/';
 @Injectable()
 export class FileHelperService {
@@ -52,14 +53,27 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
-        // let nftDirEntry = await this.fileService.getDirectory(
-        //   rootDirEntry,
-        //   nftPath,
-        //   true
-        // );
         let orderDirEntry = await this.fileService.getDirectory(
           rootDirEntry,
           orderPath,
+          true
+        );
+
+        let fileEntry = await this.fileService.getFile(orderDirEntry, fileName, true);
+        resolve(fileEntry);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getPostFileEntry(fileName: string): Promise<FileEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
+        let orderDirEntry = await this.fileService.getDirectory(
+          rootDirEntry,
+          postDataPath,
           true
         );
 
@@ -89,10 +103,9 @@ export class FileHelperService {
     });
   }
 
-  getBlobFromCacheFile(fileName: string): Promise<Blob> {
+  getBlobFromCacheFile(fileEntry: FileEntry): Promise<Blob> {
     return new Promise(async (resolve, reject) => {
       try {
-        let fileEntry = await this.getOrderFileEntry(fileName);
         let blob = await this.fileService.getFileData(fileEntry);
         resolve(blob);
       } catch (error) {
@@ -128,11 +141,37 @@ export class FileHelperService {
     });
   }
 
-  async getNFTData(fileUrl: string, fileName: string, type: string): Promise<string> {
+  getPostData(fileUrl: string, fileName: string, type: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileEntry = await this.getPostFileEntry(fileName);
+        const result = await this.getData(fileUrl, type, fileEntry);
+        resolve(result);
+      } catch (error) {
+        Logger.error("Get NFT data error");
+        reject(error);
+      }
+    });
+  }
+
+  getNFTData(fileUrl: string, fileName: string, type: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileEntry = await this.getOrderFileEntry(fileName);
+        const result = await this.getData(fileUrl, type, fileEntry);
+        resolve(result);
+      } catch (error) {
+        Logger.error("Get NFT data error");
+        reject(error);
+      }
+    });
+  }
+
+  getData(fileUrl: string, type: string, fileEntry: FileEntry): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const base64Type: string = this.transType(type);
-        const fileBlob = await this.getBlobFromCacheFile(fileName);
+        const fileBlob = await this.getBlobFromCacheFile(fileEntry);
         if (fileBlob.size > 0) {
           const result = await this.transBlobToBase64(fileBlob);
           let finalresult = result;
@@ -158,7 +197,7 @@ export class FileHelperService {
         this.dataHelper.addDownloadingUrl(fileUrl);
         let blob = await UtilService.downloadFileFromUrl(fileUrl);
         const result2 = await this.transBlobToBase64(blob);
-        await this.writeNFTCacheFileData(fileName, blob);
+        await this.writeCacheFileData(fileEntry, blob);
         this.dataHelper.deleteDownloadingUrl(fileUrl);
         Logger.log(TAG, "Get data from net");
         resolve(result2);
@@ -187,10 +226,9 @@ export class FileHelperService {
     });
   }
 
-  writeNFTCacheFileData(fileName: string, data: Blob | string): Promise<FileEntry> {
+  writeCacheFileData(fileEntry: FileEntry, data: Blob | string): Promise<FileEntry> {
     return new Promise(async (resolve, reject) => {
       try {
-        let fileEntry = await this.getOrderFileEntry(fileName);
         let newEntry = await this.fileService.writeData(
           fileEntry,
           data,

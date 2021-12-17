@@ -263,7 +263,9 @@ export class CreatenewpostPage implements OnInit {
       }
       if (!this.isPublishing) {
         this.isPublishing = true;
+        //show dialog
         await this.sendPost();
+        //dismiss dialog
         this.backHome();
       }
     });
@@ -279,6 +281,7 @@ export class CreatenewpostPage implements OnInit {
     console.log('Content', content);
     let tempPostId = this.feedService.generateTempPostId();
     console.log('tempPostId', tempPostId);
+
 
 
 

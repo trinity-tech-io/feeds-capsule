@@ -5884,6 +5884,14 @@ export class FeedService {
         commentId,
         contentObj,
       );
+    } else if (contentObj.version === '2.0') {
+      return this.parseContentV2(
+        nodeId,
+        channelId,
+        postId,
+        commentId,
+        contentObj
+      );
     } else {
       return this.parseContentV0(
         nodeId,
@@ -5894,6 +5902,84 @@ export class FeedService {
       );
     }
   }
+
+  parseContentV2(
+    nodeId: string,
+    channelId: number,
+    postId: number,
+    commentId: number,
+    contentObj: any,
+  ): FeedsData.Content {
+    let mVersion = contentObj.version || '';
+    let mText = contentObj.text || '';
+    let videoThumb = contentObj.videoThumbnail || '';
+    let mMediaType = FeedsData.MediaType.noMeida;
+    let nftTokenId = contentObj.nftTokenId || '';
+    let nftOrderId = contentObj.nftOrderId || '';
+    let nftImageType = contentObj.nftImageType || '';
+    let mMediaDatas: FeedsData.mediaData[] = [];
+    console.log('contentObj v2 ==>', contentObj);
+    mVersion = contentObj.version
+    mText = contentObj.text
+
+    nftTokenId = contentObj.nftTokenId;
+    nftOrderId = contentObj.nftOrderId;
+    nftImageType = contentObj.nftImageType;
+
+
+    // {"version":"1.0","text":"testText","imageThumbnail":[{"index":0,"imgThumb":"this.imgUrl"}],"videoThumbnail":"this.posterImg"}
+    const mediaDatas = contentObj.data;
+    console.log('contentObj v2 mediaDatas ==>', mediaDatas);
+    for (let index = 0; index < mediaDatas.length; index++) {
+      const element = mediaDatas[index];
+
+      const duration = element.duration;
+      const kind = element.kind;
+      const type = element.type;
+      const thumbnailCid = element.thumbnailCid;
+      const originMediaCid = element.originMediaCid;
+      const size = element.size;
+      const memo = element.memo;
+      const additionalInfo = element.additionalInfo;
+      const imageIndex = element.imageIndex;
+
+      if (kind == 'image') {
+        mMediaType = FeedsData.MediaType.containsImg;
+      } else if (kind == 'video') {
+        mMediaType = FeedsData.MediaType.containsVideo
+      } else {
+        mMediaType = FeedsData.MediaType.noMeida
+      }
+
+      const mData: FeedsData.mediaData = {
+        kind: kind,
+        originMediaCid: originMediaCid,
+        type: type,
+        size: size,
+        imageIndex: index,
+        thumbnailCid: thumbnailCid,
+        duration: duration,
+        additionalInfo: additionalInfo,
+        memo: memo
+      }
+      mMediaDatas.push(mData);
+    }
+
+    const content: FeedsData.Content = {
+      version: mVersion,
+      text: mText,
+      mediaType: mMediaType,
+      videoThumbKey: null,
+      imgThumbKeys: null,
+      nftTokenId: nftTokenId,
+      nftOrderId: nftOrderId,
+      nftImageType: nftImageType,
+      mediaDatas: mMediaDatas
+    };
+
+    return content;
+  }
+
 
   parseContentV1(
     nodeId: string,
@@ -5966,7 +6052,8 @@ export class FeedService {
       imgThumbKeys: imgThumbKeys,
       nftTokenId: nftTokenId,
       nftOrderId: nftOrderId,
-      nftImageType: nftImageType
+      nftImageType: nftImageType,
+      mediaDatas: null
     };
 
     return content;
@@ -6011,7 +6098,8 @@ export class FeedService {
       imgThumbKeys: imgThumbKeys,
       nftTokenId: null,
       nftOrderId: null,
-      nftImageType: null
+      nftImageType: null,
+      mediaDatas: null,
     };
 
     return content;

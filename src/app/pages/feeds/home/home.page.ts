@@ -1323,6 +1323,7 @@ export class HomePage implements OnInit {
           if (contentVersion == '0') {
             imageKey = thumbkey;
           }
+
           this.feedService
             .getData(imageKey)
             .then(imagedata => {
