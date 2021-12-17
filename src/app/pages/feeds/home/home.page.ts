@@ -38,6 +38,7 @@ import { HttpService } from '../../../services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { PostHelperService } from 'src/app/services/post_helper.service';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -189,7 +190,8 @@ export class HomePage implements OnInit {
     private httpService: HttpService,
     private dataHelper: DataHelper,
     private keyboard: Keyboard,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
+    private postHelperService: PostHelperService
   ) { }
 
   initPostListData(scrollToTop: boolean) {
@@ -727,8 +729,19 @@ export class HomePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.curNodeId = '';
-    this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-    this.isImgLoading[this.imgDownStatusKey] = false;
+
+    let isImgPercentageLoadingkeys: string[] = Object.keys(this.isImgPercentageLoading) || [];
+    for (let index = 0; index < isImgPercentageLoadingkeys.length; index++) {
+      const key = isImgPercentageLoadingkeys[index];
+      this.isImgPercentageLoading[key] = false;
+    }
+
+    let isImgLoadingkeys: string[] = Object.keys(this.isImgLoading) || [];
+    for (let index = 0; index < isImgLoadingkeys.length; index++) {
+      const key = isImgLoadingkeys[index];
+      this.isImgLoading[key] = false;
+    }
+
     this.imgDownStatus[this.imgDownStatusKey] = '';
     this.imgPercent = 0;
     this.imgRotateNum['transform'] = 'rotate(0deg)';
@@ -1152,6 +1165,27 @@ export class HomePage implements OnInit {
   showBigImage(nodeId: string, channelId: number, postId: number) {
     this.pauseAllVideo();
     this.zone.run(() => {
+      const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+      if (content.version == '2.0') {
+        console.log('content ==> ', content);
+        const mediaDatas = content.mediaDatas;
+        if (mediaDatas && mediaDatas.length > 0) {
+          const elements = mediaDatas[0];
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+            this.isImgLoading = false;
+            this.imgDownStatusKey = nodeId + '-' + channelId + '-' + postId;
+            this.viewHelper.openViewer(
+              this.titleBar,
+              value,
+              'common.image',
+              'PostdetailPage.postview',
+              this.appService,
+            );
+          });
+        }
+        return;
+      }
+
       let imagesId = nodeId + '-' + channelId + '-' + postId + 'postimg';
       let imagesObj = document.getElementById(imagesId);
       let imagesWidth = imagesObj.clientWidth;
@@ -1277,12 +1311,67 @@ export class HomePage implements OnInit {
         postImage.getBoundingClientRect().top >= -100 &&
         postImage.getBoundingClientRect().top <= this.clientHeight
       ) {
+
+        console.log('1111111111111111');
         if (isload === '') {
+          console.log('222222222222222');
           this.isLoadimage[id] = '11';
           let arr = srcId.split('-');
           let nodeId = arr[0];
           let channelId: any = arr[1];
           let postId: any = arr[2];
+
+
+
+          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+          console.log('content ===>', content);
+          if (content.version == '2.0') {
+            postImage.setAttribute('src', './assets/icon/reserve.svg');
+            const mediaDatas = content.mediaDatas;
+            if (mediaDatas && mediaDatas.length > 0) {
+              const elements = mediaDatas[0];
+              console.log('elements ===>', elements);
+              this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+                let thumbImage = value || "";
+                console.log('value ===>', value);
+                postImage.setAttribute('src', thumbImage);
+
+                // if (thumbImage != '') {
+                //   this.isLoadimage[id] = '13';
+
+                //   if (nftOrdeId != '' && priceDes != '') {
+                //     let imagesWidth = postImage.clientWidth;
+                //     let homebidfeedslogo = document.getElementById(
+                //       id + 'homebidfeedslogo'
+                //     );
+                //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                //     homebidfeedslogo.style.display = 'block';
+
+                //     let homebuy = document.getElementById(id + 'homebuy');
+                //     let homeNftPrice = document.getElementById(
+                //       id + 'homeNftPrice'
+                //     );
+                //     let homeNftQuantity = document.getElementById(
+                //       id + 'homeNftQuantity'
+                //     );
+                //     let homeMaxNftQuantity = document.getElementById(
+                //       id + 'homeMaxNftQuantity'
+                //     );
+                //     homeNftPrice.innerText = priceDes;
+                //     homeNftQuantity.innerText = nftQuantity;
+                //     homeMaxNftQuantity.innerText = nftQuantity;
+                //     homebuy.style.display = 'block';
+                //   }
+                //   rpostimg.style.display = 'block';
+                // } else {
+                //   this.isLoadimage[id] = '12';
+                //   rpostimg.style.display = 'none';
+                // }
+              });
+            }
+            return;
+          }
+
           let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
           let thumbkey = this.feedService.getImgThumbKeyStrFromId(
             nodeId,
@@ -1323,6 +1412,8 @@ export class HomePage implements OnInit {
           if (contentVersion == '0') {
             imageKey = thumbkey;
           }
+
+
 
           this.feedService
             .getData(imageKey)
