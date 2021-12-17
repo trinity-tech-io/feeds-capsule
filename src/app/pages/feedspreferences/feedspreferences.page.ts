@@ -20,6 +20,7 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { Config } from 'src/app/services/config';
+import { MenuService } from 'src/app/services/MenuService';
 
 @Component({
   selector: 'app-feedspreferences',
@@ -51,7 +52,6 @@ export class FeedspreferencesPage implements OnInit {
   public loadingText: string = "";
   public loadingCurNumber: string = "";
   public loadingMaxNumber: string = "";
-
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -70,6 +70,7 @@ export class FeedspreferencesPage implements OnInit {
     private nftContractHelperService: NFTContractHelperService,
     private ipfsService: IPFSService,
     private carrierService: CarrierService,
+    private menuService: MenuService,
   ) {}
 
   ngOnInit() {
@@ -118,11 +119,63 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   clearEvent() {
+    this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
+    this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   addEvent() {
+    this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
+      let title = obj["title"];
+      let des = obj["des"];
+      let curNum = obj["curNum"];
+      let maxNum = obj["maxNum"];
+      this.loadingTitle = title;
+      this.loadingText = des;
+      this.loadingCurNumber = curNum;
+      this.loadingMaxNumber = maxNum;
+      this.isLoading = true;
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.endLoading, (obj) => {
+      this.isLoading = false;
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder,(channelCollections: FeedsData.ChannelCollections)=>{
+      let tokenId = channelCollections.tokenId;
+      let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
+        return item.tokenId === tokenId;
+      });
+      let newChannelCollections = _.cloneDeep(channelCollections);
+          newChannelCollections.panelId = "";
+          newChannelCollections.status = "0";
+      this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
+      this.handleCace();
+  });
+
+  this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
+    let type = obj["type"] || "";
+    let tokenId = obj['tokenId'];
+    if(type === "burn"){
+      let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
+        return item.tokenId === tokenId;
+      });
+      this.channelCollectionList.splice(itemIndex,1);
+      this.handleCace();
+      return;
+    }
+    let panelId = obj['panelId'];
+    let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
+      return item.tokenId === tokenId;
+    });
+    let newChannelCollections = _.cloneDeep(this.channelCollectionList[itemIndex]);
+    newChannelCollections.panelId = panelId;
+    newChannelCollections.status = "1";
+    this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
+    this.handleCace();
+  });
+
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -131,6 +184,13 @@ export class FeedspreferencesPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
     });
+  }
+
+  handleCace() {
+    let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
+    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
+    ownChannelCollection[accountAddress] = this.channelCollectionList;
+    this.dataHelper.setOwnChannelCollection(ownChannelCollection);
   }
 
   unPublicFeeds() {
@@ -306,7 +366,7 @@ export class FeedspreferencesPage implements OnInit {
   //   }
   // }
 
-   toggle(){
+  async toggle(){
     // if (!this.curFeedPublicStatus) {
     //   if (this.feedService.getConnectionStatus() !== 0) {
     //     this.native.toastWarn('common.connectionError');
@@ -337,99 +397,60 @@ export class FeedspreferencesPage implements OnInit {
     let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
     if(channelCollections != null){
       if(channelCollections.status === "1"){//收藏品频道下架
-           this.unPublicCollectionsDialog();
+        let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
+        if(accountAddress === '') {
+        this.native.toastWarn('common.connectWallet');
+        return;
+        }
+        this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
            return;
       }
-    }
-  }
-
-  unPublicCollectionsDialog(){
-    this.popover = this.popupProvider.ionicConfirm(
-      this,
-      'FeedspreferencesPage.des3',
-      'FeedspreferencesPage.des4',
-      this.cancelUnPublicCollections,
-      this.confirmUnPublicCollections,
-      './assets/images/tskth.svg',
-      'FeedspreferencesPage.des5',
-      'FeedspreferencesPage.des6',
-    );
-  }
-
- async cancelUnPublicCollections(that: any){
-    if (this.popover != null) {
-      await this.popover.dismiss();
-      this.popover = null;
-    }
-  }
-
-  async confirmUnPublicCollections(that: any) {
-    let accountAddress =
-    that.nftContractControllerService.getAccountAddress() || '';
-  if (accountAddress === '') {
-    that.native.toastWarn('common.connectWallet');
-    return;
-  }
-    if (this.popover != null) {
-       await this.popover.dismiss();
-       this.popover = null;
-    }
-    that.isLoading = true;
-    that.loadingTitle = "common.waitMoment";
-    that.loadingText = "common.cancelingOrderDesc";
-    that.loadingCurNumber = "1";
-    that.loadingMaxNumber = "1";
-    let sId = setTimeout(()=>{
-      that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();
-      that.isLoading = false;
-      clearTimeout(sId);
-      that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
-    },Config.WAIT_TIME_CANCEL_ORDER)
-
-    that.doCancelChannelOrder(that)
-      .then(() => {
-        that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();
-        that.isLoading = false;
-        that.curFeedPublicStatus = false;
-        clearTimeout(sId);
-        that.native.toast_trans('common.cancelSuccessfully');
-      })
-      .catch(() => {
-        // cancel order error
-        that.isLoading = false;
-        clearTimeout(sId);
-        that.native.toast_trans('common.cancellationFailed');
-        that.nftContractControllerService.getPasar().cancelCancelOrderProcess();
-      });
-  }
-
-  async doCancelChannelOrder(that: any): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      let panelId = this.channelCollections['panelId'] || '';
-      if (panelId === '') {
-        reject('error');
-        return;
+    }else{
+    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      if (server === null) {
+      return;
       }
-      let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
-      if (cancelStatus===null) {
-        reject('error');
+      let feedsUrl = server.feedsUrl + '/' + this.feedId;
+      let tokenInfo = await this.isExitStrick(feedsUrl);
+      if(tokenInfo != null){
+        let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
+        if(accountAddress === '') {
+        this.native.toastWarn('common.connectWallet');
         return;
+        }
+        let channelItem: FeedsData.ChannelCollections = await this.getChannelCollections(tokenInfo,accountAddress);
+        this.menuService.showChannelCollectionsMenu(channelItem);
       }
-
-      let tokenId = that.channelCollections.tokenId;
-      console.log("")
-      let itemIndex = _.findIndex(this.channelCollectionList,(item)=>{
-        return item.tokenId === tokenId;
-      });
-      that.channelCollectionList.splice(itemIndex,1);
-      that.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
-      resolve('Success');
-    });
-
+    }
   }
 
-  async cancelChannelOrder(that: any, panelId: string) {
-    return await that.nftContractControllerService.getGalleria().removePanel(panelId);
+ async getChannelCollections(tokenInfo :any,accountAddress: string){
+      let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections()
+      channelCollections.status = "0";
+      channelCollections.userAddr = accountAddress;
+      channelCollections.panelId = "";
+      channelCollections.tokenId = tokenInfo[0];
+      channelCollections.type = "feeds-channel";
+      const signinData = this.feedService.getSignInData();
+      channelCollections.ownerDid = signinData.did;
+
+    let tokenUri = tokenInfo[3]; //tokenUri
+    tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
+    const tokenJson = await this.ipfsService
+    .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
+    channelCollections.name = tokenJson["name"];
+    channelCollections.description = tokenJson["description"];
+    let url: string = tokenJson["entry"]["url"];
+    let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
+    channelCollections.avatar = avatar;
+    channelCollections.url = url;
+    channelCollections.ownerName = "";
+    let urlArr = url.replace("feeds://","").split("/");
+    channelCollections.did = urlArr[0];
+    let carrierAddress = urlArr[1];
+    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
+    channelCollections.nodeId = nodeId;
+    return channelCollections;
   }
 
   setCollectible() {
@@ -521,7 +542,22 @@ export class FeedspreferencesPage implements OnInit {
       this.dataHelper.setPublishedActivePanelList(channelCollectionList);
       return channelCollectionList;
     }
+  }
+
+ async isExitStrick(feedsUrl: string) {
+
+   try {
+    let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+    if(tokenInfo[0]!= '0' && tokenInfo[2] != '0'){
+         return tokenInfo;
+    }
+    return null;
+   } catch (error) {
+    return null;
+   }
 
   }
+
 
 }
