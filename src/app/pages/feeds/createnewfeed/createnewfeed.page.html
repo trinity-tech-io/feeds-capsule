@@ -25,7 +25,7 @@
 
         <ion-item lines="none">
           <ion-row class="section dev-mode">
-            <ion-col size="9" class="title-col" (swipe)="clickPublicFeeds()">
+            <ion-col size="9" class="title-col" (swipe)="clickPublicFeeds()" [style.touch-action]="'pan-y'">
                 <h1 (click)="help($event)" >{{"FeedspreferencesPage.des" | translate }} <img [src]="!theme.darkMode ? './assets/images/question-circle.svg' : './assets/images/darkmode/question-circle.svg'" id="help"></h1>
                 <img *ngIf="isHelp&&curLang=='en'&&!theme.darkMode" src="./assets/images/icontop.svg" style="z-index: 9999;position: absolute;top: 26px;left:185px;">
                 <img *ngIf="isHelp&&curLang=='zh'&&!theme.darkMode" src="./assets/images/icontop.svg" style="z-index: 9999;position: absolute;top: 26px;left:140px;">
@@ -34,7 +34,7 @@
                 <h2 *ngIf="curFeedPublicStatus" (click)="clickPublicFeeds()">{{ 'SettingsPage.on' | translate }}</h2>
                  <h2 *ngIf="!curFeedPublicStatus" (click)="clickPublicFeeds()">{{ 'SettingsPage.off' | translate }}</h2>
             </ion-col>
-            <ion-col size="3" class="arrow-col" (swipe)="clickPublicFeeds()" (click)="clickPublicFeeds()">
+            <ion-col size="3" class="arrow-col" (swipe)="clickPublicFeeds()" (click)="clickPublicFeeds()" [style.touch-action]="'pan-y'">
               <ion-toggle [(ngModel)]="curFeedPublicStatus"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
             </ion-col>
            </ion-row>
