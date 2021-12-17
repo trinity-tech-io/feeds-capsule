@@ -63,12 +63,12 @@
 
       <ion-item lines="none" (click)="clickAdult()">
         <ion-row class="section dev-mode">
-          <ion-col size="9" class="title-col" (swipe)="clickAdult()">
+          <ion-col size="9" class="title-col" (swipe)="clickAdult()" [style.touch-action]="'pan-y'">
               <h1>{{"MintnftPage.adult" | translate }}</h1>
               <h2 *ngIf="adult">{{ 'SettingsPage.on' | translate }}</h2>
                <h2 *ngIf="!adult">{{ 'SettingsPage.off' | translate }}</h2>
           </ion-col>
-          <ion-col size="3" class="arrow-col" (swipe)="clickAdult()">
+          <ion-col size="3" class="arrow-col" (swipe)="clickAdult()" [style.touch-action]="'pan-y'">
             <ion-toggle [(ngModel)]="adult"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
           </ion-col>
          </ion-row>
@@ -76,12 +76,12 @@
 
       <ion-item lines="none" (click)="clickPublishtoPasar()">
         <ion-row class="section dev-mode">
-          <ion-col size="9" class="title-col" (swipe)="clickPublishtoPasar()">
+          <ion-col size="9" class="title-col" (swipe)="clickPublishtoPasar()" [style.touch-action]="'pan-y'">
               <h1>{{"MintnftPage.putOnSale" | translate }}</h1>
               <h2 *ngIf="curPublishtoPasar">{{ 'SettingsPage.on' | translate }}</h2>
                <h2 *ngIf="!curPublishtoPasar">{{ 'SettingsPage.off' | translate }}</h2>
           </ion-col>
-          <ion-col size="3" class="arrow-col" (swipe)="clickPublishtoPasar()">
+          <ion-col size="3" class="arrow-col" (swipe)="clickPublishtoPasar()" [style.touch-action]="'pan-y'">
             <ion-toggle [(ngModel)]="curPublishtoPasar"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
           </ion-col>
          </ion-row>

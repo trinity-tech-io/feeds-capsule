@@ -5,23 +5,23 @@
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
     <ion-row class="section" (click)="toggle()">
-      <ion-col size="9" class="title-col" (swipe)="toggle()">
+      <ion-col size="9" class="title-col" (swipe)="toggle()" [style.touch-action]="'pan-y'">
           <h1>{{"FeedspreferencesPage.des" | translate }}</h1>
           <h2 *ngIf="curFeedPublicStatus">{{ 'SettingsPage.on' | translate }}</h2>
           <h2 *ngIf="!curFeedPublicStatus">{{ 'SettingsPage.off' | translate }}</h2>
       </ion-col>
-      <ion-col size="3" class="arrow-col" (swipe)="toggle()">
+      <ion-col size="3" class="arrow-col" (swipe)="toggle()" [style.touch-action]="'pan-y'">
         <ion-toggle style="pointer-events: none;"  mode="ios" color="success" [(ngModel)]="curFeedPublicStatus"></ion-toggle>
       </ion-col>
   </ion-row>
 
   <ion-row class="section" (click)="setCollectible()">
-    <ion-col size="9" class="title-col" (swipe)="setCollectible()">
+    <ion-col size="9" class="title-col" (swipe)="setCollectible()" [style.touch-action]="'pan-y'">
         <h1>{{"FeedspreferencesPage.des1" | translate }}</h1>
         <h2 *ngIf="curCollectibleStatus">{{ 'SettingsPage.on' | translate }}</h2>
         <h2 *ngIf="!curCollectibleStatus">{{ 'SettingsPage.off' | translate }}</h2>
     </ion-col>
-    <ion-col size="3" class="arrow-col" (swipe)="setCollectible()">
+    <ion-col size="3" class="arrow-col" (swipe)="setCollectible()" [style.touch-action]="'pan-y'">
       <ion-toggle style="pointer-events: none;"  mode="ios" color="success" [(ngModel)]="curCollectibleStatus"></ion-toggle>
     </ion-col>
   </ion-row>
