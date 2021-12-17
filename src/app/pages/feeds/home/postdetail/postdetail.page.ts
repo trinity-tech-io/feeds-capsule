@@ -774,6 +774,26 @@ export class PostdetailPage implements OnInit {
 
   showBigImage() {
     this.zone.run(() => {
+      const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
+      if (content.version == '2.0') {
+        console.log('content ==> ', content);
+        const mediaDatas = content.mediaDatas;
+        if (mediaDatas && mediaDatas.length > 0) {
+          const elements = mediaDatas[0];
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+            this.isImgLoading = false;
+            this.viewHelper.openViewer(
+              this.titleBar,
+              value,
+              'common.image',
+              'PostdetailPage.postview',
+              this.appService,
+            );
+          });
+        }
+        return;
+      }
+
       if (this.imgDownStatus != '') {
         return;
       }
@@ -813,9 +833,13 @@ export class PostdetailPage implements OnInit {
         0,
         0,
       );
+
+      console.log('contentVersion ==> ', contentVersion);
       if (contentVersion == '0') {
         key = thumbkey;
       }
+
+
 
 
 
@@ -879,12 +903,9 @@ export class PostdetailPage implements OnInit {
       this.postImage = './assets/icon/reserve.svg';//set Reserve Image
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas.pop();
+        const elements = mediaDatas[0];
         this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
           this.postImage = value;
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-            this.postImage = value;
-          })
         });
       }
       return;
