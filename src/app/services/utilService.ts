@@ -679,6 +679,7 @@ export class UtilService {
 
   public static getChannelCollections() {
     let channelCollections: FeedsData.ChannelCollections = {
+      version: '2',
       tokenId: '',
       nodeId: '',
       did: '',
@@ -698,7 +699,12 @@ export class UtilService {
       status: '0',
       panelId: '',
       userAddr: '',
-      diaBalance: '0'
+      diaBalance: '0',
+      entry: {
+        url: '',
+        location: '',
+        version: ''
+      }
     };
     return channelCollections;
   }

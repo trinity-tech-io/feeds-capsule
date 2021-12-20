@@ -981,7 +981,7 @@ async getActivePanelList(){
     channelCollections.name = tokenJson["name"];
     channelCollections.description = tokenJson["description"];
     channelCollections.avatar = avatar;
-    channelCollections.url = url;
+    channelCollections.entry = tokenJson["entry"];
     let didUri = this.nftContractHelperService.parseTokenUri(item[6]);
     const didJson: any = await this.ipfsService
     .nftGet(this.ipfsService.getNFTGetUrl() + didUri);
@@ -1009,8 +1009,9 @@ async getActivePanelList(){
 clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
    let avatarId = this.handleCollectionImgId(channelCollections);
    let feedsAvatar = document.getElementById(avatarId).getAttribute("src") || "";
-   let newChannelCollections: any = channelCollections;
+   let newChannelCollections: any = _.cloneDeep(channelCollections);
    newChannelCollections.feedsAvatar = feedsAvatar;
+   newChannelCollections.url = channelCollections.entry.url;
    this.removeSubscribe();
    this.native.go('discoverfeedinfo', {
      params: newChannelCollections,
@@ -1019,14 +1020,13 @@ clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
 
 subscribeChannelCollection(channelCollections: FeedsData.ChannelCollections){
 
-  let feedUrl = channelCollections.url;
+  let feedUrl = channelCollections.entry.url;
   let followers = 0;
   let feedName = channelCollections.name;
   let desc = channelCollections.description;
   let ownerName = channelCollections.ownerName;
   //let avatarId = this.handleCollectionImgId(channelCollections);
   let avatar = channelCollections.avatar.image;
-  console.log("===avatar===="+avatar);
   this.feedService
   .addFeed(feedUrl,avatar,followers, feedName, ownerName, desc)
   .then(isSuccess => {

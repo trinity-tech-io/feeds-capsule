@@ -14,7 +14,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import * as _ from 'lodash';
+import  _ from 'lodash';
 
 @Component({
   selector: 'app-discoverfeedinfo',
@@ -64,10 +64,12 @@ export class DiscoverfeedinfoPage implements OnInit {
   ngOnInit() {
     this.acRoute.queryParams.subscribe(data => {
       this.feedInfo = _.cloneDeep(data)['params'];
+      let avatar = this.handleAvatar(this.feedInfo['feedsAvatar']);
+      document.getElementById("discoverFeedsAvatar").setAttribute("src",avatar);
       this.feedsUrl = this.feedInfo['url'] || '';
       this.qrcodeString =
         this.feedsUrl + '#' + encodeURIComponent(this.feedInfo['name']) || null;
-    });
+      });
   }
 
   ionViewWillEnter() {

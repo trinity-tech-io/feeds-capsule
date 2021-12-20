@@ -31,7 +31,6 @@ export class FeedinfoPage implements OnInit {
   public name: string = '';
   public des: string = '';
   public channelAvatar = '';
-  public avatar = '';
   public oldChannelInfo: any = {};
   public oldChannelAvatar: string = '';
   public serverInfo: any = {};
@@ -93,6 +92,7 @@ export class FeedinfoPage implements OnInit {
       this.serverDid = channelInfo["did"];
       this.elaAddress = "common.emptyElaAddressDes";
       this.feedsUrl = channelInfo["feedUrl"];
+      console.log("===this.feedsUrl===",this.feedsUrl);
       this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
     }
 
@@ -115,7 +115,8 @@ export class FeedinfoPage implements OnInit {
     this.initTitle();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
-    this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+    let avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+    document.getElementById("feedsInfoAvatar").setAttribute("src",avatar);
     this.addEvents();
   }
 

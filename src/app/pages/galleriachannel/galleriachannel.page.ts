@@ -665,12 +665,17 @@ export class GalleriachannelPage implements OnInit {
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
     let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+    let galleriaEntry:FeedsData.GalleriaEntry = {
+      url:this.feedsUrl,
+      location: "feeds-service",
+      version: "1.0"
+    }
+    channelCollections.entry = galleriaEntry;
     channelCollections.tokenId = tokenId;
     channelCollections.panelId = panelId;
     channelCollections.nodeId = this.nodeId;
     channelCollections.name = this.nftName;
     channelCollections.description = this.nftDescription;
-    channelCollections.url = this.feedsUrl;
     channelCollections.ownerName = "";
     channelCollections.avatar =  this.avatarObj;
     let urlArr = this.feedsUrl.replace("feeds://","").split("/");
@@ -684,6 +689,11 @@ export class GalleriachannelPage implements OnInit {
     let ownList = ownChannelCollection[accAddress] || [];
        ownList.push(channelCollections);
     this.dataHelper.setOwnChannelCollection(ownChannelCollection);
+
+    //exploer feeds
+    let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
+        publishedActivePanelList.push(channelCollections);
+        this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
   }
 
  async getDidUri(){
