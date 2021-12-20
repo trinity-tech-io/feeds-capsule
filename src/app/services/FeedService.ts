@@ -6143,13 +6143,8 @@ export class FeedService {
     commentId: number,
     index: number,
   ): FeedsData.ImageThumbKey {
-    let imgThumbKeys = this.getImgThumbsKeyFromId(
-      nodeId,
-      channelId,
-      postId,
-      commentId,
-    );
-    if (imgThumbKeys.length == 0 || imgThumbKeys[index] == undefined)
+    let imgThumbKeys = this.getImgThumbsKeyFromId(nodeId, channelId, postId, commentId,);
+    if (!imgThumbKeys || imgThumbKeys.length == 0 || imgThumbKeys[index] == undefined)
       return undefined;
 
     return imgThumbKeys[index];

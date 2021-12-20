@@ -1165,6 +1165,21 @@ export class HomePage implements OnInit {
   showBigImage(nodeId: string, channelId: number, postId: number) {
     this.pauseAllVideo();
     this.zone.run(() => {
+
+      let imagesId = nodeId + '-' + channelId + '-' + postId + 'postimg';
+      let imagesObj = document.getElementById(imagesId);
+      let imagesWidth = imagesObj.clientWidth;
+      let imagesHeight = imagesObj.clientHeight;
+      this.imgloadingStyleObj['position'] = 'absolute';
+      this.imgloadingStyleObj['left'] =
+        (imagesWidth - this.roundWidth) / 2 + 'px';
+      this.imgloadingStyleObj['top'] =
+        (imagesHeight - this.roundWidth) / 2 + 'px';
+      this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
+      console.log('this.isImgLoading', this.isImgLoading);
+      console.log('this.imgCurKey', this.imgCurKey);
+      this.isImgLoading[this.imgCurKey] = true;
+
       const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
       if (content.version == '2.0') {
         console.log('content ==> ', content);
@@ -1187,19 +1202,6 @@ export class HomePage implements OnInit {
         return;
       }
 
-      let imagesId = nodeId + '-' + channelId + '-' + postId + 'postimg';
-      let imagesObj = document.getElementById(imagesId);
-      let imagesWidth = imagesObj.clientWidth;
-      let imagesHeight = imagesObj.clientHeight;
-      this.imgloadingStyleObj['position'] = 'absolute';
-      this.imgloadingStyleObj['left'] =
-        (imagesWidth - this.roundWidth) / 2 + 'px';
-      this.imgloadingStyleObj['top'] =
-        (imagesHeight - this.roundWidth) / 2 + 'px';
-      this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
-      console.log('this.isImgLoading', this.isImgLoading);
-      console.log('this.imgCurKey', this.imgCurKey);
-      this.isImgLoading[this.imgCurKey] = true;
 
       let contentVersion = this.feedService.getContentVersion(
         nodeId,
@@ -1324,7 +1326,46 @@ export class HomePage implements OnInit {
           let channelId: any = arr[1];
           let postId: any = arr[2];
 
+          let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
+          let thumbkey = this.feedService.getImgThumbKeyStrFromId(
+            nodeId,
+            channelId,
+            postId,
+            0,
+            0,
+          );
+          let nftOrdeId = this.isNftOrderId(
+            nodeId,
+            parseInt(channelId),
+            parseInt(postId),
+          );
+          let priceDes = '';
+          let nftQuantity = '';
+          if (nftOrdeId != '') {
+            // let nftOrder = await this.handlePrice(nftOrdeId);
+            let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
+            let price = '';
+            if (nftOrder != null) {
+              nftQuantity = String(nftOrder.amount);
+              price = String(nftOrder.price);
+            }
+            if (price != '') {
+              priceDes =
+                this.nftContractControllerService.transFromWei(
+                  price.toString(),
+                ) + ' ELA';
+            }
+          }
+          let contentVersion = this.feedService.getContentVersion(
+            nodeId,
+            channelId,
+            postId,
+            0,
+          );
 
+          if (contentVersion == '0') {
+            imageKey = thumbkey;
+          }
 
           const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
           console.log('content ===>', content);
@@ -1374,49 +1415,6 @@ export class HomePage implements OnInit {
             }
             return;
           }
-
-          let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
-          let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-          );
-          let nftOrdeId = this.isNftOrderId(
-            nodeId,
-            parseInt(channelId),
-            parseInt(postId),
-          );
-          let priceDes = '';
-          let nftQuantity = '';
-          if (nftOrdeId != '') {
-            // let nftOrder = await this.handlePrice(nftOrdeId);
-            let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
-            let price = '';
-            if (nftOrder != null) {
-              nftQuantity = String(nftOrder.amount);
-              price = String(nftOrder.price);
-            }
-            if (price != '') {
-              priceDes =
-                this.nftContractControllerService.transFromWei(
-                  price.toString(),
-                ) + ' ELA';
-            }
-          }
-          let contentVersion = this.feedService.getContentVersion(
-            nodeId,
-            channelId,
-            postId,
-            0,
-          );
-
-          if (contentVersion == '0') {
-            imageKey = thumbkey;
-          }
-
-
 
           this.feedService
             .getData(imageKey)
