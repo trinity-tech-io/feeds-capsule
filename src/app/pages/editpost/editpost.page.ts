@@ -89,6 +89,10 @@ export class EditPostPage implements OnInit {
       this.channelId = item['channelId'] || '';
       this.postId = item['postId'] || '';
     });
+    let sid = setTimeout(() => {
+      this.newPostIonTextarea.setFocus();
+      clearTimeout(sid);
+    }, 300);
   }
 
   ionViewWillEnter() {
@@ -266,7 +270,6 @@ export class EditPostPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    document.getElementById('editPost').click();
   }
 
   initTitle() {
@@ -279,7 +282,7 @@ export class EditPostPage implements OnInit {
   }
 
   post() {
-  
+
 
     if (this.checkServerStatus(this.nodeId) != 0) {
       this.native.toastWarn('common.connectionError');
