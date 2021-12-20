@@ -217,7 +217,7 @@ export class NotificationPage {
     this.native.navigateForward(['/postdetail', nodeId, channelId, postId], '');
   }
 
-  getContentText(content: string): string {
+  getContentText(content: FeedsData.Content): string {
     return this.feedService.parsePostContentText(content);
   }
 

@@ -1172,7 +1172,8 @@ export class HomePage implements OnInit {
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
           this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-            this.isImgLoading = false;
+            this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
+            this.isImgLoading[this.imgCurKey] = false;
             this.imgDownStatusKey = nodeId + '-' + channelId + '-' + postId;
             this.viewHelper.openViewer(
               this.titleBar,
@@ -1196,6 +1197,8 @@ export class HomePage implements OnInit {
       this.imgloadingStyleObj['top'] =
         (imagesHeight - this.roundWidth) / 2 + 'px';
       this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
+      console.log('this.isImgLoading', this.isImgLoading);
+      console.log('this.imgCurKey', this.imgCurKey);
       this.isImgLoading[this.imgCurKey] = true;
 
       let contentVersion = this.feedService.getContentVersion(
@@ -1543,6 +1546,61 @@ export class HomePage implements OnInit {
           let nodeId = arr[0];
           let channelId: any = arr[1];
           let postId: any = arr[2];
+
+
+          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+          console.log('content ===>', content);
+          if (content.version == '2.0') {
+            video.setAttribute('poster', './assets/icon/reserve.svg');
+            const mediaDatas = content.mediaDatas;
+            if (mediaDatas && mediaDatas.length > 0) {
+              const elements = mediaDatas[0];
+              console.log('elements ===>', elements);
+              this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+                let thumbImage = value || "";
+                console.log('value ===>', value);
+                this.isLoadVideoiamge[id] = '13';
+                video.setAttribute('poster', thumbImage);
+
+                //video.
+                this.setFullScreen(id);
+                this.setOverPlay(id, srcId);
+                // if (thumbImage != '') {
+                //   this.isLoadimage[id] = '13';
+
+                //   if (nftOrdeId != '' && priceDes != '') {
+                //     let imagesWidth = postImage.clientWidth;
+                //     let homebidfeedslogo = document.getElementById(
+                //       id + 'homebidfeedslogo'
+                //     );
+                //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                //     homebidfeedslogo.style.display = 'block';
+
+                //     let homebuy = document.getElementById(id + 'homebuy');
+                //     let homeNftPrice = document.getElementById(
+                //       id + 'homeNftPrice'
+                //     );
+                //     let homeNftQuantity = document.getElementById(
+                //       id + 'homeNftQuantity'
+                //     );
+                //     let homeMaxNftQuantity = document.getElementById(
+                //       id + 'homeMaxNftQuantity'
+                //     );
+                //     homeNftPrice.innerText = priceDes;
+                //     homeNftQuantity.innerText = nftQuantity;
+                //     homeMaxNftQuantity.innerText = nftQuantity;
+                //     homebuy.style.display = 'block';
+                //   }
+                //   rpostimg.style.display = 'block';
+                // } else {
+                //   this.isLoadimage[id] = '12';
+                //   rpostimg.style.display = 'none';
+                // }
+              });
+            }
+            return;
+          }
+
           let key = this.feedService.getVideoThumbStrFromId(
             nodeId,
             channelId,
@@ -1741,6 +1799,30 @@ export class HomePage implements OnInit {
       (videoHeight - this.roundWidth) / 2 + 'px';
     this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
+
+
+    const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+    console.log('content ===>', content);
+    if (content.version == '2.0') {
+      console.log('11111111111111111 ===>');
+      // video.setAttribute('src', './assets/icon/reserve.svg');
+      const mediaDatas = content.mediaDatas;
+      if (mediaDatas && mediaDatas.length > 0) {
+        console.log('22222222222222 ===>');
+        const elements = mediaDatas[0];
+        console.log('elements ===>', elements);
+
+        console.log('this.videoCurKey ===>', this.videoCurKey);
+        // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+          this.isVideoLoading[this.videoCurKey] = false;
+          console.log('value ===>', value);
+          this.loadVideo(id, value);
+        });
+      }
+      return;
+    }
+
     let key = this.feedService.getVideoKey(nodeId, channelId, postId, 0, 0);
     this.feedService.getData(key).then((videoResult: string) => {
       this.zone.run(() => {
@@ -1820,6 +1902,7 @@ export class HomePage implements OnInit {
       return;
     }
     source.setAttribute('src', videodata);
+    console.log('333333333', source);
     let vgoverlayplay: any = document.getElementById(id + 'vgoverlayplayhome');
     let vgcontrol: any = document.getElementById(id + 'vgcontrolshome');
 

@@ -82,25 +82,23 @@
           </app-roundloading>
 
           <app-percentageloading
-          *ngIf="isVideoPercentageLoading"
-          [ngStyle]="videoloadingStyleObj"
-          [percent]="videoPercent"
-          [rotateNum]="videoRotateNum"
+            *ngIf="isVideoPercentageLoading"
+            [ngStyle]="videoloadingStyleObj"
+            [percent]="videoPercent"
+            [rotateNum]="videoRotateNum"
           >
           </app-percentageloading>
 
-          <vg-player>
-            <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
-            <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
-                <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg"/>
+        <vg-player>
+          <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
+          <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
+            <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
             </vg-controls>
 
-        <video #media [vgMedia]="media"
-        poster="assets/images/loading.png"
-        id={{nodeId+channelId+postId}}postdetailvideo
-        playsinline webkit-playsinline>
-        <source  type="video/mp4" id={{nodeId+channelId+postId}}postdetailsource>
-        </video>
+            <video #media [vgMedia]="media" poster="assets/images/loading.png" id={{nodeId+channelId+postId}}postdetailvideo
+              playsinline webkit-playsinline>
+              <source type="video/mp4" id={{nodeId+channelId+postId}}postdetailsource />
+              </video>
         </vg-player>
       </div>
         </ion-col>

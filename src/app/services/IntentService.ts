@@ -409,7 +409,7 @@ export class IntentService {
   createSharePostTitle(nodeId: string, channelId: number, postId: number): string {
     const key = this.dataHelper.getKey(nodeId, channelId, postId, 0);
     const post = this.dataHelper.getPost(key);
-    const content = post.content || '';
+    const content = post.content || null;
     let text: string = content.text || '';
 
     if (text.replace(/(^[\s\n\t]+|[\s\n\t]+$)/g, "") == '')
