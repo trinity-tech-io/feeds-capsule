@@ -33,6 +33,7 @@ export class ChannelcollectionsPage implements OnInit {
   public loadingMaxNumber: string = "";
   private clientHeight: number = 0;
   private accountAddress: string = "";
+  private signinData:any = {};
   public channelCollectionsAvatarisLoad: any = {};
   constructor(
     private titleBarService: TitleBarService,
@@ -58,6 +59,7 @@ export class ChannelcollectionsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.signinData = this.feedService.getSignInData() || {};
     this.clientHeight = screen.availHeight;
     this.accountAddress = this.walletConnectControllerService.getAccountAddress() || "";
     this.initTitle();
@@ -128,20 +130,12 @@ export class ChannelcollectionsPage implements OnInit {
     channelCollections.type = item.type;
     channelCollections.name = item.name;
     channelCollections.description = item.description;
-    channelCollections.ownerDid = item.tokenDid.did;
-
-  let tokenInfo =  await this.nftContractControllerService
-    .getSticker().tokenInfo(channelCollections.tokenId);
-
-  let tokenUri = tokenInfo[3]; //tokenUri
-  tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
-  const tokenJson = await this.ipfsService
-  .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
-  let url: string = tokenJson["entry"]["url"];
-  let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
+  let avatar: FeedsData.GalleriaAvatar = item["avatar"];
+  channelCollections.entry = item["entry"];
   channelCollections.avatar = avatar;
-  channelCollections.url = url;
-  channelCollections.ownerName = "";
+  channelCollections.ownerDid = this.signinData.did || "";
+  channelCollections.ownerName = this.signinData.name || "";
+  let url: string = channelCollections.entry.url;
   let urlArr = url.replace("feeds://","").split("/");
   channelCollections.did = urlArr[0];
   let carrierAddress = urlArr[1];
@@ -197,6 +191,10 @@ export class ChannelcollectionsPage implements OnInit {
         this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
         this.refreshChannelCollectionAvatar();
         this.handleCace();
+        //exploer feeds
+       let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
+       publishedActivePanelList.splice(itemIndex,1);
+       this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
@@ -221,6 +219,11 @@ export class ChannelcollectionsPage implements OnInit {
       this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
       this.refreshChannelCollectionAvatar();
       this.handleCace();
+
+       //exploer feeds
+       let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
+       publishedActivePanelList.push(newChannelCollections);
+       this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
     });
   }
 
@@ -328,15 +331,16 @@ export class ChannelcollectionsPage implements OnInit {
       tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
       const tokenJson = await this.ipfsService
       .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
-      let url: string = tokenJson["entry"]["url"];
+
       let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
       channelCollections.name = tokenJson["name"];
       channelCollections.description = tokenJson["description"];
       channelCollections.avatar = avatar;
-      channelCollections.url = url;
-      const signinData = this.feedService.getSignInData();
-      channelCollections.ownerDid = signinData.did;
-      channelCollections.ownerName = "";
+      channelCollections.entry = tokenJson["entry"];
+
+      channelCollections.ownerDid = this.signinData.did || "";
+      channelCollections.ownerName = this.signinData.name || "";
+      let url: string = tokenJson["entry"]["url"];
       let urlArr = url.replace("feeds://","").split("/");
       channelCollections.did = urlArr[0];
       let carrierAddress = urlArr[1];
