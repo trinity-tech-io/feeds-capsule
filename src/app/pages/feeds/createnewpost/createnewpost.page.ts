@@ -31,6 +31,11 @@ export class CreatenewpostPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', { static: false })
   newPostIonTextarea: IonTextarea;
+  public isLoading: boolean = false;
+  public loadingTitle: string = "common.waitMoment";
+  public loadingText: string = "common.uploading";
+  public loadingCurNumber: string = "1";
+  public loadingMaxNumber: string = "1";
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = '';
@@ -200,6 +205,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.isLoading = false;
     this.hideSwitchFeed = false;
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
@@ -264,7 +270,9 @@ export class CreatenewpostPage implements OnInit {
       if (!this.isPublishing) {
         this.isPublishing = true;
         //show dialog
+        this.isLoading = true;
         await this.sendPost();
+        this.isLoading = false;
         //dismiss dialog
         this.backHome();
       }

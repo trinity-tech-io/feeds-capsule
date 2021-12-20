@@ -69,7 +69,7 @@ export class PostdetailPage implements OnInit {
   public cacheGetBinaryRequestKey = '';
   public cachedMediaType = '';
 
-  public mediaType: any;
+  public mediaType: FeedsData.MediaType;
 
   public fullScreenmodal: any = '';
 
@@ -245,10 +245,58 @@ export class PostdetailPage implements OnInit {
     this.likesNum = post.likes;
     this.commentsNum = post.comments;
     console.log('this.postContent =>', this.postContent);
-    if (this.mediaType === 1) {
+    if (this.mediaType === FeedsData.MediaType.containsImg) {
       this.getImage(this.postContent);
     }
-    if (post.content.mediaType === 2) {
+    if (this.mediaType === FeedsData.MediaType.containsVideo) {
+
+      // if (this.postContent.version == '2.0') {
+      //   this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
+      //   const mediaDatas = this.postContent.mediaDatas;
+      //   console.log('mediaDatas', mediaDatas);
+      //   if (mediaDatas && mediaDatas.length > 0) {
+      //     const elements = mediaDatas[0];
+      //     this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+      //       console.log('postImage', value);
+      //       this.posterImg = value;
+      //       let sid = setTimeout(() => {
+      //         let video: any =
+      //           document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
+      //         console.log('this.postContent =>', this.postContent);
+      //         video.setAttribute('poster', this.posterImg);
+      //         this.setFullScreen();
+      //         this.setOverPlay();
+      //         clearTimeout(sid);
+      //       }, 0);
+      //     });
+      //   }
+      //   return;
+      // }
+
+      if (this.postContent.version == '2.0') {
+        this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
+        const mediaDatas = this.postContent.mediaDatas;
+        console.log('mediaDatas', mediaDatas);
+        if (mediaDatas && mediaDatas.length > 0) {
+          const elements = mediaDatas[0];
+          this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+            console.log('postImage', value);
+            this.posterImg = value;
+            let sid = setTimeout(() => {
+              let video: any =
+                document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
+              console.log('this.postContent =>', this.postContent);
+              video.setAttribute('poster', this.posterImg);
+              this.setFullScreen();
+              this.setOverPlay();
+              clearTimeout(sid);
+            }, 0);
+          });
+        }
+        return;
+      }
+
+
       let key =
         this.feedService.getVideoThumbStrFromId(
           this.nodeId,
@@ -256,8 +304,10 @@ export class PostdetailPage implements OnInit {
           this.postId,
           0,
         ) || '';
+
+      console.log('key =>', key);
       if (key != '') {
-        this.getVideoPoster(key);
+        this.getVideoPoster(key, this.postContent);
       }
     }
   }
@@ -1063,7 +1113,8 @@ export class PostdetailPage implements OnInit {
     this.hideComment = true;
   }
 
-  getVideoPoster(id: string) {
+  getVideoPoster(id: string, content: FeedsData.Content) {
+    console.log('content', content);
     this.videoisShow = true;
     this.feedService
       .getData(id)
@@ -1107,6 +1158,26 @@ export class PostdetailPage implements OnInit {
     this.videoloadingStyleObj['top'] =
       (videoHeight - this.roundWidth) / 2 + 'px';
     this.isVideoLoading = true;
+
+    const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
+    if (content.version == '2.0') {
+      const mediaDatas = content.mediaDatas;
+      if (mediaDatas && mediaDatas.length > 0) {
+        const elements = mediaDatas[0];
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+          this.isVideoLoading = false;
+          console.log('value ===>', value);
+          this.loadVideo(value);
+        });
+        // this.loadVideo('https://ipfs0.trinity-feeds.app/ipfs/' + elements.originMediaCid);
+        // this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+        //   this.loadVideo(value);
+        // });
+      }
+      return;
+    }
+
+
 
     this.feedService.getData(key).then((videodata: string) => {
       this.zone.run(() => {

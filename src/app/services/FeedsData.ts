@@ -523,7 +523,7 @@ declare namespace FeedsData {
     nodeId: string;
     channel_id: number;
     id: number;
-    content: any;
+    content: FeedsData.Content;
     comments: number;
     likes: number;
     created_at: number;

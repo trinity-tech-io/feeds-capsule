@@ -19,6 +19,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { PostHelperService } from 'src/app/services/post_helper.service';
 
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
@@ -78,6 +79,7 @@ export class EditPostPage implements OnInit {
     public el: ElementRef,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
+    private postHelperService: PostHelperService,
   ) {}
 
   ngOnInit() {
@@ -449,7 +451,19 @@ export class EditPostPage implements OnInit {
     this.viewHelper.createTip(channelName);
   }
 
-  getImage() {
+  getImage(content: FeedsData.Content) {
+    if (content.version == '2.0') {
+      this.imgUrl = './assets/icon/reserve.svg';//set Reserve Image
+      const mediaDatas = content.mediaDatas;
+      if (mediaDatas && mediaDatas.length > 0) {
+        const elements = mediaDatas[0];
+        this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+          this.imgUrl = value || '';
+        });
+      }
+      return;
+    }
+
     let thumbkey = this.feedService.getImgThumbKeyStrFromId(
       this.nodeId,
       this.channelId,
@@ -485,20 +499,25 @@ export class EditPostPage implements OnInit {
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
-    let post = this.feedService.getPostFromId(
+    let post: FeedsData.Post = this.feedService.getPostFromId(
       this.nodeId,
       this.channelId,
       this.postId,
     );
     if (post.content.mediaType === 1) {
       this.isShowVideo = false;
-      this.getImage();
+      this.getImage(post.content);
     }
 
     if (post.content.mediaType === 2) {
       this.isShowVideo = true;
-      this.duration = post.content['videoThumbKey']['duration'];
-      this.initVideo();
+      if (post.content.version == '2.0') {
+        this.duration = post.content.mediaDatas[0].duration;
+      } else {
+        this.duration = post.content['videoThumbKey']['duration'];
+      }
+
+      this.initVideo(post.content);
     }
 
     this.getContent();
@@ -666,7 +685,34 @@ export class EditPostPage implements OnInit {
     return filesize > 10;
   }
 
-  initVideo() {
+  initVideo(content: FeedsData.Content) {
+    if (content.version == '2.0') {
+      this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
+      const mediaDatas = content.mediaDatas;
+      console.log('mediaDatas', mediaDatas);
+      if (mediaDatas && mediaDatas.length > 0) {
+        const elements = mediaDatas[0];
+        this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+          console.log('postImage', value);
+          if (value != '') {
+            this.zone.run(() => {
+              this.posterImg = value;
+              let id = this.nodeId + this.channelId + this.postId;
+              let sid = setTimeout(() => {
+                let video = document.getElementById(id + 'videoeditpost');
+                console.log('this.postContent =>', content);
+                video.setAttribute('poster', this.posterImg);
+                this.setFullScreen(id);
+                this.setOverPlay(id);
+                clearTimeout(sid);
+              }, 0);
+            });
+          }
+        });
+      }
+      return;
+    }
+
     let key = this.feedService.getVideoThumbStrFromId(
       this.nodeId,
       this.channelId,
@@ -770,6 +816,23 @@ export class EditPostPage implements OnInit {
 
   getVideo(key: string) {
     Logger.log(TAG, 'Video key is', key);
+    const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
+    if (content.version == '2.0') {
+      const mediaDatas = content.mediaDatas;
+      if (mediaDatas && mediaDatas.length > 0) {
+        const elements = mediaDatas[0];
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+          console.log('value ===>', value);
+          this.loadVideo(value);
+        });
+        // this.loadVideo('https://ipfs0.trinity-feeds.app/ipfs/' + elements.originMediaCid);
+        // this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+        //   this.loadVideo(value);
+        // });
+      }
+      return;
+    }
+
     this.feedService.getData(key).then((videodata: string) => {
       this.zone.run(() => {
         let videoData = videodata || '';

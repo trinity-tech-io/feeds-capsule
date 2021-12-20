@@ -60,6 +60,9 @@ playsinline webkit-playsinline>
   </ion-row>
 </div>
 </ion-content>
+<app-nftloading *ngIf="isLoading" [loadingTitle]="loadingTitle" [loadingText]="loadingText"
+  [loadingCurNumber]="loadingCurNumber" [loadingMaxNumber]="loadingMaxNumber">
+</app-nftloading>
 <app-switchfeed
 *ngIf="hideSwitchFeed"
 [feedList] = "feedList"
