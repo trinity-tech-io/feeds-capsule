@@ -1180,29 +1180,6 @@ export class HomePage implements OnInit {
       console.log('this.imgCurKey', this.imgCurKey);
       this.isImgLoading[this.imgCurKey] = true;
 
-      const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-      if (content.version == '2.0') {
-        console.log('content ==> ', content);
-        const mediaDatas = content.mediaDatas;
-        if (mediaDatas && mediaDatas.length > 0) {
-          const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-            this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
-            this.isImgLoading[this.imgCurKey] = false;
-            this.imgDownStatusKey = nodeId + '-' + channelId + '-' + postId;
-            this.viewHelper.openViewer(
-              this.titleBar,
-              value,
-              'common.image',
-              'PostdetailPage.postview',
-              this.appService,
-            );
-          });
-        }
-        return;
-      }
-
-
       let contentVersion = this.feedService.getContentVersion(
         nodeId,
         channelId,
@@ -1220,6 +1197,27 @@ export class HomePage implements OnInit {
       if (contentVersion == '0') {
         key = thumbkey;
       }
+
+      const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+      if (content.version == '2.0') {
+        console.log('content ==> ', content);
+        const mediaDatas = content.mediaDatas;
+        if (mediaDatas && mediaDatas.length > 0) {
+          const elements = mediaDatas[0];
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+            this.isImgLoading[this.imgCurKey] = false;
+            this.viewHelper.openViewer(
+              this.titleBar,
+              value,
+              'common.image',
+              'PostdetailPage.postview',
+              this.appService,
+            );
+          });
+        }
+        return;
+      }
+
       this.feedService.getData(key).then(realImg => {
         let img = realImg || '';
         if (img != '') {

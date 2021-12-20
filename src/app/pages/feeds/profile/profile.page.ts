@@ -24,6 +24,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { PostHelperService } from 'src/app/services/post_helper.service';
+
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -191,7 +193,8 @@ export class ProfilePage implements OnInit {
     private nftPersistenceHelper: NFTPersistenceHelper,
     private dataHelper :DataHelper,
     private nftContractHelperService: NFTContractHelperService,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
+    private postHelperService: PostHelperService
   ) {
   }
 
@@ -1088,6 +1091,56 @@ export class ProfilePage implements OnInit {
           if (contentVersion == '0') {
             imageKey = thumbkey;
           }
+
+          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+          console.log('content ===>', content);
+          if (content.version == '2.0') {
+            postImage.setAttribute('src', './assets/icon/reserve.svg');
+            const mediaDatas = content.mediaDatas;
+            if (mediaDatas && mediaDatas.length > 0) {
+              const elements = mediaDatas[0];
+              console.log('elements ===>', elements);
+              this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+                let thumbImage = value || "";
+                console.log('value ===>', value);
+                postImage.setAttribute('src', thumbImage);
+
+                // if (thumbImage != '') {
+                //   this.isLoadimage[id] = '13';
+
+                //   if (nftOrdeId != '' && priceDes != '') {
+                //     let imagesWidth = postImage.clientWidth;
+                //     let homebidfeedslogo = document.getElementById(
+                //       id + 'homebidfeedslogo'
+                //     );
+                //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                //     homebidfeedslogo.style.display = 'block';
+
+                //     let homebuy = document.getElementById(id + 'homebuy');
+                //     let homeNftPrice = document.getElementById(
+                //       id + 'homeNftPrice'
+                //     );
+                //     let homeNftQuantity = document.getElementById(
+                //       id + 'homeNftQuantity'
+                //     );
+                //     let homeMaxNftQuantity = document.getElementById(
+                //       id + 'homeMaxNftQuantity'
+                //     );
+                //     homeNftPrice.innerText = priceDes;
+                //     homeNftQuantity.innerText = nftQuantity;
+                //     homeMaxNftQuantity.innerText = nftQuantity;
+                //     homebuy.style.display = 'block';
+                //   }
+                //   rpostimg.style.display = 'block';
+                // } else {
+                //   this.isLoadimage[id] = '12';
+                //   rpostimg.style.display = 'none';
+                // }
+              });
+            }
+            return;
+          }
+
           this.feedService
             .getData(imageKey)
             .then(imagedata => {
@@ -1165,6 +1218,60 @@ export class ProfilePage implements OnInit {
             postId,
             0,
           );
+
+          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+          console.log('content ===>', content);
+          if (content.version == '2.0') {
+            video.setAttribute('poster', './assets/icon/reserve.svg');
+            const mediaDatas = content.mediaDatas;
+            if (mediaDatas && mediaDatas.length > 0) {
+              const elements = mediaDatas[0];
+              console.log('elements ===>', elements);
+              this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+                let thumbImage = value || "";
+                console.log('value ===>', value);
+                this.isLoadVideoiamge[id] = '13';
+                video.setAttribute('poster', thumbImage);
+
+                //video.
+                this.setFullScreen(id);
+                this.setOverPlay(id, srcId);
+                // if (thumbImage != '') {
+                //   this.isLoadimage[id] = '13';
+
+                //   if (nftOrdeId != '' && priceDes != '') {
+                //     let imagesWidth = postImage.clientWidth;
+                //     let homebidfeedslogo = document.getElementById(
+                //       id + 'homebidfeedslogo'
+                //     );
+                //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                //     homebidfeedslogo.style.display = 'block';
+
+                //     let homebuy = document.getElementById(id + 'homebuy');
+                //     let homeNftPrice = document.getElementById(
+                //       id + 'homeNftPrice'
+                //     );
+                //     let homeNftQuantity = document.getElementById(
+                //       id + 'homeNftQuantity'
+                //     );
+                //     let homeMaxNftQuantity = document.getElementById(
+                //       id + 'homeMaxNftQuantity'
+                //     );
+                //     homeNftPrice.innerText = priceDes;
+                //     homeNftQuantity.innerText = nftQuantity;
+                //     homeMaxNftQuantity.innerText = nftQuantity;
+                //     homebuy.style.display = 'block';
+                //   }
+                //   rpostimg.style.display = 'block';
+                // } else {
+                //   this.isLoadimage[id] = '12';
+                //   rpostimg.style.display = 'none';
+                // }
+              });
+            }
+            return;
+          }
+
           this.feedService
             .getData(key)
             .then(imagedata => {
@@ -1333,6 +1440,29 @@ export class ProfilePage implements OnInit {
     this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
+    const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+    console.log('content ===>', content);
+    if (content.version == '2.0') {
+      console.log('11111111111111111 ===>');
+      // video.setAttribute('src', './assets/icon/reserve.svg');
+      const mediaDatas = content.mediaDatas;
+      if (mediaDatas && mediaDatas.length > 0) {
+        console.log('22222222222222 ===>');
+        const elements = mediaDatas[0];
+        console.log('elements ===>', elements);
+
+        console.log('this.videoCurKey ===>', this.videoCurKey);
+        // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+          this.isVideoLoading[this.videoCurKey] = false;
+          console.log('value ===>', value);
+          this.loadVideo(id, value);
+        });
+      }
+      return;
+    }
+
+
     let key = this.feedService.getVideoKey(nodeId, channelId, postId, 0, 0);
     this.feedService.getData(key).then((videoResult: string) => {
       this.zone.run(() => {
@@ -1471,6 +1601,27 @@ export class ProfilePage implements OnInit {
       if (contentVersion == '0') {
         key = thumbkey;
       }
+
+      const content: FeedsData.Content = this.feedService.getContentFromId(item.nodeId, item.channelId, item.postId, 0);
+      if (content.version == '2.0') {
+        console.log('content ==> ', content);
+        const mediaDatas = content.mediaDatas;
+        if (mediaDatas && mediaDatas.length > 0) {
+          const elements = mediaDatas[0];
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
+            this.isImgLoading[this.imgCurKey] = false;
+            this.viewHelper.openViewer(
+              this.titleBar,
+              value,
+              'common.image',
+              'FeedsPage.tabTitle2',
+              this.appService,
+            );
+          });
+        }
+        return;
+      }
+
       this.feedService.getData(key).then(realImg => {
         let img = realImg || '';
         if (img != '') {
