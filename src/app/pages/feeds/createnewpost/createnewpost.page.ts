@@ -477,6 +477,7 @@ export class CreatenewpostPage implements OnInit {
       this.totalProgress = 0;
       this.videoData = null;
       this.native.toast(this.translate.instant('common.filevideodes'));
+      return;
     }
     this.transcode = 100;
     this.totalProgress = this.transcode;
@@ -874,9 +875,9 @@ export class CreatenewpostPage implements OnInit {
     let lastIndex = path.lastIndexOf('/');
     pathObj['fileName'] = path.substring(lastIndex + 1, fileUri.length);
     pathObj['filepath'] = path.substring(0, lastIndex);
-    // pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
-    //   ? pathObj['filepath']
-    //   : `file://${pathObj['filepath']}`;
+    pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
+      ? pathObj['filepath']
+      : `file://${pathObj['filepath']}`;
 
     return pathObj;
   }
