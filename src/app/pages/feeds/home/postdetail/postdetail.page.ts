@@ -244,7 +244,6 @@ export class PostdetailPage implements OnInit {
     this.updatedTime = post.updated_at;
     this.likesNum = post.likes;
     this.commentsNum = post.comments;
-    console.log('this.postContent =>', this.postContent);
     if (this.mediaType === FeedsData.MediaType.containsImg) {
       this.getImage(this.postContent);
     }
@@ -276,17 +275,14 @@ export class PostdetailPage implements OnInit {
       if (this.postContent.version == '2.0') {
         this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
         const mediaDatas = this.postContent.mediaDatas;
-        console.log('mediaDatas', mediaDatas);
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
           this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
             .then((value) => {
-              console.log('postImage', value);
               this.posterImg = value;
               let sid = setTimeout(() => {
                 let video: any =
                   document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
-                console.log('this.postContent =>', this.postContent);
                 video.setAttribute('poster', this.posterImg);
                 this.setFullScreen();
                 this.setOverPlay();
@@ -308,7 +304,6 @@ export class PostdetailPage implements OnInit {
           0,
         ) || '';
 
-      console.log('key =>', key);
       if (key != '') {
         this.getVideoPoster(key, this.postContent);
       }
@@ -829,7 +824,6 @@ export class PostdetailPage implements OnInit {
     this.zone.run(() => {
       const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
       if (content.version == '2.0') {
-        console.log('content ==> ', content);
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
@@ -890,14 +884,9 @@ export class PostdetailPage implements OnInit {
         0,
       );
 
-      console.log('contentVersion ==> ', contentVersion);
       if (contentVersion == '0') {
         key = thumbkey;
       }
-
-
-
-
 
       this.feedService.getData(key).then(realImg => {
         let img = realImg || '';
@@ -1124,7 +1113,6 @@ export class PostdetailPage implements OnInit {
   }
 
   getVideoPoster(id: string, content: FeedsData.Content) {
-    console.log('content', content);
     this.videoisShow = true;
     this.feedService
       .getData(id)
@@ -1177,7 +1165,6 @@ export class PostdetailPage implements OnInit {
         this.postHelperService.getPostData(elements.originMediaCid, elements.type)
           .then((value) => {
             this.isVideoLoading = false;
-            console.log('value ===>', value);
             this.loadVideo(value);
           })
           .catch(() => {

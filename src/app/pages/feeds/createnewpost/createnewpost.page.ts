@@ -282,16 +282,8 @@ export class CreatenewpostPage implements OnInit {
   prepareTempPost() {}
 
   async sendPost() {
-    console.log('this.imgUrl', this.imgUrl);
-    console.log('this.flieUri', this.flieUri);
-
     const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
-    console.log('Content', content);
     let tempPostId = this.feedService.generateTempPostId();
-    console.log('tempPostId', tempPostId);
-
-
-
 
     //TODO
     this.feedService.publishPost(
@@ -378,7 +370,6 @@ export class CreatenewpostPage implements OnInit {
       type,
       (imageUrl: any) => {
         this.zone.run(() => {
-          console.log("======>imageUrl", imageUrl);
           this.imgUrl = imageUrl;
           this.feedService.setSelsectNftImage(imageUrl);
         });
@@ -432,8 +423,6 @@ export class CreatenewpostPage implements OnInit {
     } catch (error) {
       Logger.error(error);
     }
-
-    console.log('videoData==>', videoData);
     this.handleVideoData(videoData);
   }
 
@@ -457,7 +446,6 @@ export class CreatenewpostPage implements OnInit {
         this.totalProgress = progress;
       });
     });
-    console.log('videoData', videoData);
     this.handleVideoData(videoData);
   }
 
@@ -479,16 +467,12 @@ export class CreatenewpostPage implements OnInit {
     this.posterImg = videoData.thumbnail;
     this.flieUri = videoData.video;
 
-    console.log('videoData', videoData);
     let sid = setTimeout(() => {
       this.setFullScreen();
       let video: any = document.getElementById('videocreatepost') || '';
       video.setAttribute('poster', this.posterImg);
       this.setOverPlay(this.flieUri);
       clearTimeout(sid);
-
-      console.log('this.posterImg', this.posterImg);
-      console.log('this.flieUri', this.flieUri);
     }, 0);
 
     this.videoData = videoData;
@@ -763,11 +747,9 @@ export class CreatenewpostPage implements OnInit {
     that.handleImgUri(0, that).then(async (imagePath: string) => {
 
       // let pathObj = that.handleImgUrlPath(imagePath);
-      console.log('imagePath====>', imagePath);
       let pathObj = that.handleImgUrlPath(imagePath);
       let fileName = pathObj['fileName'];
       let filePath = pathObj['filepath'];
-      console.log('imagePath finish====>', pathObj);
       // that.zone.run(async () => {
       //   const file: File = await that.fileHelperService.getUserFile(filePath, fileName);
 
@@ -777,16 +759,10 @@ export class CreatenewpostPage implements OnInit {
       return  that.getFlieObj(fileName, filePath, that);
 
     }).then((fileBase64: string) => {
-
-
-      console.log('openGallery result = ', fileBase64.substring(0,100));
       that.zone.run(() => {
-
         //For test
         // const fileBlob = UtilService.base64ToBlob(fileBase64);
         // that.ipfsService.uploadData(fileBlob);
-
-
         that.imgUrl = fileBase64;
         that.feedService.setSelsectNftImage(fileBase64);
       });
@@ -800,7 +776,6 @@ export class CreatenewpostPage implements OnInit {
       0,
       1,
       (imageUrl: any) => {
-        console.log('==========imageUrl=>>>>', imageUrl);
         that.zone.run(() => {
           that.imgUrl = imageUrl;
           that.feedService.setSelsectNftImage(imageUrl);
@@ -828,7 +803,6 @@ export class CreatenewpostPage implements OnInit {
         1,
         type,
         (imgPath: any) => {
-          console.log('handleImgUri=========>>>>', imgPath);
           resolve(imgPath);
         },
         (err: any) => {
@@ -845,7 +819,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
   getFlieObj(fileName: string, filepath: string, that: any): Promise<string> {
-    console.log('getFlieObj=====>', filepath, fileName);
     return new Promise(async (resolve, reject) => {
       try {
         const base64Result = await that.fileHelperService.getUserFileBase64Data(filepath, fileName);

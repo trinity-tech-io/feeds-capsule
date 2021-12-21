@@ -5918,7 +5918,6 @@ export class FeedService {
     let nftOrderId = contentObj.nftOrderId || '';
     let nftImageType = contentObj.nftImageType || '';
     let mMediaDatas: FeedsData.mediaData[] = [];
-    console.log('contentObj v2 ==>', contentObj);
     mVersion = contentObj.version
     mText = contentObj.text
 
@@ -5926,10 +5925,9 @@ export class FeedService {
     nftOrderId = contentObj.nftOrderId;
     nftImageType = contentObj.nftImageType;
 
-
     // {"version":"1.0","text":"testText","imageThumbnail":[{"index":0,"imgThumb":"this.imgUrl"}],"videoThumbnail":"this.posterImg"}
     const mediaDatas = contentObj.data;
-    console.log('contentObj v2 mediaDatas ==>', mediaDatas);
+
     for (let index = 0; index < mediaDatas.length; index++) {
       const element = mediaDatas[index];
 
@@ -7914,7 +7912,6 @@ export class FeedService {
     return new Promise(async (resolve, reject) => {
       try {
         let didObj = this.dataHelper.getDidMapper(walletAddress)
-        console.log(didObj);
         if (didObj) {
           resolve(didObj);
           return;

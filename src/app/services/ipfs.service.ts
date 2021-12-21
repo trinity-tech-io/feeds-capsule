@@ -54,13 +54,10 @@ export class IPFSService {
   uploadData(value: string | Blob): Promise<string> {
     return new Promise((resolve, reject) => {
       let formData = new FormData();
-      console.log('value type', typeof (value));
-      console.log('value ', value);
       formData.append('', value);
       Logger.log(TAG, 'Send data to ipfs, formdata length is', formData.getAll('').length);
       this.nftPost(formData)
         .then(result => {
-          console.log("===result===", result);
           let hash = result['Hash'] || null;
           if (!hash) {
             reject("Upload Data error, hash is null")

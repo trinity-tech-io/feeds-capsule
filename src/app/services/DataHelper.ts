@@ -2732,7 +2732,6 @@ export class DataHelper {
     if (!this.didMapper || !this.didMapper[address])
       return null;
     let did = this.didMapper[address];
-    console.log('getDidMapper', address);
     return did;
   }
 
@@ -2740,9 +2739,7 @@ export class DataHelper {
     if (!this.didMapper)
       this.didMapper = {};
     this.didMapper[address] = didObj;
-    console.log('addDidMapper', address, didObj);
     this.saveData(FeedsData.PersistenceKey.didMapper, this.didMapper);
-    console.log('addDidMapper this.didMapper', this.didMapper);
   }
 
   loadDidMapper() {
