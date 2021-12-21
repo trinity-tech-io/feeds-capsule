@@ -424,12 +424,9 @@ export class CreatenewpostPage implements OnInit {
     let videoData = null;
 
     try {
-      videoData = await this.postHelperService.recordAVideo((info: number) => {
+      videoData = await this.postHelperService.recordAVideo((progress: number) => {
         this.zone.run(() => {
-          if (info > 0 && info < 1) {
-            this.transcode = parseInt((info * 100) / 2 + '');
-            this.totalProgress = this.transcode;
-          }
+          this.totalProgress = progress;
         });
       });
     } catch (error) {
@@ -455,12 +452,9 @@ export class CreatenewpostPage implements OnInit {
     this.totalProgress = 0;
     let path = "";
 
-    const videoData = await this.postHelperService.selectvideo((info: number) => {
+    const videoData = await this.postHelperService.selectvideo((progress: number) => {
       this.zone.run(() => {
-        if (info > 0 && info < 1) {
-          this.transcode = parseInt((info * 100) / 2 + '');
-          this.totalProgress = this.transcode;
-        }
+        this.totalProgress = progress;
       });
     });
     console.log('videoData', videoData);

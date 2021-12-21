@@ -126,7 +126,7 @@ export class FileHelperService {
     });
   }
 
-  transBlobToBase64(blob: Blob): Promise<string> {
+  transBlobToBase64(blob: Blob, progressCallback?: (loaded: number, total: number) => void): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -137,6 +137,12 @@ export class FileHelperService {
         } catch (error) {
           reject(error);
         }
+      };
+
+      if (progressCallback) {
+        reader.onprogress = (progressEvent: ProgressEvent) => {
+          progressCallback(progressEvent.loaded, progressEvent.total);
+        };
       }
     });
   }
@@ -340,11 +346,11 @@ export class FileHelperService {
     });
   }
 
-  getUserFileBase64Data(dirPath: string, fileName: string): Promise<string> {
+  getUserFileBase64Data(dirPath: string, fileName: string, progressCallback?: (loaded: number, total: number) => void): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const file = await this.getUserFile(dirPath, fileName);
-        const result = await this.transBlobToBase64(file);
+        const result = await this.transBlobToBase64(file, progressCallback);
         if (!result) {
           const error = 'Get user file base64 data null';
           Logger.error(TAG, error);

@@ -298,12 +298,12 @@ export class PostHelperService {
    * 5.Transcode video
    * 6.Creat video obj
   */
-  selectvideo(progressCallback: (info: number) => void): Promise<FeedsData.videoData> {
+  selectvideo(progressCallback: (progress: number) => void): Promise<FeedsData.videoData> {
     return new Promise(async (resolve, reject) => {
       try {
         const videoUri = await this.cameraService.selectVideo();
-        const videoData = await this.processVideo(videoUri, (info: number) => {
-          progressCallback(info);
+        const videoData = await this.processVideo(videoUri, (progress: number) => {
+          progressCallback(progress);
         });
         resolve(videoData);
       } catch (error) {
@@ -333,11 +333,26 @@ export class PostHelperService {
       const videoThumbnail = await this.createVideoThumbnail(path, duration);
       console.log('videoThumbnail=====>', videoThumbnail);
 
+      let progress: number = 0;
+      //0-49percent
       const transcodeVideoPath = await this.transcodeVideo(path, (info) => {
-        progressCallback(info);
+        if (info > 0 && info < 1) {
+          progress = parseInt((info * 100) / 2 + '');
+          progressCallback(progress);
+        }
       });
       console.log("transcodeVideoPath=>", transcodeVideoPath);
-      const videoBase64 = await this.getVideoBase64Data(transcodeVideoPath);
+
+      //50-100percent
+      const videoBase64 = await this.getVideoBase64Data(transcodeVideoPath, (loaded: number, total: number) => {
+        progress = parseInt(((loaded / total) * 100) / 2 + '',);
+        if (progress >= 50) {
+          progress = 100;
+        } else {
+          progress = 50 + progress;
+        }
+        progressCallback(progress);
+      });
       console.log("final=>", videoBase64);
       const videoData: FeedsData.videoData = {
         video: videoBase64,
@@ -348,7 +363,7 @@ export class PostHelperService {
     });
   }
 
-  getVideoBase64Data(transcodeVideoPath: string): Promise<string> {
+  getVideoBase64Data(transcodeVideoPath: string, progressCallback?: (loaded: number, total: number) => void): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const transcodeCDVVideoObj = this.handlePath(transcodeVideoPath);
@@ -356,7 +371,7 @@ export class PostHelperService {
         let filepath = transcodeCDVVideoObj['filepath'];
         console.log('createVideoThumbnail==filepath=', filepath);
 
-        const videoBase64 = await this.fileHelperService.getUserFileBase64Data(filepath, fileName);
+        const videoBase64 = await this.fileHelperService.getUserFileBase64Data(filepath, fileName, progressCallback);
         console.log('videoBase64=====>', videoBase64);
         resolve(videoBase64);
       } catch (error) {
