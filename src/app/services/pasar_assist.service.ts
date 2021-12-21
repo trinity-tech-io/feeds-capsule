@@ -75,7 +75,7 @@ export class PasarAssistService {
   }
 
   syncOrder(blockNumber: number): Promise<any> {
-    return this.listPasarOrderFromService(1, 10, null, blockNumber, true);
+    return this.listPasarOrderFromService(1, 50, null, blockNumber, true);
   }
 
   firstSync(blockNumber: number): Promise<any> {
