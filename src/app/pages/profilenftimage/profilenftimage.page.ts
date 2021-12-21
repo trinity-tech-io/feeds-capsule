@@ -52,7 +52,7 @@ export class ProfilenftimagePage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('MintnftPage.title'),
+      this.translate.instant('ProfilenftimagePage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);

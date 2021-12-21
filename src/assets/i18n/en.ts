@@ -893,5 +893,8 @@ export const en = {
   AssistpasarPage:{
     title: 'Assist Pasar API',
     assistProviderDes: 'Secondary assist pasar service for reading data'
+  },
+  ProfilenftimagePage: {
+    title: "Select Collectibles"
   }
 };
