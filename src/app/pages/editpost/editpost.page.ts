@@ -460,9 +460,13 @@ export class EditPostPage implements OnInit {
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
         const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
+        this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+          .then((value) => {
           this.imgUrl = value || '';
-        });
+          })
+          .catch(() => {
+            //TODO
+          });
       }
       return;
     }
@@ -695,23 +699,27 @@ export class EditPostPage implements OnInit {
       console.log('mediaDatas', mediaDatas);
       if (mediaDatas && mediaDatas.length > 0) {
         const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
-          console.log('postImage', value);
-          if (value != '') {
-            this.zone.run(() => {
-              this.posterImg = value;
-              let id = this.nodeId + this.channelId + this.postId;
-              let sid = setTimeout(() => {
-                let video = document.getElementById(id + 'videoeditpost');
-                console.log('this.postContent =>', content);
-                video.setAttribute('poster', this.posterImg);
-                this.setFullScreen(id);
-                this.setOverPlay(id);
-                clearTimeout(sid);
-              }, 0);
-            });
-          }
-        });
+        this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+          .then((value) => {
+            console.log('postImage', value);
+            if (value != '') {
+              this.zone.run(() => {
+                this.posterImg = value;
+                let id = this.nodeId + this.channelId + this.postId;
+                let sid = setTimeout(() => {
+                  let video = document.getElementById(id + 'videoeditpost');
+                  console.log('this.postContent =>', content);
+                  video.setAttribute('poster', this.posterImg);
+                  this.setFullScreen(id);
+                  this.setOverPlay(id);
+                  clearTimeout(sid);
+                }, 0);
+              });
+            }
+          })
+          .catch(() => {
+            //TODO
+          });
       }
       return;
     }
@@ -824,10 +832,14 @@ export class EditPostPage implements OnInit {
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
         const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-          console.log('value ===>', value);
-          this.loadVideo(value);
-        });
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
+          .then((value) => {
+            console.log('value ===>', value);
+            this.loadVideo(value);
+          })
+          .catch(() => {
+            //TODO
+          });
         // this.loadVideo('https://ipfs0.trinity-feeds.app/ipfs/' + elements.originMediaCid);
         // this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
         //   this.loadVideo(value);

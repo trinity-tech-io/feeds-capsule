@@ -1204,16 +1204,20 @@ export class HomePage implements OnInit {
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-            this.isImgLoading[this.imgCurKey] = false;
-            this.viewHelper.openViewer(
-              this.titleBar,
-              value,
-              'common.image',
-              'FeedsPage.tabTitle1',
-              this.appService,
-            );
-          });
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type)
+            .then((value) => {
+              this.isImgLoading[this.imgCurKey] = false;
+              this.viewHelper.openViewer(
+                this.titleBar,
+                value,
+                'common.image',
+                'FeedsPage.tabTitle1',
+                this.appService,
+              );
+            })
+            .catch(() => {
+              //TODO
+            });
         }
         return;
       }
@@ -1373,43 +1377,47 @@ export class HomePage implements OnInit {
             if (mediaDatas && mediaDatas.length > 0) {
               const elements = mediaDatas[0];
               console.log('elements ===>', elements);
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
-                let thumbImage = value || "";
-                console.log('value ===>', value);
-                postImage.setAttribute('src', thumbImage);
+              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+                .then((value) => {
+                  let thumbImage = value || "";
+                  console.log('value ===>', value);
+                  postImage.setAttribute('src', thumbImage);
 
-                // if (thumbImage != '') {
-                //   this.isLoadimage[id] = '13';
+                  // if (thumbImage != '') {
+                  //   this.isLoadimage[id] = '13';
 
-                //   if (nftOrdeId != '' && priceDes != '') {
-                //     let imagesWidth = postImage.clientWidth;
-                //     let homebidfeedslogo = document.getElementById(
-                //       id + 'homebidfeedslogo'
-                //     );
-                //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                //     homebidfeedslogo.style.display = 'block';
+                  //   if (nftOrdeId != '' && priceDes != '') {
+                  //     let imagesWidth = postImage.clientWidth;
+                  //     let homebidfeedslogo = document.getElementById(
+                  //       id + 'homebidfeedslogo'
+                  //     );
+                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                  //     homebidfeedslogo.style.display = 'block';
 
-                //     let homebuy = document.getElementById(id + 'homebuy');
-                //     let homeNftPrice = document.getElementById(
-                //       id + 'homeNftPrice'
-                //     );
-                //     let homeNftQuantity = document.getElementById(
-                //       id + 'homeNftQuantity'
-                //     );
-                //     let homeMaxNftQuantity = document.getElementById(
-                //       id + 'homeMaxNftQuantity'
-                //     );
-                //     homeNftPrice.innerText = priceDes;
-                //     homeNftQuantity.innerText = nftQuantity;
-                //     homeMaxNftQuantity.innerText = nftQuantity;
-                //     homebuy.style.display = 'block';
-                //   }
-                //   rpostimg.style.display = 'block';
-                // } else {
-                //   this.isLoadimage[id] = '12';
-                //   rpostimg.style.display = 'none';
-                // }
-              });
+                  //     let homebuy = document.getElementById(id + 'homebuy');
+                  //     let homeNftPrice = document.getElementById(
+                  //       id + 'homeNftPrice'
+                  //     );
+                  //     let homeNftQuantity = document.getElementById(
+                  //       id + 'homeNftQuantity'
+                  //     );
+                  //     let homeMaxNftQuantity = document.getElementById(
+                  //       id + 'homeMaxNftQuantity'
+                  //     );
+                  //     homeNftPrice.innerText = priceDes;
+                  //     homeNftQuantity.innerText = nftQuantity;
+                  //     homeMaxNftQuantity.innerText = nftQuantity;
+                  //     homebuy.style.display = 'block';
+                  //   }
+                  //   rpostimg.style.display = 'block';
+                  // } else {
+                  //   this.isLoadimage[id] = '12';
+                  //   rpostimg.style.display = 'none';
+                  // }
+                })
+                .catch(() => {
+                  //TODO
+                });
             }
             return;
           }
@@ -1552,47 +1560,51 @@ export class HomePage implements OnInit {
             if (mediaDatas && mediaDatas.length > 0) {
               const elements = mediaDatas[0];
               console.log('elements ===>', elements);
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
-                let thumbImage = value || "";
-                console.log('value ===>', value);
-                this.isLoadVideoiamge[id] = '13';
-                video.setAttribute('poster', thumbImage);
+              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+                .then((value) => {
+                  let thumbImage = value || "";
+                  console.log('value ===>', value);
+                  this.isLoadVideoiamge[id] = '13';
+                  video.setAttribute('poster', thumbImage);
 
-                //video.
-                this.setFullScreen(id);
-                this.setOverPlay(id, srcId);
-                // if (thumbImage != '') {
-                //   this.isLoadimage[id] = '13';
+                  //video.
+                  this.setFullScreen(id);
+                  this.setOverPlay(id, srcId);
+                  // if (thumbImage != '') {
+                  //   this.isLoadimage[id] = '13';
 
-                //   if (nftOrdeId != '' && priceDes != '') {
-                //     let imagesWidth = postImage.clientWidth;
-                //     let homebidfeedslogo = document.getElementById(
-                //       id + 'homebidfeedslogo'
-                //     );
-                //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                //     homebidfeedslogo.style.display = 'block';
+                  //   if (nftOrdeId != '' && priceDes != '') {
+                  //     let imagesWidth = postImage.clientWidth;
+                  //     let homebidfeedslogo = document.getElementById(
+                  //       id + 'homebidfeedslogo'
+                  //     );
+                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+                  //     homebidfeedslogo.style.display = 'block';
 
-                //     let homebuy = document.getElementById(id + 'homebuy');
-                //     let homeNftPrice = document.getElementById(
-                //       id + 'homeNftPrice'
-                //     );
-                //     let homeNftQuantity = document.getElementById(
-                //       id + 'homeNftQuantity'
-                //     );
-                //     let homeMaxNftQuantity = document.getElementById(
-                //       id + 'homeMaxNftQuantity'
-                //     );
-                //     homeNftPrice.innerText = priceDes;
-                //     homeNftQuantity.innerText = nftQuantity;
-                //     homeMaxNftQuantity.innerText = nftQuantity;
-                //     homebuy.style.display = 'block';
-                //   }
-                //   rpostimg.style.display = 'block';
-                // } else {
-                //   this.isLoadimage[id] = '12';
-                //   rpostimg.style.display = 'none';
-                // }
-              });
+                  //     let homebuy = document.getElementById(id + 'homebuy');
+                  //     let homeNftPrice = document.getElementById(
+                  //       id + 'homeNftPrice'
+                  //     );
+                  //     let homeNftQuantity = document.getElementById(
+                  //       id + 'homeNftQuantity'
+                  //     );
+                  //     let homeMaxNftQuantity = document.getElementById(
+                  //       id + 'homeMaxNftQuantity'
+                  //     );
+                  //     homeNftPrice.innerText = priceDes;
+                  //     homeNftQuantity.innerText = nftQuantity;
+                  //     homeMaxNftQuantity.innerText = nftQuantity;
+                  //     homebuy.style.display = 'block';
+                  //   }
+                  //   rpostimg.style.display = 'block';
+                  // } else {
+                  //   this.isLoadimage[id] = '12';
+                  //   rpostimg.style.display = 'none';
+                  // }
+                })
+                .catch(() => {
+                //TODO
+                });
             }
             return;
           }
@@ -1810,11 +1822,15 @@ export class HomePage implements OnInit {
 
         console.log('this.videoCurKey ===>', this.videoCurKey);
         // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-          this.isVideoLoading[this.videoCurKey] = false;
-          console.log('value ===>', value);
-          this.loadVideo(id, value);
-        });
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
+          .then((value) => {
+            this.isVideoLoading[this.videoCurKey] = false;
+            console.log('value ===>', value);
+            this.loadVideo(id, value);
+          })
+          .catch(() => {
+            //TODO
+          });
       }
       return;
     }

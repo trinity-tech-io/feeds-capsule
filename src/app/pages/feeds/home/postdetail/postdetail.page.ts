@@ -279,19 +279,22 @@ export class PostdetailPage implements OnInit {
         console.log('mediaDatas', mediaDatas);
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
-            console.log('postImage', value);
-            this.posterImg = value;
-            let sid = setTimeout(() => {
-              let video: any =
-                document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
-              console.log('this.postContent =>', this.postContent);
-              video.setAttribute('poster', this.posterImg);
-              this.setFullScreen();
-              this.setOverPlay();
-              clearTimeout(sid);
-            }, 0);
-          });
+          this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+            .then((value) => {
+              console.log('postImage', value);
+              this.posterImg = value;
+              let sid = setTimeout(() => {
+                let video: any =
+                  document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
+                console.log('this.postContent =>', this.postContent);
+                video.setAttribute('poster', this.posterImg);
+                this.setFullScreen();
+                this.setOverPlay();
+                clearTimeout(sid);
+              }, 0);
+            }).catch(() => {
+              //TODO
+            });
         }
         return;
       }
@@ -830,16 +833,19 @@ export class PostdetailPage implements OnInit {
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-            this.isImgLoading = false;
-            this.viewHelper.openViewer(
-              this.titleBar,
-              value,
-              'common.image',
-              'PostdetailPage.postview',
-              this.appService,
-            );
-          });
+          this.postHelperService.getPostData(elements.originMediaCid, elements.type)
+            .then((value) => {
+              this.isImgLoading = false;
+              this.viewHelper.openViewer(
+                this.titleBar,
+                value,
+                'common.image',
+                'PostdetailPage.postview',
+                this.appService,
+              );
+            }).catch(() => {
+              //TODO
+            });
         }
         return;
       }
@@ -954,9 +960,13 @@ export class PostdetailPage implements OnInit {
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
         const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
-          this.postImage = value;
-        });
+        this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+          .then((value) => {
+            this.postImage = value;
+          })
+          .catch(() => {
+            //TODO
+          });
       }
       return;
     }
@@ -1164,11 +1174,15 @@ export class PostdetailPage implements OnInit {
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
         const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-          this.isVideoLoading = false;
-          console.log('value ===>', value);
-          this.loadVideo(value);
-        });
+        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
+          .then((value) => {
+            this.isVideoLoading = false;
+            console.log('value ===>', value);
+            this.loadVideo(value);
+          })
+          .catch(() => {
+            //TODO
+          });
         // this.loadVideo('https://ipfs0.trinity-feeds.app/ipfs/' + elements.originMediaCid);
         // this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
         //   this.loadVideo(value);
