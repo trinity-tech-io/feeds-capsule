@@ -79,7 +79,7 @@ export class PasarAssistService {
   }
 
   firstSync(blockNumber: number): Promise<any> {
-    return this.listPasarOrderFromService(1, 10, FeedsData.OrderState.SALEING, blockNumber, true);
+    return this.listPasarOrderFromService(1, 50, FeedsData.OrderState.SALEING, blockNumber, true);
   }
 
   listOwnSticker() {
