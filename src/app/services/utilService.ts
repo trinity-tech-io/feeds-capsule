@@ -552,8 +552,8 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
  * @returns {string|*} 返回base64
  */
  public static resizeImg(img:any, maxWidth:any, maxHeight:any, quality = 1):any{
-    const imageData = img.src;
-    if (imageData.length < maxWidth * maxHeight) {
+    const imageData: string = img.src;
+    if (!imageData.startsWith("https")&&imageData.length < maxWidth * maxHeight) {
         return imageData;
     }
     const imgWidth = img.width;
