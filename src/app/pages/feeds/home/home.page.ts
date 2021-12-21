@@ -1210,7 +1210,7 @@ export class HomePage implements OnInit {
               this.titleBar,
               value,
               'common.image',
-              'PostdetailPage.postview',
+              'FeedsPage.tabTitle1',
               this.appService,
             );
           });

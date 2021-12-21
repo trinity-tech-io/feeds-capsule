@@ -785,7 +785,7 @@ export class CreatenewpostPage implements OnInit {
     }).then((fileBase64: string) => {
 
 
-      console.log('openGallery result = ', fileBase64)
+      console.log('openGallery result = ', fileBase64.substring(0,100));
       that.zone.run(() => {
 
         //For test
