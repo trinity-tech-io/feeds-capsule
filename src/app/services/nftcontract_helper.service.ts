@@ -668,7 +668,7 @@ export class NFTContractHelperService {
     this.isSyncingFlags[this.isSyncingIndex] = false;
   }
 
-  syncOpenOrderFromAssist() {
+  syncOpenOrderFromAssist(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (this.isSyncing == true) {
