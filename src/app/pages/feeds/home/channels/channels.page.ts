@@ -899,17 +899,14 @@ export class ChannelsPage implements OnInit {
           }
 
           const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          console.log('content ===>', content);
           if (content.version == '2.0') {
             postImage.setAttribute('src', './assets/icon/reserve.svg');
             const mediaDatas = content.mediaDatas;
             if (mediaDatas && mediaDatas.length > 0) {
               const elements = mediaDatas[0];
-              console.log('elements ===>', elements);
               this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
                 .then((value) => {
                   let thumbImage = value || "";
-                  console.log('value ===>', value);
                   postImage.setAttribute('src', thumbImage);
 
                   // if (thumbImage != '') {
@@ -1023,17 +1020,14 @@ export class ChannelsPage implements OnInit {
           let postId: any = arr[2];
 
           const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          console.log('content ===>', content);
           if (content.version == '2.0') {
             video.setAttribute('poster', './assets/icon/reserve.svg');
             const mediaDatas = content.mediaDatas;
             if (mediaDatas && mediaDatas.length > 0) {
               const elements = mediaDatas[0];
-              console.log('elements ===>', elements);
               this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
                 .then((value) => {
                   let thumbImage = value || "";
-                  console.log('value ===>', value);
                   this.isLoadVideoiamge[id] = '13';
                   video.setAttribute('poster', thumbImage);
 
@@ -1151,7 +1145,6 @@ export class ChannelsPage implements OnInit {
 
       const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
       if (content.version == '2.0') {
-        console.log('content ==> ', content);
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
@@ -1368,22 +1361,16 @@ export class ChannelsPage implements OnInit {
     this.isVideoLoading[this.videoCurKey] = true;
 
     const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-    console.log('content ===>', content);
     if (content.version == '2.0') {
-      console.log('11111111111111111 ===>');
       // video.setAttribute('src', './assets/icon/reserve.svg');
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
-        console.log('22222222222222 ===>');
         const elements = mediaDatas[0];
-        console.log('elements ===>', elements);
 
-        console.log('this.videoCurKey ===>', this.videoCurKey);
         // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
         this.postHelperService.getPostData(elements.originMediaCid, elements.type)
           .then((value) => {
             this.isVideoLoading[this.videoCurKey] = false;
-            console.log('value ===>', value);
             this.loadVideo(id, value);
           })
           .catch(() => {

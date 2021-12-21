@@ -303,7 +303,6 @@ export class FileHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const dirEntry = await this.getUserDirEntry(dirPath);
-        console.log('====dirEntry====', dirEntry);
         if (!dirEntry) {
           const error = 'User dir entry is null';
           Logger.error(TAG, error);
@@ -312,7 +311,6 @@ export class FileHelperService {
         }
         dirEntry.getFile(fileName, options,
           (fileEntry: FileEntry) => {
-            console.log('====fileEntry====', fileEntry);
             if (!fileEntry) {
               const error = 'User file entry is null';
               Logger.error(TAG, error);
@@ -338,7 +336,6 @@ export class FileHelperService {
       try {
         let fileEntry = await this.getUserFileEntry(dirPath, fileName);
         let file = await this.fileService.getFileData(fileEntry);
-        console.log('====file====', file);
         resolve(file);
       } catch (error) {
         reject(error);

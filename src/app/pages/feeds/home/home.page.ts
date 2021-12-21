@@ -1176,8 +1176,6 @@ export class HomePage implements OnInit {
       this.imgloadingStyleObj['top'] =
         (imagesHeight - this.roundWidth) / 2 + 'px';
       this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
-      console.log('this.isImgLoading', this.isImgLoading);
-      console.log('this.imgCurKey', this.imgCurKey);
       this.isImgLoading[this.imgCurKey] = true;
 
       let contentVersion = this.feedService.getContentVersion(
@@ -1200,7 +1198,6 @@ export class HomePage implements OnInit {
 
       const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
       if (content.version == '2.0') {
-        console.log('content ==> ', content);
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
           const elements = mediaDatas[0];
@@ -1318,10 +1315,7 @@ export class HomePage implements OnInit {
         postImage.getBoundingClientRect().top >= -100 &&
         postImage.getBoundingClientRect().top <= this.clientHeight
       ) {
-
-        console.log('1111111111111111');
         if (isload === '') {
-          console.log('222222222222222');
           this.isLoadimage[id] = '11';
           let arr = srcId.split('-');
           let nodeId = arr[0];
@@ -1370,17 +1364,14 @@ export class HomePage implements OnInit {
           }
 
           const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          console.log('content ===>', content);
           if (content.version == '2.0') {
             postImage.setAttribute('src', './assets/icon/reserve.svg');
             const mediaDatas = content.mediaDatas;
             if (mediaDatas && mediaDatas.length > 0) {
               const elements = mediaDatas[0];
-              console.log('elements ===>', elements);
               this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
                 .then((value) => {
                   let thumbImage = value || "";
-                  console.log('value ===>', value);
                   postImage.setAttribute('src', thumbImage);
 
                   // if (thumbImage != '') {
@@ -1551,19 +1542,15 @@ export class HomePage implements OnInit {
           let channelId: any = arr[1];
           let postId: any = arr[2];
 
-
           const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          console.log('content ===>', content);
           if (content.version == '2.0') {
             video.setAttribute('poster', './assets/icon/reserve.svg');
             const mediaDatas = content.mediaDatas;
             if (mediaDatas && mediaDatas.length > 0) {
               const elements = mediaDatas[0];
-              console.log('elements ===>', elements);
               this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
                 .then((value) => {
                   let thumbImage = value || "";
-                  console.log('value ===>', value);
                   this.isLoadVideoiamge[id] = '13';
                   video.setAttribute('poster', thumbImage);
 
@@ -1808,24 +1795,16 @@ export class HomePage implements OnInit {
     this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
-
     const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-    console.log('content ===>', content);
     if (content.version == '2.0') {
-      console.log('11111111111111111 ===>');
       // video.setAttribute('src', './assets/icon/reserve.svg');
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
-        console.log('22222222222222 ===>');
         const elements = mediaDatas[0];
-        console.log('elements ===>', elements);
-
-        console.log('this.videoCurKey ===>', this.videoCurKey);
         // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
         this.postHelperService.getPostData(elements.originMediaCid, elements.type)
           .then((value) => {
             this.isVideoLoading[this.videoCurKey] = false;
-            console.log('value ===>', value);
             this.loadVideo(id, value);
           })
           .catch(() => {
@@ -1914,7 +1893,6 @@ export class HomePage implements OnInit {
       return;
     }
     source.setAttribute('src', videodata);
-    console.log('333333333', source);
     let vgoverlayplay: any = document.getElementById(id + 'vgoverlayplayhome');
     let vgcontrol: any = document.getElementById(id + 'vgcontrolshome');
 

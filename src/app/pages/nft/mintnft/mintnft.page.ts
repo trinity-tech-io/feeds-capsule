@@ -316,13 +316,9 @@ export class MintnftPage implements OnInit {
   sendIpfsImage(file: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       // let blob = this.dataURLtoBlob(file);
-
-      console.log('nft file=============', file);
-      console.log('nft file type=============', typeof (file));
       let formData = new FormData();
       formData.append('', file);
 
-      console.log('nft formData=============', formData);
       Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
       this.ipfsService
         .nftPost(formData)
@@ -349,13 +345,8 @@ export class MintnftPage implements OnInit {
   sendIpfsThumbnail(thumbnailBase64: string) {
     return new Promise(async (resolve, reject) => {
       let thumbnailBlob = UtilService.base64ToBlob(thumbnailBase64);
-      console.log('sendIpfsThumbnail file=============', thumbnailBlob);
-      console.log('sendIpfsThumbnail file type=============', typeof (thumbnailBlob));
-
       let formData = new FormData();
       formData.append('', thumbnailBlob);
-      console.log('sendIpfsThumbnail formData=============', formData);
-
       Logger.log(TAG, 'Send thumbnail, formdata length is', formData.getAll('').length);
 
       this.ipfsService

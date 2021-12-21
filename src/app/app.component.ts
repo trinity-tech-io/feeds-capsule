@@ -89,7 +89,6 @@ export class MyApp {
         return await this.dataHelper.loadApiProvider();
       })
       .then(async (api) => {
-        console.log("====api===",api);
         Config.changeApi(api);
         this.feedService.initDidManager();
         this.splashScreen.hide();
