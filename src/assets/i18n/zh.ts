@@ -893,5 +893,8 @@ export const zh = {
   AssistpasarPage:{
     title: 'Assist Pasar API',
     assistProviderDes: '用于读取数据的辅助 Assist Pasar 服务',
+  },
+  ProfilenftimagePage: {
+    title: "选择收藏品"
   }
 };
