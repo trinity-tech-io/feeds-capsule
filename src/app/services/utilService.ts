@@ -685,7 +685,6 @@ export class UtilService {
       did: '',
       name: '',
       description: '',
-      url: '',
       ownerName: '',
       ownerDid: '',
       curQuantity: '1',

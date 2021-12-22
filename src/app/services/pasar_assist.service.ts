@@ -172,7 +172,7 @@ export class PasarAssistService {
     return this.listPasarOrderFromService(pageNum, pageSize, orderState, blockNumber, isAsc, endBlockBumber, sortType, safeMode);
   }
 
-  listOwnSticker(type:string) {
+  listOwnSticker(type: string) {
     return new Promise(async (resolve, reject) => {
       try {
         let url = '';
@@ -189,7 +189,7 @@ export class PasarAssistService {
           return;
         }
 
-        url = url + '?owner=' + accountAddress+type;
+        url = url + '?owner=' + accountAddress + type;
 
         const result = await this.httpService.httpGet(url);
 
@@ -279,5 +279,60 @@ export class PasarAssistService {
     return didObj;
   }
 
+  searchStickers(tokenId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + 'pasar/api/v1/search'
+        else
+          url = Config.PASAR_ASSIST_TESTNET_SERVER + 'search'
 
+        url = url + '?tokenId=' + tokenId;
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject(null);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'search Stickers From Service error', error);
+        reject(null)
+      }
+    });
+  }
+
+  /**
+  *
+  * @param pageNum 页码 从1开始 选填 默认1
+  * @param pageSize 每页条目 大于0 选填 默认10
+  */
+  listGalleriaPanelsFromService(pageNum: number, pageSize: number): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + 'galleria/api/v1/listPanels'
+        else
+          url = Config.GALLERIA_ASSIST_TESTNET_SERVER + 'listPanels'
+
+        url = url + '?pageNum=' + pageNum;
+        if (pageSize)
+          url = url + '&pageSize=' + pageSize;
+
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject(null);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'List Pasar Order From Service error', error);
+        reject(null)
+      }
+    });
+  }
 }
+
