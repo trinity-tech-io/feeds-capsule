@@ -284,9 +284,9 @@ export class PasarAssistService {
       try {
         let url = '';
         if (this.dataHelper.getDevelopNet() == 'MainNet')
-          url = this.baseAssistUrl + 'pasar/api/v1/search'
+          url = this.baseAssistUrl + 'sticker/api/v1/search'
         else
-          url = Config.PASAR_ASSIST_TESTNET_SERVER + 'search'
+          url = Config.STICKER_ASSIST_TESTNET_SERVER + 'search'
 
         url = url + '?tokenId=' + tokenId;
         const result = await this.httpService.httpGet(url);
@@ -330,6 +330,30 @@ export class PasarAssistService {
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'List Pasar Order From Service error', error);
+        reject(null)
+      }
+    });
+  }
+
+  getPanel(tokenId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + '/galleria/api/v1/getPanel'
+        else
+          url = Config.GALLERIA_ASSIST_TESTNET_SERVER + 'getPanel'
+
+        url = url + '?tokenId=' + tokenId;
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject(null);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'getPanel From Service error', error);
         reject(null)
       }
     });
