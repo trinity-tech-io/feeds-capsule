@@ -1163,7 +1163,7 @@ filterChannelCollection(){
 
 handleChannelShow(feed: any) {
   let feedNodeId = feed['nodeId'];
-  let feedUrl = feed['url'];
+  let feedUrl = feed['url'] || feed.entry.url;
   let feedId = feedUrl.split('/')[4];
   let followFeed = _.filter(this.followedList, (item: any) => {
     return feedNodeId == item['nodeId'] && feedId == item['id'];
