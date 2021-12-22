@@ -19,8 +19,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
-import { Config } from 'src/app/services/config';
 import { MenuService } from 'src/app/services/MenuService';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 
 @Component({
   selector: 'app-feedspreferences',
@@ -71,6 +71,7 @@ export class FeedspreferencesPage implements OnInit {
     private ipfsService: IPFSService,
     private carrierService: CarrierService,
     private menuService: MenuService,
+    private pasarAssistService: PasarAssistService,
   ) {}
 
   ngOnInit() {
@@ -313,10 +314,7 @@ export class FeedspreferencesPage implements OnInit {
     this.channelCollections = await this.getChannelCollectionsStatus() || null;
     console.log("==this.channelCollections===",this.channelCollections)
     if(this.channelCollections != null){
-      let status  = this.channelCollections["status"] || "";
-      if(status === "1"){
-        this.curFeedPublicStatus = true;
-      }
+      this.curFeedPublicStatus = true;
       return;
     }
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
@@ -482,10 +480,11 @@ export class FeedspreferencesPage implements OnInit {
      let channelCollections: FeedsData.ChannelCollections = null;
      if(this.exploreChannelCollectionList.length === 0){
       this.exploreChannelCollectionList = await this.getActivePanelList();
+      console.log("this.exploreChannelCollectionList",this.exploreChannelCollectionList);
      }
 
     channelCollections = _.find(this.exploreChannelCollectionList,(item: FeedsData.ChannelCollections)=>{
-      return ownerDid === item.ownerDid && feedsUrl===item.url;
+      return ownerDid === item.ownerDid && feedsUrl===item.entry.url;
      });
      return channelCollections;
     }
@@ -503,7 +502,6 @@ export class FeedspreferencesPage implements OnInit {
         channelCollections.userAddr = item[2];
         channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(item[2]);
         channelCollections.type = "feeds-channel";
-        channelCollections.status = "1";
         channelCollections.tokenId = item[3];
       let tokenInfo =  await this.nftContractControllerService
         .getSticker().tokenInfo(channelCollections.tokenId);
@@ -535,6 +533,7 @@ export class FeedspreferencesPage implements OnInit {
       }
     }
     this.dataHelper.setPublishedActivePanelList(channelCollectionList);
+    console.log("===channelCollectionList===",channelCollectionList);
     return channelCollectionList;
     }catch (error) {
       channelCollectionList = [];
@@ -547,8 +546,10 @@ export class FeedspreferencesPage implements OnInit {
 
    try {
     let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
-    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
-    if(tokenInfo[0]!= '0' && tokenInfo[2] != '0'){
+    console.log("=====tokenId=====",tokenId);
+    let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
+    console.log("=====tokenInfo=====",tokenInfo);
+    if(tokenInfo != null){
          return tokenInfo;
     }
     return null;

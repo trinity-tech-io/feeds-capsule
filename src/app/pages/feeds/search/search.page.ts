@@ -21,6 +21,7 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -58,6 +59,8 @@ export class SearchPage implements OnInit {
   private channelCollectionsAvatarisLoad: any = {};
   public channelCollectionPageList: any = [];//页面显示用
   public searchChannelCollectionPageList: any = [];//搜索使用
+  private panelPageSize:number = 5;//一页多少个
+  private panelPageNum:number = 1;//页码
 
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
@@ -91,7 +94,8 @@ export class SearchPage implements OnInit {
     private nftContractHelperService: NFTContractHelperService,
     private ipfsService: IPFSService,
     private carrierService: CarrierService,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
+    private pasarAssistService: PasarAssistService,
   ) {}
 
   ngOnInit() {
@@ -606,7 +610,7 @@ export class SearchPage implements OnInit {
     }
 
     let channelCollectionPageList = _.filter(this.channelCollectionPageList,(item: FeedsData.ChannelCollections)=>{
-        let url = item.url;
+        let url = item.entry.url;
         let urlArr = url.replace("feeds://","").split("/");
         let channelId = urlArr[2];
         return feedNodeId == item['nodeId'] && feedId == channelId;
@@ -958,53 +962,63 @@ async getActivePanelList(){
   this.channelCollectionList = [];
   this.channelCollectionPageList = [];
   try{
-  let activePanelCount = await this.nftContractControllerService.getGalleria().getActivePanelCount();
-  for (let index = 0; index < activePanelCount; index++) {
-    try {
-      const item:any = await this.nftContractControllerService.getGalleria().getActivePanelByIndex(index);
-      /*userAddr:2*/
-      let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-      channelCollections.panelId = item[0];
-      channelCollections.userAddr = item[2];
-      channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(item[2]);
-      channelCollections.type = "feeds-channel";
-      channelCollections.status = "1";
-      channelCollections.tokenId = item[3];
-    let tokenInfo =  await this.nftContractControllerService
-      .getSticker().tokenInfo(channelCollections.tokenId);
-    let tokenUri = tokenInfo[3]; //tokenUri
-    tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
-    const tokenJson = await this.ipfsService
-    .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
-    let url: string = tokenJson["entry"]["url"];
-    let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
-    channelCollections.name = tokenJson["name"];
-    channelCollections.description = tokenJson["description"];
-    channelCollections.avatar = avatar;
-    channelCollections.entry = tokenJson["entry"];
-    let didUri = this.nftContractHelperService.parseTokenUri(item[6]);
-    const didJson: any = await this.ipfsService
-    .nftGet(this.ipfsService.getNFTGetUrl() + didUri);
-    channelCollections.ownerDid = didJson.did;
-    let result = await this.feedService.resolveDidObjectForName(channelCollections.ownerDid);
-    let didName = result["name"] || "";
+   let result = await this.pasarAssistService.
+     listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
+   console.log("====result===",result);
+   let panelsList:any;
+   if(result!=null){
+      panelsList = result["data"]["result"];
+   }else{
+    panelsList = [];
+   }
+   console.log("====panelsList===",panelsList);
+   this.panelPageNum = this.panelPageNum+1;
+   while(result!=null&&panelsList.length > 0){
+    await this.handlePanels(panelsList);
+    result = await this.pasarAssistService.
+    listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
+    if(result!=null){
+      panelsList = result["data"]["result"];
+   }else{
+    panelsList = [];
+   }
+   await this.handlePanels(panelsList);
+   }
+  }catch (error) {
+    this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
+  }
+}
+
+async handlePanels(result:[]){
+  for(let index = 0; index < result.length; index++) {
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+    let item:any = result[index];
+    channelCollections.version = item.version;
+    channelCollections.panelId = item.panelId;
+    channelCollections.userAddr = item.user;
+    channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
+    channelCollections.type = item.type;
+    channelCollections.tokenId = item.tokenId;
+    channelCollections.name = item.name;
+    channelCollections.description = item.description;
+    channelCollections.avatar = item.avatar;
+    channelCollections.entry = item.entry;
+    channelCollections.ownerDid = item.tokenDid.did;
+    let didJsON = await this.feedService.resolveDidObjectForName(channelCollections.ownerDid);
+    let didName = didJsON["name"] || "";
     channelCollections.ownerName = didName;
+    let url: string = channelCollections.entry.url;
     let urlArr = url.replace("feeds://","").split("/");
     channelCollections.did = urlArr[0];
     let carrierAddress = urlArr[1];
     let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
     channelCollections.nodeId = nodeId;
     this.channelCollectionList.push(channelCollections);
-    this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
-    } catch (error) {
-      console.error("Get Sale item error", error);
-    }
   }
-  }catch (error) {
-    this.channelCollectionList = [];
-    this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
-  }
+  this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
 }
+
+
 
 clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
    let avatarId = this.handleCollectionImgId(channelCollections);
