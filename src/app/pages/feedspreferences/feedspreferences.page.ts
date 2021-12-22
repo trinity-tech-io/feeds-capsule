@@ -392,15 +392,14 @@ export class FeedspreferencesPage implements OnInit {
   async newToggle(){
     let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
     if(channelCollections != null){
-      if(channelCollections.status === "1"){//收藏品频道下架
         let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
         if(accountAddress === '') {
         this.native.toastWarn('common.connectWallet');
         return;
         }
         this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
-           return;
-      }
+        return;
+
     }else{
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
       if (server === null) {
@@ -469,77 +468,55 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   async getChannelCollectionsStatus(){
-     this.exploreChannelCollectionList =  this.dataHelper.getPublishedActivePanelList() || [];
-     const signinData: any = this.feedService.getSignInData() || {};
-     let ownerDid = signinData.did || "";
-     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
-     if (server === null) {
-       return;
+    try {
+      let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      if (server === null) {
+      return;
+      }
+      let feedsUrl = server.feedsUrl + '/' + this.feedId;
+      let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
+      tokenId =  UtilService.hex2dec(tokenId);
+      console.log("=====tokenId=====",tokenId);
+      let result = await this.pasarAssistService.getPanel(tokenId);
+      console.log("=====result=====",result);
+      if(result != null){
+       let tokenInfo = result["data"] || "";
+       if(tokenInfo === ""){
+           return null;
+       }
+       tokenInfo =  await this.handlePanels(result["data"]);
+        console.log("=====tokenInfo=====",result["data"]);
+        return tokenInfo;
+       }
+      return null;
+     } catch (error) {
+      return null;
      }
-     let feedsUrl = server.feedsUrl + '/' + this.feedId;
-     let channelCollections: FeedsData.ChannelCollections = null;
-     if(this.exploreChannelCollectionList.length === 0){
-      this.exploreChannelCollectionList = await this.getActivePanelList();
-      console.log("this.exploreChannelCollectionList",this.exploreChannelCollectionList);
-     }
+   }
 
-    channelCollections = _.find(this.exploreChannelCollectionList,(item: FeedsData.ChannelCollections)=>{
-      return ownerDid === item.ownerDid && feedsUrl===item.entry.url;
-     });
-     return channelCollections;
-    }
-
-  async getActivePanelList(){
-    let channelCollectionList = [];
-    try{
-    let activePanelCount = await this.nftContractControllerService.getGalleria().getActivePanelCount();
-    for (let index = 0; index < activePanelCount; index++) {
-      try {
-        const item:any = await this.nftContractControllerService.getGalleria().getActivePanelByIndex(index);
-        /*userAddr:2*/
-        let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-        channelCollections.panelId = item[0];
-        channelCollections.userAddr = item[2];
-        channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(item[2]);
-        channelCollections.type = "feeds-channel";
-        channelCollections.tokenId = item[3];
-      let tokenInfo =  await this.nftContractControllerService
-        .getSticker().tokenInfo(channelCollections.tokenId);
-      let tokenUri = tokenInfo[3]; //tokenUri
-      tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
-      const tokenJson = await this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
-      let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
-      channelCollections.name = tokenJson["name"];
-      channelCollections.description = tokenJson["description"];
-      channelCollections.avatar = avatar;
-      channelCollections.entry = tokenJson["entry"];
-      let didUri = this.nftContractHelperService.parseTokenUri(item[6]);
-      const didJson: any = await this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + didUri);
-      channelCollections.ownerDid = didJson.did;
-      let result = await this.feedService.resolveDidObjectForName(channelCollections.ownerDid);
-      let didName = result["name"] || "";
-      channelCollections.ownerName = didName;
-      let url: string = tokenJson["entry"]["url"];
+   async handlePanels(item :any){
+     let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+      channelCollections.version = item.version;
+      channelCollections.panelId = item.panelId;
+      channelCollections.userAddr = item.user;
+      //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
+      channelCollections.diaBalance = "0";
+      channelCollections.type = item.type;
+      channelCollections.tokenId = item.tokenId;
+      channelCollections.name = item.name;
+      channelCollections.description = item.description;
+      channelCollections.avatar = item.avatar;
+      channelCollections.entry = item.entry;
+      channelCollections.ownerDid = item.tokenDid.did;
+      let didJsON = this.feedService.getSignInData() || {};
+      channelCollections.ownerName = didJsON["name"];
+      let url: string = channelCollections.entry.url;
       let urlArr = url.replace("feeds://","").split("/");
       channelCollections.did = urlArr[0];
       let carrierAddress = urlArr[1];
       let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
       channelCollections.nodeId = nodeId;
-      channelCollectionList.push(channelCollections);
-      } catch (error) {
-        console.error("Get Sale item error", error);
-      }
-    }
-    this.dataHelper.setPublishedActivePanelList(channelCollectionList);
-    console.log("===channelCollectionList===",channelCollectionList);
-    return channelCollectionList;
-    }catch (error) {
-      channelCollectionList = [];
-      this.dataHelper.setPublishedActivePanelList(channelCollectionList);
-      return channelCollectionList;
-    }
+      return channelCollections;
   }
 
  async isExitStrick(feedsUrl: string) {

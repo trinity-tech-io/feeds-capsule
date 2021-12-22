@@ -5,8 +5,6 @@ import { NFTContractStickerService } from 'src/app/services/nftcontract_sticker.
 import { NFTContractGalleriaService } from 'src/app/services/nftcontract_galleria.service';
 import { NFTContractDiamondService } from './nftcontract_diamond.service';
 import { Events } from 'src/app/services/events.service';
-import { NFTContractDiamondService } from './nftcontract_diamond.service';
-import { Utils } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings/hive';
 import { UtilService } from './utilService';
 
 @Injectable()
@@ -16,7 +14,6 @@ export class NFTContractControllerService {
     private walletConnectControllerService: WalletConnectControllerService,
     private nftContractParsarService: NFTContractParsarService,
     private nftContractStickerService: NFTContractStickerService,
-    private nftContractDiamondService: NFTContractDiamondService,
     private nftContractGalleriaService: NFTContractGalleriaService,
     private nftContractDiamondService: NFTContractDiamondService
   ) {
@@ -53,10 +50,6 @@ export class NFTContractControllerService {
     return this.nftContractParsarService.getPasar();
   }
 
-  getDiamond(): NFTContractDiamondService {
-    return this.nftContractDiamondService.getDiamond();
-  }
-
   getGalleria(): NFTContractGalleriaService {
     return this.nftContractGalleriaService.getGalleria();
   }
@@ -83,26 +76,26 @@ export class NFTContractControllerService {
     return wei;
   }
 
-  isTokenId(tokenId: string){
+  isTokenId(tokenId: string) {
     let isHex = this.walletConnectControllerService
-    .getWeb3().utils.isHexStrict(tokenId);
-    if(isHex){
-      if(tokenId.length === 66){
-          return tokenId;
+      .getWeb3().utils.isHexStrict(tokenId);
+    if (isHex) {
+      if (tokenId.length === 66) {
+        return tokenId;
       }
     }
 
     try {
-      let hexString  = "0x"+UtilService.dec2hex(tokenId);
+      let hexString = "0x" + UtilService.dec2hex(tokenId);
       let isHex = this.walletConnectControllerService
-      .getWeb3().utils.isHexStrict(hexString);
-      if(isHex){
-        if(hexString.length === 66){
-            return hexString;
-        }else{
+        .getWeb3().utils.isHexStrict(hexString);
+      if (isHex) {
+        if (hexString.length === 66) {
+          return hexString;
+        } else {
           return "";
         }
-      }else{
+      } else {
         return "";
       }
     } catch (error) {
@@ -111,7 +104,7 @@ export class NFTContractControllerService {
   }
 
   isAddress(address: string) {
-     return this.walletConnectControllerService
+    return this.walletConnectControllerService
       .getWeb3()
       .utils.isAddress(address);
   }

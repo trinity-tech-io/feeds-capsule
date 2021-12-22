@@ -12,7 +12,6 @@ import { Logger } from './logger';
 import { Config } from './config';
 import { ApiUrl } from './ApiUrl';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
-import { NFTContractDiamondService } from './nftcontract_diamond.service';
 
 const TAG: string = 'GlobalService';
 @Injectable()
@@ -25,7 +24,6 @@ export class GlobalService {
     private nftContractGalleriaService: NFTContractGalleriaService,
     private nftContractDiamondService: NFTContractDiamondService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private nftContractDiamondService: NFTContractDiamondService,
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
     private pasarAssistService: PasarAssistService,
