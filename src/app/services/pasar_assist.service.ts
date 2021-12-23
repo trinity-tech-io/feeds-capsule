@@ -288,7 +288,7 @@ export class PasarAssistService {
         else
           url = Config.STICKER_ASSIST_TESTNET_SERVER + 'search'
 
-        url = url + '?tokenId=' + tokenId;
+        url = url + '?key=' + tokenId;
         const result = await this.httpService.httpGet(url);
 
         const resultCode = result.code;

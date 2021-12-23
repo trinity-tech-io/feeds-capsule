@@ -144,6 +144,10 @@ export class CreatenewfeedPage implements OnInit {
     );
   }
 
+  mintChannel(nodeId: string,channelId: number){
+    this.native.navigateForward(['/galleriachannel'],{ queryParams:{"nodeId": nodeId,"channelId": channelId }});
+  }
+
   ionViewDidEnter() {}
 
   ionViewWillLeave() {
@@ -287,37 +291,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(nodeId) || null;
-    if (server === null) {
-      return;
-    }
-    let feed = this.feedService.getChannelFromId(nodeId, feedId);
-    let feedsUrl = server.feedsUrl + '/' + feed['id'];
-    let channelAvatar = this.feedService.parseChannelAvatar(feed['avatar']);
-    let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    let obj = {
-      did: server['did'],
-      name: feed['name'],
-      description: feed['introduction'],
-      url: feedsUrl,
-      feedsUrlHash: feedsUrlHash,
-      feedsAvatar: channelAvatar,
-      followers: feed['subscribers'],
-      ownerName: feed['owner_name'],
-      nodeId: nodeId,
-      ownerDid: feed['owner_did'],
-    };
-    this.httpService.ajaxPost(ApiUrl.register, obj).then(result => {
-      if (result['code'] === 200) {
-        let feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
-        feedPublicStatus[feedsUrlHash] = '1';
-        this.feedService.setFeedPublicStatus(feedPublicStatus);
-        this.storageService.set(
-          'feeds.feedPublicStatus',
-          JSON.stringify(feedPublicStatus),
-        );
-      }
-    });
+    this.mintChannel(nodeId,feedId);
   }
 
   help(event: any) {

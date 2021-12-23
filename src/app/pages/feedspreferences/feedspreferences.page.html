@@ -26,7 +26,7 @@
     </ion-col>
   </ion-row>
 
-  <ion-row class="section" (click)="mintChannel()">
+  <ion-row class="section" (click)="mintChannel()" *ngIf="isShowMint">
     <ion-col size="9" class="title-col">
         <h1>{{ "FeedspreferencesPage.des2" | translate }}</h1>
     </ion-col>
