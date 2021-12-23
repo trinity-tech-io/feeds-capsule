@@ -26,10 +26,10 @@ export class ProfilenftimagePage implements OnInit {
   public nftImageList: any = [];
   public onSaleList: any = [];
   public styleObj: any = { width: '' };
-  public isFinsh:any = [];
-  public type:string = "";
+  public isFinsh: any = [];
+  public type: string = "";
   private collectiblesPageNum: number = 0;
-  private profileNftImagePagePostisLoad:any = {};
+  private profileNftImagePagePostisLoad: any = {};
   private clientHeight: number = 0;
   constructor(
     private zone: NgZone,
@@ -43,11 +43,11 @@ export class ProfilenftimagePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
-        this.type = queryParams.type || "";
+      this.type = queryParams.type || "";
     });
   }
 
@@ -58,15 +58,15 @@ export class ProfilenftimagePage implements OnInit {
     this.getImageList();
   }
 
-  async refreshCollectibles(event:any) {
-    try{
+  async refreshCollectibles(event: any) {
+    try {
       const address = this.nftContractControllerService.getAccountAddress() || "";
       this.nftImageList = await this.nftContractHelperService.queryOwnerCollectibles(address);
-      if(event!=null){
+      if (event != null) {
         event.target.complete();
       }
-    }catch(err){
-      if(event!=null){
+    } catch (err) {
+      if (event != null) {
         event.target.complete();
       }
     }
@@ -85,7 +85,7 @@ export class ProfilenftimagePage implements OnInit {
 
   }
 
- async getImageList() {
+  async getImageList() {
     let createAddr =
       this.nftContractControllerService.getAccountAddress() || '';
     if (createAddr === '') {
@@ -94,35 +94,35 @@ export class ProfilenftimagePage implements OnInit {
 
     let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
     if (list.length === 0) {
-       await this.refreshCollectibles(null);
-       this.refreshProfileNftImagePagePost();
+      await this.refreshCollectibles(null);
+      this.refreshProfileNftImagePagePost();
     } else {
       this.nftImageList = this.nftContractHelperService.sortData(list, this.sortType);
       this.refreshProfileNftImagePagePost()
     }
   }
 
- async doRefresh(event: any) {
-        let createAddr =
-        this.nftContractControllerService.getAccountAddress() || '';
-      if (createAddr === '') {
-        this.nftImageList = [];
-        event.target.complete();
-      }
-     await this.refreshCollectibles(event);
-     this.refreshProfileNftImagePagePost()
+  async doRefresh(event: any) {
+    let createAddr =
+      this.nftContractControllerService.getAccountAddress() || '';
+    if (createAddr === '') {
+      this.nftImageList = [];
+      event.target.complete();
+    }
+    await this.refreshCollectibles(event);
+    this.refreshProfileNftImagePagePost()
   }
 
   async clickItem(item: any) {
 
-    if(this.type === "postImages"){
+    if (this.type === "postImages") {
       let thumbnailUri = item['thumbnail'];
       let kind = item["kind"];
       let size = item["originAssetSize"];
       if (!size)
-      size = '0';
+        size = '0';
       if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
+        thumbnailUri = item['asset'];
       }
 
       if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
@@ -130,38 +130,38 @@ export class ProfilenftimagePage implements OnInit {
       } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
         thumbnailUri = thumbnailUri.replace('feeds:image:', '');
       }
-     await this.native.showLoading('common.waitMoment', isDismiss => {}, 30000);
-     let fetchUrl = this.ipfsService.getNFTGetUrl() +thumbnailUri;
-     this.fileHelperService.getNFTData(fetchUrl,thumbnailUri, kind).then((data) => {
-      this.zone.run(() => {
-        let dataSrc = data || "";
-        if(dataSrc!=""){
-          this.feedService.setSelsectNftImage(dataSrc);
-          this.native.pop();
-          this.native.hideLoading();
-        }
+      await this.native.showLoading('common.waitMoment', isDismiss => { }, 30000);
+      let fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
+      this.fileHelperService.getNFTData(fetchUrl, thumbnailUri, kind).then((data) => {
+        this.zone.run(() => {
+          let dataSrc = data || "";
+          if (dataSrc != "") {
+            this.feedService.setSelsectNftImage(dataSrc);
+            this.native.pop();
+            this.native.hideLoading();
+          }
+        });
+      }).catch((err) => {
+        this.native.hideLoading();
       });
-    }).catch((err)=>{
-      this.native.hideLoading();
-    });
-  }else{
-    let imgUri = item['asset'];
-    let size = item["originAssetSize"];
+    } else {
+      let imgUri = item['asset'];
+      let size = item["originAssetSize"];
       if (!size)
-      size = '0';
-    if (parseInt(size) > 5 * 1024 * 1024) {
-      imgUri = item['thumbnail'];
-     }
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('feeds:image:') > -1){
-      imgUri = imgUri.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+        size = '0';
+      if (parseInt(size) > 5 * 1024 * 1024) {
+        imgUri = item['thumbnail'];
+      }
+      if (imgUri.indexOf('feeds:imgage:') > -1) {
+        imgUri = imgUri.replace('feeds:imgage:', '');
+        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      } else if (imgUri.indexOf('feeds:image:') > -1) {
+        imgUri = imgUri.replace('feeds:image:', '');
+        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      }
+      this.native.navigateForward(['editimage'], { replaceUrl: true });
+      this.feedService.setClipProfileIamge(imgUri);
     }
-    this.native.navigateForward(['editimage'], { replaceUrl: true });
-    this.feedService.setClipProfileIamge(imgUri);
-   }
 
   }
 
@@ -179,17 +179,17 @@ export class ProfilenftimagePage implements OnInit {
     });
   }
 
-  getProfileNftImagePage(item: any){
+  getProfileNftImagePage(item: any) {
     let thumbnailUri = item['thumbnail'] || "";
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return "";
     }
     let kind = item["kind"];
     let size = item["originAssetSize"];
     if (!size)
-    size = '0';
+      size = '0';
     if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-    thumbnailUri = item['asset'];
+      thumbnailUri = item['asset'];
     }
 
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
@@ -202,15 +202,15 @@ export class ProfilenftimagePage implements OnInit {
 
   getChannelAvatarId(item: any) {
     let thumbnailUri = item['thumbnail'] || "";
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return "";
     }
     let kind = item["kind"];
     let size = item["originAssetSize"];
     if (!size)
-    size = '0';
+      size = '0';
     if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-    thumbnailUri = item['asset'];
+      thumbnailUri = item['asset'];
     }
 
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
@@ -218,77 +218,77 @@ export class ProfilenftimagePage implements OnInit {
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     }
-    return "profileNftImagePage-post-"+thumbnailUri;
+    return thumbnailUri + "-" + kind + "-" + size + "-profileNftImage";
   }
 
   ionScroll() {
     this.native.throttle(this.setprofileNftImagePagePost(), 200, this, true);
   }
 
-  setprofileNftImagePagePost(){
+  setprofileNftImagePagePost() {
     let discoverSquareFeed = document.getElementsByClassName("profileNftImagePage") || [];
     let len = discoverSquareFeed.length;
-    for(let itemIndex = 0;itemIndex<len;itemIndex++){
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
       let item = discoverSquareFeed[itemIndex];
       let id = item.getAttribute("id") || "";
-      if(id === ""){
-         continue;
+      if (id === "") {
+        continue;
       }
       let arr = id.split("-");
       let avatarUri = arr[0];
       let kind = arr[1];
-      let thumbImage =  document.getElementById('profileNftImagePage-post-'+avatarUri);
-      let srcStr =  thumbImage.getAttribute("src") || "";
+      let thumbImage = document.getElementById('profileNftImagePage-post-' + avatarUri);
+      let srcStr = thumbImage.getAttribute("src") || "";
       let isload = this.profileNftImagePagePostisLoad[avatarUri] || '';
       try {
-         if (
+        if (
           avatarUri != '' &&
-           thumbImage.getBoundingClientRect().top >= -100 &&
-           thumbImage.getBoundingClientRect().top <= this.clientHeight
-         ) {
-           if(isload === ""){
+          thumbImage.getBoundingClientRect().top >= -100 &&
+          thumbImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if (isload === "") {
             this.profileNftImagePagePostisLoad[avatarUri] = '12';
             let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
-            this.fileHelperService.getNFTData(fetchUrl,avatarUri, kind).then((data) => {
+            this.fileHelperService.getNFTData(fetchUrl, avatarUri, kind).then((data) => {
               this.zone.run(() => {
                 this.profileNftImagePagePostisLoad[avatarUri] = '13';
                 let dataSrc = data || "";
-                if(dataSrc!=""){
-                  thumbImage.setAttribute("src",data);
+                if (dataSrc != "") {
+                  thumbImage.setAttribute("src", data);
                 }
               });
-            }).catch((err)=>{
-              if(this.profileNftImagePagePostisLoad[avatarUri] === '13'){
+            }).catch((err) => {
+              if (this.profileNftImagePagePostisLoad[avatarUri] === '13') {
                 this.profileNftImagePagePostisLoad[avatarUri] = '';
                 thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-               }
+              }
             });
 
-           }
-         }else{
-           srcStr = thumbImage.getAttribute('src') || '';
-           if (
-             thumbImage.getBoundingClientRect().top < -100 &&
-             this.profileNftImagePagePostisLoad[avatarUri] === '13' &&
-             srcStr != './assets/icon/reserve.svg'
-           ) {
+          }
+        } else {
+          srcStr = thumbImage.getAttribute('src') || '';
+          if (
+            thumbImage.getBoundingClientRect().top < -100 &&
+            this.profileNftImagePagePostisLoad[avatarUri] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
             this.profileNftImagePagePostisLoad[avatarUri] = '';
-             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-           }
-         }
+            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
       } catch (error) {
         this.profileNftImagePagePostisLoad[avatarUri] = '';
-       thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
       }
     }
   }
 
-  refreshProfileNftImagePagePost(){
-    let sid = setTimeout(()=>{
+  refreshProfileNftImagePagePost() {
+    let sid = setTimeout(() => {
       this.profileNftImagePagePostisLoad = {};
       this.setprofileNftImagePagePost();
       clearTimeout(sid);
-    },100);
+    }, 100);
   }
 
 

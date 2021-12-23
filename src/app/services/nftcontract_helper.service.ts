@@ -1426,11 +1426,9 @@ export class NFTContractHelperService {
         let type = "&types=image&types=avatar";
         const stickList = await this.refreshStickerFromAssist(type);
         const unionList = _.unionWith(ownPasarList, stickList, _.isEqual);
-
         this.nftPersistenceHelper.setCollectiblesMap(address, unionList);
 
         const collectibles = await this.loadCollectiblesData(unionList, 0, sortType);
-
         resolve(collectibles);
       } catch (error) {
         reject(error);
