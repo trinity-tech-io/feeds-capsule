@@ -46,12 +46,12 @@ export class FeedspreferencesPage implements OnInit {
   public collectibleStatus = {};
 
   private channelCollections: FeedsData.ChannelCollections = null;
-  private exploreChannelCollectionList = [];
   public isLoading: boolean = false;
   public loadingTitle: string = "";
   public loadingText: string = "";
   public loadingCurNumber: string = "";
   public loadingMaxNumber: string = "";
+  public isShowMint: boolean = false;
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -143,60 +143,22 @@ export class FeedspreferencesPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder,(channelCollections: FeedsData.ChannelCollections)=>{
-      let tokenId = channelCollections.tokenId;
-      //自己频道
-      let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
-      let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
-      let ownChannelCollectionList  = ownChannelCollection[accountAddress] || [];
-      let itemIndex = _.findIndex(ownChannelCollectionList,(item: FeedsData.ChannelCollections)=>{
-        return item.tokenId === tokenId;
+      this.zone.run(()=>{
+        this.curFeedPublicStatus = false;
       });
-      let newChannelCollections = _.cloneDeep(channelCollections);
-          newChannelCollections.panelId = "";
-          newChannelCollections.status = "0";
-      ownChannelCollectionList.splice(itemIndex,1,newChannelCollections);
-      this.handleCace(accountAddress,ownChannelCollectionList);
-
-      //explore feeds
-      itemIndex = _.findIndex(this.exploreChannelCollectionList,(item: FeedsData.ChannelCollections)=>{
-        return item.tokenId === tokenId;
-       });
-      this.exploreChannelCollectionList.splice(itemIndex,1);
-      this.dataHelper.setPublishedActivePanelList(this.exploreChannelCollectionList);
-      this.curFeedPublicStatus = false;
-
-  });
+    });
 
   this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
-    //自己频道
-    let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
-    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
-    let ownChannelCollectionList  = ownChannelCollection[accountAddress] || [];
     let type = obj["type"] || "";
-    let tokenId = obj['tokenId'];
     if(type === "burn"){
-      let itemIndex = _.findIndex(ownChannelCollectionList,(item: FeedsData.ChannelCollections)=>{
-        return item.tokenId === tokenId;
+      this.zone.run(()=>{
+        this.curFeedPublicStatus = false;
       });
-      ownChannelCollectionList.splice(itemIndex,1);
-      this.handleCace(accountAddress,ownChannelCollectionList);
       return;
     }
-    this.curFeedPublicStatus = true;
-    let panelId = obj['panelId'];
-    let itemIndex = _.findIndex(ownChannelCollectionList,(item: FeedsData.ChannelCollections)=>{
-      return item.tokenId === tokenId;
+    this.zone.run(()=>{
+      this.curFeedPublicStatus = true;
     });
-    let newChannelCollections = _.cloneDeep(ownChannelCollectionList[itemIndex]);
-    newChannelCollections.panelId = panelId;
-    newChannelCollections.status = "1";
-    ownChannelCollectionList.splice(itemIndex,1,newChannelCollections);
-    this.handleCace(accountAddress,ownChannelCollectionList);
-
-    //explore Feeds
-    this.exploreChannelCollectionList.push(newChannelCollections);
-    this.dataHelper.setPublishedActivePanelList(this.exploreChannelCollectionList);
-
   });
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
@@ -311,10 +273,13 @@ export class FeedspreferencesPage implements OnInit {
   }
 
  async getPublicStatus() {
+
     this.channelCollections = await this.getChannelCollectionsStatus() || null;
     console.log("==this.channelCollections===",this.channelCollections)
     if(this.channelCollections != null){
-      this.curFeedPublicStatus = true;
+      this.zone.run(() => {
+        this.curFeedPublicStatus = true;
+      });
       return;
     }
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
@@ -324,6 +289,7 @@ export class FeedspreferencesPage implements OnInit {
     let feedsUrl = server.feedsUrl + '/' + this.feedId;
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let curFeedPublicStatus = this.feedPublicStatus[feedsUrlHash] || '';
+    console.log("=====curFeedPublicStatus====",curFeedPublicStatus);
     if (curFeedPublicStatus === '') {
       this.httpService
         .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false)
@@ -334,6 +300,7 @@ export class FeedspreferencesPage implements OnInit {
               this.zone.run(() => {
                 this.curFeedPublicStatus = true;
                 this.isFirst = true;
+                this.isShowMint = true;
               });
               this.feedPublicStatus[feedsUrlHash] = '1';
               this.feedService.setFeedPublicStatus(this.feedPublicStatus);
@@ -351,6 +318,7 @@ export class FeedspreferencesPage implements OnInit {
     } else {
       this.zone.run(() => {
         this.curFeedPublicStatus = true;
+        this.isShowMint = true;
         this.isFirst = true;
       });
     }
@@ -474,7 +442,8 @@ export class FeedspreferencesPage implements OnInit {
       return;
       }
       let feedsUrl = server.feedsUrl + '/' + this.feedId;
-      let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
+      let feedsUrlHash = UtilService.SHA256(feedsUrl);
+      let tokenId: string ="0x" + feedsUrlHash;
       tokenId =  UtilService.hex2dec(tokenId);
       console.log("=====tokenId=====",tokenId);
       let result = await this.pasarAssistService.getPanel(tokenId);
@@ -523,10 +492,10 @@ export class FeedspreferencesPage implements OnInit {
 
    try {
     let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
-    console.log("=====tokenId=====",tokenId);
-    let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
-    console.log("=====tokenInfo=====",tokenInfo);
-    if(tokenInfo != null){
+    tokenId =  UtilService.hex2dec(tokenId);
+    //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+    if(tokenInfo[0]!='0' && tokenInfo[2]!='0'){
          return tokenInfo;
     }
     return null;

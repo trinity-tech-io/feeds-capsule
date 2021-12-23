@@ -523,7 +523,7 @@ export class GalleriachannelPage implements OnInit {
     let hash = UtilService.SHA256(this.feedsUrl);
     let status = feedPublicStatus[hash] || null;
     let des = "GalleriachannelPage.mintSuccessDesc";
-    if(status === null) {
+    if(status === null || status!="1") {
       this.popover = this.popupProvider.showalertdialog(
         this,
         'GalleriachannelPage.mintSuccess',
