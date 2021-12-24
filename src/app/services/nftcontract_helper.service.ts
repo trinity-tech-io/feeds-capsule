@@ -1408,6 +1408,22 @@ export class NFTContractHelperService {
     });
   }
 
+  async refreshAllOwnerCollectiblesData(sortType: FeedsData.SortType): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const address = this.nftContractControllerService.getAccountAddress();
+        const ownPasarList = this.dataHelper.getOwnPasarItemList(address);
+        const stickList = await this.refreshStickerFromAssist();
+        const unionList = _.unionWith(ownPasarList, stickList, _.isEqual);
+        const list = this.sortData(unionList ,sortType);
+        this.nftPersistenceHelper.setCollectiblesMap(address, list);
+        resolve(list);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   parseAssistStickerResult(result: any): FeedsData.NFTItem[] {
     let list: FeedsData.NFTItem[] = [];
     let array = result.data.result;
