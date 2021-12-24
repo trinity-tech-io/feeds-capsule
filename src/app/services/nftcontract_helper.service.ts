@@ -1441,7 +1441,8 @@ export class NFTContractHelperService {
       try {
         const address = this.nftContractControllerService.getAccountAddress();
         const ownPasarList = this.dataHelper.getOwnPasarItemList(address);
-        const stickList = await this.refreshStickerFromAssist();
+        let type = "&types=image&types=avatar";
+        const stickList = await this.refreshStickerFromAssist(type);
         const unionList = _.unionWith(ownPasarList, stickList, _.isEqual);
         const list = this.sortData(unionList, sortType);
         this.nftPersistenceHelper.setCollectiblesMap(address, list);
