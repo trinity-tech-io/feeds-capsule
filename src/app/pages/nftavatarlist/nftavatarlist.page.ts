@@ -12,6 +12,8 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { FeedService, Avatar } from 'src/app/services/FeedService';
 import _ from 'lodash';
 import { IonRefresher } from '@ionic/angular';
+import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 const TAG: string = 'NftavatarlistPage';
 @Component({
   selector: 'app-nftavatarlist',
@@ -21,14 +23,17 @@ const TAG: string = 'NftavatarlistPage';
 export class NftavatarlistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonRefresher,{static:false}) refresher: IonRefresher;
+  private sortType = FeedsData.SortType.TIME_ORDER_LATEST;
+  private profileNftImagePagePostisLoad:any = {};
   public nftAvatarList: any = [];
   public onSaleList: any = [];
   public styleObj: any = { width: '' };
   public isFinsh:any = [];
   public type:string = "";
-  private maxCount:number = 0;
   public isLoading:boolean = false;
+  private clientHeight: number = 0;
   constructor(
+    private zone: NgZone,
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private nftContractControllerService: NFTContractControllerService,
@@ -36,13 +41,18 @@ export class NftavatarlistPage implements OnInit {
     private ipfsService: IPFSService,
     private native: NativeService,
     private feedService: FeedService,
-    public theme: ThemeService
+    private nftContractHelperService: NFTContractHelperService,
+    private fileHelperService: FileHelperService,
+    public theme: ThemeService,
   ) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
+    this.clientHeight = screen.availHeight;
+    this.clientHeight = screen.availHeight;
+    this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
     this.initTitle();
     this.getImageList();
   }
@@ -63,8 +73,7 @@ export class NftavatarlistPage implements OnInit {
 
   }
 
-  getImageList() {
-    this.isFinsh = [];
+  async getImageList() {
     let createAddr =
       this.nftContractControllerService.getAccountAddress() || '';
     if (createAddr === '') {
@@ -75,239 +84,43 @@ export class NftavatarlistPage implements OnInit {
     let list = this.nftPersistenceHelper.getCollectiblesList(avatarKey);
     if (list.length === 0) {
       this.isLoading = true;
-      this.notOnSale(createAddr);
-      this.OnSale(createAddr);
+      await this.refreshCollectibles(null,createAddr);
     } else {
+      this.nftAvatarList = this.nftContractHelperService.sortData(list, this.sortType);
+      this.refreshProfileNftImagePagePost();
+    }
+  }
+
+
+  async refreshCollectibles(event:any,accAddress: string) {
+    try{
+      let nftImageList = await this.nftContractHelperService.refreshAllOwnerCollectiblesData(this.sortType);
+       this.nftAvatarList = _.filter(nftImageList,(item)=>{
+             return item.type === "avatar";
+       });
+       this.isLoading = false;
+       this.hanleListCace(accAddress);
+       this.refreshProfileNftImagePagePost();
+      if(event!=null){
+        event.target.complete();
+      }
+    }catch(err){
       this.isLoading = false;
-      this.nftAvatarList = list;
+      if(event!=null){
+        event.target.complete();
+      }
     }
   }
 
  async doRefresh(event: any) {
-    this.isFinsh = [];
-    this.nftAvatarList = [];
     let accAddress =
       this.nftContractControllerService.getAccountAddress() || '';
-    this.notOnSale(accAddress);
-    this.OnSale(accAddress);
-    let nftCreatedCount = await this.nftContractControllerService
-      .getSticker()
-      .tokenCountOfOwner(accAddress);
-    let sellerInfo = await this.nftContractControllerService
-      .getPasar()
-      .getSellerByAddr(accAddress);
-    let orderCount = sellerInfo[3];
-    this.maxCount = parseInt(nftCreatedCount) + parseInt(orderCount);
-    // let sId2 = setTimeout(() => {
-    //   if (accAddress === '') {
-    //     event.target.complete();
-    //     clearTimeout(sId2);
-    //     return;
-    //   }
-    //   this.notOnSale(accAddress);
-    //   this.OnSale(accAddress);
-    //   event.target.complete();
-    //   clearTimeout(sId2);
-    // }, 500);
-  }
-
-  async notOnSale(accAddress: string) {
-    this.nftAvatarList = [];
-    let nftCreatedCount = await this.nftContractControllerService
-      .getSticker()
-      .tokenCountOfOwner(accAddress);
-    let sellerInfo = await this.nftContractControllerService
-      .getPasar()
-      .getSellerByAddr(accAddress);
-    let orderCount = sellerInfo[3];
-    this.maxCount = parseInt(nftCreatedCount) + parseInt(orderCount);
-    if(this.maxCount === 0){
-      this.isLoading = false;
-      this.nftAvatarList = [];
-      this.hanleListCace(accAddress);
-      return;
-    }
-    if (nftCreatedCount === '0') {
-      this.isLoading = false;
-      this.nftAvatarList = [];
-      this.hanleListCace(accAddress);
-    } else {
-      for (let cIndex = 0; cIndex < nftCreatedCount; cIndex++) {
-        let tokenId = await this.nftContractControllerService
-          .getSticker()
-          .tokenIdOfOwnerByIndex(accAddress, cIndex);
-        let tokenInfo = await this.nftContractControllerService
-          .getSticker()
-          .tokenInfo(tokenId);
-        let price = '';
-        let tokenNum = tokenInfo[2];
-        let tokenUri = tokenInfo[3];
-        let createTime = tokenInfo[7];
-        let royaltyOwner = tokenInfo[4];
-        this.handleFeedsUrl(
-          tokenUri,
-          tokenId,
-          price,
-          tokenNum,
-          royaltyOwner,
-          cIndex,
-          accAddress,
-          createTime,
-        );
-      }
-    }
-  }
-
-  handleFeedsUrl(
-    feedsUri: string,
-    tokenId: string,
-    price: any,
-    tokenNum: any,
-    royaltyOwner: any,
-    cIndex: any,
-    createAddress: any,
-    createTime: any,
-  ) {
-    feedsUri = feedsUri.replace('feeds:json:', '');
-    this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
-      .then(result => {
-        let type = result['type'] || '';
-        this.isFinsh.push("1");
-        if(this.maxCount === this.isFinsh.length){
-          this.refresher.complete();
-          this.isLoading = false;
-        }
-        if(type === 'avatar'){
-
-          let royalties = royaltyOwner;
-          let quantity = tokenNum;
-          let fixedAmount = price || null;
-          let thumbnail = result['thumbnail'] || '';
-          if (thumbnail === '') {
-            thumbnail = result['image'];
-          }
-
-          let item = {
-            creator: createAddress,
-            tokenId: tokenId,
-            asset: result['image'],
-            name: result['name'],
-            description: result['description'],
-            fixedAmount: fixedAmount,
-            kind: result['kind'],
-            type: type,
-            royalties: royalties,
-            quantity: quantity,
-            thumbnail: thumbnail,
-            createTime: createTime * 1000,
-            moreMenuType: 'created',
-          };
-          this.nftAvatarList.push(item);
-          this.hanleListCace(createAddress);
-        }
-      })
-      .catch(() => {
-        this.isFinsh.push("1");
-        if(this.maxCount === this.isFinsh.length){
-          this.refresher.complete()
-          this.isLoading = false;
-        }
-       });
-  }
-
-  async OnSale(accAddress: string) {
-    //this.onSaleList = [];
-    let sellerInfo = await this.nftContractControllerService
-      .getPasar()
-      .getSellerByAddr(accAddress);
-    let sellerAddr = sellerInfo[1];
-    let orderCount = sellerInfo[3];
-    if (orderCount === '0') {
-      this.isLoading = false;
-    } else {
-
-      let nftCreatedCount = await this.nftContractControllerService
-      .getSticker()
-      .tokenCountOfOwner(accAddress);
-
-      await this.handleOrder(sellerAddr, orderCount,accAddress,nftCreatedCount);
-    }
-  }
-
-  async handleOrder(
-    sellerAddr: any,
-    orderCount: any,
-    createAddress: any,
-    nftCreatedCount:any
-  ) {
-    for (let index = 0; index < orderCount; index++) {
-      try {
-        let sellerOrder = await this.nftContractControllerService
-          .getPasar()
-          .getSellerOpenByIndex(sellerAddr, index);
-        let tokenId = sellerOrder[3];
-        let saleOrderId = sellerOrder[0];
-        let price = sellerOrder[5];
-
-        let tokenInfo = await this.nftContractControllerService
-          .getSticker()
-          .tokenInfo(tokenId);
-        let feedsUri = tokenInfo[3];
-        let createTime = tokenInfo[7];
-        feedsUri = feedsUri.replace('feeds:json:', '');
-        let tokenNum = tokenInfo[2];
-        this.ipfsService
-          .nftGet(this.ipfsService.getNFTGetUrl() + feedsUri)
-          .then(result => {
-            let type = result['type'] || '';
-            this.isFinsh.push("1");
-            if(this.maxCount === this.isFinsh.length){
-              this.refresher.complete();
-              this.isLoading = false;
-            }
-            if(type === 'avatar'){
-              let royalties = result['royalties'] || '';
-              let quantity = tokenNum;
-              let fixedAmount = price || null;
-              let thumbnail = result['thumbnail'] || '';
-              if (thumbnail === '') {
-                thumbnail = result['image'];
-              }
-
-              let item = {
-                creator: createAddress,
-                saleOrderId: saleOrderId,
-                tokenId: tokenId,
-                asset: result['image'],
-                name: result['name'],
-                description: result['description'],
-                fixedAmount: fixedAmount,
-                kind: result['kind'],
-                type: type,
-                royalties: royalties,
-                quantity: quantity,
-                thumbnail: thumbnail,
-                sellerAddr: sellerAddr,
-                createTime: createTime * 1000,
-                moreMenuType: 'onSale',
-              };
-              this.nftAvatarList.push(item);
-              this.hanleListCace(createAddress);
-            }
-          })
-          .catch(() => {
-            this.isFinsh.push("1");
-            if(this.maxCount === this.isFinsh.length){
-              this.refresher.complete()
-              this.isLoading = false;
-            }
-          });
-      } catch (error) {
-        this.refresher.complete();
+      if (accAddress === '') {
         this.isLoading = false;
+        this.nftAvatarList = [];
+        event.target.complete();
       }
-    }
+    await this.refreshCollectibles(event,accAddress);
   }
 
   hanleListCace(createAddress?: any) {
@@ -318,67 +131,119 @@ export class NftavatarlistPage implements OnInit {
   }
 
   async clickItem(item: any) {
-
+    let size = item["originAssetSize"];
+    if (!size)
+    size = '0';
     let imgUri = item['asset'];
+    if (parseInt(size) > 5 * 1024 * 1024) {
+       imgUri = item['thumbnail'];
+      }
     this.feedService.setClipProfileIamge(imgUri);
     this.native.pop();
-
-    if(this.type === "postImages"){
-      if (imgUri.indexOf('feeds:imgage:') > -1) {
-        imgUri = imgUri.replace('feeds:imgage:', '');
-        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      }else if(imgUri.indexOf('feeds:image:') > -1){
-        imgUri = imgUri.replace('feeds:image:', '');
-        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      }
-     await this.native.showLoading('common.waitMoment', isDismiss => {}, 30000);
-     let imgBase64 = await this.compressImage(imgUri);
-      this.feedService.setSelsectNftImage(imgBase64);
-      this.native.pop();
-      this.native.hideLoading();
-     return;
-  }
-  //this.native.navigateForward(['editimage'], { replaceUrl: true });
   }
 
-  hanldeImg(item:any) {
-    let imgUri = item['thumbnail'];
+
+  getProfileNftImagePage(item: any){
+    let thumbnailUri = item['thumbnail'];
     let kind = item["kind"];
-    if(kind === "gif"){
-        imgUri = item['asset'];
+    let size = item["originAssetSize"];
+    if (!size)
+    size = '0';
+    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+    thumbnailUri = item['asset'];
     }
-    if (imgUri.indexOf('feeds:imgage:') > -1) {
-      imgUri = imgUri.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if (imgUri.indexOf('feeds:image:') > -1) {
-      imgUri = imgUri.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      // imgUri = ApiUrl.nftGet + imgUri;
+
+    if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
+    } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     }
-    return imgUri;
+    return thumbnailUri + "-" + kind + "-" + size + "-nftavatarlistPage";
   }
 
-  // 压缩图片
-  compressImage(path: any): Promise<string> {
-    return new Promise((resolve, reject) => {
+  getChannelAvatarId(item: any) {
+    let thumbnailUri = item['thumbnail'];
+    let kind = item["kind"];
+    let size = item["originAssetSize"];
+    if (!size)
+    size = '0';
+    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+    thumbnailUri = item['asset'];
+    }
+
+    if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
+    } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    }
+    return "nftavatarlistPage-avatar-"+thumbnailUri;
+  }
+
+  ionScroll() {
+    this.native.throttle(this.setprofileNftImagePagePost(), 200, this, true);
+  }
+
+  setprofileNftImagePagePost(){
+    let discoverSquareFeed = document.getElementsByClassName("nftavatarlistPage") || [];
+    let len = discoverSquareFeed.length;
+    for(let itemIndex = 0;itemIndex<len;itemIndex++){
+      let item = discoverSquareFeed[itemIndex];
+      let arr = item.getAttribute("id").split("-");
+      let avatarUri = arr[0];
+      let kind = arr[1];
+      let thumbImage =  document.getElementById('nftavatarlistPage-avatar-'+avatarUri);
+      let srcStr =  thumbImage.getAttribute("src") || "";
+      let isload = this.profileNftImagePagePostisLoad[avatarUri] || '';
       try {
-        let img = new Image();
-        img.crossOrigin='*';
-        img.crossOrigin = "Anonymous";
-        img.src = path;
+         if (
+          avatarUri != '' &&
+           thumbImage.getBoundingClientRect().top >= -100 &&
+           thumbImage.getBoundingClientRect().top <= this.clientHeight
+         ) {
+           if(isload === ""){
+            this.profileNftImagePagePostisLoad[avatarUri] = '12';
+            let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
+            this.fileHelperService.getNFTData(fetchUrl,avatarUri, kind).then((data) => {
+              this.zone.run(() => {
+                this.profileNftImagePagePostisLoad[avatarUri] = '13';
+                let dataSrc = data || "";
+                if(dataSrc!=""){
+                  thumbImage.setAttribute("src",data);
+                }
+              });
+            }).catch((err)=>{
+              if(this.profileNftImagePagePostisLoad[avatarUri] === '13'){
+                this.profileNftImagePagePostisLoad[avatarUri] = '';
+                thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+               }
+            });
 
-        img.onload = () =>{
-          let maxWidth = img.width / 4;
-          let maxHeight = img.height / 4;
-          let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
-          resolve(imgBase64);
-        };
-      } catch (err) {
-        Logger.error(TAG, "Compress image error", err);
-        this.native.hideLoading();
-        reject("Compress image error" + JSON.stringify(err));
+           }
+         }else{
+           srcStr = thumbImage.getAttribute('src') || '';
+           if (
+             thumbImage.getBoundingClientRect().top < -100 &&
+             this.profileNftImagePagePostisLoad[avatarUri] === '13' &&
+             srcStr != './assets/icon/reserve.svg'
+           ) {
+            this.profileNftImagePagePostisLoad[avatarUri] = '';
+             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+           }
+         }
+      } catch (error) {
+        this.profileNftImagePagePostisLoad[avatarUri] = '';
+       thumbImage.setAttribute('src', './assets/icon/reserve.svg');
       }
-    });
+    }
   }
+
+  refreshProfileNftImagePagePost(){
+    let sid = setTimeout(()=>{
+      this.profileNftImagePagePostisLoad = {};
+      this.setprofileNftImagePagePost();
+      clearTimeout(sid);
+    },100);
+  }
+
 
 }

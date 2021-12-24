@@ -20,12 +20,13 @@
       </ion-refresher>
     <ion-grid>
     <ion-row class="leftrightrow">
-        <ion-col size="6" *ngFor="let item of nftAvatarList">
-            <div *ngIf="item==null">
-                <img src="assets/images/loading.png" style="object-fit:cover;"/>
-            </div>
+        <ion-col
+        size="6"
+        class="nftavatarlistPage"
+        id = {{getProfileNftImagePage(item)}}
+        *ngFor="let item of nftAvatarList">
             <div class="ion-activatable ripple"  *ngIf="item!=null"  [ngStyle]="styleObj" style="object-fit: contain;height: 200px;margin: 0 auto;">
-            <img src="{{hanldeImg(item)}}" (click)="clickItem(item)"/>
+            <img src="./assets/icon/reserve.svg" (click)="clickItem(item)" id={{getChannelAvatarId(item)}}/>
             <ion-ripple-effect></ion-ripple-effect>
             </div>
         </ion-col>
