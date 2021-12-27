@@ -152,6 +152,7 @@ export class SearchPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = '';
     }
+    this.dataHelper.setOpenBarcodeScanner(false);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
@@ -396,6 +397,7 @@ export class SearchPage implements OnInit {
 
   async handleJump(clickType: string) {
     if (clickType === 'scanService') {
+      this.dataHelper.setOpenBarcodeScanner(true);
       let scannedContent = (await this.intentService.scanQRCode()) || '';
       this.checkValid(scannedContent);
       return;
@@ -403,24 +405,29 @@ export class SearchPage implements OnInit {
   }
 
   checkValid(result: string) {
+    if(result === ""){
+      return;
+    }
     if (
       result.length < 54 ||
       !result.startsWith('feeds://') ||
       !result.indexOf('did:elastos:')
     ) {
       this.native.toastWarn('AddServerPage.tipMsg');
+      this.dataHelper.setOpenBarcodeScanner(false);
       return;
     }
 
     let splitStr = result.split('/');
     if (splitStr.length != 5 || splitStr[4] == '') {
       this.native.toastWarn('AddServerPage.tipMsg');
+      this.dataHelper.setOpenBarcodeScanner(false);
       return;
     }
-
     this.feedService.addFeed(result, '', 0, '', '', '').then(isSuccess => {
       if (isSuccess) {
         this.native.pop();
+        this.dataHelper.setOpenBarcodeScanner(false);
         return;
       }
     });
