@@ -3,7 +3,7 @@
 <!-- </ion-header> -->
 <ion-content>
 <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
-
+    <img [src]="handleDownloadImages()" />
     <ion-row class="section" (click)="navToSelectLanguage()">
         <ion-col size="9" class="title-col">
             <h1>{{"SettingsPage.language-setting" | translate }}</h1>

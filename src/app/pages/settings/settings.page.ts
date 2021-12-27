@@ -18,10 +18,11 @@ import { HiveService } from 'src/app/services/HiveService';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Claims, DIDDocument, JWTParserBuilder, Logger, DID as JSDID} from '@elastosfoundation/did-js-sdk';
 // import { FilesService, VaultSubscriptionService } from "@elastosfoundation/elastos-hive-js-sdk";
-import { FilesService, ScriptingService, VaultSubscriptionService, VaultServices, QueryHasResultCondition, InsertExecutable, FileUploadExecutable, Executable} from "@dchagastelles/elastos-hive-js-sdk";
+import { FilesService, ScriptingService, VaultSubscriptionService, VaultServices, QueryHasResultCondition, InsertExecutable, FileUploadExecutable, Executable, InsertOptions, File as HiveFile, StreamResponseParser} from "@dchagastelles/elastos-hive-js-sdk";
 import { Console } from 'console';
 import { HttpService } from 'src/app/services/HttpService';
 import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { File } from '@ionic-native/file/ngx';
 
 @Component({
   selector: 'app-settings',
@@ -41,6 +42,11 @@ export class SettingsPage implements OnInit {
   public isHideDeveloperMode: boolean = false;
   public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
   private isListGrid: boolean = false;
+  public avatar: string = '';
+  public did = '';
+  public imageBuffer = null;
+  public image = null;
+
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -59,6 +65,7 @@ export class SettingsPage implements OnInit {
     private hiveService: HiveService,
     private standardAuthService: StandardAuthService,
     private httpService: HttpService,
+    private file: File,
   ) { }
 
   ngOnInit() { }
@@ -72,7 +79,7 @@ export class SettingsPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.loadIpfsShowNmae();
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
@@ -81,6 +88,9 @@ export class SettingsPage implements OnInit {
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
     this.developerMode = this.feedService.getDeveloperMode();
+    let signInData = this.feedService.getSignInData() || {};
+    this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');
+    this.avatar = await this.feedService.getUserAvatar(this.did);
     this.initTitle();
   }
 
@@ -215,12 +225,299 @@ export class SettingsPage implements OnInit {
   }
 
   async navIPFSProvider() {
-      this.getAvatar()
+      // this.getScriptAvatar()
+      this.getFile()
+      // this.getDatabase()
     // this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
-  async getAvatar() {
-    // 读取
+  async databaseTestuploadImg() {
+    
+    
+
+  }
+
+  async createChannl() {
+          // auth
+    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    let userDid =  (await this.dataHelper.getSigninData()).did
+
+    const resolverUrl = "https://api.elastos.io/eid"
+    let context = await this.hiveService.creat(appinstanceDocument, userDid, resolverUrl)
+    // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
+    const userDID =  JSDID.from(userDid)
+    const userDiddocument = await userDID.resolve()
+    const ccount = userDiddocument.getCredentialCount()
+    const avatarDid = userDid + "#avatar"
+    const cre = userDiddocument.getCredential(avatarDid)
+    const sub = cre.getSubject()
+    const pro = sub.getProperty("avatar")
+    const data: string = pro["data"]
+    const type = pro["type"]
+
+    const serviceDid = userDid + "#hivevault"
+    const service = userDiddocument.getService(serviceDid)
+    const provider = service.getServiceEndpoint() + ":443" 
+    const prefix = "hive://"
+    const param = data.substr(prefix.length)
+    const parts = param.split("/")
+    // TODO 验证parts是否大于2个 ，否则 抛出异常
+    const dids = parts[0].split("@")
+    // TODO 验证dids是否等于2个 ，否则 抛出异常
+    const star = data.length - (prefix.length + parts[0].length + 1)
+    const values = parts[1].split("?")
+    // TODO 验证values是否等于2个 ，否则 抛出异常
+    const scriptName = values[0]
+    const paramStr = values[1]
+    const scriptParam = JSON.parse(paramStr.substr(7))
+
+    // 创建
+    const tarDID = dids[0]
+    const tarAppDID = dids[1]
+    const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(context, provider)
+    const vault = new VaultServices(context, provider)
+    const scriptingService = vault.getScriptingService()
+    const result = await scriptingService.callScript(scriptName, param, tarDID, tarAppDID)
+    const transaction_id = result["download"]["transaction_id"]
+    console.log("transaction_id ==== ", transaction_id)
+    const downresult = await scriptingService.downloadFile(transaction_id)
+    console.log("downresult === ", downresult)
+
+
+    // 注册
+    // let filter = {"author" : "feeds_channel_user_name", "content": "message"}
+    // QueryHasResultCondition
+    // QueryHasResultCondition("verify_user_permission", COLLECTION_NAME, filter)
+    // FindExecutable(scriptName, COLLECTION_NAME, filter).setOutput(true), false, false)
+    // FindExecutable(scriptName, _collectionName, filter)
+
+    // const list = this.dataHelper.getSubscribedFeedsList()
+    // console.log("list ==== ", list)
+
+    // const uploadName = "feeds_user_list"
+    // const fileName = "feeds_file_name" 
+    // let didAccess = new DID.DIDAccess()
+    // let mAppIdCredential = await didAccess.getExistingAppIdentityCredential()
+    // let appId = mAppIdCredential.getSubject()["appDid"]
+    // console.log("appId ==== ", appId)
+
+    // const uploadEx = new FileUploadExecutable(uploadName)
+    // await scriptingService.registerScript(uploadName, uploadEx.setOutput(true), undefined, true, true)
+    // const uploadTXID = await scriptingService.callScript(uploadName, Executable.createRunFileParams(fileName), tarDID, appId)
+    // // scriptingService.callScriptUrl
+    // console.log("uploadResult === ", uploadTXID)
+    // const txId = uploadTXID[uploadName]["transaction_id"]
+    // let testData = "test test upload"
+    // const uploadFile = await scriptingService.uploadFile(txId, testData)
+    // console.log("uploadFile === ", uploadFile)
+
+
+  }
+
+  async uploadCustomeAvatar() {
+    // auth
+    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    let userDid =  (await this.dataHelper.getSigninData()).did
+
+    const resolverUrl = "https://api.elastos.io/eid"
+    let context = await this.hiveService.creat(appinstanceDocument, userDid, resolverUrl)
+    // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
+    const userDID =  JSDID.from(userDid)
+    const userDiddocument = await userDID.resolve()
+    const ccount = userDiddocument.getCredentialCount()
+    const avatarDid = userDid + "#avatar"
+    const cre = userDiddocument.getCredential(avatarDid)
+    const sub = cre.getSubject()
+    const pro = sub.getProperty("avatar")
+    const data: string = pro["data"]
+    const type = pro["type"]
+
+    const serviceDid = userDid + "#hivevault"
+    const service = userDiddocument.getService(serviceDid)
+    const provider = service.getServiceEndpoint() + ":443" 
+    const prefix = "hive://"
+    const param = data.substr(prefix.length)
+    const parts = param.split("/")
+    // TODO 验证parts是否大于2个 ，否则 抛出异常
+    const dids = parts[0].split("@")
+    // TODO 验证dids是否等于2个 ，否则 抛出异常
+    const star = data.length - (prefix.length + parts[0].length + 1)
+    const values = parts[1].split("?")
+    // TODO 验证values是否等于2个 ，否则 抛出异常
+    const scriptName = values[0]
+    const paramStr = values[1]
+    const scriptParam = JSON.parse(paramStr.substr(7))
+
+    // 创建
+    const tarDID = dids[0]
+    const tarAppDID = dids[1]
+    const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(context, provider)
+    const vault = new VaultServices(context, provider)
+    const scriptService = vault.getScriptingService()
+
+
+  }
+
+  async getDatabase() {
+    // auth
+    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    let userDid =  (await this.dataHelper.getSigninData()).did
+
+    const resolverUrl = "https://api.elastos.io/eid"
+    let context = await this.hiveService.creat(appinstanceDocument, userDid, resolverUrl)
+    // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
+    const userDID =  JSDID.from(userDid)
+    const userDiddocument = await userDID.resolve()
+    const ccount = userDiddocument.getCredentialCount()
+    const avatarDid = userDid + "#avatar"
+    const cre = userDiddocument.getCredential(avatarDid)
+    const sub = cre.getSubject()
+    const pro = sub.getProperty("avatar")
+    const data: string = pro["data"]
+    const type = pro["type"]
+
+    const serviceDid = userDid + "#hivevault"
+    const service = userDiddocument.getService(serviceDid)
+    const provider = service.getServiceEndpoint() + ":443" 
+    const prefix = "hive://"
+    const param = data.substr(prefix.length)
+    const parts = param.split("/")
+    // TODO 验证parts是否大于2个 ，否则 抛出异常
+    const dids = parts[0].split("@")
+    // TODO 验证dids是否等于2个 ，否则 抛出异常
+    const star = data.length - (prefix.length + parts[0].length + 1)
+    const values = parts[1].split("?")
+    // TODO 验证values是否等于2个 ，否则 抛出异常
+    const scriptName = values[0]
+    const paramStr = values[1]
+    const scriptParam = JSON.parse(paramStr.substr(7))
+
+    // 创建
+    const tarDID = dids[0]
+    const tarAppDID = dids[1]
+    const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(context, provider)
+    const vault = new VaultServices(context, provider)
+    const databaseService = vault.getDatabaseService()
+
+    const collectName = "feeds_subscription"
+    const list = this.dataHelper.getSubscribedFeedsList()
+    console.log("list ==== ", list)
+    // 只能创建一次，先注释掉，后面补充查询是否创建的api
+    // const queryResult = await databaseService.query(collectName)
+    // const creatResult = await databaseService.createCollection(collectName)
+    // console.log("creatResult === ", creatResult)
+    const insert =  databaseService.insertMany(collectName, list, new InsertOptions(false, true))
+
+    console.log("update === ", insert)
+  }
+
+  async getFile() {
+    // auth
+    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    let userDid =  (await this.dataHelper.getSigninData()).did
+
+    const resolverUrl = "https://api.elastos.io/eid"
+    let context = await this.hiveService.creat(appinstanceDocument, userDid, resolverUrl)
+    // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
+    const userDID =  JSDID.from(userDid)
+    const userDiddocument = await userDID.resolve()
+    const ccount = userDiddocument.getCredentialCount()
+    const avatarDid = userDid + "#avatar"
+    const cre = userDiddocument.getCredential(avatarDid)
+    const sub = cre.getSubject()
+    const pro = sub.getProperty("avatar")
+    const data: string = pro["data"]
+    const type = pro["type"]
+
+    const serviceDid = userDid + "#hivevault"
+    const service = userDiddocument.getService(serviceDid)
+    const provider = service.getServiceEndpoint() + ":443" 
+    const prefix = "hive://"
+    const param = data.substr(prefix.length)
+    const parts = param.split("/")
+    // TODO 验证parts是否大于2个 ，否则 抛出异常
+    const dids = parts[0].split("@")
+    // TODO 验证dids是否等于2个 ，否则 抛出异常
+    const star = data.length - (prefix.length + parts[0].length + 1)
+    const values = parts[1].split("?")
+    // TODO 验证values是否等于2个 ，否则 抛出异常
+    const scriptName = values[0]
+    const paramStr = values[1]
+    const scriptParam = JSON.parse(paramStr.substr(7))
+
+    // 创建
+    const tarDID = dids[0]
+    const tarAppDID = dids[1]
+    const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(context, provider)
+    const vault = new VaultServices(context, provider)
+    const fileService = vault.getFilesService()
+
+    const REMOTE_DIR = "hive/"
+    const FILE_CONTENT_TXT = "This is a test file";
+
+    const list = this.dataHelper.getSubscribedFeedsList()
+    console.log("list ==== ", list)
+
+    console.log("2222222");
+    // this.file.writeFile(this.file.documentsDirectory, 'test.json', 'hello,world,', { replace: true }).then(_ => console.log('Directory exists')).catch(err => console.log('Directory doesn\'t exist'));
+
+        // await this.file.readAsText(this.file.documentsDirectory, 'test.json').then(result => {
+        //   console.log(result);
+        // }
+        // )
+
+    this.imageBuffer = this.handleImages()
+    console.log("imageURL + " + this.imageBuffer)
+    this.file.writeFile(this.file.documentsDirectory, 'test.jpg', this.imageBuffer, { replace: true }).then(_ => console.log('Directory exists')).catch(err => console.log('Directory doesn\'t exist'));
+
+    let file = new HiveFile(this.file.documentsDirectory, 'test.jpg');
+
+        await this.file.readAsText(this.file.documentsDirectory, 'test.jpg').then(result => {
+          console.log("result + " + result)
+          fileService.upload(REMOTE_DIR + "test.jpg", Buffer.from(result, 'utf8')).then(
+            result => {
+
+            });
+        })
+
+        let self = this   
+        let dataBuffer = Buffer.from("");
+        await fileService.download(REMOTE_DIR + "test.jpg", {
+          onData(chunk: any): void {
+
+            self.image = chunk
+
+            // this.image = chunk
+            // console.log("download start + " + chunk)
+            // dataBuffer = Buffer.concat([dataBuffer, Buffer.from(chunk)]);
+          },
+          onEnd(): void {
+            // console.log("download end")
+            // console.log("final data + " + dataBuffer.toString('base64'));
+          }
+        } as StreamResponseParser)
+  }
+
+  handleDownloadImages() {
+    return this.image
+  }
+
+  handleImages() {
+    let imgUri = "";
+    if (this.avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = this.avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(this.avatar.indexOf('feeds:image:') > -1){
+      imgUri = this.avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else{
+      imgUri = this.avatar;
+    }
+    return imgUri;
+  }
+
+  async getScriptAvatar() {
+    // auth
     let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
     let userDid =  (await this.dataHelper.getSigninData()).did
 
@@ -280,11 +577,12 @@ export class SettingsPage implements OnInit {
     const uploadEx = new FileUploadExecutable(uploadName)
     await scriptingService.registerScript(uploadName, uploadEx.setOutput(true), undefined, true, true)
     const uploadTXID = await scriptingService.callScript(uploadName, Executable.createRunFileParams(fileName), tarDID, appId)
+    // scriptingService.callScriptUrl
     console.log("uploadResult === ", uploadTXID)
     const txId = uploadTXID[uploadName]["transaction_id"]
-    const uploadFile = await scriptingService.uploadFile(txId, list)
+    let testData = "test test upload"
+    const uploadFile = await scriptingService.uploadFile(txId, testData)
     console.log("uploadFile === ", uploadFile)
-    
   }
 
   navDeveloper() {
