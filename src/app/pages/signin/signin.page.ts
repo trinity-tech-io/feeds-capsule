@@ -71,6 +71,8 @@ export class SigninPage implements OnInit {
   signIn() {
     connectivity.setActiveConnector(null).then(() => {
       this.doSignin();
+    }).catch((err)=>{
+       console.log("=====err=====",err);
     });
   }
 
@@ -95,58 +97,5 @@ export class SigninPage implements OnInit {
         return;
       }
     });
-  }
-
-  public async testGetCredentials() {
-    let didAccess = new DID.DIDAccess();
-    try {
-      let presentation = await didAccess.getCredentials({
-        claims: {
-          name: true,
-          avatar: {
-            required: false,
-            reason: 'For test',
-          },
-          email: {
-            required: false,
-            reason: 'For test',
-          },
-          gender: {
-            required: false,
-            reason: 'For test',
-          },
-          telephone: {
-            required: false,
-            reason: 'For test',
-          },
-          nation: {
-            required: false,
-            reason: 'For test',
-          },
-          nickname: {
-            required: false,
-            reason: 'For test',
-          },
-          description: {
-            required: false,
-            reason: 'For test',
-          },
-          interests: {
-            required: false,
-            reason: 'For test',
-          },
-        },
-      });
-
-      if (presentation) {
-        Logger.log(TAG, 'Got credential', presentation);
-      } else {
-        alert(
-          'Empty presentation returned, something wrong happened, or operation was cancelled',
-        );
-      }
-    } catch (error) {
-      alert('error ' + JSON.stringify(error));
-    }
   }
 }
