@@ -12,6 +12,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private openBarcodeScanner: boolean = false;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private isShowAdult: boolean = true;
   private nftDidList: any = null;
@@ -2802,5 +2803,13 @@ export class DataHelper {
 
   getBidPageAssetItem(): FeedsData.NFTItem {
     return this.bidPageAssetItem;
+  }
+  
+  setOpenBarcodeScanner(openBarcodeScanner: boolean) {
+     this.openBarcodeScanner = openBarcodeScanner;
+  }
+
+  getOpenBarcodeScanner() {
+      return this.openBarcodeScanner;
   }
 }
