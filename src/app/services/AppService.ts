@@ -36,7 +36,6 @@ export class AppService {
       '';
     let bindingServer = this.feedService.getBindingServer() || null;
     let openBarcodeScanner = this.dataHelper.getOpenBarcodeScanner();
-    console.log("======openBarcodeScanner========",openBarcodeScanner);
     if (
       (this.router.url.indexOf('/bindservice/scanqrcode') > -1 &&
         isFirstBindFeedService === '' &&
@@ -52,10 +51,18 @@ export class AppService {
       this.router.url.indexOf('/bindservice/issuecredential') > -1
     ) {
       this.createDialog();
-    } else if (this.router.url === "/tabs/home" ||
+    }else if(this.router.url === "/tabs/search"){
+            if(!openBarcodeScanner){
+              navigator['app'].exitApp();
+              return
+            }
+            let sid = setTimeout(()=>{
+              this.dataHelper.setOpenBarcodeScanner(false);
+             clearTimeout(sid);
+            },10);
+    }else if (this.router.url === "/tabs/home" ||
                this.router.url === "/tabs/profile" ||
                this.router.url === "/tabs/notification" ||
-               (this.router.url === "/tabs/search" && !openBarcodeScanner) ||
                this.router.url === "/signin" ||
                this.router.url === "/disclaimer" ) {
                navigator['app'].exitApp();
