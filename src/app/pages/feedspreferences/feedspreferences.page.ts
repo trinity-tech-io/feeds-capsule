@@ -145,6 +145,7 @@ export class FeedspreferencesPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder,(channelCollections: FeedsData.ChannelCollections)=>{
       this.zone.run(()=>{
         this.curFeedPublicStatus = false;
+        this.isShowMint = false;
       });
     });
 
@@ -153,11 +154,13 @@ export class FeedspreferencesPage implements OnInit {
     if(type === "burn"){
       this.zone.run(()=>{
         this.curFeedPublicStatus = false;
+        this.isShowMint = false;
       });
       return;
     }
     this.zone.run(()=>{
       this.curFeedPublicStatus = true;
+      this.isShowMint = false;
     });
   });
 
