@@ -72,7 +72,6 @@ let eventBus: Events = null;
 @Injectable()
 export class FeedService {
   private whiteListData:  FeedsData.WhiteItem[] = [];
-  private curSearchField: string = "name";
   private nftFirstdisclaimer: string = "";
   public  elaUsdPrice: string = "";
   public  selsectNftImage: string = "";
@@ -7821,14 +7820,6 @@ export class FeedService {
 
   getNftFirstdisclaimer(){
     return this.nftFirstdisclaimer;
-  }
-
-  setCurSearchField(curSearchField:string){
-     this.curSearchField = curSearchField;
-  }
-
-  getCurSearchField(){
-     return this.curSearchField;
   }
 
   // syncOpenOrder() {

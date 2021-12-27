@@ -119,7 +119,6 @@ export class MyApp {
         this.initCurrentFeed();
         this.initDiscoverfeeds();
         this.initCollectibleSetting();
-        this.initCurSearchField();
         this.initWhiteList();
         this.initFeedsSortType();
         this.initHideAdult();
@@ -422,19 +421,6 @@ export class MyApp {
           return;
         }
         this.feedService.setCollectibleStatus(JSON.parse(collectibleSetting));
-      })
-      .catch(() => { });
-  }
-
-  initCurSearchField() {
-    this.feedService
-      .getData('feeds.pasar.curSearchField')
-      .then(curSearchField => {
-        if (curSearchField === null) {
-          this.feedService.setCurSearchField("name");
-          return;
-        }
-        this.feedService.setCurSearchField(curSearchField);
       })
       .catch(() => { });
   }

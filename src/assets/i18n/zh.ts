@@ -243,7 +243,8 @@ export const zh = {
     recentlyAdded: '最近添加',
     Oldest: '最早的',
     priceLowToHigh: '价格：从低到高',
-    priceHightoLow: '价格：从高到低'
+    priceHightoLow: '价格：从高到低',
+    search: '搜索'
   },
   ProfilePage: {
     myFeeds: '频道',

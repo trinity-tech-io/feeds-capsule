@@ -152,10 +152,10 @@ export class HomePage implements OnInit {
   public elaPrice: string = null;
 
   public searchText: string = "";
-  // public searchPasar: any = [];
+  public searchPasar: any = [];
   public curSearchField: string = "name";
   public isShowSearchField: boolean = false;
-  public pasarsearchPlaceholder: string = "";
+  public pasarsearchPlaceholder: string = "HomePage.search";
   // private searchBeforePasar: any = [];
   private nftImageType:string = "";
   private pasarGridisLoadimage: any = {};
@@ -163,7 +163,6 @@ export class HomePage implements OnInit {
   public isAutoGet: string = 'unAuto';
   public thumbImageName: string = "homeImg";
   private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
-  public isClickSort: boolean = false;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -2093,8 +2092,6 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
         await this.content.scrollToTop(0);
-        this.curSearchField = this.feedService.getCurSearchField();
-        this.handlePlaceholder(this.curSearchField);
         this.handleRefresherInfinite(false);
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.infiniteScroll.disabled = false;
@@ -2421,7 +2418,6 @@ export class HomePage implements OnInit {
   ionClear() {
     this.searchText = '';
     this.isShowSearchField = false;
-    this.isClickSort = false;
     this.handleRefresherInfinite(false);
 
     const isShowAdult = this.dataHelper.getAdultStatus();
@@ -2434,7 +2430,6 @@ export class HomePage implements OnInit {
   }
 
   getItems(events: any) {
-    this.isClickSort = false;
     this.searchText = events.target.value || '';
 
     if (events && events.keyCode === 13) {
@@ -2487,8 +2482,12 @@ export class HomePage implements OnInit {
         this.native.hideLoading();
       });
       return;
-    }
+   }
 
+  this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
+    return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1;
+  });
+  this.refreshPasarGridVisibleareaImage();
   }
 
   handleRefresherInfinite(isOpen: boolean) {
@@ -2496,35 +2495,8 @@ export class HomePage implements OnInit {
     this.infiniteScroll.disabled = isOpen;
   }
 
-  clickPasarSpan(searchField: string) {
-    this.curSearchField = searchField;
-    this.handlePlaceholder(this.curSearchField);
-    this.feedService.setCurSearchField(this.curSearchField);
-    this.feedService.setData("feeds.pasar.curSearchField", this.curSearchField);
-  }
-
-  handlePlaceholder(searchField: string) {
-    switch (searchField) {
-      case 'name':
-        this.pasarsearchPlaceholder = "HomePage.namePlaceholder";
-        break;
-      case 'creator':
-        this.pasarsearchPlaceholder = "HomePage.creatorPlaceholder";
-        break;
-      case 'owner':
-        this.pasarsearchPlaceholder = "HomePage.ownerPlaceholder";
-        break;
-      case 'tokenID':
-        this.pasarsearchPlaceholder = "HomePage.tokenIDPlaceholder";
-        break;
-    }
-  }
-
   clickfilterCircle() {
-
     this.isShowSearchField = !this.isShowSearchField;
-    this.isClickSort = false;
-
   }
 
   setPasarGridVisibleareaImage(){
@@ -2684,10 +2656,7 @@ export class HomePage implements OnInit {
   async changeSortType(sortType: number, event: any) {
     this.sortType = sortType;
     this.dataHelper.setFeedsSortType(sortType);
-
-    this.isClickSort = false;
     event.stopPropagation();
-
     this.native.showLoading('common.waitMoment');
     await this.refreshPasarList();
     this.isShowSearchField = false;
@@ -2696,7 +2665,6 @@ export class HomePage implements OnInit {
 
   clickSortArrow(){
     this.isShowSearchField = false;
-    this.isClickSort = !this.isClickSort;
     // this.searchText = "";
     // if (this.searchBeforePasar.length > 0) {
     //   this.pasarList = _.cloneDeep(this.searchBeforePasar);

@@ -243,7 +243,8 @@ export const en = {
     recentlyAdded: 'Recently Added',
     Oldest: 'Oldest',
     priceLowToHigh: 'Price: Low to High',
-    priceHightoLow: 'Price: High to Low'
+    priceHightoLow: 'Price: High to Low',
+    search: 'Search'
   },
   ProfilePage: {
     myFeeds: 'Channels',
