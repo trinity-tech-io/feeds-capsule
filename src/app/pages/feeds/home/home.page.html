@@ -9,8 +9,6 @@
 
   </ion-col>
   <ion-col size="9.5" class="search-home-container" [class.dark-search-home-container]="theme.darkMode">
-    <img *ngIf="searchText===''&&!isClickSort" src="./assets/images/arrow-back.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
-    <img *ngIf="searchText===''&&isClickSort" src="./assets/images/arrow-up.svg" class="arrowBack" [ngStyle]="arrowBackStyle" (click)="clickSortArrow()"/>
     <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
       <ion-searchbar #homePasarSearchBar  [(ngModel)]="searchText" inputmode=""  enterkeyhint="search" placeholder="{{ pasarsearchPlaceholder | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
     </form>
@@ -26,25 +24,6 @@
     <p class="sortName" (click)="changeSortType(3,$event)"><span>{{"HomePage.priceLowToHigh" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===3"><p>
     <p class="sortName" (click)="changeSortType(2,$event)"><span>{{"HomePage.priceHightoLow" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===2"><p>
   </div>
-</ion-row>
-<ion-row *ngIf="tabType==='pasar'&&isClickSort">
-  <ion-col size="0.5">
-
-  </ion-col>
-  <ion-col size="2.75" (click)="clickPasarSpan('name')">
-    <span class="pasarSpan" [ngClass]="{'lightPasarSpan':!theme.darkMode&&curSearchField!='name','darkPasarSpan':theme.darkMode&&curSearchField!='name','selectPasarSpan':curSearchField==='name'}">{{"HomePage.name" | translate}}</span>
-  </ion-col>
-  <ion-col size="2.75" (click)="clickPasarSpan('creator')">
-    <span class="pasarSpan" [ngClass]="{'lightPasarSpan':!theme.darkMode&&curSearchField!='creator','darkPasarSpan':curSearchField!='creator'&&theme.darkMode,'selectPasarSpan':curSearchField==='creator'}">{{"HomePage.creator" | translate}}</span>
-  </ion-col>
-  <ion-col size="2.75" (click)="clickPasarSpan('owner')">
-    <span class="pasarSpan" [ngClass]="{'lightPasarSpan':!theme.darkMode&&curSearchField!='owner','selectPasarSpan':curSearchField==='owner','darkPasarSpan':theme.darkMode&&curSearchField!='owner'}">{{"HomePage.owner" | translate}}</span>
-  </ion-col>
-  <ion-col size="2.75" (click)="clickPasarSpan('tokenID')">
-   <span class="pasarSpan" [ngClass]="{'lightPasarSpan':!theme.darkMode&&curSearchField!='tokenID','selectPasarSpan':curSearchField==='tokenID','darkPasarSpan':theme.darkMode&&curSearchField!='tokenID'}" >{{"HomePage.tokenID"|translate}}</span>
-  </ion-col>
-  <ion-col size="0.5">
-  </ion-col>
 </ion-row>
 <ion-content [ngClass]="{'contentTop':tabType==='feeds'}" (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
