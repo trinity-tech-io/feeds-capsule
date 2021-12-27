@@ -60,9 +60,9 @@ export class StandardAuthService {
           resolve(presentation);
           Logger.log(TAG, 'Got credentials:', presentation);
         } else {
-          alert(
-            'Empty presentation returned, something wrong happened, or operation was cancelled',
-          );
+          // alert(
+          //   'Empty presentation returned, something wrong happened, or operation was cancelled',
+          // );
           Logger.log(TAG, 'Empty ....', presentation);
         }
       } catch (error) {
