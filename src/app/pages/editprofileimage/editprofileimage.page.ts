@@ -10,6 +10,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { Events } from 'src/app/services/events.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { HiveService } from 'src/app/services/HiveService';
+
 @Component({
   selector: 'app-editprofileimage',
   templateUrl: './editprofileimage.page.html',
@@ -35,7 +37,8 @@ export class EditprofileimagePage implements OnInit {
     private native: NativeService,
     private events: Events,
     private dataHelper: DataHelper,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private hiveService: HiveService,
   ) {}
 
   async ngOnInit() {
@@ -145,6 +148,7 @@ export class EditprofileimagePage implements OnInit {
   }
 
   async saveAvatar() {
+    await this.hiveService.uploadCustomeAvatar(this.userDid, this.avatar)
     await this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
     this.native.pop();
   }

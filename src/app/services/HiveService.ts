@@ -18,7 +18,11 @@ export class HiveService {
   private static readonly RESOLVE_CACHE = "data/didCache"
   private static INSTANCE: HiveService
   public context: AppContext
-
+  public vault: VaultServices
+  public tarDID: string
+  public tarAppDID: string
+  public avatarParam : string
+  public avatarScriptName: string
   constructor(
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
@@ -73,13 +77,15 @@ export class HiveService {
     })
   }
 
-  async getVault() {
+  async creatVault() {
     // auth
     let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
     let userDid =  (await this.dataHelper.getSigninData()).did
 
     const resolverUrl = "https://api.elastos.io/eid"
-    let context = await this.creat(appinstanceDocument, userDid, resolverUrl)
+    if (this.context == null) {
+      this.context = await this.creat(appinstanceDocument, userDid, resolverUrl)
+    }
     // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
     const userDID =  DID.from(userDid)
     const userDiddocument = await userDID.resolve()
@@ -95,25 +101,30 @@ export class HiveService {
     const service = userDiddocument.getService(serviceDid)
     const provider = service.getServiceEndpoint() + ":443" 
     const prefix = "hive://"
-    const param = data.substr(prefix.length)
-    const parts = param.split("/")
+    this.avatarParam = data.substr(prefix.length)
+    const parts = this.avatarParam.split("/")
     // TODO 验证parts是否大于2个 ，否则 抛出异常
     const dids = parts[0].split("@")
     // TODO 验证dids是否等于2个 ，否则 抛出异常
     const star = data.length - (prefix.length + parts[0].length + 1)
     const values = parts[1].split("?")
     // TODO 验证values是否等于2个 ，否则 抛出异常
-    const scriptName = values[0]
+    this.avatarScriptName = values[0]
     const paramStr = values[1]
     const scriptParam = JSON.parse(paramStr.substr(7))
 
     // 创建
-    const tarDID = dids[0]
-    const tarAppDID = dids[1]
-    const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(context, provider)
-    const vault = new VaultServices(context, provider)
+    this.tarDID = dids[0]
+    this.tarAppDID = dids[1]
+    const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(this.context, provider)
+    this.vault = new VaultServices(this.context, provider)
+  }
 
-    return vault
+  async getVault() {
+    if (this.vault == null) {
+      await this.creatVault()
+    }
+    return this.vault
   }
 
   backupSubscriptionToHive() {
@@ -142,7 +153,9 @@ export class HiveService {
       let vault = null
       this.getVault().then(async (v:VaultServices) => {
         vault = v
-        return vault.getDatabaseService().createCollection(collectName)
+        localStorage.setItem(createCollection, createCollection)
+        // return vault.getDatabaseService().createCollection(collectName)
+        return
       })
       .then(async() => {
         localStorage.setItem(createCollection, createCollection)
@@ -221,4 +234,170 @@ export class HiveService {
       })
     }
   }
+
+/*
+  getEssAvatar(){
+    let scriptingService: ScriptingService
+    this.getVault().then(async (vault: VaultServices) => {
+      scriptingService = vault.getScriptingService()
+      return scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
+    }).then(async (result: any) => {
+      const transaction_id = result["download"]["transaction_id"]
+      console.log("transaction_id ==== ", transaction_id)
+      return scriptingService.downloadFile(transaction_id)
+    }).then((result: any)=>{
+      console.log("getEssAvatar success")
+    })
+    .catch((error)=>{
+      console.log("getEssAvatar error - 5")
+    })
+  }*/
+
+  async getEssAvatar(){
+    let scriptingService: ScriptingService
+    const vault = await this.getVault()
+    scriptingService = vault.getScriptingService()
+    const result = await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
+    const transaction_id = result["download"]["transaction_id"]
+    console.log("transaction_id ==== ", transaction_id)
+    let imageData = await scriptingService.downloadFile<Blob>(transaction_id)
+
+    const reader = new FileReader();
+    let url = await reader.readAsDataURL(imageData);
+
+    return 'data:image/png;base64,';
+    // console.log("rawImageToBase64 buffer base64==== ", Buffer.from(imageData).toString("ascii"))
+
+    
+    // It support ascii , utf-8 , ucs2, base64, binary
+
+
+    // // ascii, utf8, utf16le/ucs2, base64, binary, and hex.
+    // console.log("rawImageToBase64 buffer base64==== ", Buffer.from(imageData).toString(""))
+    // console.log("rawImageToBase64 buffer utf8==== ", Buffer.from(imageData).toString("utf8"))
+    // console.log("rawImageToBase64 buffer utf8==== ", Buffer.from(imageData).toString("utf16"))
+
+    // let rrr = rawImageToBase64(imageData)
+    // const r = await rawImageToBase64DataUrl(base64ImageToBuffer(rrr))
+    // console.log("r = " + r);
+    // return r;
+
+  }
+  
+  async uploadCustomeAvatar(remotePath: string, img: any){
+    const vault = await this.getVault()
+    const fileService = vault.getFilesService()
+    const file = await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
+  }
+}
+
+interface Mime {
+  mime: string;
+  pattern: (number | undefined)[];
+}
+
+const imageMimes: Mime[] = [
+  {
+    mime: 'image/png',
+    pattern: [0x89, 0x50, 0x4e, 0x47]
+  },
+  {
+    mime: 'image/jpeg',
+    pattern: [0xff, 0xd8, 0xff]
+  },
+  {
+    mime: 'image/gif',
+    pattern: [0x47, 0x49, 0x46, 0x38]
+  },
+  {
+    mime: 'image/webp',
+    pattern: [0x52, 0x49, 0x46, 0x46, undefined, undefined, undefined, undefined, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50],
+  }
+];
+
+/**
+ * Encodes a raw binary picture data into a base64 string.
+ * Ex: âPNG   IHDR... ---> "iVe89...."
+ */
+export function rawImageToBase64(rawImageData: Buffer): string {
+  if (!rawImageData)
+    return null;
+
+    return Buffer.from(rawImageData).toString("base64");
+}
+
+/**
+ * Converts a base64 encoded raw binary picture data into its original raw binary buffer.
+ * Ex: "iVe89...." ---> âPNG   IHDR...
+ */
+export function base64ImageToBuffer(base64Picture: string): Buffer {
+  return Buffer.from(base64Picture, "base64");
+}
+
+/**
+ * Converts a raw binary picture data to a base64 data url usable on UI.
+ * Ex: âPNG   IHDR... ---> "data:image/png;base64,iVe89...."
+ */
+export async function rawImageToBase64DataUrl(rawImageData: Buffer): Promise<string> {
+  console.log("rawImageToBase64DataUrl" + rawImageData)
+  if (!rawImageData)
+    return null;
+    console.log("rawImageToBase64DataUrl")
+
+  let mimeType = pictureMimeType(rawImageData);
+  console.log("rawImageToBase64DataUrl" + mimeType)
+  if (!mimeType) {
+    Logger.warn("picturehelper", "Unable to extract mime type from picture buffer. rawImageToBase64DataUrl() returns null picture.");
+    return null;
+  }
+  console.log("rawImageToBase64DataUrl" + rawImageToBase64(rawImageData))
+
+  return "data:"+mimeType+";base64,"+rawImageToBase64(rawImageData);
+}
+
+/**
+ * Returns a 1x1 px fully transparent picture, encoded as base64 data url.
+ * Use https://png-pixel.com/ to generate.
+ */
+export function transparentPixelIconDataUrl(): string {
+  return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+}
+
+function isMime(bytes: Uint8Array, mime: Mime): boolean {
+  return mime.pattern.every((p, i) => !p || bytes[i] === p);
+}
+
+/**
+ * @param rawOrBase64ImageData Raw picture buffer, or base64 encoded raw picture (not a base64 data url)
+ */
+export function pictureMimeType(rawOrBase64ImageData: Buffer | string): Promise<string> {
+  if (typeof rawOrBase64ImageData === "string")
+    rawOrBase64ImageData = base64ImageToBuffer(rawOrBase64ImageData);
+
+  const numBytesNeeded = Math.max(...imageMimes.map(m => m.pattern.length));
+  const blob = new Blob([rawOrBase64ImageData.slice(0, numBytesNeeded)]); // Read the needed bytes of the file
+
+  const fileReader = new FileReader();
+  let p = new Promise<string>((resolve) => {
+    fileReader.onloadend = e => {
+      //console.log("DEBUG ONLOADEND", e);
+      if (!e || !fileReader.result) {
+        resolve(null);
+        return;
+      }
+
+      const bytes = new Uint8Array(fileReader.result as ArrayBuffer);
+
+      const mime = imageMimes.find(mime => isMime(bytes, mime));
+
+      if (!mime)
+        resolve(null);
+      else
+        resolve(mime.mime);
+    };
+  });
+
+  fileReader.readAsArrayBuffer(blob);
+
+  return p;
 }
