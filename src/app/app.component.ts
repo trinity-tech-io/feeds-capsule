@@ -23,6 +23,7 @@ import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './services/ApiUrl';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { HiveService } from 'src/app/services/HiveService';
 
 let TAG: string = 'app-component';
 
@@ -70,7 +71,8 @@ export class MyApp {
     private nftContractControllerService: NFTContractControllerService,
     private intentService: IntentService,
     private httpService: HttpService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private hiveService: HiveService,
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -134,6 +136,7 @@ export class MyApp {
         this.initDisclaimer();
         this.initConnector();
         this.initIpfs();
+        this.backupSubscriptionToHive()
         this.initAssist();
         await this.initUserDidUri();
       }).then(async () => {
@@ -563,5 +566,9 @@ export class MyApp {
     }).catch((err)=>{
 
     });
+  }
+
+  backupSubscriptionToHive() {
+    this.hiveService.backupSubscriptionToHive()
   }
 }
