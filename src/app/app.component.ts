@@ -78,7 +78,8 @@ export class MyApp {
     this.initProfileData();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, () => {
       this.initProfileData();
-    });
+      this.backupSubscriptionToHive()
+    })
 
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
@@ -136,7 +137,6 @@ export class MyApp {
         this.initDisclaimer();
         this.initConnector();
         this.initIpfs();
-        this.backupSubscriptionToHive()
         this.initAssist();
         await this.initUserDidUri();
       }).then(async () => {
