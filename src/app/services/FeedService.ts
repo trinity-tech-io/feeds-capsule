@@ -26,6 +26,7 @@ import { UtilService } from './utilService';
 import { Config } from './config';
 import { Logger } from './logger';
 import { IPFSService } from './ipfs.service';
+import { HiveService } from 'src/app/services/HiveService';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -131,7 +132,8 @@ export class FeedService {
     private ipfsService: IPFSService,
     private nftContractHelperService: NFTContractHelperService,
     private pasarAssistService: PasarAssistService,
-    private userDIDService: UserDIDService
+    private userDIDService: UserDIDService,
+    private hiveService: HiveService,
   ) {
     eventBus = events;
     this.init();
@@ -2249,6 +2251,7 @@ export class FeedService {
         // memo        :   "", //Added 2.0
       };
       this.dataHelper.updateChannel(nodeChannelId, channel);
+      this.hiveService.insertOne(channel)
       eventBus.publish(
         FeedsEvent.PublishType.editFeedInfoFinish,
         nodeChannelId,
@@ -2256,6 +2259,7 @@ export class FeedService {
       return;
     }
 
+    const originChannelForHive = originChannel
     if (name != '') originChannel.name = name;
     if (desc != '') originChannel.introduction = desc;
     if (avatarBin != '') originChannel.avatar = avatar;
@@ -2263,6 +2267,7 @@ export class FeedService {
     if (subscribers != 0) originChannel.subscribers = subscribers;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    this.hiveService.updateOne(originChannelForHive, originChannel)
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -2450,6 +2455,7 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
 
     this.dataHelper.updateChannel(nodeChannelId, channel);
+    this.hiveService.insertOne(channel)
 
     let createTopicSuccessData: FeedsEvent.CreateTopicSuccessData = {
       nodeId: nodeId,
@@ -2740,6 +2746,7 @@ export class FeedService {
         };
 
         this.dataHelper.updateChannel(nodeChannelId, channel);
+        this.hiveService.insertOne(channel)
       }
 
       this.syncPost(nodeId, id);
@@ -2783,6 +2790,7 @@ export class FeedService {
       let status = result[index].status;
       Logger.log(TAG, 'Receive result from get_channels RPC,status is ', status);
 
+      let originChannelForHive = originChannel
       if (originChannel == null) {
         originChannel = {
           nodeId: nodeId,
@@ -2797,6 +2805,7 @@ export class FeedService {
           avatar: avatar,
           isSubscribed: false,
         };
+        originChannelForHive = originChannel
       } else {
         originChannel.name = result[index].name;
         originChannel.avatar = avatar;
@@ -2808,6 +2817,7 @@ export class FeedService {
         originChannel.last_update = result[index].last_update * 1000;
       }
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
+      this.hiveService.updateOne(originChannelForHive, originChannel)
     }
   }
 
@@ -2830,6 +2840,7 @@ export class FeedService {
 
     let nodeChannelId = this.getChannelId(nodeId, id);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    const originChannelForHive = originChannel
     originChannel.avatar = avatar;
     originChannel.introduction = introduction;
     originChannel.last_update = last_update;
@@ -2839,6 +2850,7 @@ export class FeedService {
     originChannel.subscribers = subscribers;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    this.hiveService.updateOne(originChannelForHive, originChannel)
   }
 
   async handleGetSubscribedChannelsResult(
@@ -2884,6 +2896,7 @@ export class FeedService {
       let nodeChannelId = this.getChannelId(nodeId, channelId);
       let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+      let originChannelForHive = originChannel
       if (originChannel == null) {
         originChannel = {
           nodeId: nodeId,
@@ -2898,10 +2911,12 @@ export class FeedService {
           avatar: avatar,
           isSubscribed: true,
         };
+        originChannelForHive = originChannel
       } else {
         originChannel.isSubscribed = true;
       }
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
+      this.hiveService.updateOne(originChannelForHive, originChannel)
 
       if (request.max_count == 1) {
         isAddFeeds = true;
@@ -3244,10 +3259,12 @@ export class FeedService {
   handleUnsubscribeChannelResult(nodeId: string, request: any, error: any) {
     let nodeChannelId = this.getChannelId(nodeId, request.id);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    const originChannelForHive = originChannel
     if (error != null && error != undefined && error.code == -4) {
       if (nodeChannelId != null) {
         originChannel.isSubscribed = false;
         this.dataHelper.updateChannel(nodeChannelId, originChannel);
+        this.hiveService.updateOne(originChannelForHive, originChannel)
       }
       let unsubscribeData: FeedsEvent.unsubscribeData = {
         nodeId: nodeId,
@@ -3270,6 +3287,7 @@ export class FeedService {
     if (nodeChannelId != null) {
       originChannel.isSubscribed = false;
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
+      this.hiveService.updateOne(originChannelForHive, originChannel)
     }
     this.deletePostFromChannel(nodeId, request.id);
 
@@ -3296,10 +3314,12 @@ export class FeedService {
 
     let nodeChannelId = this.getChannelId(nodeId, channelId) || '';
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    const originChannelForHive = originChannel
     if (name != '') originChannel.name = name;
     if (desc != '') originChannel.introduction = desc;
     if (avatarBin != '') originChannel.avatar = avatar;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    this.hiveService.updateOne(originChannelForHive, originChannel)
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -3316,6 +3336,7 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+    const originChannelForHive = originChannel
     if (originChannel == null) return;
 
     originChannel.isSubscribed = true;
@@ -3325,6 +3346,7 @@ export class FeedService {
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
 
+    this.hiveService.updateOne(originChannelForHive, originChannel)
     let subscribeFinishData: FeedsEvent.SubscribeFinishData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -3339,11 +3361,13 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+    const originChannelForHive = originChannel
     originChannel.isSubscribed = false;
 
     let subscribeNum = originChannel.subscribers;
     if (subscribeNum > 0) originChannel.subscribers = subscribeNum - 1;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    this.hiveService.updateOne(originChannelForHive, originChannel)
     let subscribeFinishData: FeedsEvent.SubscribeFinishData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -3358,11 +3382,13 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+    const originChannelForHive = originChannel
     originChannel.isSubscribed = false;
     let subscribeNum = originChannel.subscribers;
     if (subscribeNum > 0) originChannel.subscribers = subscribeNum - 1;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
 
+    this.hiveService.updateOne(originChannelForHive, originChannel)
     let unsubscribeData: FeedsEvent.unsubscribeData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -3375,11 +3401,13 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+    const originChannelForHive = originChannel
     originChannel.isSubscribed = true;
     let subscribeNum = originChannel.subscribers;
     originChannel.subscribers = subscribeNum + 1;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    this.hiveService.updateOne(originChannelForHive, originChannel)
     let unsubscribeData: FeedsEvent.unsubscribeData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -4435,10 +4463,12 @@ export class FeedService {
   ) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
+    const originChannelForHive = originChannel
     if (originChannel == null) return;
 
     originChannel.subscribers = subscribesCount;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
+    this.hiveService.updateOne(originChannelForHive, originChannel)
   }
 
   async handleGetMultiLikesAndCommentsCount(
