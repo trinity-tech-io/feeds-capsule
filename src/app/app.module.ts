@@ -78,6 +78,8 @@ import { UserDIDService } from 'src/app/services/userdid.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { VideoService } from 'src/app/services/video.service';
 
+import { HiveService } from './services/HiveService';
+
 import * as Sentry from '@sentry/browser';
 
 Sentry.init({
@@ -89,15 +91,15 @@ Sentry.init({
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
-  constructor(private popup: PopupProvider) {}
+  constructor(private popup: PopupProvider) { }
 
   handleError(error) {
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('io.trinity-tech.dapp.feeds')) {
       // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       /*const eventId = */ Sentry.captureException(
-        error.originalError || error,
-      );
+      error.originalError || error,
+    );
       //Sentry.showReportDialog({ eventId });
     }
 
@@ -216,8 +218,9 @@ export function TranslateLoaderFactory() {
     UserDIDService,
     PostHelperService,
     VideoService,
+    HiveService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],
 })
-export class AppModule {}
+export class AppModule { }

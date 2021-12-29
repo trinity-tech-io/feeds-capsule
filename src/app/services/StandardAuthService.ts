@@ -9,6 +9,12 @@ let TAG: string = 'StandardAuthService';
 @Injectable()
 export class StandardAuthService {
   private appIdCredential: DIDPlugin.VerifiableCredential = null;
+  private appInstanceDID: DIDPlugin.DID
+  private appInstanceDIDInfo: {
+    storeId: string;
+    didString: string;
+    storePassword: string;
+  }
   constructor(
     private storeService: StorageService,
   ) {}
@@ -357,5 +363,123 @@ export class StandardAuthService {
     }
 
     return true;
+  }
+
+  generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
+    let self = this ; 
+    return new Promise(async (resolver, reject) => {
+      Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', challeng)
+      if (
+        challeng == null ||
+        challeng == undefined ||
+        challeng == ''
+      ) {
+        reject('Params error');
+      }
+
+      // Parse, but verify on chain that this JWT is valid first
+      let parseResult: DIDPlugin.ParseJWTResult = null;
+      try {
+        parseResult = await didManager.parseJWT(true, challeng)
+      } catch (error) {
+        Logger.error(TAG, 'Parse JWT error,', error)
+      }
+      Logger.log(TAG, 'Parse JWT Result is', parseResult)
+      if (!parseResult) {
+        reject('Parse jwt error, parse result null')
+        return;
+      }
+      if (!parseResult.signatureIsValid) {
+        // Could not verify the received JWT as valid - reject the authentication request by returning a null token
+        reject(
+          'The received authentication JWT token signature cannot be verified or failed to verify: ' +
+            parseResult.errorReason +
+            '. Is the back-end DID published? Are you on the right network?',
+        );
+        return;
+      }
+
+      // The request JWT must contain iss and nonce fields
+      if (
+        !('iss' in parseResult.payload) ||
+        !('nonce' in parseResult.payload)
+      ) {
+        reject(
+          'The received authentication JWT token does not contain iss or nonce',
+        );
+        return;
+      }
+
+      // Generate a authentication presentation and put the credential + back-end info such as nonce inside
+      let nonce = parseResult.payload['nonce'] as string;
+      let realm = parseResult.payload['iss'] as string;
+
+      let name = (parseResult.payload['name'] as string) || '';
+      let didAccess = new DID.DIDAccess();
+      this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
+      this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
+      console.log("this.appIdCredential");
+
+      this.appIdCredential = await this.getAppIdCredentialFromStorage(
+        this.appIdCredential,
+      );
+
+      this.appIdCredential = await this.checkAppIdCredentialStatus(
+        this.appIdCredential,
+      );
+
+      Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
+      if (!this.appIdCredential) {
+        Logger.warn(TAG, 'Empty app id credential')
+        resolver(null)
+        return
+      }
+
+      this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword,async presentation => {
+
+        if (presentation) {
+          // Generate the back end authentication JWT
+          Logger.log(TAG,
+            'Opening DID store to create a JWT for presentation:',
+            presentation
+          );
+          let didStore = await DID.DIDHelper.openDidStore(
+            this.appInstanceDIDInfo.storeId,
+          );
+
+          Logger.log(TAG, 'Loading DID document');
+          didStore.loadDidDocument(
+            this.appInstanceDIDInfo.didString,
+            async didDocument => {
+              let validityDays = 2;
+              Logger.log(TAG, 'Creating JWT')
+              didDocument.createJWT(
+                {
+                  presentation: JSON.parse(await presentation.toJson()),
+                },
+                validityDays,
+                this.appInstanceDIDInfo.storePassword,
+                jwtToken => {
+                  Logger.log(TAG, 'JWT created for presentation:', jwtToken)
+                  resolver(jwtToken)
+                },
+                err => {
+                  reject(err)
+                },
+              );
+            },
+            err => {
+              reject(err)
+            },
+          );
+        } else {
+          reject('No presentation generated')
+        }
+      },
+      err => {
+        Logger.error(TAG, 'Create Verifiable Presentation error', err)
+      },)
+
+    })
   }
 }
