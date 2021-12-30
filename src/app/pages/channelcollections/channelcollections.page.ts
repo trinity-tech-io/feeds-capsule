@@ -64,8 +64,7 @@ export class ChannelcollectionsPage implements OnInit {
     this.accountAddress = this.walletConnectControllerService.getAccountAddress() || "";
     this.initTitle();
     this.addEvent();
-    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
-    let channelCollectionList  = ownChannelCollection[this.accountAddress] || [];
+    let channelCollectionList  = [];
     if(channelCollectionList.length === 0){
       this.native.showLoading('common.waitMoment');
       this.getChannelCollectionsList();
@@ -104,14 +103,9 @@ export class ChannelcollectionsPage implements OnInit {
     }else{
       this.native.hideLoading();
     }
-    this.handleCace();
+
   }
 
-  handleCace() {
-    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
-    ownChannelCollection[this.accountAddress] = this.channelCollectionList;
-    this.dataHelper.setOwnChannelCollection(ownChannelCollection);
-  }
   async getUnActivePanelList(){
   let type = "&types=feeds-channel";
   let result:any  = await this.pasarAssistService.listOwnSticker(type);
@@ -190,7 +184,6 @@ export class ChannelcollectionsPage implements OnInit {
             newChannelCollections.status = "0";
         this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
         this.refreshChannelCollectionAvatar();
-        this.handleCace();
         //exploer feeds
        let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
        publishedActivePanelList.splice(itemIndex,1);
@@ -206,7 +199,6 @@ export class ChannelcollectionsPage implements OnInit {
         });
         this.channelCollectionList.splice(itemIndex,1);
         this.refreshChannelCollectionAvatar();
-        this.handleCace();
         return;
       }
       let panelId = obj['panelId'];
@@ -218,7 +210,6 @@ export class ChannelcollectionsPage implements OnInit {
       newChannelCollections.status = "1";
       this.channelCollectionList.splice(itemIndex,1,newChannelCollections);
       this.refreshChannelCollectionAvatar();
-      this.handleCace();
 
        //exploer feeds
        let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];

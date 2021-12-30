@@ -685,10 +685,6 @@ export class GalleriachannelPage implements OnInit {
     channelCollections.ownerDid = signinData.did;
     channelCollections.type = 'feeds-channel';
     channelCollections.status =  '1';
-    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
-    let ownList = ownChannelCollection[accAddress] || [];
-       ownList.push(channelCollections);
-    this.dataHelper.setOwnChannelCollection(ownChannelCollection);
 
     //exploer feeds
     let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
