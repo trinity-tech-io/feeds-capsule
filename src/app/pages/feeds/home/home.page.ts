@@ -2471,37 +2471,43 @@ export class HomePage implements OnInit {
   }
 
   handlePasarSearch() {
-
     if (this.curSearchField === "name") {
-      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
-        return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1;
+      this.zone.run(async () => {
+        this.native.showLoading('common.waitMoment');
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
+        this.refreshPasarGridVisibleareaImage();
+        this.native.hideLoading();
       });
-      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
     if (this.curSearchField === "creator") {
-      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
-        return this.searchText === pasarItem.creator;
+      this.zone.run(async () => {
+        this.native.showLoading('common.waitMoment');
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.ROYALTY_ADDRESS, this.searchText);
+        this.refreshPasarGridVisibleareaImage();
+        this.native.hideLoading();
       });
-      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
     if (this.curSearchField === "owner") {
-      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
-        return this.searchText === pasarItem.sellerAddr;
+      this.zone.run(async () => {
+        this.native.showLoading('common.waitMoment');
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.OWNER_ADDRESS, this.searchText);
+        this.refreshPasarGridVisibleareaImage();
+        this.native.hideLoading();
       });
-      this.refreshPasarGridVisibleareaImage();
       return;
     }
 
     if (this.curSearchField === "tokenID") {
-      this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
-        let tokenID = '0x' + UtilService.dec2hex(pasarItem.tokenId);
-        return this.searchText === tokenID || this.searchText === pasarItem.tokenId;
+      this.zone.run(async () => {
+        this.native.showLoading('common.waitMoment');
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.TOKEN_ID, this.searchText);
+        this.refreshPasarGridVisibleareaImage();
+        this.native.hideLoading();
       });
-      this.refreshPasarGridVisibleareaImage();
       return;
     }
 

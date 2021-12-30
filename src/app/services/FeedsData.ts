@@ -17,6 +17,14 @@ declare namespace FeedsData {
     OUTER_RIGHT = 3,
   }
 
+  const enum SearchType {
+    TOKEN_ID,
+    ROYALTY_ADDRESS,
+    OWNER_ADDRESS,
+    NAME,
+    DESCRIPTION
+  }
+
   const enum SortType {
     TIME_ORDER_LATEST,
     TIME_ORDER_OLDEST,
