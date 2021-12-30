@@ -92,6 +92,51 @@ export class PasarAssistService {
     });
   }
 
+  //https://test.trinity-feeds.app/pasar/api/v1/searchSaleOrders?searchType=description&key=%E6%99%AF%20%E6%95%8F
+  searchPasarOrder(searchType: FeedsData.SearchType, key: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + 'pasar/api/v1/searchSaleOrders'
+        else
+          url = Config.PASAR_ASSIST_TESTNET_SERVER + 'searchSaleOrders'
+
+        switch (searchType) {
+          case FeedsData.SearchType.NAME:
+            url = url + '?searchType=name';
+            break;
+          case FeedsData.SearchType.ROYALTY_ADDRESS:
+            url = url + '?searchType=royaltyAddress';
+            break;
+          case FeedsData.SearchType.OWNER_ADDRESS:
+            url = url + '?searchType=ownerAddress';
+            break;
+          case FeedsData.SearchType.TOKEN_ID:
+            url = url + '?searchType=tokenId';
+            break;
+          case FeedsData.SearchType.DESCRIPTION:
+            url = url + '?searchType=description';
+            break;
+          default:
+            break;
+        }
+        url = url + '&key=' + key;
+
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject('Receive result response code is' + resultCode);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Search Pasar Order From Service error', error);
+        reject(error)
+      }
+    });
+  }
+
   refreshPasarOrder(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number,
     isAsc: boolean, endBlockBumber: number, sortType: FeedsData.SortType, safeMode: boolean): Promise<Object> {
     return this.listPasarOrderFromService(pageNum, pageSize, orderState, blockNumber, isAsc, endBlockBumber, sortType, safeMode);

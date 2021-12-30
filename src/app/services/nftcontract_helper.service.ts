@@ -1462,33 +1462,29 @@ export class NFTContractHelperService {
     }
   }
 
-  // getDataFromAssist(pageNum: number, blockNumber: number, isAsc: boolean) {
-  //   this.pasarAssistService.listPasarOrderFromService(pageNum, this.refreshCount, FeedsData.OrderState.SALEING, blockNumber, isAsc);
-  // }
+  searchPasarOrder(searchType: FeedsData.SearchType, key: string): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const requestDevNet = this.dataHelper.getDevelopNet();
+        const result = await this.pasarAssistService.searchPasarOrder(searchType, key);
+        const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
+        console.log('searchPasarOrder', list);
+        resolve(list);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
-  // searchDataFromAssist() {
-  // }
-
-  // refreshDataFromAssist() {
-  //   this.dataHelper.setRefreshBlockNumber(-1);
-  //   //删除blockNum
-  //   //获取数据
-  //   const result = this.getDataFromAssist(1, null, false);
-  //   console.log(result);
-  //   //删除缓存
-  //   this.dataHelper.setCachePasarData(list);
-  //   //缓存数据
-  //   //提供显示数据
-  //   let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
-
-  //   this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
-  // }
-
-  // loadDataFromAssist() {
-  //   //获取数据
-  //   //缓存数据
-  //   //组织数据
-  //   //提供显示数据
-  // }
-
+  parseSearchResultFromAssistResult(result: any, syncMode: FeedsData.SyncMode, requestDevNet: string): FeedsData.NFTItem[] {
+    let searchList = [];
+    let array = result.data;
+    console.log('parseSearchResultFromAssistResult', result);
+    for (let index = 0; index < array.length; index++) {
+      const item = array[index];
+      const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
+      searchList.push(pasarItem.item);
+    }
+    return searchList;
+  }
 }
