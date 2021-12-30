@@ -2508,7 +2508,10 @@ export class HomePage implements OnInit {
    let len = homePasarGridCols.length;
    for(let itemIndex = 0;itemIndex<len;itemIndex++){
      let item = homePasarGridCols[itemIndex];
-     let id = item.getAttribute("id");
+     let id = item.getAttribute("id") || "";
+     if(id === ""){
+      continue;
+    }
      let arr = id.split("-");
      let fileName = arr[0];
      let kind = arr[1];
@@ -2577,7 +2580,10 @@ export class HomePage implements OnInit {
 
     for(let itemIndex = 0;itemIndex<len;itemIndex++){
       let item = homePasarListCol[itemIndex];
-      let id = item.getAttribute("id");
+      let id = item.getAttribute("id") || "";
+      if(id === ""){
+        continue;
+      }
       let arr = id.split("-");
       let fileName = arr[0];
       let kind = arr[1];
@@ -2637,7 +2643,10 @@ export class HomePage implements OnInit {
   }
 
   handleId(item:any){
-    let thumbnailUri = item['thumbnail'];
+    let thumbnailUri = item['thumbnail'] || "";
+    if(thumbnailUri === ""){
+      return "";
+    }
     let kind = item["kind"];
     let size = item["originAssetSize"]
     if (!size)
