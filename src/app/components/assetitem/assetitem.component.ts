@@ -20,8 +20,8 @@ export class AssetitemComponent implements OnInit {
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
   public imgUri = './assets/icon/reserve.svg';
-  public thumbImageId:string = "";
-  public maxSize:number = 5 * 1024 * 1024;
+  public thumbImageId: string = "";
+  public maxSize: number = 5 * 1024 * 1024;
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private viewHelper: ViewHelper,
@@ -35,8 +35,8 @@ export class AssetitemComponent implements OnInit {
 
   ngOnInit() {
     this.styleObj.width = (screen.width - 20 - 10) / 2 + 'px';
-    if(this.assetItem === null){
-        return;
+    if (this.assetItem === null) {
+      return;
     }
     let fileName = "";
     let fetchUrl = "";
@@ -44,21 +44,21 @@ export class AssetitemComponent implements OnInit {
     let thumbnailUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = this.assetItem['thumbnail'] || "";
       kind = this.assetItem["kind"];
       size = this.assetItem["originAssetSize"];
-    }else if(version === "2"){
-      let jsonData  = this.assetItem['data'] || "";
-      if(jsonData != ""){
+    } else if (version === "2") {
+      let jsonData = this.assetItem['data'] || "";
+      if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
-      }else{
+      } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return "";
     }
 
@@ -80,7 +80,7 @@ export class AssetitemComponent implements OnInit {
 
     this.thumbImageId = thumbnailUri;
     this.isAutoGet = this.isAutoGet || "";
-    if(this.isAutoGet === ""){
+    if (this.isAutoGet === "") {
       this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
         this.zone.run(() => {
           this.imgUri = data;
@@ -109,17 +109,17 @@ export class AssetitemComponent implements OnInit {
     return price;
   }
 
-  hanldeUsdPrice(ethPrice: string){
+  hanldeUsdPrice(ethPrice: string) {
     let usdPrice = null;
-    if(this.elaPrice != null){
+    if (this.elaPrice != null) {
       let ethprice = this.nftContractControllerService.transFromWei(ethPrice);
-      usdPrice = UtilService.accMul(this.elaPrice,ethprice).toFixed(2);
+      usdPrice = UtilService.accMul(this.elaPrice, ethprice).toFixed(2);
     }
     return usdPrice;
   }
 
 
-  onSale(){
+  onSale() {
     this.viewHelper.showNftPrompt(
       this.assetItem,
       'CollectionsPage.putOnSale',
@@ -127,9 +127,9 @@ export class AssetitemComponent implements OnInit {
     );
   }
 
-  handleCurQuantity(assetItem:any){
+  handleCurQuantity(assetItem: any) {
     //if(assetItem != null){
-        return  assetItem['curQuantity'] || assetItem['quantity'];
+    return assetItem['curQuantity'] || assetItem['quantity'];
     //}
   }
 }

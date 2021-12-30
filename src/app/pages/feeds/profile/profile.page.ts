@@ -156,7 +156,7 @@ export class ProfilePage implements OnInit {
   public loadingText: string = "";
   public loadingCurNumber: string = "";
   public loadingMaxNumber: string = "";
-  public elaPrice:string = null;
+  public elaPrice: string = null;
 
   private notSaleOrderCount = 0;
   private saleOrderCount = 0;
@@ -191,7 +191,7 @@ export class ProfilePage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private dataHelper :DataHelper,
+    private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService,
     private postHelperService: PostHelperService
@@ -266,7 +266,7 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress("");
-    this.events.subscribe(FeedsEvent.PublishType.clickDisconnectWallet,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.clickDisconnectWallet, () => {
       this.walletAddress = '';
       this.walletAddressStr = '';
       this.ownNftSum = 0;
@@ -275,7 +275,7 @@ export class ProfilePage implements OnInit {
       // this.price = nftPrice;
       await this.getCollectiblesList();
     });
-    this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.nftdisclaimer, () => {
 
       let accAdress = this.nftContractControllerService.getAccountAddress() || "";
       if (accAdress === "") {
@@ -764,7 +764,7 @@ export class ProfilePage implements OnInit {
       case 'ProfilePage.collectibles':
         this.elaPrice = this.feedService.getElaUsdPrice();
         //if (!this.collectiblesList || this.collectiblesList.length == 0)
-          await this.getCollectiblesList();
+        await this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
         this.startIndex = 0;
@@ -930,73 +930,73 @@ export class ProfilePage implements OnInit {
   ionScroll() {
     if (this.selectType === 'ProfilePage.myLikes') {
       this.native.throttle(this.setVisibleareaImage(), 200, this, true);
-    }else if(this.selectType === 'ProfilePage.collectibles'){
-      this.native.throttle(this.setCollectiblesVisibleareaImage(),200,this,true);
+    } else if (this.selectType === 'ProfilePage.collectibles') {
+      this.native.throttle(this.setCollectiblesVisibleareaImage(), 200, this, true);
     }
   }
 
-  setCollectiblesVisibleareaImage(){
-    let profileCollectibles = document.getElementById("profileCollectibles")|| null;
-    if(profileCollectibles === null){
+  setCollectiblesVisibleareaImage() {
+    let profileCollectibles = document.getElementById("profileCollectibles") || null;
+    if (profileCollectibles === null) {
       return;
     }
     let profileCollectiblesCol = profileCollectibles.getElementsByClassName("profileCollectiblesCol") || null;
     let len = profileCollectiblesCol.length;
-    for(let itemIndex = 0;itemIndex<len;itemIndex++){
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
       let item = profileCollectiblesCol[itemIndex];
       let id = item.getAttribute("id") || "";
-      if(id === ""){
+      if (id === "") {
         continue;
       }
       let arr = id.split("-");
       let fileName = arr[0];
       let kind = arr[1];
       let size = arr[2];
-      let thumbImage =  document.getElementById(fileName+"-profileImg");
-      let srcStr =  thumbImage.getAttribute("src") || "";
+      let thumbImage = document.getElementById(fileName + "-profileImg");
+      let srcStr = thumbImage.getAttribute("src") || "";
       let isload = this.profileCollectiblesisLoadimage[fileName] || '';
       try {
-         if (
-           id != '' &&
-           thumbImage.getBoundingClientRect().top >= -100 &&
-           thumbImage.getBoundingClientRect().top <= this.clientHeight
-         ) {
-           if(isload === ""){
+        if (
+          id != '' &&
+          thumbImage.getBoundingClientRect().top >= -100 &&
+          thumbImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if (isload === "") {
             //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
             //    Logger.log(TAG, 'Work around, Not show');
             //    continue;
             //  }
 
-             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
-             this.profileCollectiblesisLoadimage[fileName] = '12';
-             this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
-               this.zone.run(() => {
-                 this.profileCollectiblesisLoadimage[fileName] = '13';
-                 let srcData = data || "";
-                 if(srcData != ""){
-                  thumbImage.setAttribute("src",data);
-                 }
-               });
-             }).catch((err)=>{
-               if(this.profileCollectiblesisLoadimage[fileName] === '13'){
+            let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
+            this.profileCollectiblesisLoadimage[fileName] = '12';
+            this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
+              this.zone.run(() => {
+                this.profileCollectiblesisLoadimage[fileName] = '13';
+                let srcData = data || "";
+                if (srcData != "") {
+                  thumbImage.setAttribute("src", data);
+                }
+              });
+            }).catch((err) => {
+              if (this.profileCollectiblesisLoadimage[fileName] === '13') {
                 this.profileCollectiblesisLoadimage[fileName] = '';
                 thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-               }
-             });
-           }
-         }else{
-           srcStr = thumbImage.getAttribute('src') || './assets/icon/reserve.svg';
-           if (
-             thumbImage.getBoundingClientRect().top < -100 &&
-             this.profileCollectiblesisLoadimage[fileName] === '13' &&
-             srcStr != './assets/icon/reserve.svg'
-           ) {
-             this.profileCollectiblesisLoadimage[fileName] = '';
-             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-           }
-         }
+              }
+            });
+          }
+        } else {
+          srcStr = thumbImage.getAttribute('src') || './assets/icon/reserve.svg';
+          if (
+            thumbImage.getBoundingClientRect().top < -100 &&
+            this.profileCollectiblesisLoadimage[fileName] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
+            this.profileCollectiblesisLoadimage[fileName] = '';
+            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
       } catch (error) {
-        if(this.profileCollectiblesisLoadimage[fileName] === '13'){
+        if (this.profileCollectiblesisLoadimage[fileName] === '13') {
           this.profileCollectiblesisLoadimage[fileName] = '';
           thumbImage.setAttribute('src', './assets/icon/reserve.svg');
         }
@@ -1005,48 +1005,48 @@ export class ProfilePage implements OnInit {
 
   }
 
-  refreshCollectiblesVisibleareaImage(){
-    if(this.selectType === "ProfilePage.collectibles"){
-     let sid = setTimeout(()=>{
-      this.profileCollectiblesisLoadimage = {};
-       this.setCollectiblesVisibleareaImage();
-       clearTimeout(sid);
-      },100);
+  refreshCollectiblesVisibleareaImage() {
+    if (this.selectType === "ProfilePage.collectibles") {
+      let sid = setTimeout(() => {
+        this.profileCollectiblesisLoadimage = {};
+        this.setCollectiblesVisibleareaImage();
+        clearTimeout(sid);
+      }, 100);
     }
   }
 
 
 
-  handleId(item:any){
+  handleId(item: any) {
     let version = item['version'] || "1";
-    let thumbnailUri =  "";
+    let thumbnailUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
 
-       thumbnailUri = item['thumbnail'] || "";
-       kind = item["kind"];
-       size = item["originAssetSize"];
+      thumbnailUri = item['thumbnail'] || "";
+      kind = item["kind"];
+      size = item["originAssetSize"];
 
-    }else if(version === "2"){
-      let jsonData  = item['data'] || "";
-      if(jsonData != ""){
+    } else if (version === "2") {
+      let jsonData = item['data'] || "";
+      if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
-      }else{
+      } else {
         thumbnailUri = "";
       }
     }
 
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return "";
     }
 
     if (!size)
-    size = '0';
+      size = '0';
     if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-    thumbnailUri = item['asset'];
+      thumbnailUri = item['asset'];
     }
 
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
@@ -1173,18 +1173,18 @@ export class ProfilePage implements OnInit {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.isLoadimage[id] = '13';
-                postImage.setAttribute('src',realImage);
+                postImage.setAttribute('src', realImage);
               } else {
-                this.feedService.getData(thumbkey).then((thumbImagedata) =>{
+                this.feedService.getData(thumbkey).then((thumbImagedata) => {
                   let thumbImage = thumbImagedata || '';
-                  if(thumbImage!= ''){
+                  if (thumbImage != '') {
                     this.isLoadimage[id] = '13';
                     postImage.setAttribute('src', thumbImagedata);
-                  }else{
+                  } else {
                     this.isLoadimage[id] = '12';
                     rpostImage.style.display = 'none';
                   }
-                }).catch(()=>{
+                }).catch(() => {
                   rpostImage.style.display = 'none';
                 })
               }
@@ -1722,9 +1722,9 @@ export class ProfilePage implements OnInit {
       let nodeId = arrKey[0];
       let channelId = arrKey[1];
       let postId = arrKey[2];
-      let id = nodeId+"-"+channelId+"-"+postId;
+      let id = nodeId + "-" + channelId + "-" + postId;
       let postImage = document.getElementById(id + 'postimglike') || null;
-      if(postImage!=null){
+      if (postImage != null) {
         postImage.setAttribute('src', value);
       }
       this.viewHelper.openViewer(
@@ -1826,7 +1826,7 @@ export class ProfilePage implements OnInit {
           try {
             const sharedLink = await this.intentService.createShareLink(myNodeId, myChannelId, myPostId);
             const title = this.intentService.createShareChannelTitle(myNodeId, myChannelId) || "";
-            this.intentService.share(title,sharedLink);
+            this.intentService.share(title, sharedLink);
           } catch (error) {
           }
 
@@ -1918,7 +1918,7 @@ export class ProfilePage implements OnInit {
     let feedSubscribes = feed.subscribers;
     let feedAvatar = this.feedService.parseChannelAvatar(feed.avatar);
     if (feedAvatar.indexOf('data:image') > -1 ||
-        feedAvatar.startsWith("https:")) {
+      feedAvatar.startsWith("https:")) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(feedAvatar);
     } else if (feedAvatar.indexOf('assets/images') > -1) {
@@ -2049,7 +2049,7 @@ export class ProfilePage implements OnInit {
       this.walletAddress = walletAccount;
     Logger.log(TAG, 'Update WalletAddress', this.walletAddress);
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
-    if(this.walletAddress===""){
+    if (this.walletAddress === "") {
       this.ownNftSum = 0;
     }
   }
@@ -2061,7 +2061,7 @@ export class ProfilePage implements OnInit {
 
   chanelCollections() {
     let account = this.walletConnectControllerService.getAccountAddress() || null;
-    if(account === null){
+    if (account === null) {
       this.walletConnectControllerService.connect();
       return;
     }
@@ -2166,7 +2166,7 @@ export class ProfilePage implements OnInit {
   clickAssetItem(assetitem: any) {
     this.clearData();
     this.dataHelper.setAssetPageAssetItem(assetitem);
-    this.native.navigateForward(['assetdetails'],{});
+    this.native.navigateForward(['assetdetails'], {});
   }
 
   clickMore(parm: any) {
@@ -2197,7 +2197,7 @@ export class ProfilePage implements OnInit {
 
   async createNft() {
     let nftFirstdisclaimer = this.feedService.getNftFirstdisclaimer() || "";
-    if(nftFirstdisclaimer === ""){
+    if (nftFirstdisclaimer === "") {
       this.viewHelper.showNftdisclaimerPrompt();
       return;
     }
@@ -2233,7 +2233,7 @@ export class ProfilePage implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('feeds:image:') > -1){
+    } else if (imgUri.indexOf('feeds:image:') > -1) {
       imgUri = imgUri.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
@@ -2253,7 +2253,7 @@ export class ProfilePage implements OnInit {
         return item.tokenId === tokenId && item.moreMenuType === "created";
       });
       cpItem["curQuantity"] = sellQuantity;
-      list.splice(index,1,cpItem);
+      list.splice(index, 1, cpItem);
       Logger.log(TAG, 'Update list', list);
 
     } else {

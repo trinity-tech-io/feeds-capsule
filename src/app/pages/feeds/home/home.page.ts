@@ -156,7 +156,7 @@ export class HomePage implements OnInit {
   public isShowSearchField: boolean = false;
   public pasarsearchPlaceholder: string = "HomePage.search";
   // private searchBeforePasar: any = [];
-  private nftImageType:any = {};
+  private nftImageType: any = {};
   private pasarGridisLoadimage: any = {};
   private pasarListisLoadimage: any = {};
   public isAutoGet: string = 'unAuto';
@@ -283,7 +283,7 @@ export class HomePage implements OnInit {
       this.styleType = "list";
     }
 
-    switch(this.tabType){
+    switch (this.tabType) {
       case 'feeds':
         this.refreshPostList();
         break;
@@ -296,7 +296,7 @@ export class HomePage implements OnInit {
       this.addConnectionChangedEvent();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.mintNft,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.mintNft, () => {
       this.refreshPasarList();
       // this.pasarList = this.nftPersistenceHelper.getPasarList();
       //this.refreshPasarGridVisibleareaImage();
@@ -361,12 +361,12 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.hideAdult,()=>{
-      this.zone.run(async() => {
+    this.events.subscribe(FeedsEvent.PublishType.hideAdult, () => {
+      this.zone.run(async () => {
         this.native.showLoading('common.waitMoment');
         await this.refreshPasarList();
         this.isShowSearchField = false;
-       this.native.hideLoading();
+        this.native.hideLoading();
       });
     });
 
@@ -989,7 +989,7 @@ export class HomePage implements OnInit {
           this.elaPrice = this.feedService.getElaUsdPrice();
           this.loadMoreData().then((list) => {
             let timer = setTimeout(() => {
-              if(list.length>0){
+              if (list.length > 0) {
                 this.pasarList = list;
                 this.refreshPasarGridVisibleareaImage();
               }
@@ -1059,24 +1059,24 @@ export class HomePage implements OnInit {
     }
   }
 
-  refreshPasarGridVisibleareaImage(){
-     if(this.tabType === 'pasar' && this.styleType==='grid'){
-      let sid = setTimeout(()=>{
+  refreshPasarGridVisibleareaImage() {
+    if (this.tabType === 'pasar' && this.styleType === 'grid') {
+      let sid = setTimeout(() => {
         this.pasarGridisLoadimage = {};
         this.setPasarGridVisibleareaImage();
         clearTimeout(sid);
-       },100);
-       return;
-     }
+      }, 100);
+      return;
+    }
 
-     if(this.tabType === 'pasar' && this.styleType==='list'){
-      let sid = setTimeout(()=>{
+    if (this.tabType === 'pasar' && this.styleType === 'list') {
+      let sid = setTimeout(() => {
         this.pasarListisLoadimage = {};
         this.setPasarListVisibleareaImage();
         clearTimeout(sid);
-       },100);
-       return;
-     }
+      }, 100);
+      return;
+    }
   }
 
   scrollToTop(int) {
@@ -1222,15 +1222,15 @@ export class HomePage implements OnInit {
         let img = realImg || '';
         if (img != '') {
           let post =
-          _.find(this.postList, item => {
-         return (
-          item.nodeId === nodeId &&
-          item.channel_id === channelId &&
-          item.id === postId
-        );
-        }) || {};
+            _.find(this.postList, item => {
+              return (
+                item.nodeId === nodeId &&
+                item.channel_id === channelId &&
+                item.id === postId
+              );
+            }) || {};
 
-       let isNft = post.content.nftOrderId || '';
+          let isNft = post.content.nftOrderId || '';
           this.isImgLoading[this.imgCurKey] = false;
           this.viewHelper.openViewer(
             this.titleBar,
@@ -1422,13 +1422,13 @@ export class HomePage implements OnInit {
                 postImage.setAttribute('src', realImage);
                 if (nftOrdeId != '' && priceDes != '') {
                   let imagesWidth = postImage.clientWidth;
-                  if(this.nftImageType[nftOrdeId] === "avatar"){
+                  if (this.nftImageType[nftOrdeId] === "avatar") {
 
                     let homebidAvatar = document.getElementById(
                       id + 'homebidAvatar'
                     );
                     homebidAvatar.style.display = 'block';
-                  }else if(this.nftImageType[nftOrdeId] === "video"){
+                  } else if (this.nftImageType[nftOrdeId] === "video") {
                     let homebidVideo = document.getElementById(
                       id + 'homebidVideo'
                     );
@@ -1466,13 +1466,13 @@ export class HomePage implements OnInit {
                     postImage.setAttribute('src', thumbImagedata);
                     if (nftOrdeId != '' && priceDes != '') {
                       let imagesWidth = postImage.clientWidth;
-                      if(this.nftImageType[nftOrdeId] === "avatar"){
+                      if (this.nftImageType[nftOrdeId] === "avatar") {
 
                         let homebidAvatar = document.getElementById(
                           id + 'homebidAvatar'
                         );
                         homebidAvatar.style.display = 'block';
-                      }else if(this.nftImageType[nftOrdeId] === "video"){
+                      } else if (this.nftImageType[nftOrdeId] === "video") {
                         let homebidVideo = document.getElementById(
                           id + 'homebidVideo'
                         );
@@ -1608,7 +1608,7 @@ export class HomePage implements OnInit {
                   // }
                 })
                 .catch(() => {
-                //TODO
+                  //TODO
                 });
             }
             return;
@@ -1674,11 +1674,11 @@ export class HomePage implements OnInit {
         this.native.throttle(this.setVisibleareaImage(this.postgridindex), 200, this, true);
         break;
       case 'pasar':
-         if(this.styleType==='grid'){
-          this.native.throttle(this.setPasarGridVisibleareaImage(),200,this,true);
-         }else if(this.styleType==='list'){
-          this.native.throttle(this.setPasarListVisibleareaImage(),200,this,true);
-         }
+        if (this.styleType === 'grid') {
+          this.native.throttle(this.setPasarGridVisibleareaImage(), 200, this, true);
+        } else if (this.styleType === 'list') {
+          this.native.throttle(this.setPasarListVisibleareaImage(), 200, this, true);
+        }
         break;
       default:
         break;
@@ -1962,15 +1962,15 @@ export class HomePage implements OnInit {
         postImage.setAttribute('src', value);
       }
       let post =
-      _.find(this.postList, item => {
-     return (
-      item.nodeId === nodeId &&
-      item.channel_id === parseInt(channelId) &&
-      item.id === parseInt(postId)
-    );
-    }) || {};
-    let content = post.content || {};
-    let isNft = content.nftOrderId || '';
+        _.find(this.postList, item => {
+          return (
+            item.nodeId === nodeId &&
+            item.channel_id === parseInt(channelId) &&
+            item.id === parseInt(postId)
+          );
+        }) || {};
+      let content = post.content || {};
+      let isNft = content.nftOrderId || '';
       this.viewHelper.openViewer(
         this.titleBar,
         value,
@@ -2280,7 +2280,7 @@ export class HomePage implements OnInit {
           item.id === postId
         );
       }) || {};
-      //homebidAvatar
+    //homebidAvatar
     let nftOrderId = post.content.nftOrderId || '';
     if (nftOrderId != '') {
       this.nftImageType[nftOrderId] = post.content.nftImageType || '';
@@ -2410,14 +2410,14 @@ export class HomePage implements OnInit {
       this.homeTittleBar.style.display = "none";
       this.homeTab.setAttribute("style", "top:0px;height:45px;line-height:37px;");
       let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
-      if(sort!=null){
+      if (sort != null) {
         sort.setAttribute("style", "top:93px;");
       }
     } else {
       this.homeTittleBar.style.display = "block";
       this.homeTab.setAttribute("style", "top:36px;height:34px;");
       let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
-      if(sort!=null){
+      if (sort != null) {
         sort.setAttribute("style", "top:132px;");
       }
     }
@@ -2462,32 +2462,32 @@ export class HomePage implements OnInit {
   }
 
   handlePasarSearch() {
-   let tokenId = this.nftContractControllerService.isTokenId(this.searchText);
+    let tokenId = this.nftContractControllerService.isTokenId(this.searchText);
     if (tokenId != "") {
       this.zone.run(async () => {
         this.native.showLoading('common.waitMoment');
-        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.TOKEN_ID,tokenId);
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.TOKEN_ID, tokenId);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
       });
       return;
     }
 
-    if(this.nftContractControllerService.isAddress(this.searchText)){
-       this.zone.run(async () => {
+    if (this.nftContractControllerService.isAddress(this.searchText)) {
+      this.zone.run(async () => {
         this.native.showLoading('common.waitMoment');
         this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.ROYALTY_ADDRESS, this.searchText);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
-        });
-        return;
+      });
+      return;
     }
 
     this.zone.run(async () => {
-        this.native.showLoading('common.waitMoment');
-        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
-        this.refreshPasarGridVisibleareaImage();
-        this.native.hideLoading();
+      this.native.showLoading('common.waitMoment');
+      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
+      this.refreshPasarGridVisibleareaImage();
+      this.native.hideLoading();
     });
   }
 
@@ -2500,33 +2500,33 @@ export class HomePage implements OnInit {
     this.isShowSearchField = !this.isShowSearchField;
   }
 
-  setPasarGridVisibleareaImage(){
-   let homePasarGrid = document.getElementById("homePasarGrid")|| null;
-   if(homePasarGrid === null){
-     return;
-   }
-   let homePasarGridCols = homePasarGrid.getElementsByClassName("homePasarGridCol") || null;
-   let len = homePasarGridCols.length;
-   for(let itemIndex = 0;itemIndex<len;itemIndex++){
-     let item = homePasarGridCols[itemIndex];
-     let id = item.getAttribute("id") || "";
-     if(id === ""){
-      continue;
+  setPasarGridVisibleareaImage() {
+    let homePasarGrid = document.getElementById("homePasarGrid") || null;
+    if (homePasarGrid === null) {
+      return;
     }
-     let arr = id.split("-");
-     let fileName = arr[0];
-     let kind = arr[1];
-     let size = arr[2];
-     let thumbImage =  document.getElementById(fileName+"-homeImg");
-     let srcStr =  thumbImage.getAttribute("src") || "";
-     let isload = this.pasarGridisLoadimage[fileName] || '';
-     try {
+    let homePasarGridCols = homePasarGrid.getElementsByClassName("homePasarGridCol") || null;
+    let len = homePasarGridCols.length;
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
+      let item = homePasarGridCols[itemIndex];
+      let id = item.getAttribute("id") || "";
+      if (id === "") {
+        continue;
+      }
+      let arr = id.split("-");
+      let fileName = arr[0];
+      let kind = arr[1];
+      let size = arr[2];
+      let thumbImage = document.getElementById(fileName + "-homeImg");
+      let srcStr = thumbImage.getAttribute("src") || "";
+      let isload = this.pasarGridisLoadimage[fileName] || '';
+      try {
         if (
           id != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
           thumbImage.getBoundingClientRect().top <= this.clientHeight
         ) {
-          if(isload === ""){
+          if (isload === "") {
             // if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
             //   Logger.log(TAG, 'Work around, Not show');
             //   continue;
@@ -2534,22 +2534,22 @@ export class HomePage implements OnInit {
 
             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
             this.pasarGridisLoadimage[fileName] = '12';
-            this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
+            this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
               this.zone.run(() => {
                 this.pasarGridisLoadimage[fileName] = '13';
                 let dataSrc = data || "";
-                if(dataSrc!=""){
-                  thumbImage.setAttribute("src",data);
+                if (dataSrc != "") {
+                  thumbImage.setAttribute("src", data);
                 }
               });
-            }).catch((err)=>{
-              if(this.pasarGridisLoadimage[fileName] === '13'){
+            }).catch((err) => {
+              if (this.pasarGridisLoadimage[fileName] === '13') {
                 this.pasarGridisLoadimage[fileName] = '';
                 thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-               }
+              }
             });
           }
-        }else{
+        } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
             thumbImage.getBoundingClientRect().top < -100 &&
@@ -2560,109 +2560,109 @@ export class HomePage implements OnInit {
             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
           }
         }
-     } catch (error) {
-       if(this.pasarGridisLoadimage[fileName] === '13'){
-        this.pasarGridisLoadimage[fileName] = '';
-        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-       }
-     }
-   }
+      } catch (error) {
+        if (this.pasarGridisLoadimage[fileName] === '13') {
+          this.pasarGridisLoadimage[fileName] = '';
+          thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+        }
+      }
+    }
   }
 
 
-  setPasarListVisibleareaImage(){
+  setPasarListVisibleareaImage() {
 
-    let homePasarList = document.getElementById("homePasarList")|| null;
-    if(homePasarList === null){
+    let homePasarList = document.getElementById("homePasarList") || null;
+    if (homePasarList === null) {
       return;
     }
     let homePasarListCol = homePasarList.getElementsByClassName("homePasarListCol") || null;
     let len = homePasarListCol.length;
 
-    for(let itemIndex = 0;itemIndex<len;itemIndex++){
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
       let item = homePasarListCol[itemIndex];
       let id = item.getAttribute("id") || "";
-      if(id === ""){
+      if (id === "") {
         continue;
       }
       let arr = id.split("-");
       let fileName = arr[0];
       let kind = arr[1];
       let size = arr[2];
-      let thumbImage =  document.getElementById(fileName+"-thumbImage") || null;
-      let srcStr =  thumbImage.getAttribute("src") || "";
+      let thumbImage = document.getElementById(fileName + "-thumbImage") || null;
+      let srcStr = thumbImage.getAttribute("src") || "";
       let isload = this.pasarListisLoadimage[fileName] || '';
 
       try {
-         if (
-           id != '' &&
-           thumbImage.getBoundingClientRect().top >= -100 &&
-           thumbImage.getBoundingClientRect().top <= this.clientHeight
-         ) {
-           if(isload === ""){
+        if (
+          id != '' &&
+          thumbImage.getBoundingClientRect().top >= -100 &&
+          thumbImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if (isload === "") {
             //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
             //    Logger.log(TAG, 'Work around, Not show');
             //    continue;
             //  }
 
-             let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
-             this.pasarListisLoadimage[fileName] = '12';
+            let fetchUrl = this.ipfsService.getNFTGetUrl() + fileName;
+            this.pasarListisLoadimage[fileName] = '12';
 
-             this.fileHelperService.getNFTData(fetchUrl,fileName, kind).then((data) => {
-               this.zone.run(() => {
-                 this.pasarListisLoadimage[fileName] = '13';
-                 let dataSrc = data || "";
-                 if(dataSrc!=""){
-                  thumbImage.setAttribute("src",data);
-                 }
-               });
-             }).catch((err)=>{
-              if(this.pasarListisLoadimage[fileName] === '13'){
+            this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
+              this.zone.run(() => {
+                this.pasarListisLoadimage[fileName] = '13';
+                let dataSrc = data || "";
+                if (dataSrc != "") {
+                  thumbImage.setAttribute("src", data);
+                }
+              });
+            }).catch((err) => {
+              if (this.pasarListisLoadimage[fileName] === '13') {
                 this.pasarListisLoadimage[fileName] = '';
                 thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-               }
-             });
-           }
-         }else{
-           srcStr = thumbImage.getAttribute('src') || '';
-           if (
-             thumbImage.getBoundingClientRect().top < -100 &&
-             this.pasarListisLoadimage[fileName] === '13' &&
-             srcStr != './assets/icon/reserve.svg'
-           ) {
-             this.pasarListisLoadimage[fileName] = '';
-             thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-           }
-         }
+              }
+            });
+          }
+        } else {
+          srcStr = thumbImage.getAttribute('src') || '';
+          if (
+            thumbImage.getBoundingClientRect().top < -100 &&
+            this.pasarListisLoadimage[fileName] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
+            this.pasarListisLoadimage[fileName] = '';
+            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
       } catch (error) {
-       if(this.pasarListisLoadimage[fileName] === '13'){
-        this.pasarListisLoadimage[fileName] = '';
-        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-       }
+        if (this.pasarListisLoadimage[fileName] === '13') {
+          this.pasarListisLoadimage[fileName] = '';
+          thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+        }
       }
     }
   }
 
-  handleId(item:any){
+  handleId(item: any) {
     let thumbnailUri = "";
     let kind = "";
     let size = "";
     let version = item["version"] || "1";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
-    }else if(version === "2"){
-      let jsonData  = item['data'] || "";
-      if(jsonData != ""){
-        thumbnailUri= jsonData['thumbnail'] || "";
+    } else if (version === "2") {
+      let jsonData = item['data'] || "";
+      if (jsonData != "") {
+        thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
-      }else{
+      } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return "";
     }
 
@@ -2689,7 +2689,7 @@ export class HomePage implements OnInit {
     this.native.hideLoading();
   }
 
-  clickSortArrow(){
+  clickSortArrow() {
     this.isShowSearchField = false;
     // this.searchText = "";
     // if (this.searchBeforePasar.length > 0) {
