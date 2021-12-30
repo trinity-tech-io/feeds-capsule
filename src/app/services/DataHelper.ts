@@ -15,7 +15,6 @@ export class DataHelper {
   private openBarcodeScanner: boolean = false;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
-  private ownChannelCollection: any = {};
   private isShowAdult: boolean = true;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
@@ -2823,15 +2822,6 @@ export class DataHelper {
 
   getOpenBarcodeScanner() {
     return this.openBarcodeScanner;
-  }
-
-  setOwnChannelCollection(ownChannelCollection: any) {
-    this.ownChannelCollection = ownChannelCollection;
-    this.saveData("feeds.galleric.own.channel.collection", ownChannelCollection);
-  }
-
-  getOwnChannelCollection() {
-    return this.ownChannelCollection;
   }
 
   setPublishedActivePanelList(publishedActivePanelList: any) {

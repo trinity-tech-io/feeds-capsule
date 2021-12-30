@@ -122,7 +122,6 @@ export class MyApp {
         this.initWhiteList();
         this.initFeedsSortType();
         this.initHideAdult();
-        this.initOwnChannelCollection();
         this.initPublishedActivePanelList();
         this.native.addNetworkListener(
           () => {
@@ -543,19 +542,6 @@ export class MyApp {
 
     });
   }
-
-  initOwnChannelCollection(){
-    this.dataHelper.loadData('feeds.galleric.own.channel.collection').then((ownChannelCollection)=>{
-          if(ownChannelCollection === null){
-            this.dataHelper.setOwnChannelCollection({});
-              return;
-          }
-         this.dataHelper.setOwnChannelCollection(ownChannelCollection);
-    }).catch((err)=>{
-
-    });
-  }
-
 
   initPublishedActivePanelList(){
     this.dataHelper.loadData('feeds.published.activePanel.list').then((publishedActivePanelList)=>{

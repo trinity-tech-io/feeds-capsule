@@ -174,12 +174,6 @@ export class FeedspreferencesPage implements OnInit {
     });
   }
 
-  handleCace(accountAddress: string,ownChannelCollectionList: any) {
-    let ownChannelCollection = this.dataHelper.getOwnChannelCollection();
-    ownChannelCollection[accountAddress] = ownChannelCollectionList;
-    this.dataHelper.setOwnChannelCollection(ownChannelCollection);
-  }
-
   unPublicFeeds() {
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
     if (server === null) {
