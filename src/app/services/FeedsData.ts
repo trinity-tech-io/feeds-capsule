@@ -387,7 +387,9 @@ declare namespace FeedsData {
 
     didMapper = 'feeds: didMapper',
 
-    userDidUriMap = 'feeds:userDidUriMap'
+    userDidUriMap = 'feeds:userDidUriMap',
+    pasarItemList = 'pasarItemList',
+    RefreshLastBlockNumber = 'RefreshLastBlockNumber'
   }
 
   type ServerVersion = {

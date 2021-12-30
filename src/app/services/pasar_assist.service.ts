@@ -31,7 +31,8 @@ export class PasarAssistService {
    * @param blockNumber 返回本高度之后的数据 选填
    * @param isAsc sort排序方式: 默认按BlockNumber降序， 传 asc表示按BlockNumber升序
    */
-  listPasarOrderFromService(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number, isAsc: boolean): Promise<any> {
+  listPasarOrderFromService(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number,
+    isAsc: boolean, endBlockNumber: number, sortType: FeedsData.SortType, safeMode: boolean): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         let url = '';
@@ -45,12 +46,37 @@ export class PasarAssistService {
           url = url + '&blockNumber=' + blockNumber;
         }
 
+        if (endBlockNumber != null && endBlockNumber != undefined) {
+          url = url + '&endBlockNumber=' + endBlockNumber;
+        }
+
+        if (sortType != null && sortType != undefined) {
+          switch (sortType) {
+            case FeedsData.SortType.PRICE_HIGHEST:
+              url = url + '&sortType=price';
+              break;
+            case FeedsData.SortType.PRICE_CHEAPEST:
+              url = url + '&sortType=price&sort=asc';
+              break;
+            case FeedsData.SortType.TIME_ORDER_LATEST:
+              url = url + '&sortType=createTime';
+              break;
+            case FeedsData.SortType.TIME_ORDER_OLDEST:
+              url = url + '&sortType=createTime&sort=asc';
+              break;
+            default:
+              break;
+          }
+        }
+
         if (pageSize)
           url = url + '&pageSize=' + pageSize;
         if (orderState)
           url = url + '&orderState=' + orderState;
-        if (isAsc)
-          url = url + '&sort=asc'
+
+        if (safeMode)
+          url = url + '&adult=false';
+
 
         const result = await this.httpService.httpGet(url);
 
@@ -66,20 +92,9 @@ export class PasarAssistService {
     });
   }
 
-  refreshPasarOrder(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number): Promise<Object> {
-    return this.listPasarOrderFromService(pageNum, pageSize, orderState, blockNumber, false);
-  }
-
-  syncPasarOrder(pageNum: number, pageSize: number, blockNumber: number): Promise<Object> {
-    return this.listPasarOrderFromService(pageNum, pageSize, null, blockNumber, true);
-  }
-
-  syncOrder(blockNumber: number): Promise<any> {
-    return this.listPasarOrderFromService(1, 50, null, blockNumber, true);
-  }
-
-  firstSync(blockNumber: number): Promise<any> {
-    return this.listPasarOrderFromService(1, 50, FeedsData.OrderState.SALEING, blockNumber, true);
+  refreshPasarOrder(pageNum: number, pageSize: number, orderState: FeedsData.OrderState, blockNumber: number,
+    isAsc: boolean, endBlockBumber: number, sortType: FeedsData.SortType, safeMode: boolean): Promise<Object> {
+    return this.listPasarOrderFromService(pageNum, pageSize, orderState, blockNumber, isAsc, endBlockBumber, sortType, safeMode);
   }
 
   listOwnSticker() {

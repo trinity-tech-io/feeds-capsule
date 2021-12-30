@@ -99,8 +99,8 @@ export class BidPage implements OnInit {
         Logger.log('Sale orderId is null');
         return;
       }
-      const pasarItem: FeedsData.PasarItem = this.dataHelper.getPasarItem(this.saleOrderId);
-      this.curAssetItem = _.cloneDeep(pasarItem.item);
+      const pasarItem: FeedsData.NFTItem = this.dataHelper.getPasarItem(this.saleOrderId);
+      this.curAssetItem = _.cloneDeep(pasarItem);
 
       let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';

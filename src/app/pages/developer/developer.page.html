@@ -1,7 +1,7 @@
 <app-titlebar></app-titlebar>
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
-   <!-- <ion-row class="section" (click)="navToConfigureNetwork()">
+<ion-row class="section" (click)="navToConfigureNetwork()">
         <ion-col size="9" class="title-col">
             <h1>{{"SettingsPage.configure-network" | translate }}</h1>
             <h2>{{ selectedNetwork }}</h2>
@@ -9,7 +9,7 @@
         <ion-col size="3" class="arrow-col">
             <ion-img src="assets/icons/right-arrow.svg"></ion-img>
         </ion-col>
-    </ion-row> -->
+    </ion-row>
     <ion-row class="section" (click)="toggleLogMode()">
         <ion-col size="9" class="title-col" (swipe)="toggleLogMode()" [style.touch-action]="'pan-y'">
             <h1>{{"common.developLog" | translate }}</h1>
