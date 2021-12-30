@@ -75,7 +75,7 @@ export class AppService {
       this.feedService.loadData().then(() => {
         this.feedService.updateVersionData();
         this.initData(signInData);
-        this.feedService.syncOpenOrder();
+        // this.feedService.syncOpenOrder();
       });
     });
   }

@@ -112,9 +112,9 @@ export class DataHelper {
 
   private cachedNftMap: { [name: string]: string } = null;
 
-  private pasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
+  // private pasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
+  private pasarItemList: FeedsData.NFTItem[] = [];
   private displayedPasarItemMap: { [orderId: string]: FeedsData.PasarItem } = {};
-  private lastSyncBlockNumber = 0;
   private refreshLastBlockNumber = 0;
   private firstSyncOrderFinish = false;
 
@@ -2445,24 +2445,34 @@ export class DataHelper {
     return;
   }
 
-
-  ////PasarItemMap
-  setPasarItemMap(pasarItemMap: { [orderId: string]: FeedsData.PasarItem }) {
-    this.pasarItemMap = pasarItemMap;
-    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
+  // sync data from pasar-assist directly
+  // pasarItemList
+  setPasarItemList() {
   }
 
-  loadPasarItemMap(): Promise<{ [orderId: string]: FeedsData.PasarItem }> {
+  savePasarItemList() {
+  }
+
+  appendPasarItem() {
+  }
+
+
+  ////PasarItemMap
+  cleanPasarItemList() {
+    this.pasarItemList = [];
+    this.saveData(FeedsData.PersistenceKey.pasarItemList + "-" + this.developNet, this.pasarItemList);
+  }
+
+  loadPasarItemList(): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        this.pasarItemMap = {};
+        this.pasarItemList = [];
         await this.loadDevelopNet();
-        await this.loadFirstSyncOrderStatus();
-        this.pasarItemMap =
-          (await this.loadData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet)) || {};
+        await this.loadRefreshLastBlockNumber();
+        this.pasarItemList =
+          (await this.loadData(FeedsData.PersistenceKey.pasarItemList + "-" + this.developNet)) || [];
 
-        this.loadBlockNumFromStore();
-        resolve(this.pasarItemMap);
+        resolve(this.pasarItemList);
       } catch (error) {
         reject(error);
       }
@@ -2471,88 +2481,65 @@ export class DataHelper {
 
   deletePasarItem(orderId: string) {
     this.checkPasarItemMap();
-    if (this.pasarItemMap == null || this.pasarItemMap == undefined)
-      return;
-    this.pasarItemMap[orderId] = null;
-    delete this.pasarItemMap[orderId];
-    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
-  }
-
-  deltePasarItems(deletItems: FeedsData.PasarItem[]) {
-    if (!deletItems || deletItems.length == 0)
-      return;
-    for (let index = 0; index < deletItems.length; index++) {
-      const deletItem = deletItems[index];
-      if (!deletItem || !deletItem.item)
-        continue;
-      this.deletePasarItem(String(deletItem.item.saleOrderId));
-    }
+    _.remove(this.pasarItemList, item => {
+      return item.saleOrderId == orderId;
+    });
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemList);
   }
 
   cleanPasarItems() {
-    this.setPasarItemMap({});
+    this.cleanPasarItemList();
   }
 
-  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode, reqeustDevNet: string) {
+  updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, reqeustDevNet: string) {
+    console.log('updatePasarItem', orderId, pasarItem);
     if (reqeustDevNet != this.getDevelopNet())
       return;
     this.checkPasarItemMap();
-    this.updatePasarItemWithoutSave(orderId, pasarItem, index, blockNumber, syncMode);
-    this.updatePasarBlockNum(blockNumber);
-    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemMap);
+    this.updatePasarItemWithoutSave(orderId, pasarItem);
+    // this.updatePasarBlockNum(blockNumber);
+    this.saveData(FeedsData.PersistenceKey.pasarItemMap + "-" + this.developNet, this.pasarItemList);
   }
 
-  searchPasarItemFromIndex(index: number) {
-    const filterResult: FeedsData.PasarItem[] = _.filter(this.pasarItemMap, (pasarItem) => { return pasarItem.index == index });
-    return filterResult;
-  }
-
-  updatePasarItemWithoutSave(orderId: string, item: FeedsData.NFTItem, index: number, blockNumber: number, syncMode: FeedsData.SyncMode) {
+  updatePasarItemWithoutSave(orderId: string, item: FeedsData.NFTItem) {
     this.checkPasarItemMap();
-    const pasarItem: FeedsData.PasarItem = { index: index, blockNumber: blockNumber, item: item, syncMode: syncMode };
-    this.pasarItemMap[orderId] = pasarItem;
+    const position = this.getPasarItemIndex(orderId);
+    if (position == -1) {
+      this.pasarItemList.push(item);
+      return;
+    }
+
+    this.pasarItemList[position] = item;
+    console.log('updatePasarItemWithoutSave', this.pasarItemList);
   }
 
   updatePasarItemPrice(orderId: string, price: string) {
     let pasarItem = this.getPasarItem(orderId);
-    if (pasarItem && pasarItem.item && pasarItem.blockNumber && pasarItem.syncMode) {
-      pasarItem.item.fixedAmount = price;
-      this.updatePasarItem(orderId, pasarItem.item, pasarItem.index, pasarItem.blockNumber, pasarItem.syncMode, this.getDevelopNet());
+    if (pasarItem) {
+      pasarItem.fixedAmount = price;
+      this.updatePasarItem(orderId, pasarItem, this.getDevelopNet());
     }
   }
 
-  getPasarItem(orderId: string): FeedsData.PasarItem {
+  getPasarItem(orderId: string): FeedsData.NFTItem {
     this.checkPasarItemMap();
-    if (!this.pasarItemMap) return null;
-    return this.pasarItemMap[orderId];
+    const pasarItems = _.filter(this.pasarItemList, item => {
+      return item.saleOrderId == orderId;
+    });
+    if (!pasarItems || pasarItems.length <= 0)
+      return null;
+    return pasarItems[0];
   }
 
-  getPasarItemMap(): { [orderId: string]: FeedsData.PasarItem } {
-    this.checkPasarItemMap();
-    if (!this.pasarItemMap) return null;
-    return this.pasarItemMap;
-  }
-
-  isExistPasarItem(orderId: string): boolean {
-    this.checkPasarItemMap();
-    if (this.pasarItemMap[orderId] == null || this.pasarItemMap[orderId] == undefined)
-      return false;
-    return true;
+  getPasarItemIndex(orderId: string): number {
+    const index = _.findIndex(this.pasarItemList, item => {
+      return item.saleOrderId == orderId;
+    });
+    return index;
   }
 
   getPasarItemList(): FeedsData.NFTItem[] {
-    let list: FeedsData.NFTItem[] = [];
-    this.pasarItemMap = this.pasarItemMap || {};
-    let keys: string[] = Object.keys(this.pasarItemMap) || [];
-    for (let index in keys) {
-      if (this.pasarItemMap[keys[index]] == null ||
-        this.pasarItemMap[keys[index]] == undefined
-      )
-        continue;
-      list.push(this.pasarItemMap[keys[index]].item);
-    }
-
-    return list;
+    return this.pasarItemList;
   }
 
   getPasarItemListWithAdultFlag(isShowAdult: boolean): FeedsData.NFTItem[] {
@@ -2560,7 +2547,7 @@ export class DataHelper {
     if (isShowAdult) {
       return _.filter(list, item => {
         return item.adult == null || item.adult == undefined || item.adult != true;
-      })
+      });
     }
     return list;
   }
@@ -2569,41 +2556,12 @@ export class DataHelper {
     const list = this.getPasarItemList();
     return _.filter(list, (item: FeedsData.NFTItem) => {
       return item.sellerAddr == address;
-    })
+    });
   }
 
   checkPasarItemMap() {
-    if (this.pasarItemMap == null || this.pasarItemMap == undefined)
-      this.pasarItemMap = {};
-  }
-
-  getLastPasarBlockNum() {
-    return this.lastSyncBlockNumber;
-  }
-
-  loadBlockNumFromStore(): FeedsData.NFTItem[] {
-    let list: FeedsData.NFTItem[] = [];
-    this.pasarItemMap = this.pasarItemMap || {};
-    let keys: string[] = Object.keys(this.pasarItemMap) || [];
-    for (let index in keys) {
-      const pasarItem = this.pasarItemMap[keys[index]];
-      if (!pasarItem)
-        continue;
-      const blockNumber = pasarItem.blockNumber;
-      if (pasarItem.syncMode == FeedsData.SyncMode.SYNC) {
-        this.updatePasarBlockNum(blockNumber);
-        this.setRefreshLastBlockNumber(blockNumber);
-      }
-
-      list.push(this.pasarItemMap[keys[index]].item);
-    }
-
-    return list;
-  }
-
-  updatePasarBlockNum(blockNumber: number) {
-    if (blockNumber && this.lastSyncBlockNumber < blockNumber)
-      this.lastSyncBlockNumber = blockNumber;
+    if (!this.pasarItemList)
+      this.pasarItemList = [];
   }
 
   ////
@@ -2612,10 +2570,21 @@ export class DataHelper {
   }
 
   setRefreshLastBlockNumber(blockNumber: number) {
-    // if (blockNumber && this.refreshLastBlockNumber < blockNumber)
     this.refreshLastBlockNumber = blockNumber;
+    this.saveData(FeedsData.PersistenceKey.RefreshLastBlockNumber, this.refreshLastBlockNumber);
   }
 
+  loadRefreshLastBlockNumber(): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.refreshLastBlockNumber = 0;
+        this.refreshLastBlockNumber = await this.loadData(FeedsData.PersistenceKey.RefreshLastBlockNumber) || 0;
+        resolve(this.refreshLastBlockNumber);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
   ////
   // initDisplayedPasarItem() {
   //   this.displayedPasarItemMap = {}

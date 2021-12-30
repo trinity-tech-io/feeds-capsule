@@ -268,8 +268,8 @@ export class FeedService {
     return this.dataHelper.loadTempData();
   }
 
-  loadPasarItemMap() {
-    return this.dataHelper.loadPasarItemMap();
+  loadPasarItemList() {
+    return this.dataHelper.loadPasarItemList();
   }
 
   loadDidMapper() {
@@ -300,7 +300,7 @@ export class FeedService {
       this.loadSyncCommentStatusMap(),
       this.loadSyncPostStatusMap(),
       this.loadLastMultiLikesAndCommentsCountUpdateMap(),
-      this.loadPasarItemMap(),
+      this.loadPasarItemList(),
       this.loadDidMapper()
     ]);
   }
@@ -7831,16 +7831,10 @@ export class FeedService {
      return this.curSearchField;
   }
 
-  syncOpenOrder() {
-    // const timer = setTimeout(() => {
-      // this.nftContractHelperService.syncOpenOrder();
-    this.nftContractHelperService.syncOpenOrderFromAssist().catch(() => {
-      //TODO
-    });
-
-    //   clearTimeout(timer);
-    // }, 20);
-  }
+  // syncOpenOrder() {
+  //   this.nftContractHelperService.syncOpenOrderFromAssist().catch(() => {
+  //   });
+  // }
 
   getWhiteListData(){
     return this.whiteListData;

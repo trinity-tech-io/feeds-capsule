@@ -131,7 +131,7 @@ export class NFTContractHelperService {
           const tokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
-          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.REFRESH, requestDevNet);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, requestDevNet);
           list.push(item);
         }
         // this.nftPersistenceHelper.setPasarList(list);
@@ -154,20 +154,29 @@ export class NFTContractHelperService {
           return;
         }
 
-        const isShowAdult = this.dataHelper. getAdultStatus();
+        const isShowAdult = this.dataHelper.getAdultStatus();
         pasarItemList = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult) || [];
-        pasarItemList = this.sortData(pasarItemList, sortType);
+        console.log('111111111111111111pasarItemList', pasarItemList);
+        // pasarItemList = this.sortData(pasarItemList, sortType);
         const count = pasarItemList.length || 0;
         const start = startPage * this.refreshCount;
         const end = (startPage + 1) * this.refreshCount;
 
+        console.log('count', count);
+        console.log('start', start);
+        console.log('end', end);
+        console.log('aaaaaa');
         if (count <= start) {
+          console.log('bbbbbbbb');
+          console.log('list', list);
           resolve(list);
           return;
         }
 
         if (count > end) {
+          console.log('ccccccccc');
           list = pasarItemList.slice(start, end);
+          console.log('list', list);
           resolve(list);
           return;
         }
@@ -175,7 +184,10 @@ export class NFTContractHelperService {
         list = pasarItemList.slice(start, count);
         resolve(list);
 
+        console.log('ddddddd', list);
+        console.log('list', list);
       } catch (error) {
+        console.log('eeeeeeee');
         reject(error);
       }
     });
@@ -213,7 +225,7 @@ export class NFTContractHelperService {
           const tokenJson = await this.getTokenJson(tokenInfo.tokenUri);
           const item: FeedsData.NFTItem = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, saleStatus);
 
-          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, index, 0, FeedsData.SyncMode.APP, requestDevNet);
+          this.dataHelper.updatePasarItem(String(orderInfo.orderId), item, requestDevNet);
           // let openOrderResult = await this.getOpenOrderResultByIndex(index);
           // let contractItem = await this.handleFeedsUrl(openOrderResult, saleStatus);
           list.push(item);
@@ -228,8 +240,10 @@ export class NFTContractHelperService {
   refreshPasarListFromAssist(sortType: FeedsData.SortType): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.refreshPasarOrderFromAssist(1);
+        const isShowAdult = this.dataHelper.getAdultStatus();
+        await this.refreshPasarOrderFromAssist(1, sortType, isShowAdult);
         const list = await this.loadData(0, sortType);
+        console.log('refreshPasarListFromAssist', list);
         resolve(this.sortData(list, sortType));
       } catch (error) {
         reject(error);
@@ -240,8 +254,10 @@ export class NFTContractHelperService {
   loadMorePasarListFromAssist(sortType: FeedsData.SortType, startPage: number): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.loadMorePasarOrderFromAssist(startPage);
+        await this.loadMorePasarOrderFromAssist(startPage, sortType);
+        console.log('startPage===>', startPage);
         const list = await this.loadData(startPage, sortType);
+        console.log('loadMorePasarListFromAssist', list);
         resolve(this.sortData(list, sortType));
       } catch (error) {
         reject(error);
@@ -266,19 +282,20 @@ export class NFTContractHelperService {
     });
   }
 
-  refreshPasarOrderFromAssist(pageNumber: number): Promise<string> {
+  refreshPasarOrderFromAssist(pageNumber: number, sortType: FeedsData.SortType, safeMode: boolean): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const requestCancelDevNet = this.dataHelper.getDevelopNet();
-        const canceledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.CANCELED, null);
-        this.parseAssistResult(canceledResult, FeedsData.SyncMode.REFRESH, requestCancelDevNet);
+        // const requestCancelDevNet = this.dataHelper.getDevelopNet();
+        // const canceledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.CANCELED, null);
+        // this.parseAssistResult(canceledResult, FeedsData.SyncMode.REFRESH, requestCancelDevNet);
 
-        const requestFilledDevNet = this.dataHelper.getDevelopNet();
-        const filledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SOLD, null);
-        this.parseAssistResult(filledResult, FeedsData.SyncMode.REFRESH, requestFilledDevNet);
+        // const requestFilledDevNet = this.dataHelper.getDevelopNet();
+        // const filledResult = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SOLD, null);
+        // this.parseAssistResult(filledResult, FeedsData.SyncMode.REFRESH, requestFilledDevNet);
 
         const requestDevNet = this.dataHelper.getDevelopNet();
-        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, 8, FeedsData.OrderState.SALEING, null);
+        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, this.refreshCount, FeedsData.OrderState.SALEING, null, false, null, sortType, safeMode);
+        this.dataHelper.cleanPasarItems();
         let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
 
         this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
@@ -289,13 +306,30 @@ export class NFTContractHelperService {
     });
   }
 
-  loadMorePasarOrderFromAssist(pageNumber: number): Promise<string> {
+  loadPasarOrderFromAssist(pageNumber: number, sortType: FeedsData.SortType, safeMode: boolean): Promise<string> {
+    console.log('pageNumber', pageNumber + 1);
     return new Promise(async (resolve, reject) => {
       try {
-        const lastBlockNumber = this.dataHelper.getLastPasarBlockNum();
-        const refreshLastBlockNumber = this.dataHelper.getRefreshLastBlockNumber();
-        if (lastBlockNumber < refreshLastBlockNumber)
-          await this.refreshPasarOrderFromAssist(pageNumber);
+        const requestDevNet = this.dataHelper.getDevelopNet();
+        const refreshLastBlockNum = this.dataHelper.getRefreshLastBlockNumber();
+        //TODO
+        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber + 1, this.refreshCount, FeedsData.OrderState.SALEING, null, false, 9778202, sortType, safeMode);
+        this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  loadMorePasarOrderFromAssist(pageNumber: number, sortType: FeedsData.SortType): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // const lastBlockNumber = this.dataHelper.getLastPasarBlockNum();
+        // const refreshLastBlockNumber = this.dataHelper.getRefreshLastBlockNumber();
+        // if (lastBlockNumber < refreshLastBlockNumber)
+        const isShowAdult = this.dataHelper.getAdultStatus();
+        await this.loadPasarOrderFromAssist(pageNumber, sortType, isShowAdult);
 
         resolve('FINISH');
       } catch (error) {
@@ -668,69 +702,29 @@ export class NFTContractHelperService {
     this.isSyncingFlags[this.isSyncingIndex] = false;
   }
 
-  syncOpenOrderFromAssist(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (this.isSyncing == true) {
-          resolve('FINISH');
-          return;
-        }
-        this.isSyncing = true;
+  // syncOpenOrderFromAssist(): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       if (this.isSyncing == true) {
+  //         resolve('FINISH');
+  //         return;
+  //       }
+  //       this.isSyncing = true;
 
-        const lastBlockNumber = this.dataHelper.getLastPasarBlockNum();
-        const newBlockNumber = await this.doSyncOpenOrderFromAssist(lastBlockNumber);
+  //       const lastBlockNumber = this.dataHelper.getLastPasarBlockNum();
+  //       const newBlockNumber = await this.doSyncOpenOrderFromAssist(lastBlockNumber);
 
-        this.dataHelper.setFirstSyncOrderStatus(true);
-        this.dataHelper.setRefreshLastBlockNumber(newBlockNumber);
-        resolve('FINISH');
-      } catch (error) {
-        Logger.error('Sync open order', error);
-        reject(error);
-      } finally {
-        this.isSyncing = false;
-      }
-    });
-  }
-
-  doSyncOpenOrderFromAssist(lastBlockNumber: number): Promise<number> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let curBlockNum = lastBlockNumber;
-        let result = null;
-        const requestDevNet = this.dataHelper.getDevelopNet();
-        if (this.dataHelper.getFirstSyncOrderStatus())
-          result = await this.pasarAssistService.syncOrder(curBlockNum);
-        else
-          result = await this.pasarAssistService.firstSync(curBlockNum);
-
-        if (!result) {
-          reject('Result is null');
-          return;
-        }
-
-        if (requestDevNet != this.dataHelper.getDevelopNet()) {
-          reject('Net diffrent');
-          return;
-        }
-
-        curBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.SYNC, requestDevNet);
-
-        if (curBlockNum == lastBlockNumber) {
-          resolve(curBlockNum);
-          return;
-        }
-
-        const newBlockNum = await this.doSyncOpenOrderFromAssist(curBlockNum);
-
-        if (newBlockNum == curBlockNum) {
-          resolve(newBlockNum);
-          return;
-        }
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
+  //       this.dataHelper.setFirstSyncOrderStatus(true);
+  //       this.dataHelper.setRefreshLastBlockNumber(newBlockNumber);
+  //       resolve('FINISH');
+  //     } catch (error) {
+  //       Logger.error('Sync open order', error);
+  //       reject(error);
+  //     } finally {
+  //       this.isSyncing = false;
+  //     }
+  //   });
+  // }
 
   syncOpenOrder(): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -757,33 +751,22 @@ export class NFTContractHelperService {
   parseAssistResult(result: any, syncMode: FeedsData.SyncMode, requestDevNet: string): number {
     let curBlockNum = 0;
     let array = result.data.result;
+    console.log('parseAssistResult', result);
     for (let index = 0; index < array.length; index++) {
       const item = array[index];
 
-      if (item.orderState == FeedsData.OrderState.CANCELED || item.orderState == FeedsData.OrderState.SOLD) {
-        this.dataHelper.deletePasarItem(item.orderId);
-      } else {
+      // if (item.orderState == FeedsData.OrderState.CANCELED || item.orderState == FeedsData.OrderState.SOLD) {
+      //   this.dataHelper.deletePasarItem(item.orderId);
+      // } else {
         const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
         this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode, requestDevNet);
-      }
+      // }
+      console.log('item', item);
 
       if (curBlockNum < item.blockNumber)
         curBlockNum = item.blockNumber;
     }
     return curBlockNum;
-  }
-
-  checkSyncMode(orderId: string): boolean {
-    const originPasarItem = this.dataHelper.getPasarItem(orderId);
-    if (!originPasarItem) {
-      return false;
-    }
-
-    if (originPasarItem.syncMode == FeedsData.SyncMode.SYNC) {
-      return true;
-    }
-
-    return false;
   }
 
   transPasarItemFromAssistPasar(result: Object) {
@@ -1079,7 +1062,7 @@ export class NFTContractHelperService {
   }
 
   savePasarItem(orderId: string, item: FeedsData.NFTItem, index: number, blockNum: number, syncMode: FeedsData.SyncMode, requestDevNet: string) {
-    this.dataHelper.updatePasarItem(orderId, item, index, blockNum, syncMode, requestDevNet);
+    this.dataHelper.updatePasarItem(orderId, item, requestDevNet);
   }
 
   // setPasarItemMap() {
@@ -1092,16 +1075,15 @@ export class NFTContractHelperService {
     return isDiff;
   }
 
-  diffOrderInfo(newOrder: FeedsData.OrderInfo, index: number, pasarItem: FeedsData.PasarItem): boolean {
-    if (!pasarItem || !pasarItem.item)
+  diffOrderInfo(newOrder: FeedsData.OrderInfo, index: number, pasarItem: FeedsData.NFTItem): boolean {
+    if (!pasarItem)
       return true;
 
-    if (newOrder.sellerAddr == pasarItem.item.sellerAddr &&
-      newOrder.tokenId == pasarItem.item.tokenId &&
-      newOrder.orderId == pasarItem.item.saleOrderId &&
-      newOrder.price == pasarItem.item.fixedAmount &&
-      newOrder.amount == pasarItem.item.curQuantity &&
-      index == pasarItem.index)
+    if (newOrder.sellerAddr == pasarItem.sellerAddr &&
+      newOrder.tokenId == pasarItem.tokenId &&
+      newOrder.orderId == pasarItem.saleOrderId &&
+      newOrder.price == pasarItem.fixedAmount &&
+      newOrder.amount == pasarItem.curQuantity)
       return false;
 
     return true;
@@ -1479,5 +1461,34 @@ export class NFTContractHelperService {
       adult: item.adult
     }
   }
+
+  // getDataFromAssist(pageNum: number, blockNumber: number, isAsc: boolean) {
+  //   this.pasarAssistService.listPasarOrderFromService(pageNum, this.refreshCount, FeedsData.OrderState.SALEING, blockNumber, isAsc);
+  // }
+
+  // searchDataFromAssist() {
+  // }
+
+  // refreshDataFromAssist() {
+  //   this.dataHelper.setRefreshBlockNumber(-1);
+  //   //删除blockNum
+  //   //获取数据
+  //   const result = this.getDataFromAssist(1, null, false);
+  //   console.log(result);
+  //   //删除缓存
+  //   this.dataHelper.setCachePasarData(list);
+  //   //缓存数据
+  //   //提供显示数据
+  //   let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
+
+  //   this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
+  // }
+
+  // loadDataFromAssist() {
+  //   //获取数据
+  //   //缓存数据
+  //   //组织数据
+  //   //提供显示数据
+  // }
 
 }

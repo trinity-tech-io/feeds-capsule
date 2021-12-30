@@ -1009,7 +1009,12 @@ export class HomePage implements OnInit {
       try {
         // const list = await this.nftContractHelperService.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
         // const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
+
+
+
         const list = await this.nftContractHelperService.loadMorePasarListFromAssist(this.sortType, this.pasarListPage) || [];
+        console.log('this.pasarList=====>', this.pasarList);
+        console.log('list =====>', list);
         let pasarList: FeedsData.NFTItem[] = [];
         if (list && list.length > 0) {
           this.pasarListPage++;
@@ -1053,6 +1058,7 @@ export class HomePage implements OnInit {
     try {
       this.pasarListPage = 0;
       this.pasarList = await this.nftContractHelperService.refreshPasarListFromAssist(this.sortType);
+      console.log('Home this.pasarList==>', this.pasarList);
       this.refreshPasarGridVisibleareaImage();
       this.pasarListPage++;
     } catch (err) {
