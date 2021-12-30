@@ -16,15 +16,15 @@ import { FeedService } from 'src/app/services/FeedService';
 })
 export class NewassetitemComponent implements OnInit {
   @Input() type = '';
-  @Input() elaPrice:string = null;
+  @Input() elaPrice: string = null;
   @Input() assetItem: any = null;
   @Output() clickAssetItem = new EventEmitter();
   @Output() clickMore = new EventEmitter();
   public styleObj: any = { width: '' };
   public verified: boolean = false;
   public imgUri = './assets/icon/reserve.svg';
-  public thumbImageId:string = "";
-  public maxSize:number = 5 * 1024 * 1024;
+  public thumbImageId: string = "";
+  public maxSize: number = 5 * 1024 * 1024;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -32,7 +32,7 @@ export class NewassetitemComponent implements OnInit {
     private ipfsService: IPFSService,
     private httpService: HttpService,
     private feedService: FeedService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.styleObj.width = screen.width - 40 + 'px';
@@ -44,21 +44,21 @@ export class NewassetitemComponent implements OnInit {
     let version = this.assetItem['version'] || "1";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = this.assetItem['thumbnail'] || "";
       kind = this.assetItem["kind"];
       size = this.assetItem["originAssetSize"];
-    }else if(version === "2"){
-      let jsonData  = this.assetItem['data'] || "";
-      if(jsonData != ""){
+    } else if (version === "2") {
+      let jsonData = this.assetItem['data'] || "";
+      if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
-      }else{
+      } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return "";
     }
     if (!size)
@@ -80,9 +80,9 @@ export class NewassetitemComponent implements OnInit {
     this.thumbImageId = thumbnailUri;
 
     let creator = this.assetItem.creator || "";
-    if(creator != ""){
+    if (creator != "") {
       this.verified = await this.handleVerifiedAddress(creator);
-    }else{
+    } else {
       this.verified = false;
     }
   }
@@ -113,17 +113,17 @@ export class NewassetitemComponent implements OnInit {
   }
 
   hanldePrice(price: string) {
-    if (price != '' || price !=null)
+    if (price != '' || price != null)
       return this.nftContractControllerService.transFromWei(price);
 
     return price;
   }
 
-  hanldeUsdPrice(ethPrice: string){
+  hanldeUsdPrice(ethPrice: string) {
     let usdPrice = null;
-    if(this.elaPrice != null){
+    if (this.elaPrice != null) {
       let ethprice = this.nftContractControllerService.transFromWei(ethPrice);
-      usdPrice = UtilService.accMul(this.elaPrice,ethprice).toFixed(2);
+      usdPrice = UtilService.accMul(this.elaPrice, ethprice).toFixed(2);
     }
     return usdPrice;
   }
@@ -134,7 +134,7 @@ export class NewassetitemComponent implements OnInit {
   }
 
   handleDisplayTime(createTime: number) {
-    let obj = UtilService.handleDisplayTime(createTime*1000);
+    let obj = UtilService.handleDisplayTime(createTime * 1000);
     if (obj.type === 's') {
       return this.translate.instant('common.just');
     }
@@ -160,23 +160,23 @@ export class NewassetitemComponent implements OnInit {
     return obj.content;
   }
 
-  handleCurQuantity(assetItem:any){
+  handleCurQuantity(assetItem: any) {
     //if(assetItem != null){
-        return  assetItem['curQuantity'] || assetItem['quantity'];
+    return assetItem['curQuantity'] || assetItem['quantity'];
     //}
   }
 
-  async handleVerifiedAddress(creatorAddress: string): Promise<boolean>{
+  async handleVerifiedAddress(creatorAddress: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      let whiteListData :FeedsData.WhiteItem[] =  this.feedService.getWhiteListData();
-      let whiteListItem =  _.find(whiteListData,(item: FeedsData.WhiteItem)=>{
-             return item.address === creatorAddress;
+      let whiteListData: FeedsData.WhiteItem[] = this.feedService.getWhiteListData();
+      let whiteListItem = _.find(whiteListData, (item: FeedsData.WhiteItem) => {
+        return item.address === creatorAddress;
       }) || "";
-      if(whiteListItem != ""){
+      if (whiteListItem != "") {
         resolve(true);
-      }else{
+      } else {
         resolve(false);
       }
     });
-    }
+  }
 }
