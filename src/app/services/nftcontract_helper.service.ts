@@ -296,9 +296,9 @@ export class NFTContractHelperService {
         const requestDevNet = this.dataHelper.getDevelopNet();
         const result = await this.pasarAssistService.refreshPasarOrder(pageNumber, this.refreshCount, FeedsData.OrderState.SALEING, null, false, null, sortType, safeMode);
         this.dataHelper.cleanPasarItems();
-        let refreshBlockNum = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
+        let latestBlockNumber = this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
 
-        this.dataHelper.setRefreshLastBlockNumber(refreshBlockNum);
+        this.dataHelper.setRefreshLastBlockNumber(latestBlockNumber);
         resolve('FINISH');
       } catch (error) {
         reject(error);
@@ -311,9 +311,9 @@ export class NFTContractHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const requestDevNet = this.dataHelper.getDevelopNet();
-        const refreshLastBlockNum = this.dataHelper.getRefreshLastBlockNumber();
+        const latestBlockNumber = this.dataHelper.getRefreshLastBlockNumber();
         //TODO
-        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber + 1, this.refreshCount, FeedsData.OrderState.SALEING, null, false, 9778202, sortType, safeMode);
+        const result = await this.pasarAssistService.refreshPasarOrder(pageNumber + 1, this.refreshCount, FeedsData.OrderState.SALEING, null, false, latestBlockNumber, sortType, safeMode);
         this.parseAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
         resolve('FINISH');
       } catch (error) {
@@ -749,8 +749,9 @@ export class NFTContractHelperService {
   }
 
   parseAssistResult(result: any, syncMode: FeedsData.SyncMode, requestDevNet: string): number {
-    let curBlockNum = 0;
+    // let curBlockNum = 0;
     let array = result.data.result;
+    const latestBlockNumber = result.data.latestBlockNumber;
     console.log('parseAssistResult', result);
     for (let index = 0; index < array.length; index++) {
       const item = array[index];
@@ -758,15 +759,15 @@ export class NFTContractHelperService {
       // if (item.orderState == FeedsData.OrderState.CANCELED || item.orderState == FeedsData.OrderState.SOLD) {
       //   this.dataHelper.deletePasarItem(item.orderId);
       // } else {
-        const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
-        this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode, requestDevNet);
+      const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
+      this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode, requestDevNet);
       // }
       console.log('item', item);
 
-      if (curBlockNum < item.blockNumber)
-        curBlockNum = item.blockNumber;
+      // if (curBlockNum < item.blockNumber)
+      //   curBlockNum = item.blockNumber;
     }
-    return curBlockNum;
+    return latestBlockNumber;
   }
 
   transPasarItemFromAssistPasar(result: Object) {
