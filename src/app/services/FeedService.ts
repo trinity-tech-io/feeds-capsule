@@ -7802,19 +7802,28 @@ export class FeedService {
   async getUserAvatar(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let signinData = this.getSignInData();
+      let userDid = signinData.did;
+      console.log("getUserAvatar === ", userDid)
       if (!signinData) {
         resolve('assets/images/default-contact.svg');
         return;
       }
-
-      let userDid = signinData.did;
       let avatar = await this.dataHelper.loadUserAvatar(userDid);
-
+      console.log("avatar === ,", avatar)
       if (avatar) {
         resolve(avatar);
         return;
       }
+      const loadKey = userDid + "_ess_avatar"
+      console.log("essavatar loadKey === ", loadKey)
+      let essavatar = await this.dataHelper.loadUserAvatar(loadKey);
+      console.log("load essavatar === ", essavatar)
 
+      if (essavatar) {
+        console.log("load _ess_avatar === ", essavatar)
+        resolve(essavatar)
+        return
+      }
       resolve('assets/images/default-contact.svg');
       return;
     });

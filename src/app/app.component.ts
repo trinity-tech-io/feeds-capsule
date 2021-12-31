@@ -79,6 +79,7 @@ export class MyApp {
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, () => {
       this.initProfileData();
       this.backupSubscriptionToHive()
+      this.getEssAvatar()
     })
 
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
@@ -570,5 +571,9 @@ export class MyApp {
 
   backupSubscriptionToHive() {
     this.hiveService.backupSubscriptionToHive()
+  }
+
+  async getEssAvatar() {
+    await this.hiveService.getEssAvatar()
   }
 }
