@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "postinstall": "patch-package"
   },
   "private": true,
   "dependencies": {
@@ -20,7 +21,7 @@
     "@angular/platform-browser": "^11.0.7",
     "@angular/platform-browser-dynamic": "^11.0.7",
     "@angular/router": "^11.0.7",
-    "@dchagastelles/elastos-hive-js-sdk": "^2.3.51",
+    "@dchagastelles/elastos-hive-js-sdk": "^2.3.53",
     "@elastosfoundation/did-js-sdk": "^2.2.2",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "2.0.2",
     "@elastosfoundation/elastos-connector-localidentity-cordova": "2.0.0",
@@ -121,6 +122,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "patch-package": "^6.4.7",
     "phonegap-plugin-barcodescanner": "^8.1.0",
     "prettier": "1.19.1",
     "protractor": "~5.4.0",

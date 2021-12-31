@@ -1,0 +1,82 @@
+diff --git a/node_modules/@dchagastelles/elastos-hive-js-sdk/dist/hive.js b/node_modules/@dchagastelles/elastos-hive-js-sdk/dist/hive.js
+index 60051fc..cf82c34 100644
+--- a/node_modules/@dchagastelles/elastos-hive-js-sdk/dist/hive.js
++++ b/node_modules/@dchagastelles/elastos-hive-js-sdk/dist/hive.js
+@@ -553,7 +553,7 @@ class HttpClient {
+                         data: payload
+                     }).then((response) => {
+                         if (isStream) {
+-                            HttpClient.LOG.info("HTTP Response: Status: " + response.status + " (\"STREAM\")");
++                            HttpClient.LOG.info("HTTP Response: Status: " + response.status + " (\"STREAM11111\")");
+                             streamParser.onData(response.data);
+                             self.handleResponse(response.status);
+                             streamParser.onEnd();
+@@ -573,6 +573,7 @@ class HttpClient {
+                         const chunks = [];
+                         response.on('data', (chunk) => {
+                             if (isStream) {
++                                console.log("~~~~~~~~~~~~~~~·1", chunk)
+                                 streamParser.onData(chunk);
+                             }
+                             else {
+@@ -582,7 +583,8 @@ class HttpClient {
+                         response.on('end', () => {
+                             try {
+                                 if (isStream) {
+-                                    HttpClient.LOG.info("HTTP Response: Status: " + response.statusCode + " (\"STREAM\")");
++                                    console.log("~~~~~~~~~~~~~~~·2", chunk)
++                                    HttpClient.LOG.info("HTTP Response: Status: " + response.statusCode + " (\"STREAM222\")");
+                                     self.handleResponse(response.statusCode);
+                                     streamParser.onEnd();
+                                     resolve(null);
+@@ -1803,11 +1805,15 @@ class ScriptingService extends RestService {
+         });
+     }
+     downloadFile(transactionId, dataParser) {
++        HttpClient.LOG.info("iiiiiiiiiiiiiii")
++        HttpClient.LOG.info("iiiiiiiiiiiiii")
+         return __awaiter(this, void 0, void 0, function* () {
+             checkNotNull(transactionId, "Missing transactionId.");
+             checkNotNull(dataParser, "Download data handler is mandatory");
+             try {
+                 yield this.httpClient.send(`${ScriptingService.API_SCRIPT_STREAM_ENDPOINT}/${transactionId}`, HttpClient.NO_PAYLOAD, dataParser, exports.HttpMethod.GET);
++                // yield this.httpClient.send(`${FilesService.API_FILES_ENDPOINT}/${path}`, HttpClient.NO_PAYLOAD, dataParser, exports.HttpMethod.GET);
++
+             }
+             catch (e) {
+                 this.handleError(e);
+diff --git a/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/http/httpclient.d.ts b/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/http/httpclient.d.ts
+index 72bc959..9886458 100644
+--- a/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/http/httpclient.d.ts
++++ b/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/http/httpclient.d.ts
+@@ -17,6 +17,7 @@ export declare class HttpClient {
+     static DEFAULT_AGENT: string;
+     static DEFAULT_HEADERS: http.OutgoingHttpHeaders;
+     static DEFAULT_OPTIONS: http.RequestOptions;
++    static DEFAULT_STREAM_PARSER(data: any)
+     private withAuthorization;
+     private serviceContext;
+     private httpOptions;
+diff --git a/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/restclient/scripting/scriptingservice.d.ts b/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/restclient/scripting/scriptingservice.d.ts
+index 414f4a1..eead6fa 100644
+--- a/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/restclient/scripting/scriptingservice.d.ts
++++ b/node_modules/@dchagastelles/elastos-hive-js-sdk/typings/restclient/scripting/scriptingservice.d.ts
+@@ -4,6 +4,8 @@ import { Executable } from './executable';
+ import { ServiceContext } from '../../http/servicecontext';
+ import { HttpClient } from '../../http/httpclient';
+ import { RestService } from '../restservice';
++import { StreamResponseParser } from "../../http/streamresponseparser";
++
+ export declare class ScriptingService extends RestService {
+     private static LOG;
+     private static API_SCRIPT_ENDPOINT;
+@@ -14,6 +16,8 @@ export declare class ScriptingService extends RestService {
+     callScript<T>(name: string, params: any, targetDid: string, targetAppDid: string): Promise<T>;
+     callScriptUrl<T>(name: string, params: string, targetDid: string, targetAppDid: string): Promise<T>;
+     uploadFile(transactionId: string, data: any): Promise<void>;
+-    downloadFile(transactionId: string): Promise<Buffer>;
++    downloadFile(transactionId: string, dataParser: StreamResponseParser): Promise<void>;
++
++    // downloadFile(transactionId: string): Promise<Buffer>;
+     private handleError;
+ }
