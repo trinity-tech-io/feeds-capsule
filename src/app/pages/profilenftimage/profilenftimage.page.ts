@@ -179,7 +179,10 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   getProfileNftImagePage(item: any){
-    let thumbnailUri = item['thumbnail'];
+    let thumbnailUri = item['thumbnail'] || "";
+    if(thumbnailUri === ""){
+      return "";
+    }
     let kind = item["kind"];
     let size = item["originAssetSize"];
     if (!size)
@@ -197,7 +200,10 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   getChannelAvatarId(item: any) {
-    let thumbnailUri = item['thumbnail'];
+    let thumbnailUri = item['thumbnail'] || "";
+    if(thumbnailUri === ""){
+      return "";
+    }
     let kind = item["kind"];
     let size = item["originAssetSize"];
     if (!size)
@@ -223,7 +229,11 @@ export class ProfilenftimagePage implements OnInit {
     let len = discoverSquareFeed.length;
     for(let itemIndex = 0;itemIndex<len;itemIndex++){
       let item = discoverSquareFeed[itemIndex];
-      let arr = item.getAttribute("id").split("-");
+      let id = item.getAttribute("id") || "";
+      if(id === ""){
+         continue;
+      }
+      let arr = id.split("-");
       let avatarUri = arr[0];
       let kind = arr[1];
       let thumbImage =  document.getElementById('profileNftImagePage-post-'+avatarUri);
