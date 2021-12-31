@@ -1363,8 +1363,8 @@ export class NFTContractHelperService {
           collectibles = this.nftPersistenceHelper.getCollectiblesList(address);
         }
 
-        const finalList = this.sortData(collectibles, sortType);
-        const count = finalList.length || 0;
+        // const finalList = this.sortData(collectibles, sortType);
+        const count = collectibles.length || 0;
         const start = startPage * this.refreshCount;
         const end = (startPage + 1) * this.refreshCount;
 
@@ -1374,12 +1374,12 @@ export class NFTContractHelperService {
         }
 
         if (count > end) {
-          list = finalList.slice(start, end);
+          list = collectibles.slice(start, end);
           resolve(list);
           return;
         }
 
-        list = finalList.slice(start, count);
+        list = collectibles.slice(start, count);
         resolve(list);
 
       } catch (error) {
@@ -1465,9 +1465,9 @@ export class NFTContractHelperService {
   searchPasarOrder(searchType: FeedsData.SearchType, key: string): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const requestDevNet = this.dataHelper.getDevelopNet();
-        const result = await this.pasarAssistService.searchPasarOrder(searchType, key);
-        const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH, requestDevNet);
+        const isShowAdult = this.dataHelper.getAdultStatus();
+        const result = await this.pasarAssistService.searchPasarOrder(searchType, key, isShowAdult);
+        const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH);
         console.log('searchPasarOrder', list);
         resolve(list);
       } catch (error) {
@@ -1476,7 +1476,7 @@ export class NFTContractHelperService {
     });
   }
 
-  parseSearchResultFromAssistResult(result: any, syncMode: FeedsData.SyncMode, requestDevNet: string): FeedsData.NFTItem[] {
+  parseSearchResultFromAssistResult(result: any, syncMode: FeedsData.SyncMode): FeedsData.NFTItem[] {
     let searchList = [];
     let array = result.data;
     console.log('parseSearchResultFromAssistResult', result);
@@ -1487,4 +1487,33 @@ export class NFTContractHelperService {
     }
     return searchList;
   }
+
+
+  queryOwnerCollectibles(ownerAddress: string): Promise<FeedsData.NFTItem[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.pasarAssistService.queryOwnerCollectibles(ownerAddress);
+        const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH);
+        console.log('searchPasarOrder', list);
+        resolve(list);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  parseQOCFromAssistResult(result: any, syncMode: FeedsData.SyncMode): FeedsData.NFTItem[] {
+    let searchList = [];
+    let array = result.data;
+    console.log('parseSearchResultFromAssistResult', result);
+    for (let index = 0; index < array.length; index++) {
+      const item = array[index];
+      const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
+      console.log('searchPasarOrder pasarItem', pasarItem);
+      searchList.push(pasarItem.item);
+    }
+    return searchList;
+  }
+
+
 }

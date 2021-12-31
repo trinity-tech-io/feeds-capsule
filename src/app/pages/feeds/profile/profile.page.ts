@@ -826,7 +826,7 @@ export class ProfilePage implements OnInit {
           let list = await this.nftContractHelperService.loadCollectiblesData(null, this.collectiblesPageNum, this.sortType);
 
           list = _.unionWith(this.collectiblesList, list, _.isEqual);
-          this.collectiblesList = this.nftContractHelperService.sortData(list, this.sortType);
+          // this.collectiblesList = this.nftContractHelperService.sortData(list, this.sortType);
 
           this.refreshCollectiblesVisibleareaImage();
           event.target.complete();
@@ -2063,8 +2063,9 @@ export class ProfilePage implements OnInit {
       this.refreshCollectiblesVisibleareaImage();
       return;
     }
-    this.collectiblesList = this.nftContractHelperService.sortData(list, this.sortType);
 
+    // this.collectiblesList = this.nftContractHelperService.sortData(list, this.sortType);
+    this.collectiblesList = list;
     this.ownNftSum = this.collectiblesList.length;
     this.refreshCollectiblesVisibleareaImage();
   }
@@ -2409,7 +2410,7 @@ export class ProfilePage implements OnInit {
     this.refreshNotSaleOrderFinish = false;
     this.refreshSaleOrderFinish = false;
     this.elaPrice = this.feedService.getElaUsdPrice();
-    await this.getOwnNftSum();
+    // await this.getOwnNftSum();
     let accAddress = this.nftContractControllerService.getAccountAddress() || '';
 
     if (accAddress === '') {
@@ -2417,7 +2418,14 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    this.collectiblesList = await this.nftContractHelperService.refreshCollectiblesData(this.sortType);
+    this.collectiblesList = await this.nftContractHelperService.queryOwnerCollectibles(accAddress);
+    this.saveCollectiblesToCache(accAddress);
+    this.ownNftSum = this.collectiblesList.length;
+    // this.collectiblesList = await this.nftContractHelperService.refreshCollectiblesData(this.sortType);
+
+
+
+
     // this.refreshingCollectiblesHelper = [];
     // this.processOnSaleOrder(accAddress).then(() => {
     //   return this.processNotOnSaleOrder(accAddress);
