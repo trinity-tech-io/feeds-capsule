@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions} from "@dchagastelles/elastos-hive-js-sdk";
+import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions, HttpClient} from "@dchagastelles/elastos-hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter} from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -7,7 +7,7 @@ import { resolve } from 'url';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
+import { InsertResult} from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 import { isNil } from 'lodash';
 import { on } from 'process';
 
@@ -23,6 +23,8 @@ export class HiveService {
   public tarAppDID: string
   public avatarParam : string
   public avatarScriptName: string
+  public image = null
+
   constructor(
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
@@ -147,7 +149,7 @@ export class HiveService {
 
         })
         .catch((error)=>{
-          console.log("backupSubscriptionToHive error")
+          console.log("backupSubscriptionToHive error - 1")
         })
       }
       let vault = null
@@ -165,7 +167,7 @@ export class HiveService {
         localStorage.setItem(collectName, "true")
       })
       .catch((error)=>{
-        console.log("backupSubscriptionToHive error")
+        console.log("backupSubscriptionToHive error - 2")
       })
     }
   }
@@ -186,7 +188,7 @@ export class HiveService {
 
       })
       .catch((error)=>{
-       console.log("backupSubscriptionToHive error")
+       console.log("backupSubscriptionToHive error - 3")
       })
     }
   }
@@ -203,11 +205,11 @@ export class HiveService {
       this.getVault().then(async (vault:VaultServices) => {
         return vault.getDatabaseService().deleteOne(collectName, one)
      })
-      .then((result: number) => {
+      .then((result: void) => {
         console.log("deleteOne success === ", result)
       })
       .catch((error)=>{
-        console.log("backupSubscriptionToHive error")
+        console.log("backupSubscriptionToHive error - 4")
       })
     }
   }
@@ -227,10 +229,10 @@ export class HiveService {
         return vault.getDatabaseService().updateOne(collectName, origin, updateNode, new UpdateOptions(false, true))
      })
       .then((result: UpdateResult) => {
-        console.log("deleteOne success === ", result)
+        console.log("updateOne success === ", result)
       })
       .catch((error)=>{
-        console.log("backupSubscriptionToHive error")
+        console.log("backupSubscriptionToHive error - 5")
       })
     }
   }
@@ -253,35 +255,54 @@ export class HiveService {
     })
   }*/
 
-  async getEssAvatar(){
+  async getEssAvatar() {
     let scriptingService: ScriptingService
     const vault = await this.getVault()
     scriptingService = vault.getScriptingService()
     const result = await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
     const transaction_id = result["download"]["transaction_id"]
     console.log("transaction_id ==== ", transaction_id)
-    let imageData = await scriptingService.downloadFile<Blob>(transaction_id)
+    let self = this   
 
-    const reader = new FileReader();
-    let url = await reader.readAsDataURL(imageData);
+    let dataBuffer = Buffer.from("");
+    let userDid =  (await this.dataHelper.getSigninData()).did
+    await scriptingService.downloadFile(transaction_id, {
+      onData(chunk: any): void {
+        // self.image = chunk
+        self.image = chunk
+        console.log("chunk type === ", typeof(chunk))
+        console.log("chunk length === ", chunk.length)
+        console.log("chunk === ", chunk)
+        console.log("image === ", self.image)
+        dataBuffer = Buffer.concat([dataBuffer, Buffer.from(chunk)]);
 
-    return 'data:image/png;base64,';
-    // console.log("rawImageToBase64 buffer base64==== ", Buffer.from(imageData).toString("ascii"))
+        console.log("dataBuffer === ", dataBuffer)
+        const key = userDid + "_ess_avatar" 
+        console.log("avatar_key === ", key)
 
-    
-    // It support ascii , utf-8 , ucs2, base64, binary
+        self.dataHelper.saveUserAvatar(key, dataBuffer)
 
+        // self.dataHelper.saveUserAvatar(this.userDid + "_ess_avatar" , self.image);
+			},
+			onEnd(): void {
+        console.log("onEnd ++++++++++++++++++ end")
+        return
+			}
+    } as StreamResponseParser)
 
-    // // ascii, utf8, utf16le/ucs2, base64, binary, and hex.
-    // console.log("rawImageToBase64 buffer base64==== ", Buffer.from(imageData).toString(""))
-    // console.log("rawImageToBase64 buffer utf8==== ", Buffer.from(imageData).toString("utf8"))
-    // console.log("rawImageToBase64 buffer utf8==== ", Buffer.from(imageData).toString("utf16"))
+  //   await scriptingService.downloadFile(transaction_id).then(res => {
+  //     console.log(`get the downloaded file content: ${res}`)
+  //     self.image = res
+  //     console.log("scriptingService === self.image", self.image)
 
-    // let rrr = rawImageToBase64(imageData)
-    // const r = await rawImageToBase64DataUrl(base64ImageToBuffer(rrr))
-    // console.log("r = " + r);
-    // return r;
+  // })
 
+    // console.log("return self.image === ", self.image)
+  console.log("return dataBuffer === ", dataBuffer)
+  console.log("return image === ", self.image)
+
+    return rawImageToBase64DataUrl(dataBuffer)
+  
   }
   
   async uploadCustomeAvatar(remotePath: string, img: any){
@@ -339,7 +360,7 @@ export function base64ImageToBuffer(base64Picture: string): Buffer {
  * Ex: âPNG   IHDR... ---> "data:image/png;base64,iVe89...."
  */
 export async function rawImageToBase64DataUrl(rawImageData: Buffer): Promise<string> {
-  console.log("rawImageToBase64DataUrl" + rawImageData)
+  console.log("rawImageToBase64DataUrl === " + rawImageData)
   if (!rawImageData)
     return null;
     console.log("rawImageToBase64DataUrl")
