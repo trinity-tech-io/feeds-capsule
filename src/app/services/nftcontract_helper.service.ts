@@ -1132,7 +1132,7 @@ export class NFTContractHelperService {
         did: sellerDid.did
       }
     }
-
+    let price = assistPasarItem.price || null;
     const nftItem: FeedsData.NFTItem = {
       creator: assistPasarItem.royaltyOwner,
       saleOrderId: assistPasarItem.orderId,
@@ -1140,7 +1140,7 @@ export class NFTContractHelperService {
       asset: assistPasarItem.asset,
       name: assistPasarItem.name,
       description: assistPasarItem.description,
-      fixedAmount: assistPasarItem.price,
+      fixedAmount: price,
       kind: assistPasarItem.kind,
       type: assistPasarItem.type,
       royalties: assistPasarItem.royalties,
