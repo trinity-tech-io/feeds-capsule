@@ -93,7 +93,7 @@ export class PasarAssistService {
   }
 
   //https://test.trinity-feeds.app/pasar/api/v1/searchSaleOrders?searchType=description&key=%E6%99%AF%20%E6%95%8F
-  searchPasarOrder(searchType: FeedsData.SearchType, key: string) {
+  searchPasarOrder(searchType: FeedsData.SearchType, key: string, saveMode: boolean) {
     return new Promise(async (resolve, reject) => {
       try {
         let url = '';
@@ -123,7 +123,11 @@ export class PasarAssistService {
         }
         url = url + '&key=' + key;
 
+        if (!saveMode) {
+          url = url + '&adult=false';
+        }
         const result = await this.httpService.httpGet(url);
+
 
         const resultCode = result.code;
         if (resultCode != 200)
@@ -132,6 +136,32 @@ export class PasarAssistService {
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'Search Pasar Order From Service error', error);
+        reject(error)
+      }
+    });
+  }
+
+  //contain sticker & pasar data
+  queryOwnerCollectibles(ownerAddress: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = this.baseAssistUrl + 'sticker/api/v1/query'
+        else
+          url = Config.BASE_PASAR_ASSIST_TESTNET_SERVER + 'sticker/api/v1/query'
+
+        url = url + '?owner=' + ownerAddress;
+
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.code;
+        if (resultCode != 200)
+          reject('Receive result response code is' + resultCode);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Query owner Collectibles From Service error', error);
         reject(error)
       }
     });
@@ -248,4 +278,6 @@ export class PasarAssistService {
 
     return didObj;
   }
+
+
 }
