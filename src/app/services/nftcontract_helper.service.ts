@@ -1132,7 +1132,11 @@ export class NFTContractHelperService {
         did: sellerDid.did
       }
     }
+
     let price = assistPasarItem.price || null;
+    if(price === null){
+      moreMenuType =  'created';
+    }
     const nftItem: FeedsData.NFTItem = {
       creator: assistPasarItem.royaltyOwner,
       saleOrderId: assistPasarItem.orderId,
