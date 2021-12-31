@@ -155,9 +155,8 @@ export class HiveService {
       let vault = null
       this.getVault().then(async (v:VaultServices) => {
         vault = v
-        localStorage.setItem(createCollection, createCollection)
-        // return vault.getDatabaseService().createCollection(collectName)
-        return
+        // localStorage.setItem(createCollection, createCollection)
+        return vault.getDatabaseService().createCollection(collectName)
       })
       .then(async() => {
         localStorage.setItem(createCollection, createCollection)
