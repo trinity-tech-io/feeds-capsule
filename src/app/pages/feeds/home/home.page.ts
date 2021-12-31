@@ -152,11 +152,11 @@ export class HomePage implements OnInit {
   public elaPrice: string = null;
 
   public searchText: string = "";
-  public searchPasar: any = [];
+  // public searchPasar: any = [];
   public curSearchField: string = "name";
   public isShowSearchField: boolean = false;
   public pasarsearchPlaceholder: string = "";
-  private searchBeforePasar: any = [];
+  // private searchBeforePasar: any = [];
   private nftImageType:string = "";
   private pasarGridisLoadimage: any = {};
   private pasarListisLoadimage: any = {};
@@ -2091,11 +2091,6 @@ export class HomePage implements OnInit {
     switch (type) {
       case 'feeds':
         await this.content.scrollToTop(0);
-        this.searchText = '';
-        if (this.searchBeforePasar.length > 0) {
-          this.pasarList = _.cloneDeep(this.searchBeforePasar);
-          this.searchBeforePasar = [];
-        }
         this.handleRefresherInfinite(false);
         this.isShowSearchField = false;
         this.refreshPostList();
@@ -2138,12 +2133,14 @@ export class HomePage implements OnInit {
         this.hideFullScreen();
         this.native.hideLoading();
 
-        if (!this.pasarList || this.pasarList.length == 0) {
-          await this.refreshLocalPasarData();
-          this.refreshPasarGridVisibleareaImage();
-        }else{
-          this.refreshPasarGridVisibleareaImage();
-        }
+        console.log('clicktab this.pasarList', this.pasarList);
+        // if (!this.pasarList || this.pasarList.length == 0) {
+        this.searchText = '';
+        await this.refreshLocalPasarData();
+        this.refreshPasarGridVisibleareaImage();
+        // }else{
+        //   this.refreshPasarGridVisibleareaImage();
+        // }
         break;
     }
   }
@@ -2433,9 +2430,12 @@ export class HomePage implements OnInit {
     this.isShowSearchField = false;
     this.isClickSort = false;
     this.handleRefresherInfinite(false);
-    if (this.searchBeforePasar.length > 0) {
-      this.pasarList = _.cloneDeep(this.searchBeforePasar);
-      this.searchBeforePasar = [];
+
+    const isShowAdult = this.dataHelper.getAdultStatus();
+    let searchPasar = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult);
+
+    if (searchPasar.length > 0) {
+      this.pasarList = searchPasar;
       this.refreshPasarGridVisibleareaImage();
     }
   }
@@ -2443,26 +2443,11 @@ export class HomePage implements OnInit {
   getItems(events: any) {
     this.isClickSort = false;
     this.searchText = events.target.value || '';
-    this.searchBeforePasar = _.cloneDeep(this.pasarList);
-    // let searchPasar = this.nftPersistenceHelper.getPasarList();
 
-
-    const isShowAdult = this.dataHelper.getAdultStatus();
-    let searchPasar = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult);
-    this.searchPasar = _.cloneDeep(searchPasar);
-
-    if (
-      (events && events.keyCode === 13) ||
-      (events.keyCode === 8 && this.searchText === '')
-    ) {
+    if (events && events.keyCode === 13) {
       this.keyboard.hide();
       if (this.searchText === "") {
-        this.handleRefresherInfinite(false);
-        if (this.searchBeforePasar.length > 0) {
-          this.pasarList = _.cloneDeep(this.searchBeforePasar);
-          this.searchBeforePasar = [];
-          this.refreshPasarGridVisibleareaImage();
-        }
+        this.ionClear();
         return;
       }
       this.handleRefresherInfinite(true);
@@ -2719,13 +2704,13 @@ export class HomePage implements OnInit {
   clickSortArrow(){
     this.isShowSearchField = false;
     this.isClickSort = !this.isClickSort;
-    this.searchText = "";
-    if (this.searchBeforePasar.length > 0) {
-      this.pasarList = _.cloneDeep(this.searchBeforePasar);
-      this.searchBeforePasar = [];
-      this.refreshPasarGridVisibleareaImage();
-    }
-    this.handleRefresherInfinite(false);
+    // this.searchText = "";
+    // if (this.searchBeforePasar.length > 0) {
+    //   this.pasarList = _.cloneDeep(this.searchBeforePasar);
+    //   this.searchBeforePasar = [];
+    //   this.refreshPasarGridVisibleareaImage();
+    // }
+    // this.handleRefresherInfinite(false);
   }
 }
 
