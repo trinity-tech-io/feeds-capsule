@@ -41,7 +41,10 @@ export class AssetitemComponent implements OnInit {
     let fileName = "";
     let fetchUrl = "";
 
-    let thumbnailUri = this.assetItem['thumbnail'];
+    let thumbnailUri = this.assetItem['thumbnail'] || "";
+    if(thumbnailUri === ""){
+      return "";
+    }
     let kind = this.assetItem["kind"];
     let size = this.assetItem["originAssetSize"];
     if (!size)

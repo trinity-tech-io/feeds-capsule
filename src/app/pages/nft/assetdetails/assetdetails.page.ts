@@ -91,6 +91,7 @@ export class AssetdetailsPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(queryParams => {
+      console.log("====queryParams====",queryParams);
       this.assItem = _.cloneDeep(queryParams);
       let asset = queryParams.asset || {};
       let signInData = this.feedService.getSignInData() || null;
