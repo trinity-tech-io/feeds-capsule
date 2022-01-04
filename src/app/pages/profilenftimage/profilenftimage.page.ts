@@ -60,7 +60,8 @@ export class ProfilenftimagePage implements OnInit {
 
   async refreshCollectibles(event:any) {
     try{
-      this.nftImageList = await this.nftContractHelperService.refreshCollectiblesData(this.sortType);
+      const address = this.nftContractControllerService.getAccountAddress() || "";
+      this.nftImageList = await this.nftContractHelperService.queryOwnerCollectibles(address);
       if(event!=null){
         event.target.complete();
       }
@@ -94,7 +95,7 @@ export class ProfilenftimagePage implements OnInit {
     let list = this.nftPersistenceHelper.getCollectiblesList(createAddr);
     if (list.length === 0) {
        await this.refreshCollectibles(null);
-       this.refreshProfileNftImagePagePost()
+       this.refreshProfileNftImagePagePost();
     } else {
       this.nftImageList = this.nftContractHelperService.sortData(list, this.sortType);
       this.refreshProfileNftImagePagePost()
