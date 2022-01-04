@@ -99,7 +99,7 @@ export class BidPage implements OnInit {
         Logger.log('Sale orderId is null');
         return;
       }
-      const pasarItem: FeedsData.NFTItem = this.dataHelper.getPasarItem(this.saleOrderId);
+      const pasarItem: FeedsData.NFTItem = this.dataHelper.getBidPageAssetItem();
       this.curAssetItem = _.cloneDeep(pasarItem);
 
       let asset = queryParams.asset || '';

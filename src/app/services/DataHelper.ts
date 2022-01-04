@@ -122,6 +122,7 @@ export class DataHelper {
   private downloadList = [];
 
   private didMapper: { [address: string]: FeedsData.DidObj } = {};
+  private bidPageAssetItem: FeedsData.NFTItem;
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2792,5 +2793,14 @@ export class DataHelper {
   cleanPasarData() {
     this.cleanPasarItems();
     this.cleanFirstSyncOrderStatus();
+  }
+
+  ////
+  setBidPageAssetItem(assetItem: FeedsData.NFTItem) {
+    this.bidPageAssetItem = assetItem;
+  }
+
+  getBidPageAssetItem(): FeedsData.NFTItem {
+    return this.bidPageAssetItem;
   }
 }
