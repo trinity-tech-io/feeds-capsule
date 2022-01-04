@@ -156,38 +156,25 @@ export class NFTContractHelperService {
 
         const isShowAdult = this.dataHelper.getAdultStatus();
         pasarItemList = this.dataHelper.getPasarItemListWithAdultFlag(isShowAdult) || [];
-        console.log('111111111111111111pasarItemList', pasarItemList);
         // pasarItemList = this.sortData(pasarItemList, sortType);
         const count = pasarItemList.length || 0;
         const start = startPage * this.refreshCount;
         const end = (startPage + 1) * this.refreshCount;
 
-        console.log('count', count);
-        console.log('start', start);
-        console.log('end', end);
-        console.log('aaaaaa');
         if (count <= start) {
-          console.log('bbbbbbbb');
-          console.log('list', list);
           resolve(list);
           return;
         }
 
         if (count > end) {
-          console.log('ccccccccc');
           list = pasarItemList.slice(start, end);
-          console.log('list', list);
           resolve(list);
           return;
         }
 
         list = pasarItemList.slice(start, count);
         resolve(list);
-
-        console.log('ddddddd', list);
-        console.log('list', list);
       } catch (error) {
-        console.log('eeeeeeee');
         reject(error);
       }
     });
@@ -243,7 +230,6 @@ export class NFTContractHelperService {
         const isShowAdult = this.dataHelper.getAdultStatus();
         await this.refreshPasarOrderFromAssist(1, sortType, isShowAdult);
         const list = await this.loadData(0, sortType);
-        console.log('refreshPasarListFromAssist', list);
         resolve(this.sortData(list, sortType));
       } catch (error) {
         reject(error);
@@ -255,9 +241,7 @@ export class NFTContractHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         await this.loadMorePasarOrderFromAssist(startPage, sortType);
-        console.log('startPage===>', startPage);
         const list = await this.loadData(startPage, sortType);
-        console.log('loadMorePasarListFromAssist', list);
         resolve(this.sortData(list, sortType));
       } catch (error) {
         reject(error);
@@ -307,7 +291,6 @@ export class NFTContractHelperService {
   }
 
   loadPasarOrderFromAssist(pageNumber: number, sortType: FeedsData.SortType, safeMode: boolean): Promise<string> {
-    console.log('pageNumber', pageNumber + 1);
     return new Promise(async (resolve, reject) => {
       try {
         const requestDevNet = this.dataHelper.getDevelopNet();
@@ -752,7 +735,6 @@ export class NFTContractHelperService {
     // let curBlockNum = 0;
     let array = result.data.result;
     const latestBlockNumber = result.data.latestBlockNumber;
-    console.log('parseAssistResult', result);
     for (let index = 0; index < array.length; index++) {
       const item = array[index];
 
@@ -762,7 +744,6 @@ export class NFTContractHelperService {
       const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
       this.savePasarItem(String(pasarItem.item.saleOrderId), pasarItem.item, 0, item.blockNumber, syncMode, requestDevNet);
       // }
-      console.log('item', item);
 
       // if (curBlockNum < item.blockNumber)
       //   curBlockNum = item.blockNumber;
@@ -1495,7 +1476,6 @@ export class NFTContractHelperService {
         const isShowAdult = this.dataHelper.getAdultStatus();
         const result = await this.pasarAssistService.searchPasarOrder(searchType, key, isShowAdult);
         const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH);
-        console.log('searchPasarOrder', list);
         resolve(list);
       } catch (error) {
         reject(error);
@@ -1506,7 +1486,6 @@ export class NFTContractHelperService {
   parseSearchResultFromAssistResult(result: any, syncMode: FeedsData.SyncMode): FeedsData.NFTItem[] {
     let searchList = [];
     let array = result.data;
-    console.log('parseSearchResultFromAssistResult', result);
     for (let index = 0; index < array.length; index++) {
       const item = array[index];
       const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
@@ -1521,7 +1500,6 @@ export class NFTContractHelperService {
       try {
         const result = await this.pasarAssistService.queryOwnerCollectibles(ownerAddress);
         const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH);
-        console.log('searchPasarOrder', list);
         resolve(list);
       } catch (error) {
         reject(error);
@@ -1532,11 +1510,9 @@ export class NFTContractHelperService {
   parseQOCFromAssistResult(result: any, syncMode: FeedsData.SyncMode): FeedsData.NFTItem[] {
     let searchList = [];
     let array = result.data;
-    console.log('parseSearchResultFromAssistResult', result);
     for (let index = 0; index < array.length; index++) {
       const item = array[index];
       const pasarItem = this.createItemFromPasarAssist(item, 'onSale', 'buy', syncMode);
-      console.log('searchPasarOrder pasarItem', pasarItem);
       searchList.push(pasarItem.item);
     }
     return searchList;
