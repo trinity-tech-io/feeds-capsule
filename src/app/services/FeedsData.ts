@@ -678,7 +678,9 @@ declare namespace FeedsData {
     orderBuyerDidObj: DidObj,
     tokenCreatorDid: DidObj
 
-    adult: boolean
+    adult: boolean,
+
+    priceNumber: number
   }
 
   type DidObj = {

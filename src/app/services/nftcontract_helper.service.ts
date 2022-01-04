@@ -881,6 +881,7 @@ export class NFTContractHelperService {
     let thumbnail: string = "";
     let sellerAddr: string = "";
     let createTime: number = 0;
+    let priceNumber: number = 0;
 
     let amount = 0;
     let bids = "0";
@@ -982,7 +983,8 @@ export class NFTContractHelperService {
       orderBuyerDidObj: null,
       tokenCreatorDid: null,
 
-      adult: adult
+      adult: adult,
+      priceNumber: priceNumber
     }
     return item;
   }
@@ -1138,6 +1140,8 @@ export class NFTContractHelperService {
     if(price === null){
       moreMenuType =  'created';
     }
+    let priceNumber = assistPasarItem.priceNumber || 0;
+
     const nftItem: FeedsData.NFTItem = {
       creator: assistPasarItem.royaltyOwner,
       saleOrderId: assistPasarItem.orderId,
@@ -1178,7 +1182,8 @@ export class NFTContractHelperService {
       orderBuyerDidObj: null,
       tokenCreatorDid: null,
 
-      adult: assistPasarItem.adult
+      adult: assistPasarItem.adult,
+      priceNumber: priceNumber
     }
     const item: FeedsData.PasarItem = {
       index: 0,
@@ -1479,7 +1484,8 @@ export class NFTContractHelperService {
       orderSellerDidObj: null,
       tokenCreatorDid: null,
 
-      adult: item.adult
+      adult: item.adult,
+      priceNumber: item.priceNumber
     }
   }
 
