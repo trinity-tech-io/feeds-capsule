@@ -160,12 +160,20 @@ export class BidPage implements OnInit {
     this.initTile();
     this.collectContractData();
     this.addEvent();
-    this.httpService.getElaPrice().then((elaPrice)=>{
-      if(elaPrice != null){
-        let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
-        this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
-       }
-    });
+    if(this.fixedPrice != null){
+    let elaPrice = this.feedService.getElaUsdPrice() || "";
+    if(elaPrice != ""){
+      let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
+      this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
+     }else{
+      this.httpService.getElaPrice().then((elaPrice)=>{
+        if(elaPrice != null){
+          let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
+          this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
+         }
+      });
+    }
+   }
   }
 
   ionViewWillLeave() {

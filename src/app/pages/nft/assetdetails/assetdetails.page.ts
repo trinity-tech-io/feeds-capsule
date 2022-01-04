@@ -17,6 +17,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { HttpService } from 'src/app/services/HttpService';
 
 type detail = {
   type: string;
@@ -86,7 +87,8 @@ export class AssetdetailsPage implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private menuService: MenuService,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private httpService: HttpService
   ) {}
 
   ngOnInit() {
@@ -143,21 +145,32 @@ export class AssetdetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.NftDidList= this.dataHelper.getNftDidList() || {};
-    this.handleNftDid();
-    let elaPrice = this.feedService.getElaUsdPrice();
-    this.price = this.assItem.fixedAmount || null;
-    if(this.price!=null){
-      let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
-      this.usdPrice = UtilService.accMul(elaPrice,ethprice).toFixed(2);
-    }
-    if (this.price != null) {
-      this.nftStatus = this.translate.instant('common.onsale');
-    }
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.changeType(this.selectType);
     this.addEvent();
+    this.NftDidList= this.dataHelper.getNftDidList() || {};
+    this.handleNftDid();
+    this.price = this.assItem.fixedAmount || null;
+    if(this.price!=null){
+      let elaPrice = this.feedService.getElaUsdPrice() || "";
+      if(elaPrice != ""){
+        let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
+      this.usdPrice = UtilService.accMul(elaPrice,ethprice).toFixed(2);
+      }else{
+        this.httpService.getElaPrice().then((elaPrice)=>{
+          if(elaPrice != null){
+            let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
+            this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
+           }
+        });
+      }
+    }
+    if (this.price != null) {
+      this.nftStatus = this.translate.instant('common.onsale');
+    }
+
+
   }
 
   ionViewWillLeave() {

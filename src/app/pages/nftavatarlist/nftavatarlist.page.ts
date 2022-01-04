@@ -94,7 +94,8 @@ export class NftavatarlistPage implements OnInit {
 
   async refreshCollectibles(event:any,accAddress: string) {
     try{
-      let nftImageList = await this.nftContractHelperService.refreshAllOwnerCollectiblesData(this.sortType);
+      const address = this.nftContractControllerService.getAccountAddress() || "";
+      let nftImageList = await this.nftContractHelperService.queryOwnerCollectibles(address);
        this.nftAvatarList = _.filter(nftImageList,(item)=>{
              return item.type === "avatar";
        });
