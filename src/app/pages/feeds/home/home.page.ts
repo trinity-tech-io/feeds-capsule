@@ -2062,7 +2062,8 @@ export class HomePage implements OnInit {
       .then((stateAndItem: FeedsData.OrderStateAndNFTItem) => {
         switch (stateAndItem.state) {
           case FeedsData.OrderState.SALEING:
-            this.native.navigateForward(['bid'], { queryParams: stateAndItem.item });
+            // this.native.navigateForward(['bid'], { queryParams: stateAndItem.item });
+            this.navigateForwardBidPage(stateAndItem.item);
             break;
           case FeedsData.OrderState.SOLD:
             this.native.toast_trans('common.sold');
@@ -2248,13 +2249,11 @@ export class HomePage implements OnInit {
     });
   }
 
-
-
   clickAssetItem(assetitem: any) {
     assetitem['showType'] = 'buy';
     Logger.log(TAG, 'Click asset item', assetitem);
     this.clearData();
-    this.native.navigateForward(['bid'], { queryParams: assetitem });
+    this.navigateForwardBidPage(assetitem);
   }
 
   isNftOrderId(nodeId: string, channelId: number, postId: number) {
@@ -2705,6 +2704,11 @@ export class HomePage implements OnInit {
     //   this.refreshPasarGridVisibleareaImage();
     // }
     // this.handleRefresherInfinite(false);
+  }
+
+  navigateForwardBidPage(assetItem: FeedsData.NFTItem) {
+    this.dataHelper.setBidPageAssetItem(assetItem);
+    this.native.navigateForward(['bid'], { queryParams: assetItem });
   }
 }
 
