@@ -2492,7 +2492,6 @@ export class DataHelper {
   }
 
   updatePasarItem(orderId: string, pasarItem: FeedsData.NFTItem, reqeustDevNet: string) {
-    console.log('updatePasarItem', orderId, pasarItem);
     if (reqeustDevNet != this.getDevelopNet())
       return;
     this.checkPasarItemMap();
@@ -2510,7 +2509,6 @@ export class DataHelper {
     }
 
     this.pasarItemList[position] = item;
-    console.log('updatePasarItemWithoutSave', this.pasarItemList);
   }
 
   updatePasarItemPrice(orderId: string, price: string) {
