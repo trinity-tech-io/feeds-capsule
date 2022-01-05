@@ -445,46 +445,6 @@ export class AssetdetailsPage implements OnInit {
     );
   }
 
-  clickImages(){
-    this.menuService.showSaveImageMenu(this,this.saveImage);
-  }
-
- async saveImage(that: any){
-   if (that.platform.is('ios')) {
-     that.native.toast("common.comingSoon");
-   } else {
-     that.native.showLoading('common.savedDes', isDismiss => { }, 2000).then(() => {
-       that.photoLibrary.requestAuthorization({
-         read: true,
-         write: true
-       }).then(() => {
-         that.photoLibrary.getLibrary().subscribe(
-           {
-             next: async library => {
-               let base64 = await that.getImageBase64(that.assetUri);
-               let album = "Feeds";
-               that.photoLibrary.saveImage(base64, album).then(() => {
-                 that.native.hideLoading();
-                 that.native.toast("common.savedSuccessfully");
-
-               })
-             },
-             error: err => {
-               that.native.hideLoading();
-               that.native.toastWarn("common.saveFailed");
-
-             },
-             complete: () => { console.log('done getting photos'); }
-           });
-       })
-         .catch(err => {
-           that.native.hideLoading();
-           that.native.toastWarn("common.saveFailed");
-         });
-     })
-   }
-  }
-
   getImageBase64(uri:string):Promise<string> {
    return new Promise((resolve, reject) => {
     let img = new Image();
