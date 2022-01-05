@@ -650,5 +650,4 @@ public static  zoomImgSize(imgWidth:any, imgHeight:any, maxWidth:any, maxHeight:
       };
     });
   }
-
 }
