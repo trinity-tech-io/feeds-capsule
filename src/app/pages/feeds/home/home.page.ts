@@ -153,7 +153,6 @@ export class HomePage implements OnInit {
 
   public searchText: string = "";
   public searchPasar: any = [];
-  public curSearchField: string = "name";
   public isShowSearchField: boolean = false;
   public pasarsearchPlaceholder: string = "HomePage.search";
   // private searchBeforePasar: any = [];
@@ -2444,50 +2443,33 @@ export class HomePage implements OnInit {
   }
 
   handlePasarSearch() {
-    if (this.curSearchField === "name") {
+   let tokenId = this.nftContractControllerService.isTokenId(this.searchText);
+    if (tokenId != "") {
       this.zone.run(async () => {
         this.native.showLoading('common.waitMoment');
-        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.TOKEN_ID,tokenId);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
       });
       return;
     }
 
-    if (this.curSearchField === "creator") {
-      this.zone.run(async () => {
+    if(this.nftContractControllerService.isAddress(this.searchText)){
+       this.zone.run(async () => {
         this.native.showLoading('common.waitMoment');
         this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.ROYALTY_ADDRESS, this.searchText);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
-      });
-      return;
+        });
+        return;
     }
 
-    if (this.curSearchField === "owner") {
-      this.zone.run(async () => {
+    this.zone.run(async () => {
         this.native.showLoading('common.waitMoment');
-        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.OWNER_ADDRESS, this.searchText);
+        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
-      });
-      return;
-    }
-
-    if (this.curSearchField === "tokenID") {
-      this.zone.run(async () => {
-        this.native.showLoading('common.waitMoment');
-        this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.TOKEN_ID, this.searchText);
-        this.refreshPasarGridVisibleareaImage();
-        this.native.hideLoading();
-      });
-      return;
-   }
-
-  this.pasarList = _.filter(this.searchPasar, (pasarItem) => {
-    return pasarItem.name.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1;
-  });
-  this.refreshPasarGridVisibleareaImage();
+    });
   }
 
   handleRefresherInfinite(isOpen: boolean) {
