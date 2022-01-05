@@ -45,6 +45,7 @@ img{
     overflow: hidden;
     text-overflow: ellipsis;
     margin-top: 23px;
+    height:16px;
 }
 
 .des1{
@@ -58,6 +59,7 @@ img{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    height:16px;
 }
 
 .des2{
@@ -68,6 +70,8 @@ img{
     font-style: normal;
     text-align: left;
     color: #9ca0a4;
+    margin-bottom: 7px;
+    height: 16px;
 }
 
 .des3{
@@ -78,6 +82,7 @@ img{
     font-style: normal;
     text-align: left;
     color: #000000;
+    height: 16px;
 }
 
 .like{
@@ -111,11 +116,9 @@ img{
         font-style: normal;
         /* text-align: left; */
         color: #7624fe;
-        margin-top: 24px;
         border: solid 1px #7624fe;
         border-radius: 10px;
-        width: 60px;
-        height: 20px;
+        padding: 5px 15px;
         text-align: center;
         font-size: 16px;
     }
