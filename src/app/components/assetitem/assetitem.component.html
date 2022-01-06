@@ -12,6 +12,8 @@
   <div *ngIf="assetItem != null ">
     <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar' && assetItem['fixedAmount'] === null" style="position:absolute;bottom:7px;right:5px;width:17.5px;height:30px;"/>
     <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar' && assetItem['fixedAmount'] != null" style="position:absolute;bottom:11px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/videoTypeIcon.svg" *ngIf="assetItem['type']==='feeds-video' && assetItem['fixedAmount'] === null" style="position:absolute;bottom:7px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/videoTypeIcon.svg" *ngIf="assetItem['type']==='feeds-video' && assetItem['fixedAmount'] != null" style="position:absolute;bottom:11px;right:5px;width:17.5px;height:30px;"/>
     <div style="height:132px;padding: 0px 5px;display:flex;justify-content:center;align-items: center;">
     <img src="{{imgUri}}" (click)="clickItem()" style="object-fit:contain;" id={{thumbImageId}}-{{thumbImageName}}/>
     </div>

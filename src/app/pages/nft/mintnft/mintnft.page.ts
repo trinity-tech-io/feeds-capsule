@@ -255,6 +255,13 @@ export class MintnftPage implements OnInit {
         }
         //Finish
         if(!this.curPublishtoPasar){
+          if(this.assetType === "feeds-video"){
+            console.log("tokenId",tokenId);
+            this.isLoading = false;
+            clearTimeout(sid);
+            this.showSuccessDialog();
+            return;
+          }
           this.handleCace('created',tokenId);
         }
         //this.native.hideLoading();
@@ -301,10 +308,14 @@ export class MintnftPage implements OnInit {
             return;
           }
 
-          // this.assetBase64 = file;
-          this.imageObj['imgSize'] = result['Size'];
           let tokenId = '0x' + UtilService.SHA256(hash);
-          this.imageObj['imgHash'] = 'feeds:image:' + hash;
+          if(this.assetType === "feeds-video"){
+              this.videoObj.size = result['Size'];
+              this.videoObj.video = 'feeds:video:' + hash;
+          }else{
+            this.imageObj['imgSize'] = result['Size'];
+            this.imageObj['imgHash'] = 'feeds:image:' + hash;
+          }
 
           resolve(tokenId);
         })
@@ -330,8 +341,12 @@ export class MintnftPage implements OnInit {
             return;
           }
 
-          this.thumbnail = thumbnailBase64;
-          this.imageObj['thumbnail'] = 'feeds:image:' + hash;
+          if(this.assetType === "feeds-video"){
+            this.videoObj.thumbnail = 'feeds:image:' + hash;
+          }else{
+           this.thumbnail = thumbnailBase64;
+           this.imageObj['thumbnail'] = 'feeds:image:' + hash;
+          }
           resolve('');
         })
         .catch(err => {
@@ -344,21 +359,33 @@ export class MintnftPage implements OnInit {
     return new Promise(async (resolve, reject) => {
       let type = "image";
       let thumbnail = this.imageObj['thumbnail'];
+      let ipfsJSON = null;
       if(this.assetType === "avatar"){
          type = "avatar";
          thumbnail = this.imageObj['imgHash'];
       }
-      let ipfsJSON = {
-        version: '1',
-        type: type,
-        name: this.nftName,
-        description: this.nftDescription,
-        image: this.imageObj['imgHash'],
-        kind: this.imageObj['imgFormat'],
-        size: this.imageObj['imgSize'],
-        thumbnail: thumbnail,
-        adult: this.adult
-      };
+      if(this.assetType === "feeds-video"){
+         ipfsJSON = {
+          version: '2',
+          type:"feeds-video",
+          name: this.nftName,
+          description: this.nftDescription,
+          video:this.videoObj,
+          adult: this.adult
+        };
+       }else{
+        ipfsJSON = {
+          version: '1',
+          type: type,
+          name: this.nftName,
+          description: this.nftDescription,
+          image: this.imageObj['imgHash'],
+          kind: this.imageObj['imgFormat'],
+          size: this.imageObj['imgSize'],
+          thumbnail: thumbnail,
+          adult: this.adult
+        };
+      }
 
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
@@ -380,30 +407,6 @@ export class MintnftPage implements OnInit {
         });
     });
   }
-
-
-  //@Deprecated
-  // addImg(type: number): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     this.camera.openCamera(
-  //       100,
-  //       1,
-  //       type,
-  //       (imgPath: any) => {
-  //         resolve(imgPath);
-  //       },
-  //       (err: any) => {
-  //         Logger.error(TAG, 'Add img err', err);
-  //         let imgUrl = this.assetBase64 || '';
-  //         if (!imgUrl) {
-  //           this.native.toast_trans('common.noImageSelected');
-  //           reject(err);
-  //           return;
-  //         }
-  //       }
-  //     );
-  //   });
-  // }
 
   removeImg() {
     if(this.assetType === "feeds-video"){
@@ -621,6 +624,11 @@ export class MintnftPage implements OnInit {
     orderIndex: number,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
+      if(this.assetType === "feeds-video"){
+        console.log("tokenId",tokenId);
+        resolve(SUCCESS);
+        return;
+      }
       this.handleCace('onSale', tokenId, orderIndex);
       await this.getSetChannel(tokenId,orderIndex);
       resolve(SUCCESS);

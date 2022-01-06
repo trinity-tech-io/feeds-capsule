@@ -787,9 +787,8 @@ export class MenuService {
           text: this.translate.instant('CollectionsPage.details'),
           icon: 'information-circle',
           handler: () => {
-            this.native.navigateForward(['assetdetails'], {
-              queryParams: assItem,
-            });
+            this.dataHelper.setAssetPageAssetItem(assItem);
+            this.native.navigateForward(['assetdetails'],{});
           },
         },
         {
@@ -939,9 +938,8 @@ export class MenuService {
           text: this.translate.instant('CollectionsPage.details'),
           icon: 'information-circle',
           handler: () => {
-            this.native.navigateForward(['assetdetails'], {
-              queryParams: assItem,
-            });
+            this.dataHelper.setAssetPageAssetItem(assItem);
+            this.native.navigateForward(['assetdetails'],{});
           },
         },
         {
