@@ -15,12 +15,20 @@ import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.se
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import { DataHelper } from 'src/app/services/DataHelper';
+import { VideoService } from 'src/app/services/video.service';
 
 import _ from 'lodash';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
 const TAG: string = 'MintPage';
+type videoId = {
+  "videoId": string,
+  "sourceId": string
+  "vgbufferingId": string,
+  "vgcontrolsId": string
+  "vgoverlayplayId": string,
+  "vgfullscreeId": string
+};
 @Component({
   selector: 'app-mintnft',
   templateUrl: './mintnft.page.html',
@@ -60,7 +68,27 @@ export class MintnftPage implements OnInit {
   public  maxAvatarSize:number = 5 * 1024 * 1024;
   public  assetType:string = "general";
   public  adult:boolean = false;
+  public videoIdObj: videoId = {
+    videoId: '',
+    sourceId: '',
+    vgbufferingId: '',
+    vgcontrolsId: '',
+    vgoverlayplayId: '',
+    vgfullscreeId: ''
+  };
+  public  accept: string = "image/png, image/jpeg, image/jpg, image/gif";
   private didUri:string = null;
+  public  videoUrl: string ="";
+  private videoObj:FeedsData.FeedsVideo = {
+    kind: '',
+    video: '',
+    size: '',
+    thumbnail: '',
+    duration: '',
+    width: '',
+    height: ''
+  };
+  private maxVideoDuration:number = 60*60*1000;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -75,10 +103,12 @@ export class MintnftPage implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private nftContractHelperService: NFTContractHelperService,
-    private dataHelper: DataHelper
+    private videoService: VideoService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
 
   ionViewWillEnter() {
 
@@ -139,26 +169,6 @@ export class MintnftPage implements OnInit {
       this.curPublishtoPasar = !this.curPublishtoPasar;
     });
   }
-
-  //@Deprecated
-  // addAsset() {
-  //   this.addImg(0)
-  //     .then((imagePath) => {
-  //       this.imagePath = imagePath;
-  //       let pathObj = this.handlePath(this.imagePath);
-  //       let fileName = pathObj['fileName'];
-  //       let filePath = pathObj['filepath'];
-  //       let index = fileName.lastIndexOf(".");
-  //       let imgFormat = fileName.substr(index+1);
-  //       this.imageObj['imgFormat'] = imgFormat;
-  //       return this.getFlieObj(fileName, filePath);
-  //     }).then((fileBase64) => {
-  //       this.assetBase64 = fileBase64;
-  //       return this.compressImage(fileBase64);
-  //     }).then((compressBase64) => {
-  //       this.thumbnail = compressBase64;
-  //     });
-  // }
 
   mint() {
     if (!this.checkParms()) {
@@ -274,44 +284,6 @@ export class MintnftPage implements OnInit {
         this.native.toast_trans('common.publicPasarFailed');
       });
   }
-
-  // getFlieObj(fileName: string, filepath: string): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     this.file
-  //     .resolveLocalFilesystemUrl(filepath)
-  //     .then((dirEntry: DirectoryEntry) => {
-  //       dirEntry.getFile(
-  //         fileName,
-  //         { create: true, exclusive: false },
-  //         fileEntry => {
-  //           fileEntry.file(
-  //             file => {
-  //               let fileReader = new FileReader();
-  //               fileReader.onloadend = (event: any) => {
-  //                 this.zone.run(() => {
-  //                   let assetBase64 = fileReader.result.toString();
-  //                   resolve(assetBase64);
-  //                 });
-  //               };
-  //               fileReader.onprogress = (event: any) => {
-  //                 this.zone.run(() => {});
-  //               };
-  //               fileReader.readAsDataURL(file);
-  //             },
-  //             () => {},
-  //           );
-  //         },
-  //         () => {
-  //           reject('error');
-  //         },
-  //       );
-  //     })
-  //     .catch(dirEntryErr => {
-  //       reject(dirEntryErr);
-  //       Logger.error(TAG, 'Get File object error', dirEntryErr)
-  //     });
-  //   });
-  // }
 
   sendIpfsImage(file: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -434,6 +406,18 @@ export class MintnftPage implements OnInit {
   // }
 
   removeImg() {
+    if(this.assetType === "feeds-video"){
+      this.accept = "video/*";
+      let source: any = document.getElementById('sourcemintnft') || '';
+      if(source!=""){
+        let videoUri = source.getAttribute('src') || '';
+        if(videoUri!=""){
+          source.setAttribute('src',"");
+        }
+      }
+   }else{
+     this.accept = "image/png, image/jpeg, image/jpg, image/gif";
+   }
     this.thumbnail = '';
     this.assetBase64 = '';
     this.realFile = null;
@@ -965,12 +949,108 @@ export class MintnftPage implements OnInit {
     }
   }
 
-  handleMintEvent(event:any){
+ handleMintEvent(event:any){
     event.target.value = null;
-    document.getElementById("mintfile").onchange = (event)=>{
-      this.onChange(event);
+    document.getElementById("mintfile").onchange = async (event)=>{
+      if(this.assetType === "feeds-video"){
+        await this.handleFeedsVideo(event);
+           return;
+      }else{
+        this.onChange(event);
+      }
     };
   }
+
+  async handleFeedsVideo(event: any) {
+    Logger.log(TAG, 'video change', event);
+    this.realFile = event.target.files[0];
+
+    Logger.log("Real File is", event.target.files[0]);
+    await this.native.showLoading("common.waitMoment");
+    this.videoObj.kind = this.realFile.type;
+    const reader = new FileReader();
+    reader.readAsDataURL(this.realFile);
+
+    reader.onload = async event => {
+      try {
+        let result =  event.target.result.toString();
+        let videoInfo:any = await this.getVideoImage(result);
+        if(videoInfo === null){
+            this.native.hideLoading();
+            return;
+        }
+        this.videoObj.duration = videoInfo.duration;
+        this.videoObj.width = videoInfo.width;
+        this.videoObj.height = videoInfo.height;
+        this.videoService.intVideoAllId(TAG);
+        this.videoIdObj = this.videoService.getVideoAllId();
+        this.thumbnail = videoInfo.url;
+        console.log("====result===",result.substring(0,100));
+        console.log("===this.videoIdObj==",this.videoIdObj);
+        // this.videoService.getVideoPoster(this.thumbnail,result,this.videoObj.kind);
+        // let sid = setTimeout(()=>{
+        //   let video: any = document.getElementById(this.videoIdObj.videoId) || '';
+        //   video.setAttribute('poster',this.thumbnail);
+        //   this.videoService.setOverPlay(result,this.videoObj.kind);
+        //     //this.setOverPlay(result,this.videoObj.kind);
+        //   this.native.hideLoading();
+        //   clearTimeout(sid);
+        // },0);
+        this.videoService.getVideoPoster(this.thumbnail,this.videoObj.kind,result);
+      } catch (error) {
+        this.native.hideLoading();
+        Logger.error('Get image thumbnail error', error);
+      }
+  }
+  }
+
+  getVideoImage(file: any) {
+    return new Promise((resolve, reject) => {
+      try{
+        //if (file && file.type.indexOf('video/') == 0) {
+          let video = document.createElement('video');
+          video.src = file;
+          console.log("=====file====",file.substring(0,100));
+          video.addEventListener('loadeddata', function() {
+            this.currentTime = 1;
+          })
+          let that = this;
+          video.addEventListener('seeked', function () {
+            console.log("this.duration",this.duration);
+            let videoDuration = UtilService.accMul(this.duration,1000);
+            console.log("videoDuration",videoDuration);
+            if(videoDuration > that.maxVideoDuration){
+                that.native.toastWarn("MintnftPage.fileTypeDes5");
+                reject(null);
+                return;
+            }
+              this.width = this.videoWidth;
+              this.height = this.videoHeight;
+              let canvas = document.createElement('canvas');
+              let ctx = canvas.getContext('2d');
+              canvas.width = this.width*0.3;
+              canvas.height = this.height*0.3;
+              ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+              let image:any = {
+                  url: canvas.toDataURL('image/jpeg', 1),
+                  width: this.width,
+                  height: this.height,
+                  duration: this.duration,
+              };
+              video = null;
+              canvas = null;
+              resolve(image);
+          });
+          video.load();
+        //}
+      }catch(err){
+        reject(null);
+      }
+
+    });
+
+  }
+
 
   async getDidUri(){
     return await this.feedService.getDidUri();
@@ -980,5 +1060,57 @@ export class MintnftPage implements OnInit {
     this.zone.run(() => {
       this.adult = !this.adult;
     });
+  }
+
+  setOverPlay(file:any,type:string) {
+    let vgoverlayplay: any =
+      document.getElementById(this.videoIdObj.vgoverlayplayId) || '';
+    if (vgoverlayplay != '') {
+      vgoverlayplay.onclick = () => {
+        this.zone.run(() => {
+          let source: any = document.getElementById(this.videoIdObj.sourceId) || '';
+          let sourceSrc = source.getAttribute('src') || '';
+          if (sourceSrc === '') {
+            this.loadVideo(file,type);
+          }
+        });
+      };
+    }
+  }
+
+  loadVideo(file: any,type: string) {
+    let video: any = document.getElementById(this.videoIdObj.videoId) || '';
+    let source: any = document.getElementById(this.videoIdObj.sourceId) || '';
+    source.setAttribute('src',file);
+    source.setAttribute('type',type);
+    let vgbuffering: any = document.getElementById(this.videoIdObj.vgbufferingId);
+    let vgoverlayplay: any = document.getElementById(this.videoIdObj.vgoverlayplayId);
+    let vgcontrol: any = document.getElementById(this.videoIdObj.vgcontrolsId);
+
+    video.addEventListener('loadeddata', function() {
+    });
+
+    video.addEventListener('ended', () => {
+      vgoverlayplay.style.display = 'block';
+      vgbuffering.style.display = 'none';
+      vgcontrol.style.display = 'none';
+    });
+
+    video.addEventListener('pause', () => {
+      vgoverlayplay.style.display = 'block';
+      vgbuffering.style.display = 'none';
+      vgcontrol.style.display = 'none';
+    });
+
+    video.addEventListener('play', () => {
+      vgcontrol.style.display = 'block';
+    });
+
+    video.addEventListener('canplay', () => {
+      vgbuffering.style.display = 'none';
+      video.play();
+    });
+
+    video.load();
   }
 }

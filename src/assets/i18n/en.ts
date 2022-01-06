@@ -691,7 +691,10 @@ export const en = {
     fileTypeDes3: 'Recommended GIF animation length: Less than 10 seconds',
     general: 'General',
     assetType: 'Asset Type',
-    adult: 'Explicit & Sensitive Content'
+    adult: 'Explicit & Sensitive Content',
+    video: 'video',
+    fileTypeDes4:'File types supported:',
+    fileTypeDes5: 'The playback length of this video exceeds the limit of 60 minutes'
   },
   AssetdetailsPage: {
     title: 'Collectible Details',
