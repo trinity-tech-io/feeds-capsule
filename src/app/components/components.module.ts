@@ -44,6 +44,7 @@ import { ShareModule } from 'src/app/share/share.module';
 import { TitleBarComponent } from './titlebar/titlebar.component';
 import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+import { VideostyleComponent } from './videostyle/videostyle.component';
 
 @NgModule({
   imports: [
@@ -82,6 +83,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     TitlebarmenuitemComponent,
     AddassetComponent,
     AssetitemComponent,
+    VideostyleComponent,
     NewassetitemComponent,
     ChannelcardComponent,
     NftloadingComponent,
@@ -111,6 +113,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
     TitleBarComponent,
     AddassetComponent,
     AssetitemComponent,
+    VideostyleComponent,
     NewassetitemComponent,
     ChannelcardComponent,
     NftloadingComponent,

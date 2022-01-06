@@ -691,7 +691,10 @@ export const zh = {
     fileTypeDes3: '建议的GIF动画长度：小于10秒',
     general: '通用',
     assetType: '资产类型',
-    adult: '明确和敏感的内容'
+    adult: '明确和敏感的内容',
+    video: '视频',
+    fileTypeDes4:'支持视频格式 -',
+    fileTypeDes5: '您的视频文件播放长度超出当前限制 (60分钟）',
   },
   AssetdetailsPage: {
     title: '收藏品明细',

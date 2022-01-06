@@ -800,4 +800,23 @@ declare namespace FeedsData {
     thumbnail: string,
     duration: number
   }
+
+  type CollectionVideoJson = {
+    "version": string,
+    "type": string,
+    "name": string,
+    "description": string,
+    "video": FeedsVideo,
+    "adult": boolean
+  }
+
+  type FeedsVideo = {
+    "kind": string,
+    "video": string,
+    "size": string,
+    "thumbnail": string,
+    "duration": string,
+    "width": string,
+    "height":string,
+  }
 }

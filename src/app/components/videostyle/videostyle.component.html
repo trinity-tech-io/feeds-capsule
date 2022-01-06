@@ -1,0 +1,14 @@
+<vg-player>
+  <vg-overlay-play id= {{videoIdObj.vgoverlayplayId}}></vg-overlay-play>
+  <vg-buffering id= {{videoIdObj.vgbufferingId}}></vg-buffering>
+
+  <vg-controls id= {{videoIdObj.vgcontrolsId}} style="display:none;">
+      <img class="vgfullscreen" id= {{videoIdObj.vgfullscreeId}} src="assets/images/fullscreen.svg"/>
+  </vg-controls>
+
+  <video #media [vgMedia]="media" id= {{videoIdObj.videoId}}
+  poster="./assets/icon/reserve.svg"
+  playsinline webkit-playsinline>
+  <source id= {{videoIdObj.sourceId}} src="">
+  </video>
+</vg-player>
