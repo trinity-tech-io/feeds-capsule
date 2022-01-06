@@ -124,6 +124,7 @@ export class DataHelper {
 
   private didMapper: { [address: string]: FeedsData.DidObj } = {};
   private bidPageAssetItem: FeedsData.NFTItem;
+  private assetPageAssetItem: FeedsData.NFTItem;
   constructor(
     private storageService: StorageService,
     private events: Events
@@ -2804,7 +2805,16 @@ export class DataHelper {
   getBidPageAssetItem(): FeedsData.NFTItem {
     return this.bidPageAssetItem;
   }
-  
+
+    ////
+    setAssetPageAssetItem(assetItem: FeedsData.NFTItem) {
+      this.assetPageAssetItem = assetItem;
+    }
+
+    getAssetPageAssetItem(): FeedsData.NFTItem {
+      return this.assetPageAssetItem;
+    }
+
   setOpenBarcodeScanner(openBarcodeScanner: boolean) {
      this.openBarcodeScanner = openBarcodeScanner;
   }

@@ -18,10 +18,19 @@ import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HttpService } from 'src/app/services/HttpService';
+import { VideoService } from 'src/app/services/video.service';
 
 type detail = {
   type: string;
   details: string;
+};
+type videoId = {
+  "videoId": string,
+  "sourceId": string
+  "vgbufferingId": string,
+  "vgcontrolsId": string
+  "vgoverlayplayId": string,
+  "vgfullscreeId": string
 };
 let TAG: string = "AssetDetails";
 @Component({
@@ -73,6 +82,14 @@ export class AssetdetailsPage implements OnInit {
   private NftDidList: any = null;
   public isSwitch: boolean = false;
   public dispalyOwer: string = "";
+  public videoIdObj: videoId = {
+    videoId: '',
+    sourceId: '',
+    vgbufferingId: '',
+    vgcontrolsId: '',
+    vgoverlayplayId: '',
+    vgfullscreeId: ''
+  };
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -86,15 +103,17 @@ export class AssetdetailsPage implements OnInit {
     public popupProvider: PopupProvider,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
-    private menuService: MenuService,
+    private videoService: VideoService,
     private dataHelper: DataHelper,
     private httpService: HttpService
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(queryParams => {
+    //this.activatedRoute.queryParams.subscribe(queryParams => {
+     let queryParams = this.dataHelper.getAssetPageAssetItem();
+      console.log("===queryParams==",queryParams);
       this.assItem = _.cloneDeep(queryParams);
-      let asset = queryParams.asset || {};
+      let asset = queryParams.asset || "";
       let signInData = this.feedService.getSignInData() || null;
       let did = signInData['did'] || null;
 
@@ -103,7 +122,7 @@ export class AssetdetailsPage implements OnInit {
       this.name = queryParams.name || '';
       this.description = queryParams.description || '';
       this.saleOrderId = queryParams.saleOrderId || '';
-      this.quantity = queryParams.curQuantity || queryParams.quantity;
+      this.quantity = (queryParams.curQuantity || queryParams.quantity).toString();
       this.tokenID = queryParams.tokenId || '';
       this.orderCreateTime = queryParams.orderCreateTime || null;
       this.tokenCreateTime = queryParams.tokenCreateTime || null;
@@ -113,8 +132,14 @@ export class AssetdetailsPage implements OnInit {
       this.parsarContractAddress = this.nftContractControllerService
         .getPasar()
         .getPasarAddress();
-      const kind = queryParams.kind || 'png';
-      this.assetUri = this.handleImg(asset, kind);
+
+        if(this.imageType === "feeds-video"){
+          this.videoService.intVideoAllId(TAG);
+          this.videoIdObj = this.videoService.getVideoAllId();
+        }else{
+          const kind = queryParams.kind || 'png';
+          this.assetUri = this.handleImg(asset, kind);
+        }
 
       this.creator = queryParams.creator || '';//原创者
 
@@ -141,7 +166,7 @@ export class AssetdetailsPage implements OnInit {
       }
 
       this.royalties = queryParams.royalties || null;
-    });
+    //});
   }
 
   ionViewWillEnter() {
@@ -187,6 +212,19 @@ export class AssetdetailsPage implements OnInit {
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+
+    if(this.imageType === "feeds-video"){
+      let ipfsUrl = this.ipfsService.getNFTGetUrl();
+      let videoInfo: FeedsData.FeedsVideo = this.assItem.video;
+      let thumbnail = videoInfo.thumbnail;
+      let thumbnailUri = thumbnail.replace('feeds:image:', '');
+      thumbnailUri = ipfsUrl + thumbnailUri;
+      let kind = videoInfo.kind;
+      let video = videoInfo.video;
+      let videoUri = video.replace('feeds:video:', '');
+      videoUri = ipfsUrl + videoUri;
+      this.videoService.getVideoPoster(thumbnailUri,kind,videoUri);
+   }
   }
 
   addEvent() {

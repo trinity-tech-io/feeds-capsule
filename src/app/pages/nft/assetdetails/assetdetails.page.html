@@ -15,8 +15,17 @@
       <ion-col size="12" class="left-col">
         <h1 *ngIf="did===null" (press)="copytext(ownerAddress)" [style.touch-action]="'pan-y'">{{dispalyOwer}}</h1>
         <h1 (click)="switchDid()" *ngIf="did!=null" style="margin-bottom: 0px;" (press)="copyDid()" [style.touch-action]="'pan-y'"><img src="./assets/images/nft-user-circle.svg" class="nftusercircle"/><span *ngIf="didName===null">{{didDispaly}}</span><span *ngIf="didName!=null">{{didName}}</span><img src="./assets/images/switch.svg" class="switch" *ngIf="isSwitch"/></h1>
-        <img src="{{assetUri}}" class="assetsImg" />
+        <img src="{{assetUri}}" class="assetsImg" *ngIf="imageType==='avatar' || imageType==='general'"/>
         <img src="assets/images/avatar.svg" *ngIf="imageType==='avatar'" style="position:absolute;left:10px;top:36px;width:24px;height:24px"/>
+        <img src="assets/images/videoTypeIcon.svg" *ngIf="imageType==='feeds-video'" style="position:absolute;left:10px;top:36px;width:24px;height:24px;z-index: 999;"/>
+
+        <!-- video -->
+        <div *ngIf="imageType==='feeds-video'" style="border:none;position:relative;margin: 0 auto;margin-top: 5px;">
+          <app-videostyle
+              [videoIdObj] = "videoIdObj"
+              >
+         </app-videostyle>
+       </div>
       </ion-col>
     </ion-row>
     <div *ngIf="selectType === 'AssetdetailsPage.contract'" style="margin-bottom:10px;">

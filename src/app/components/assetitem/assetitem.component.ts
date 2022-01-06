@@ -40,13 +40,20 @@ export class AssetitemComponent implements OnInit {
     }
     let fileName = "";
     let fetchUrl = "";
-
+    let type =this.assetItem['type'] || "";
     let thumbnailUri = this.assetItem['thumbnail'] || "";
+    let kind = this.assetItem["kind"];
+    let size = this.assetItem["originAssetSize"];
+    if(type === "feeds-video"){
+       let videoInfo: FeedsData.FeedsVideo = this.assetItem['video'];
+       thumbnailUri = videoInfo.thumbnail;
+       kind = videoInfo.kind;
+       size = videoInfo.size;
+    }
     if(thumbnailUri === ""){
       return "";
     }
-    let kind = this.assetItem["kind"];
-    let size = this.assetItem["originAssetSize"];
+
     if (!size)
       size = '0';
     if (kind === "gif" && parseInt(size) <= this.maxSize) {

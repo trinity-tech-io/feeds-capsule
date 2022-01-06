@@ -680,7 +680,8 @@ declare namespace FeedsData {
 
     adult: boolean,
 
-    priceNumber: number
+    priceNumber: number,
+    video: FeedsVideo
   }
 
   type DidObj = {

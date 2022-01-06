@@ -918,13 +918,18 @@ export class NFTContractHelperService {
     type = tokenJson.type || 'single';
     thumbnail = tokenJson.thumbnail || '';
     if (thumbnail === '')
-      thumbnail = tokenJson.image;
-    image = tokenJson.image;
-    name = tokenJson.name;
-    description = tokenJson.description;
-    kind = tokenJson.kind;
-    size = tokenJson.size;
+      thumbnail = tokenJson.image || "";
+    image = tokenJson.image || "";
+    name = tokenJson.name || "";
+    description = tokenJson.description || "";
+    kind = tokenJson.kind || "";
+    size = tokenJson.size || "";
     adult = tokenJson.adult;
+
+    let videoJson: FeedsData.FeedsVideo = null;
+    if(type === "feeds-video"){
+      videoJson = null;
+    }
     const item: FeedsData.NFTItem = {
       creator: createAddress,
       saleOrderId: orderId,
@@ -965,7 +970,8 @@ export class NFTContractHelperService {
       tokenCreatorDid: null,
 
       adult: adult,
-      priceNumber: priceNumber
+      priceNumber: priceNumber,
+      video: videoJson
     }
     return item;
   }
@@ -1121,6 +1127,12 @@ export class NFTContractHelperService {
     if(price === null){
       moreMenuType =  'created';
     }
+
+    let nftType = assistPasarItem.type || "";
+    let videoJson: FeedsData.FeedsVideo = null;
+    if(nftType === "feeds-video"){
+      videoJson = assistPasarItem.video;
+    }
     let priceNumber = assistPasarItem.priceNumber || 0;
 
     const nftItem: FeedsData.NFTItem = {
@@ -1164,7 +1176,8 @@ export class NFTContractHelperService {
       tokenCreatorDid: null,
 
       adult: assistPasarItem.adult,
-      priceNumber: priceNumber
+      priceNumber: priceNumber,
+      video: videoJson
     }
     const item: FeedsData.PasarItem = {
       index: 0,
@@ -1466,7 +1479,8 @@ export class NFTContractHelperService {
       tokenCreatorDid: null,
 
       adult: item.adult,
-      priceNumber: item.priceNumber
+      priceNumber: item.priceNumber,
+      video: null
     }
   }
 

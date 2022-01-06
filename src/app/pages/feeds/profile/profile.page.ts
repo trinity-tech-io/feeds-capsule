@@ -1019,11 +1019,18 @@ export class ProfilePage implements OnInit {
 
   handleId(item:any){
     let thumbnailUri = item['thumbnail'] || "";
+    let kind = item["kind"];
+    let size = item["originAssetSize"];
+    let type = item['type'] || "";
+    if(type === "feeds-video"){
+      let videoInfo: FeedsData.FeedsVideo = item['video'];
+      thumbnailUri = videoInfo.thumbnail;
+      kind = videoInfo.kind;
+      size = videoInfo.size;
+   }
     if(thumbnailUri === ""){
       return "";
     }
-    let kind = item["kind"];
-    let size = item["originAssetSize"];
     if (!size)
     size = '0';
     if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
@@ -2136,7 +2143,8 @@ export class ProfilePage implements OnInit {
 
   clickAssetItem(assetitem: any) {
     this.clearData();
-    this.native.navigateForward(['assetdetails'], { queryParams: assetitem });
+    this.dataHelper.setAssetPageAssetItem(assetitem);
+    this.native.navigateForward(['assetdetails'],{});
   }
 
   clickMore(parm: any) {
