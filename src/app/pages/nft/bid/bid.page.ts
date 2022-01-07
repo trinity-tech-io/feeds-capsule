@@ -19,11 +19,21 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
 import { UserDIDService } from 'src/app/services/userdid.service';
+import { VideoService } from 'src/app/services/video.service';
 
 type detail = {
   type: string;
   details: string;
 };
+type videoId = {
+  "videoId": string,
+  "sourceId": string
+  "vgbufferingId": string,
+  "vgcontrolsId": string
+  "vgoverlayplayId": string,
+  "vgfullscreeId": string
+};
+let TAG: string = "Bid";
 @Component({
   selector: 'app-bid',
   templateUrl: './bid.page.html',
@@ -74,6 +84,15 @@ export class BidPage implements OnInit {
   private NftDidList: any = null;
   public isSwitch: boolean = false;
   public dispalyOwer: string = "";
+  public videoIdObj: videoId = {
+    videoId: '',
+    sourceId: '',
+    vgbufferingId: '',
+    vgcontrolsId: '',
+    vgoverlayplayId: '',
+    vgfullscreeId: ''
+  };
+  public thumbnail: string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -89,7 +108,7 @@ export class BidPage implements OnInit {
     private httpService: HttpService,
     private nftContractHelperService: NFTContractHelperService,
     private dataHelper: DataHelper,
-    private userDIDService: UserDIDService
+    private videoService: VideoService
   ) {}
 
   ngOnInit() {
@@ -142,8 +161,13 @@ export class BidPage implements OnInit {
         .getPasar()
         .getPasarAddress();
 
-      const kind = queryParams.kind || 'png';
-      this.assetUri = this.handleImg(asset, kind);
+        if(this.imageType === "feeds-video"){
+          this.videoService.intVideoAllId(TAG);
+          this.videoIdObj = this.videoService.getVideoAllId();
+        }else{
+          const kind = queryParams.kind || 'png';
+          this.assetUri = this.handleImg(asset, kind);
+        }
       this.fixedPrice = queryParams.fixedAmount || null;
       this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
@@ -174,6 +198,23 @@ export class BidPage implements OnInit {
       });
     }
    }
+   if(this.imageType === "feeds-video"){
+    let ipfsUrl = this.ipfsService.getNFTGetUrl();
+    let videoInfo: FeedsData.FeedsVideo = this.curAssetItem.video || null;
+    if(videoInfo === null){
+      this.thumbnail = "";
+      return;
+    }
+    let thumbnail = videoInfo.thumbnail;
+    this.thumbnail  = thumbnail;
+    let thumbnailUri = thumbnail.replace('feeds:image:', '');
+    thumbnailUri = ipfsUrl + thumbnailUri;
+    let kind = videoInfo.kind;
+    let video = videoInfo.video;
+    let videoUri = video.replace('feeds:video:', '');
+    videoUri = ipfsUrl + videoUri;
+    this.videoService.getVideoPoster(thumbnailUri,kind,videoUri);
+  }
   }
 
   ionViewWillLeave() {

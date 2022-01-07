@@ -2626,11 +2626,23 @@ export class HomePage implements OnInit {
 
   handleId(item:any){
     let thumbnailUri = item['thumbnail'] || "";
+    let kind = item["kind"];
+    let size = item["originAssetSize"];
+    let type = item["type"] || "";
+    if(type === "feeds-video"){
+      let videoInfo: FeedsData.FeedsVideo = item['video'] || null;
+      if(videoInfo != null){
+        thumbnailUri = videoInfo.thumbnail;
+        kind = videoInfo.kind;
+        size = videoInfo.size;
+      }else{
+        thumbnailUri = "";
+      }
+   }
     if(thumbnailUri === ""){
       return "";
     }
-    let kind = item["kind"];
-    let size = item["originAssetSize"]
+
     if (!size)
       size = '0';
     if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {

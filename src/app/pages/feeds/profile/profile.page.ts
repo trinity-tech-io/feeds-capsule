@@ -1023,10 +1023,14 @@ export class ProfilePage implements OnInit {
     let size = item["originAssetSize"];
     let type = item['type'] || "";
     if(type === "feeds-video"){
-      let videoInfo: FeedsData.FeedsVideo = item['video'];
-      thumbnailUri = videoInfo.thumbnail;
-      kind = videoInfo.kind;
-      size = videoInfo.size;
+      let videoInfo: FeedsData.FeedsVideo = item['video'] || null;
+      if(videoInfo != null){
+        thumbnailUri = videoInfo.thumbnail;
+        kind = videoInfo.kind;
+        size = videoInfo.size;
+      }else{
+        thumbnailUri = "";
+      }
    }
     if(thumbnailUri === ""){
       return "";

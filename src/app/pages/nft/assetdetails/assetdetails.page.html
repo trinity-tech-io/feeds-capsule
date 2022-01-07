@@ -20,7 +20,7 @@
         <img src="assets/images/videoTypeIcon.svg" *ngIf="imageType==='feeds-video'" style="position:absolute;left:10px;top:36px;width:24px;height:24px;z-index: 999;"/>
 
         <!-- video -->
-        <div *ngIf="imageType==='feeds-video'" style="border:none;position:relative;margin: 0 auto;margin-top: 5px;">
+        <div *ngIf="imageType==='feeds-video'&&this.thumbnail!=''" style="border:none;position:relative;margin: 0 auto;margin-top: 5px;">
           <app-videostyle
               [videoIdObj] = "videoIdObj"
               >

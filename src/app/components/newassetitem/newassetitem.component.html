@@ -24,6 +24,7 @@
         <span class="des2" style="text-align:right;display:inline-block;">{{handleCurQuantity(assetItem)}}/{{handleCurQuantity(assetItem)}}</span>
         <span class="priceUsd" *ngIf="elaPrice!=null">≈USD {{hanldeUsdPrice(assetItem['fixedAmount'])}}</span>
         <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar'" style="position:absolute;right:47px;bottom: 35px;width:24px;height:24px"/>
+        <img src="assets/images/videoTypeIcon.svg" *ngIf="assetItem['type']==='feeds-video'" style="position:absolute;right:47px;bottom: 35px;width:24px;height:24px;z-index: 999;"/>
       </div>
     </div>
 

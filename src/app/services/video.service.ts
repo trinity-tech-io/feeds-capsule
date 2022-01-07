@@ -48,7 +48,6 @@ export class VideoService {
   }
 
   getVideoPoster(thumbnailUri:string,kind:string,videoUri:string){
-
     let sid = setTimeout(()=>{
       let videoId = this.videoIdObj.videoId;
       let video: any = document.getElementById(videoId) || '';
