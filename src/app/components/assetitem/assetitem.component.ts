@@ -45,10 +45,14 @@ export class AssetitemComponent implements OnInit {
     let kind = this.assetItem["kind"];
     let size = this.assetItem["originAssetSize"];
     if(type === "feeds-video"){
-       let videoInfo: FeedsData.FeedsVideo = this.assetItem['video'];
-       thumbnailUri = videoInfo.thumbnail;
-       kind = videoInfo.kind;
-       size = videoInfo.size;
+       let videoInfo: FeedsData.FeedsVideo = this.assetItem['video'] || null;
+       if(videoInfo != null){
+        thumbnailUri = videoInfo.thumbnail;
+        kind = videoInfo.kind;
+        size = videoInfo.size;
+       }else{
+        thumbnailUri = "";
+       }
     }
     if(thumbnailUri === ""){
       return "";

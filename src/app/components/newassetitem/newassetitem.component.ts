@@ -41,11 +41,22 @@ export class NewassetitemComponent implements OnInit {
     let fetchUrl = "";
 
     let thumbnailUri = this.assetItem['thumbnail'] || "";
+    let type = this.assetItem['type'] || "";
+    let kind = this.assetItem["kind"];
+    let size = this.assetItem["originAssetSize"];
+    if(type === "feeds-video"){
+      let videoInfo: FeedsData.FeedsVideo = this.assetItem['video'] || null;
+      if(videoInfo != null){
+       thumbnailUri = videoInfo.thumbnail;
+       kind = videoInfo.kind;
+       size = videoInfo.size;
+      }else{
+       thumbnailUri = "";
+      }
+   }
     if(thumbnailUri === ""){
       return "";
     }
-    let kind = this.assetItem["kind"];
-    let size = this.assetItem["originAssetSize"];
     if (!size)
       size = '0';
     if (kind === "gif" && parseInt(size) <= this.maxSize) {

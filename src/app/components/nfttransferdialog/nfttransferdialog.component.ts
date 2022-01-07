@@ -25,6 +25,7 @@ export class NfttransferdialogComponent implements OnInit {
   public disableMemo: boolean = false;
   private tokenId: string = "";
   private curAssItem: any = null;
+  private maxSize:number = 5 * 1024 * 1024;
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -48,8 +49,30 @@ export class NfttransferdialogComponent implements OnInit {
 
   async hanldeImg(assItem:any) {
     let newAssItem  =  _.cloneDeep(assItem);
-    let imgUri = newAssItem['thumbnail'];
+    let imgUri = newAssItem['thumbnail'] || "";
     let kind = newAssItem["kind"];
+    let type = newAssItem['type'] || "";
+    let size = newAssItem["originAssetSize"];
+    if(type === "feeds-video"){
+      let videoInfo: FeedsData.FeedsVideo = newAssItem['video'] || null;
+      if(videoInfo!=null){
+        imgUri = videoInfo.thumbnail;
+        kind = videoInfo.kind;
+        size = videoInfo.size;
+      }else{
+        imgUri = "";
+      }
+
+    }
+    if(imgUri === ""){
+      this.imgUri = "";
+      return;
+    }
+    if (!size)
+    size = '0';
+    if (kind === "gif" && parseInt(size) <= this.maxSize) {
+        imgUri = newAssItem['asset'];
+    }
     if(kind === "gif"){
         imgUri = newAssItem['asset'];
     }

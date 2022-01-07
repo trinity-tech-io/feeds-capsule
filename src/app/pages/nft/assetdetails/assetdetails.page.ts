@@ -90,6 +90,7 @@ export class AssetdetailsPage implements OnInit {
     vgoverlayplayId: '',
     vgfullscreeId: ''
   };
+  public thumbnail: string = "";
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -195,6 +196,24 @@ export class AssetdetailsPage implements OnInit {
       this.nftStatus = this.translate.instant('common.onsale');
     }
 
+    if(this.imageType === "feeds-video"){
+      let ipfsUrl = this.ipfsService.getNFTGetUrl();
+      let videoInfo: FeedsData.FeedsVideo = this.assItem.video || null;
+      if(videoInfo === null){
+        this.thumbnail = "";
+        return;
+      }
+      let thumbnail = videoInfo.thumbnail;
+      this.thumbnail  = thumbnail;
+      let thumbnailUri = thumbnail.replace('feeds:image:', '');
+      thumbnailUri = ipfsUrl + thumbnailUri;
+      let kind = videoInfo.kind;
+      let video = videoInfo.video;
+      let videoUri = video.replace('feeds:video:', '');
+      videoUri = ipfsUrl + videoUri;
+      this.videoService.getVideoPoster(thumbnailUri,kind,videoUri);
+    }
+
 
   }
 
@@ -212,19 +231,6 @@ export class AssetdetailsPage implements OnInit {
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
-
-    if(this.imageType === "feeds-video"){
-      let ipfsUrl = this.ipfsService.getNFTGetUrl();
-      let videoInfo: FeedsData.FeedsVideo = this.assItem.video;
-      let thumbnail = videoInfo.thumbnail;
-      let thumbnailUri = thumbnail.replace('feeds:image:', '');
-      thumbnailUri = ipfsUrl + thumbnailUri;
-      let kind = videoInfo.kind;
-      let video = videoInfo.video;
-      let videoUri = video.replace('feeds:video:', '');
-      videoUri = ipfsUrl + videoUri;
-      this.videoService.getVideoPoster(thumbnailUri,kind,videoUri);
-   }
   }
 
   addEvent() {

@@ -40,6 +40,7 @@ export class NftdialogComponent implements OnInit {
   private popoverDialog: any;
   private assetType:string = "";
   private didUri:string = null;
+  private maxSize:number = 5 * 1024 * 1024;
   constructor(
     private navParams: NavParams,
     private popover: PopoverController,
@@ -59,6 +60,7 @@ export class NftdialogComponent implements OnInit {
     this.title = this.navParams.get('title');
     this.menuType = this.navParams.get('menuType');
     let assItem = this.navParams.get('assItem');
+    console.log("assItem",assItem);
     this.curAssItem = assItem;
     let curAmount = assItem.fixedAmount || null;
     if (curAmount != null) {
@@ -317,8 +319,12 @@ export class NftdialogComponent implements OnInit {
         const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         this.orderId = item.saleOrderId;
-        await this.getSetChannel(tokenId);
-        resolve(item);
+        if(item.type === "feeds-video"){
+          resolve(item);
+        }else{
+          await this.getSetChannel(tokenId);
+          resolve(item);
+        }
       } catch (err) {
         Logger.error(err);
         reject(err);
@@ -338,9 +344,28 @@ export class NftdialogComponent implements OnInit {
   }
 
   async hanldeImg() {
-    let imgUri = this.assItem['thumbnail'];
+    let imgUri = this.assItem['thumbnail'] || "";
+    let type = this.assItem['type'] || "";
     let kind = this.assItem["kind"];
-    if(kind === "gif"){
+    let size = this.assItem["originAssetSize"];
+    if(type === "feeds-video"){
+      let videoInfo: FeedsData.FeedsVideo = this.assItem['video'] || null;
+      if(videoInfo != null){
+        imgUri = videoInfo.thumbnail;
+        kind = videoInfo.kind;
+        size = videoInfo.size;
+      }else{
+        imgUri = "";
+      }
+
+    }
+    if(imgUri === ""){
+      this.imgUri = "";
+      return;
+    }
+    if (!size)
+    size = '0';
+    if (kind === "gif" && parseInt(size) <= this.maxSize) {
         imgUri = this.assItem['asset'];
     }
     if (imgUri.indexOf('feeds:imgage:') > -1) {
