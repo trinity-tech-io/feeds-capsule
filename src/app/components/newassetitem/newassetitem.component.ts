@@ -40,20 +40,24 @@ export class NewassetitemComponent implements OnInit {
     let fileName = "";
     let fetchUrl = "";
 
-    let thumbnailUri = this.assetItem['thumbnail'] || "";
-    let type = this.assetItem['type'] || "";
-    let kind = this.assetItem["kind"];
-    let size = this.assetItem["originAssetSize"];
-    if(type === "feeds-video"){
-      let videoInfo: FeedsData.FeedsVideo = this.assetItem['video'] || null;
-      if(videoInfo != null){
-       thumbnailUri = videoInfo.thumbnail;
-       kind = videoInfo.kind;
-       size = videoInfo.size;
+    let thumbnailUri = "";
+    let version = this.assetItem['version'] || "1";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+      thumbnailUri = this.assetItem['thumbnail'] || "";
+      kind = this.assetItem["kind"];
+      size = this.assetItem["originAssetSize"];
+    }else if(version === "2"){
+      let jsonData  = this.assetItem['data'] || "";
+      if(jsonData != ""){
+        thumbnailUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
       }else{
-       thumbnailUri = "";
+        thumbnailUri = "";
       }
-   }
+    }
     if(thumbnailUri === ""){
       return "";
     }

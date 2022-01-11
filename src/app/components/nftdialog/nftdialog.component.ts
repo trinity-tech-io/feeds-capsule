@@ -319,7 +319,7 @@ export class NftdialogComponent implements OnInit {
         const obj = { type: type, assItem: item, sellQuantity: this.quantity };
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         this.orderId = item.saleOrderId;
-        if(item.type === "feeds-video"){
+        if(item.type === "video"){
           resolve(item);
         }else{
           await this.getSetChannel(tokenId);
@@ -344,20 +344,23 @@ export class NftdialogComponent implements OnInit {
   }
 
   async hanldeImg() {
-    let imgUri = this.assItem['thumbnail'] || "";
-    let type = this.assItem['type'] || "";
-    let kind = this.assItem["kind"];
-    let size = this.assItem["originAssetSize"];
-    if(type === "feeds-video"){
-      let videoInfo: FeedsData.FeedsVideo = this.assItem['video'] || null;
-      if(videoInfo != null){
-        imgUri = videoInfo.thumbnail;
-        kind = videoInfo.kind;
-        size = videoInfo.size;
+    let imgUri = "";
+    let version = this.assItem['version'] || "1";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+      imgUri = this.assItem['thumbnail'] || "";
+      kind = this.assItem["kind"];
+      size = this.assItem["originAssetSize"];
+    }else if(version === "2"){
+      let jsonData  = this.assItem['data'] || "";
+      if(jsonData != ""){
+        imgUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
       }else{
         imgUri = "";
       }
-
     }
     if(imgUri === ""){
       this.imgUri = "";
