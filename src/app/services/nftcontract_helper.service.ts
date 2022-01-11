@@ -8,8 +8,6 @@ import { Logger } from './logger';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import _ from 'lodash';
-import { type } from 'os';
-
 const TAG = 'NFTContractHelperService';
 // export const enum SortType {
 //   CREATE_TIME,
@@ -525,18 +523,39 @@ export class NFTContractHelperService {
     return tokenInfo;
   }
 
-  transTokenJson(httpResult: any): FeedsData.TokenJson {
-    const tokenJson: FeedsData.TokenJson = {
-      description: httpResult.description,
-      image: httpResult.image,
-      kind: httpResult.kind,
-      name: httpResult.name,
-      size: httpResult.size,
-      thumbnail: httpResult.thumbnail,
-      type: httpResult.type,
-      version: httpResult.version,
+  transTokenJson(httpResult: any): any {
+    let version =  httpResult.version || "1";
+    let tokenJson: any = null;
+    switch(version){
+      case "1":
+        tokenJson = {
+          description: httpResult.description,
+          image: httpResult.image,
+          kind: httpResult.kind,
+          name: httpResult.name,
+          size: httpResult.size,
+          thumbnail: httpResult.thumbnail,
+          type: httpResult.type,
+          version: httpResult.version,
 
-      adult: httpResult.adult
+          adult: httpResult.adult
+        }
+        break;
+      case "2":
+        tokenJson = {
+          description: httpResult.description,
+          image: httpResult.image,
+          kind: httpResult.kind,
+          name: httpResult.name,
+          size: httpResult.size,
+          thumbnail: httpResult.thumbnail,
+          type: httpResult.type,
+          version: httpResult.version,
+
+          adult: httpResult.adult,
+          data: httpResult.data
+        }
+        break;
     }
     return tokenJson;
   }
@@ -553,7 +572,7 @@ export class NFTContractHelperService {
     return finaluri;
   }
 
-  getTokenJsonFromIpfs(uri: string): Promise<FeedsData.TokenJson> {
+  getTokenJsonFromIpfs(uri: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.ipfsService
@@ -570,16 +589,16 @@ export class NFTContractHelperService {
     });
   }
 
-  getTokenJson(tokenUri: string): Promise<FeedsData.TokenJson> {
+  getTokenJson(tokenUri: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         //tokenUri: feeds:json:xxx
         const uri = this.parseTokenUri(tokenUri);
         let tokenJson = await this.fileHelperService.getTokenJsonData(uri);
+        console.log("====tokenJsonUri===",tokenJson);
         if (!tokenJson) {
           tokenJson = await this.getTokenJsonFromIpfs(uri);
         }
-
         resolve(tokenJson);
       } catch (error) {
         Logger.error('Get Token Json error', error);
@@ -841,11 +860,12 @@ export class NFTContractHelperService {
    *
    * @param orderInfo
    * @param tokenInfo
-   * @param tokenJson
+   * @param tokenJson "TokenJsonV1 | TokenJsonV2"
    * @param moreMenuType "onSale"/"created"
    */
   createItem(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
-    tokenJson: FeedsData.TokenJson, moreMenuType: string, showType: string = 'buy'): FeedsData.NFTItem {
+    tokenJson:any, moreMenuType: string, showType: string = 'buy'): FeedsData.NFTItem {
+    let version: string = "1";
     let createAddress: string = "";
     let orderId: string = "-1";
     let tokenId: string = "-1";
@@ -914,8 +934,9 @@ export class NFTContractHelperService {
     createTime = tokenInfo.createTime * 1000;
     quantity = tokenInfo.tokenSupply;
     royalties = tokenInfo.royaltyFee;
-
+    version = tokenJson.version || "1";
     type = tokenJson.type || 'single';
+
     thumbnail = tokenJson.thumbnail || '';
     if (thumbnail === '')
       thumbnail = tokenJson.image || "";
@@ -925,12 +946,13 @@ export class NFTContractHelperService {
     kind = tokenJson.kind || "";
     size = tokenJson.size || "";
     adult = tokenJson.adult;
-
-    let videoJson: FeedsData.FeedsVideo = null;
-    if(type === "feeds-video"){
-      videoJson = null;
+    let videoJson: any;
+    if(version === "2" || type === "video"){
+      version = "2";
+      videoJson = tokenJson.data || "";
     }
     const item: FeedsData.NFTItem = {
+      version: version,
       creator: createAddress,
       saleOrderId: orderId,
       tokenId: tokenId,
@@ -971,17 +993,17 @@ export class NFTContractHelperService {
 
       adult: adult,
       priceNumber: priceNumber,
-      video: videoJson
+      data: videoJson
     }
     return item;
   }
 
   createItemFromOrderInfo(orderInfo: FeedsData.OrderInfo, tokenInfo: FeedsData.TokenInfo,
-    tokenJson: FeedsData.TokenJson, moreMenuType: string): FeedsData.NFTItem {
+    tokenJson: any, moreMenuType: string): FeedsData.NFTItem {
     return this.createItem(orderInfo, tokenInfo, tokenJson, moreMenuType);
   }
 
-  creteItemFormTokenId(tokenInfo: FeedsData.TokenInfo, tokenJson: FeedsData.TokenJson,
+  creteItemFormTokenId(tokenInfo: FeedsData.TokenInfo, tokenJson: any,
     moreMenuType: string): FeedsData.NFTItem {
     return this.createItem(null, tokenInfo, tokenJson, moreMenuType);
   }
@@ -1006,8 +1028,10 @@ export class NFTContractHelperService {
       try {
         const orderInfo: FeedsData.OrderInfo = await this.getSellerOrderByIndex(index);
         let tokenInfo: FeedsData.TokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
-        let tokenJson: FeedsData.TokenJson = await this.getTokenJson(tokenInfo.tokenUri);
+        let tokenJson: any = await this.getTokenJson(tokenInfo.tokenUri);
+        console.log("tokenJson",tokenJson);
         const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
+        console.log("item",item);
         const requestDevNet = this.dataHelper.getDevelopNet();
         if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
           this.savePasarItem(String(orderInfo.orderId), item, index, Number.MAX_SAFE_INTEGER, FeedsData.SyncMode.NONE, requestDevNet);
@@ -1128,14 +1152,16 @@ export class NFTContractHelperService {
       moreMenuType =  'created';
     }
 
-    let nftType = assistPasarItem.type || "";
-    let videoJson: FeedsData.FeedsVideo = null;
-    if(nftType === "feeds-video"){
-      videoJson = assistPasarItem.video;
+    let version = assistPasarItem.version || "1";
+    let type = assistPasarItem.type || "";
+    let videoJson:any;
+    if(version === "2" || type === "video"){
+      version = "2";
+      videoJson = assistPasarItem.data || "";
     }
     let priceNumber = assistPasarItem.priceNumber || 0;
-
     const nftItem: FeedsData.NFTItem = {
+      version: version,
       creator: assistPasarItem.royaltyOwner,
       saleOrderId: assistPasarItem.orderId,
       tokenId: assistPasarItem.tokenId,
@@ -1177,7 +1203,7 @@ export class NFTContractHelperService {
 
       adult: assistPasarItem.adult,
       priceNumber: priceNumber,
-      video: videoJson
+      data: videoJson
     }
     const item: FeedsData.PasarItem = {
       index: 0,
@@ -1440,7 +1466,15 @@ export class NFTContractHelperService {
   }
 
   transStickerItemToPasarItem(item: any, address: string): FeedsData.NFTItem {
+    let version = item.version || "1";
+    let type = item.type || "";
+    let jsonData: any;
+    if(version === "2" || type === "video"){
+      version = "2";
+      jsonData = item.data || "";
+    }
     return {
+      version: version,
       creator: item.royaltyOwner,
       saleOrderId: null,
       tokenId: item.tokenId,
@@ -1480,7 +1514,7 @@ export class NFTContractHelperService {
 
       adult: item.adult,
       priceNumber: item.priceNumber,
-      video: null
+      data: jsonData
     }
   }
 

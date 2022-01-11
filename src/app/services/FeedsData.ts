@@ -621,16 +621,44 @@ declare namespace FeedsData {
     didUri: string
   }
 
-  type TokenJson = {
+  type TokenJson = TokenJsonV1;
+
+  type TokenJsonV1 = {
     description: string;
     image: string;
     kind: string;
     name: string;
     size: string;
     thumbnail: string;
-    type: string
-    version: string,
+    type: string;
+    version: string;
     adult: boolean
+  }
+
+  type TokenJsonV2 = {
+    version: string;
+    name: string;
+    description: string;
+    type: string;
+    data: any;
+    adult: boolean
+  }
+
+  type ImageJsonData = {
+    thumbnail: string;
+    image: string;
+    kind: string;
+    size: string;
+  }
+
+  type VideoJsonData = {
+    kind: string,
+    video: string,
+    size: string,
+    thumbnail: string,
+    duration: number,
+    width: number,
+    height: number
   }
 
   type OrderTokenJsonInfo = {
@@ -640,6 +668,7 @@ declare namespace FeedsData {
   }
 
   type NFTItem = {
+    version: string,
     creator: string,
     saleOrderId: string,
     tokenId: string,
@@ -681,7 +710,7 @@ declare namespace FeedsData {
     adult: boolean,
 
     priceNumber: number,
-    video: FeedsVideo
+    data: any
   }
 
   type DidObj = {
@@ -802,22 +831,13 @@ declare namespace FeedsData {
     duration: number
   }
 
-  type CollectionVideoJson = {
-    "version": string,
-    "type": string,
-    "name": string,
-    "description": string,
-    "video": FeedsVideo,
-    "adult": boolean
-  }
-
   type FeedsVideo = {
-    "kind": string,
-    "video": string,
-    "size": string,
-    "thumbnail": string,
-    "duration": string,
-    "width": string,
-    "height":string,
+    kind: string,
+    video: string,
+    size: string,
+    thumbnail: string,
+    duration: string,
+    width: string,
+    height:string,
   }
 }

@@ -2625,20 +2625,24 @@ export class HomePage implements OnInit {
   }
 
   handleId(item:any){
-    let thumbnailUri = item['thumbnail'] || "";
-    let kind = item["kind"];
-    let size = item["originAssetSize"];
-    let type = item["type"] || "";
-    if(type === "feeds-video"){
-      let videoInfo: FeedsData.FeedsVideo = item['video'] || null;
-      if(videoInfo != null){
-        thumbnailUri = videoInfo.thumbnail;
-        kind = videoInfo.kind;
-        size = videoInfo.size;
+    let thumbnailUri = "";
+    let kind = "";
+    let size = "";
+    let version = item["version"] || "1";
+    if(version === "1"){
+      thumbnailUri = item['thumbnail'] || "";
+      kind = item["kind"];
+      size = item["originAssetSize"];
+    }else if(version === "2"){
+      let jsonData  = item['data'] || "";
+      if(jsonData != ""){
+        thumbnailUri= jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
       }else{
         thumbnailUri = "";
       }
-   }
+    }
     if(thumbnailUri === ""){
       return "";
     }

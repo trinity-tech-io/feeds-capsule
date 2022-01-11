@@ -114,7 +114,6 @@ export class AssetdetailsPage implements OnInit {
      let queryParams = this.dataHelper.getAssetPageAssetItem();
       console.log("===queryParams==",queryParams);
       this.assItem = _.cloneDeep(queryParams);
-      let asset = queryParams.asset || "";
       let signInData = this.feedService.getSignInData() || null;
       let did = signInData['did'] || null;
 
@@ -134,12 +133,12 @@ export class AssetdetailsPage implements OnInit {
         .getPasar()
         .getPasarAddress();
 
-        if(this.imageType === "feeds-video"){
+        if(this.imageType === "video"){
           this.videoService.intVideoAllId(TAG);
           this.videoIdObj = this.videoService.getVideoAllId();
         }else{
-          const kind = queryParams.kind || 'png';
-          this.assetUri = this.handleImg(asset, kind);
+          let version = queryParams.version || "1";
+          this.assetUri = this.handleImg(queryParams,version);
         }
 
       this.creator = queryParams.creator || '';//原创者
@@ -196,9 +195,9 @@ export class AssetdetailsPage implements OnInit {
       this.nftStatus = this.translate.instant('common.onsale');
     }
 
-    if(this.imageType === "feeds-video"){
+    if(this.imageType === "video"){
       let ipfsUrl = this.ipfsService.getNFTGetUrl();
-      let videoInfo: FeedsData.FeedsVideo = this.assItem.video || null;
+      let videoInfo: FeedsData.FeedsVideo = this.assItem.data || null;
       if(videoInfo === null){
         this.thumbnail = "";
         return;
@@ -437,27 +436,30 @@ export class AssetdetailsPage implements OnInit {
     }
   }
 
-  handleImg(imgUri: string, kind: string): string {
-    let fileName = "";
+  handleImg(queryParams: any,version :string): string {
+
     let fetchUrl = "";
-    let imageUri = imgUri;
-    if (imageUri.indexOf('feeds:imgage:') > -1) {
+    let imageUri = "";
+    if(version === "1"){
+      imageUri = queryParams.asset || "";
+    }else if(version === "2"){
+      let data = queryParams.data || "";
+      if(data != ""){
+        imageUri  = data.image || "";
+      }else{
+        imageUri  = "";
+      }
+    }
+    if(imageUri === ""){
+      return "";
+    }
+    if(imageUri.indexOf('feeds:imgage:') > -1) {
       imageUri = imageUri.replace('feeds:imgage:', '');
-      fileName = imageUri;
       fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     } else if (imageUri.indexOf('feeds:image:') > -1) {
       imageUri = imageUri.replace('feeds:image:', '');
-      fileName = imageUri;
       fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     }
-
-    // this.fileHelperService.getNFTData(fetchUrl, fileName, kind).then((data) => {
-    //   setTimeout(() => {
-    //     this.zone.run(() => {
-    //       this.assetUri = data;
-    //     });
-    //   }, 300);
-    // });
     return fetchUrl;
   }
 

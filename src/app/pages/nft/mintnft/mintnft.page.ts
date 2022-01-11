@@ -255,13 +255,6 @@ export class MintnftPage implements OnInit {
         }
         //Finish
         if(!this.curPublishtoPasar){
-          if(this.assetType === "feeds-video"){
-            console.log("tokenId",tokenId);
-            this.isLoading = false;
-            clearTimeout(sid);
-            this.showSuccessDialog();
-            return;
-          }
           this.handleCace('created',tokenId);
         }
         //this.native.hideLoading();
@@ -309,7 +302,7 @@ export class MintnftPage implements OnInit {
           }
 
           let tokenId = '0x' + UtilService.SHA256(hash);
-          if(this.assetType === "feeds-video"){
+          if(this.assetType === "video"){
               this.videoObj.size = result['Size'];
               this.videoObj.video = 'feeds:video:' + hash;
           }else{
@@ -341,7 +334,7 @@ export class MintnftPage implements OnInit {
             return;
           }
 
-          if(this.assetType === "feeds-video"){
+          if(this.assetType === "video"){
             this.videoObj.thumbnail = 'feeds:image:' + hash;
           }else{
            this.thumbnail = thumbnailBase64;
@@ -356,36 +349,29 @@ export class MintnftPage implements OnInit {
   }
 
   sendIpfsJSON(): Promise<string> {
+
     return new Promise(async (resolve, reject) => {
       let type = "image";
+      let ipfsJSON:any = null;
       let thumbnail = this.imageObj['thumbnail'];
-      let ipfsJSON = null;
       if(this.assetType === "avatar"){
          type = "avatar";
          thumbnail = this.imageObj['imgHash'];
       }
-      if(this.assetType === "feeds-video"){
-         ipfsJSON = {
-          version: '2',
-          type:"feeds-video",
-          name: this.nftName,
-          description: this.nftDescription,
-          video:this.videoObj,
-          adult: this.adult
-        };
+      if(this.assetType === "video"){
+         type = "video";
+        //  ipfsJSON = {
+        //   version: '2',
+        //   type:type,
+        //   name: this.nftName,
+        //   description: this.nftDescription,
+        //   video:this.videoObj,
+        //   adult: this.adult
+        // };
+        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
        }else{
-        ipfsJSON = {
-          version: '1',
-          type: type,
-          name: this.nftName,
-          description: this.nftDescription,
-          image: this.imageObj['imgHash'],
-          kind: this.imageObj['imgFormat'],
-          size: this.imageObj['imgSize'],
-          thumbnail: thumbnail,
-          adult: this.adult
-        };
-      }
+        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
+       }
 
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
@@ -409,9 +395,9 @@ export class MintnftPage implements OnInit {
   }
 
   removeImg() {
-    if(this.assetType === "feeds-video"){
+    if(this.assetType === "video"){
       this.accept = "video/*";
-      let source: any = document.getElementById('sourcemintnft') || '';
+      let source: any = document.getElementById(this.videoIdObj.sourceId) || '';
       if(source!=""){
         let videoUri = source.getAttribute('src') || '';
         if(videoUri!=""){
@@ -624,8 +610,9 @@ export class MintnftPage implements OnInit {
     orderIndex: number,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      if(this.assetType === "feeds-video"){
+      if(this.assetType === "video"){
         console.log("tokenId",tokenId);
+        this.handleCace('onSale', tokenId, orderIndex);
         resolve(SUCCESS);
         return;
       }
@@ -845,39 +832,42 @@ export class MintnftPage implements OnInit {
     let tokenInfo = await this.nftContractControllerService
     .getSticker()
     .tokenInfo(tokenId);
+    const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);;
     tokenId = tokenInfo[0];
-    let createTime = tokenInfo[7];
-    let creator = tokenInfo[4];//原作者
-    let royalties = UtilService.accMul(this.nftRoyalties,10000);
+    // let createTime = tokenInfo[7];
+    // let creator = tokenInfo[4];//原作者
+    // let royalties = UtilService.accMul(this.nftRoyalties,10000);
     let accAddress =
     this.nftContractControllerService.getAccountAddress() || '';
 
     let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
-    let imageType = "image";
-    if(this.assetType === "avatar"){
-       imageType = "avatar";
-    }
+    // let imageType = "image";
+    // if(this.assetType === "avatar"){
+    //    imageType = "avatar";
+    // }
     let item:any = {};
     switch (type) {
       case 'created':
-        item = {
-          creator: creator,//原创者
-          tokenId: tokenId,
-          asset: this.imageObj['imgHash'],
-          name: this.nftName,
-          description: this.nftDescription,
-          fixedAmount: null,
-          kind: this.imageObj['imgFormat'],
-          type: imageType,
-          royalties: royalties,
-          quantity: this.nftQuantity,
-          curQuantity: this.nftQuantity,
-          thumbnail: this.imageObj['thumbnail'],
-          createTime: createTime * 1000,
-          moreMenuType: 'created',
-          sellerAddr: accAddress,//所有者
-          adult: this.adult
-        };
+        // item = {
+        //   creator: creator,//原创者
+        //   tokenId: tokenId,
+        //   asset: this.imageObj['imgHash'],
+        //   name: this.nftName,
+        //   description: this.nftDescription,
+        //   fixedAmount: null,
+        //   kind: this.imageObj['imgFormat'],
+        //   type: imageType,
+        //   royalties: royalties,
+        //   quantity: this.nftQuantity,
+        //   curQuantity: this.nftQuantity,
+        //   thumbnail: this.imageObj['thumbnail'],
+        //   createTime: createTime * 1000,
+        //   moreMenuType: 'created',
+        //   sellerAddr: accAddress,//所有者
+        //   adult: this.adult
+        // };
+        item = this.nftContractHelperService.creteItemFormTokenId(tokenInfo, tokenJson, 'created');
+        console.log("====item====",item);
         slist.push(item);
         break;
       case 'onSale':
@@ -960,7 +950,7 @@ export class MintnftPage implements OnInit {
  handleMintEvent(event:any){
     event.target.value = null;
     document.getElementById("mintfile").onchange = async (event)=>{
-      if(this.assetType === "feeds-video"){
+      if(this.assetType === "video"){
         await this.handleFeedsVideo(event);
            return;
       }else{
@@ -1070,55 +1060,61 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  setOverPlay(file:any,type:string) {
-    let vgoverlayplay: any =
-      document.getElementById(this.videoIdObj.vgoverlayplayId) || '';
-    if (vgoverlayplay != '') {
-      vgoverlayplay.onclick = () => {
-        this.zone.run(() => {
-          let source: any = document.getElementById(this.videoIdObj.sourceId) || '';
-          let sourceSrc = source.getAttribute('src') || '';
-          if (sourceSrc === '') {
-            this.loadVideo(file,type);
-          }
-        });
-      };
-    }
+  getTokenJsonV1(type :string,thumbnail: string){
+    let tokenJsonV1: FeedsData.TokenJsonV1 = {
+      description: '',
+      image: '',
+      kind: '',
+      name: '',
+      size: '',
+      thumbnail: '',
+      type: '',
+      version: '',
+      adult: false
+    };
+        tokenJsonV1.version = "1";
+        tokenJsonV1.type = type;
+        tokenJsonV1.name = this.nftName;
+        tokenJsonV1.description = this.nftDescription;
+        tokenJsonV1.image = this.imageObj['imgHash'];
+        tokenJsonV1.kind = this.imageObj['imgFormat'];
+        tokenJsonV1.size = this.imageObj['imgSize'];
+        tokenJsonV1.thumbnail = thumbnail;
+        tokenJsonV1.adult = this.adult;
+      return tokenJsonV1;
   }
 
-  loadVideo(file: any,type: string) {
-    let video: any = document.getElementById(this.videoIdObj.videoId) || '';
-    let source: any = document.getElementById(this.videoIdObj.sourceId) || '';
-    source.setAttribute('src',file);
-    source.setAttribute('type',type);
-    let vgbuffering: any = document.getElementById(this.videoIdObj.vgbufferingId);
-    let vgoverlayplay: any = document.getElementById(this.videoIdObj.vgoverlayplayId);
-    let vgcontrol: any = document.getElementById(this.videoIdObj.vgcontrolsId);
+  getTokenJsonV2(type :string,thumbnail: string){
 
-    video.addEventListener('loadeddata', function() {
-    });
+    let tokenJsonV2: FeedsData.TokenJsonV2 = {
+      version: '',
+      name: '',
+      description: '',
+      type: '',
+      data:null,
+      adult: false
+    };
+        tokenJsonV2.version = "2";
+        tokenJsonV2.type = type;
+        tokenJsonV2.name = this.nftName;
+        tokenJsonV2.description = this.nftDescription;
+        tokenJsonV2.adult = this.adult;
+        switch(type){
+          case "image":
+          case "avatar":
+            let mintJsonData = {
+              image: this.imageObj['imgHash'],
+              kind: this.imageObj['imgFormat'],
+              size: this.imageObj['imgSize'],
+              thumbnail:thumbnail
+            }
+            tokenJsonV2.data = mintJsonData;
+            break;
+          case "video":
+            tokenJsonV2.data = this.videoObj;
+            break;
+        }
 
-    video.addEventListener('ended', () => {
-      vgoverlayplay.style.display = 'block';
-      vgbuffering.style.display = 'none';
-      vgcontrol.style.display = 'none';
-    });
-
-    video.addEventListener('pause', () => {
-      vgoverlayplay.style.display = 'block';
-      vgbuffering.style.display = 'none';
-      vgcontrol.style.display = 'none';
-    });
-
-    video.addEventListener('play', () => {
-      vgcontrol.style.display = 'block';
-    });
-
-    video.addEventListener('canplay', () => {
-      vgbuffering.style.display = 'none';
-      video.play();
-    });
-
-    video.load();
+      return tokenJsonV2;
   }
 }

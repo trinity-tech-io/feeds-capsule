@@ -22,7 +22,7 @@
             <ion-col size="4" style="padding:0px;left:20px;">
               <ion-item lines="none" style="border:none;margin:0px;">
               <span class="leftionradiodes">{{ 'MintnftPage.video' | translate }}</span>
-              <ion-radio slot="end" value="feeds-video" mode="md"></ion-radio>
+              <ion-radio slot="end" value="video" mode="md"></ion-radio>
              </ion-item>
             </ion-col>
           </ion-row>
@@ -36,8 +36,8 @@
         <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes1' | translate }}</div>
         <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes2' | translate }}</div>
         <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes3' | translate }}</div>
-        <div class="fileTypeDes" *ngIf="assetType==='feeds-video'">{{ 'MintnftPage.fileTypeDes4' | translate }} mp4,quicktime</div>
-        <div class="fileTypeDes" *ngIf="assetType==='feeds-video'">{{ 'MintnftPage.fileTypeDes5' | translate }} </div>
+        <div class="fileTypeDes" *ngIf="assetType==='video'">{{ 'MintnftPage.fileTypeDes4' | translate }} mp4,quicktime</div>
+        <div class="fileTypeDes" *ngIf="assetType==='video'">{{ 'MintnftPage.fileTypeDes5' | translate }} </div>
         <div class="rectangle1" *ngIf="thumbnail===''">
           <div class="rectangle2" style="position:relative;">
             <ion-input type="file" id="mintfile" (click)="handleMintEvent($event)"  [accept]="accept"
@@ -56,7 +56,7 @@
          border-radius:10px;
          margin-top:10px;object-fit:contain;" [src]="handleImg()">
 
-          <div *ngIf="assetType==='feeds-video'" style="border:none;position:relative;margin: 0 auto;margin-top: 5px;">
+          <div *ngIf="assetType==='video'" style="border:none;position:relative;margin: 0 auto;margin-top: 5px;">
               <app-videostyle
               [videoIdObj] = "videoIdObj"
               >

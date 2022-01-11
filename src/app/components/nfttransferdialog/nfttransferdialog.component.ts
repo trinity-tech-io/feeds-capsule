@@ -49,20 +49,23 @@ export class NfttransferdialogComponent implements OnInit {
 
   async hanldeImg(assItem:any) {
     let newAssItem  =  _.cloneDeep(assItem);
-    let imgUri = newAssItem['thumbnail'] || "";
-    let kind = newAssItem["kind"];
-    let type = newAssItem['type'] || "";
-    let size = newAssItem["originAssetSize"];
-    if(type === "feeds-video"){
-      let videoInfo: FeedsData.FeedsVideo = newAssItem['video'] || null;
-      if(videoInfo!=null){
-        imgUri = videoInfo.thumbnail;
-        kind = videoInfo.kind;
-        size = videoInfo.size;
+    let imgUri = "";
+    let kind = "";
+    let version = newAssItem['version'] || "1";
+    let size = "";
+    if(version === "1"){
+      imgUri = newAssItem['thumbnail'] || "";
+      kind = newAssItem["kind"];
+      size = newAssItem["originAssetSize"];
+    }else if(version === "2"){
+      let jsonData  = newAssItem['data'] || "";
+      if(jsonData != ""){
+        imgUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
       }else{
         imgUri = "";
       }
-
     }
     if(imgUri === ""){
       this.imgUri = "";
