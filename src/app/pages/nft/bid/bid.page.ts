@@ -93,6 +93,8 @@ export class BidPage implements OnInit {
     vgfullscreeId: ''
   };
   public thumbnail: string = "";
+  public kind: string = "";
+  public isAudioLoading: boolean = false;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -121,7 +123,6 @@ export class BidPage implements OnInit {
       const pasarItem: FeedsData.NFTItem = this.dataHelper.getBidPageAssetItem();
       this.curAssetItem = _.cloneDeep(pasarItem);
 
-      let asset = queryParams.asset || '';
       this.imageType = queryParams.type || '';
       this.showType = queryParams.showType;
       this.seller = queryParams.sellerAddr || '';
@@ -164,6 +165,17 @@ export class BidPage implements OnInit {
         if(this.imageType === "video"){
           this.videoService.intVideoAllId(TAG);
           this.videoIdObj = this.videoService.getVideoAllId();
+        }else if(this.imageType === "audio"){
+          let ipfsUrl = this.ipfsService.getNFTGetUrl();
+          let audioInfo: FeedsData.FeedsAudio = this.curAssetItem.data || null;
+          if(audioInfo === null){
+            this.thumbnail = "";
+            return;
+          }
+          this.kind = audioInfo.kind;
+          let audioUri = audioInfo.audio;
+             audioUri = audioUri.replace('feeds:audio:', '');
+          this.assetUri = ipfsUrl + audioUri;
         }else{
           let version = queryParams.version || "1";
           this.assetUri = this.handleImg(queryParams,version);
@@ -176,6 +188,15 @@ export class BidPage implements OnInit {
   }
 
  ionViewWillEnter() {
+    let audio = document.getElementById("bid-audio") || null;
+    if(audio != null ){
+      this.isAudioLoading = true;
+      audio.addEventListener("loadeddata",()=>{
+         audio.style.display = "block";
+         this.isAudioLoading = false;
+      });
+      audio.style.display = "none";
+    }
     this.NftDidList= this.dataHelper.getNftDidList() || {};
     this.handleNftDid();
     this.accAddress =
@@ -634,5 +655,4 @@ export class BidPage implements OnInit {
     .catch(() => {});
    }
   }
-
 }

@@ -322,6 +322,8 @@ export class NftdialogComponent implements OnInit {
         if(item.type === "video"){
           await this.getSetChannel(tokenId);
           resolve(item);
+        }else if(item.type === "audio"){
+          resolve(item);
         }else{
           await this.getSetChannel(tokenId);
           resolve(item);

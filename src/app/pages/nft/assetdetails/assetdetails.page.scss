@@ -94,6 +94,19 @@
   }
 }
 .container {
+  .loading{
+    display: flex;
+    justify-content: center;
+    padding: 0px;
+    img{
+       width: 24px;
+       height: 24px;
+    }
+
+    p{
+        margin: 5px 0px;
+    }
+ }
   .nftusercircle{
     vertical-align: middle;
     margin-right: 5px;
