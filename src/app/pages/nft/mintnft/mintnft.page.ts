@@ -88,6 +88,14 @@ export class MintnftPage implements OnInit {
     width: '',
     height: ''
   };
+
+  private audioObj:FeedsData.FeedsAudio = {
+    kind: '',
+    audio: '',
+    size: '',
+    thumbnail: '',
+    duration: '',
+  };
   private maxVideoDuration:number = 60*60*1000;
   constructor(
     private translate: TranslateService,
@@ -305,6 +313,9 @@ export class MintnftPage implements OnInit {
           if(this.assetType === "video"){
               this.videoObj.size = result['Size'];
               this.videoObj.video = 'feeds:video:' + hash;
+          }else if(this.assetType === "audio"){
+               this.audioObj.size = result["size"];
+               this.audioObj.audio = 'feeds:audio:' + hash;
           }else{
             this.imageObj['imgSize'] = result['Size'];
             this.imageObj['imgHash'] = 'feeds:image:' + hash;
@@ -358,16 +369,13 @@ export class MintnftPage implements OnInit {
          type = "avatar";
          thumbnail = this.imageObj['imgHash'];
       }
+      if(this.assetType === "audio"){
+        type = "audio";
+        thumbnail = "";
+        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
+      }
       if(this.assetType === "video"){
          type = "video";
-        //  ipfsJSON = {
-        //   version: '2',
-        //   type:type,
-        //   name: this.nftName,
-        //   description: this.nftDescription,
-        //   video:this.videoObj,
-        //   adult: this.adult
-        // };
         ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
        }else{
         ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
@@ -612,6 +620,11 @@ export class MintnftPage implements OnInit {
     orderIndex: number,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
+      if(this.assetType === "audio"){
+        this.handleCace('onSale', tokenId, orderIndex);
+        resolve(SUCCESS);
+        return;
+      }
       if(this.assetType === "video"){
         this.handleCace('onSale', tokenId, orderIndex);
         await this.getSetChannel(tokenId,orderIndex);
@@ -734,28 +747,36 @@ export class MintnftPage implements OnInit {
 
   uploadData(): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      // let pathObj = this.handlePath(this.imagePath);
-      // let fileName = pathObj['fileName'];
-      // let filePath = pathObj['filepath']
-      // let file = null;
+
       let tokenId = "";
-      // this.getFlieObj(fileName, filePath).then((fileBase64) => {
-      //   file = fileBase64;
-      //   return this.sendIpfsImage(file);
-      // })
 
       if (this.realFile == null)
         console.log("Not select image");
-      this.sendIpfsImage(this.realFile).then((cid) => {
-        tokenId = cid;
-        return this.sendIpfsThumbnail(this.thumbnail);
-      }).then(() => {
-        return this.sendIpfsJSON();
-      }).then((jsonHash) => {
-        resolve({ tokenId: tokenId, jsonHash: jsonHash });
-      }).catch((error) => {
-        reject('upload file error');
-      });
+
+      if(this.assetType === "audio"){
+        this.sendIpfsImage(this.realFile).then((cid) => {
+          tokenId = cid;
+        }).then(() => {
+          return this.sendIpfsJSON();
+        }).then((jsonHash) => {
+          resolve({ tokenId: tokenId, jsonHash: jsonHash });
+        }).catch((error) => {
+          reject('upload file error');
+        });
+      }else{
+        this.sendIpfsImage(this.realFile).then((cid) => {
+          tokenId = cid;
+          return this.sendIpfsThumbnail(this.thumbnail);
+        }).then(() => {
+          return this.sendIpfsJSON();
+        }).then((jsonHash) => {
+          resolve({ tokenId: tokenId, jsonHash: jsonHash });
+        }).catch((error) => {
+          reject('upload file error');
+        });
+      }
+
+
     });
   }
 
@@ -954,6 +975,10 @@ export class MintnftPage implements OnInit {
       if(this.assetType === "video"){
         await this.handleFeedsVideo(event);
            return;
+      }
+      if(this.assetType === "audio"){
+        await this.handleFeedsAudio(event);
+        return;
       }else{
         this.onChange(event);
       }
@@ -994,6 +1019,41 @@ export class MintnftPage implements OnInit {
         //   clearTimeout(sid);
         // },0);
         this.videoService.getVideoPoster(this.thumbnail,this.videoObj.kind,result);
+      } catch (error) {
+        this.native.hideLoading();
+        Logger.error('Get image thumbnail error', error);
+      }
+  }
+  }
+
+  async handleFeedsAudio(event: any) {
+    Logger.log(TAG, 'audio change', event);
+    this.realFile = event.target.files[0];
+
+    Logger.log("Real File is", event.target.files[0]);
+    await this.native.showLoading("common.waitMoment");
+    this.audioObj.kind = this.realFile.type;
+    const reader = new FileReader();
+    reader.readAsDataURL(this.realFile);
+
+    reader.onload = async event => {
+      try {
+        let result =  event.target.result.toString();
+        let videoInfo:any = await this.getAudioInfo(result);
+        if(videoInfo === null){
+            this.native.hideLoading();
+            return;
+        }
+        this.audioObj.duration = videoInfo.duration;
+        this.thumbnail = "11111";
+        let sid = setTimeout(()=>{
+          let audio: any = document.getElementById("mintnft-audio") || '';
+          audio.setAttribute('type',this.audioObj.kind);
+          audio.setAttribute('src',result);
+          console.log("this.audioObj",this.audioObj)
+          this.native.hideLoading();
+          clearTimeout(sid);
+        },0);
       } catch (error) {
         this.native.hideLoading();
         Logger.error('Get image thumbnail error', error);
@@ -1046,6 +1106,34 @@ export class MintnftPage implements OnInit {
     });
 
   }
+
+  getAudioInfo(file: any) {
+    return new Promise((resolve, reject) => {
+      try{
+          let audio = document.createElement('audio');
+          audio.src = file;
+          let that = this;
+          audio.addEventListener('loadeddata', function() {
+            let audioDuration = UtilService.accMul(this.duration,1000);
+            let videoDuration = UtilService.accMul(this.duration,1000);
+            if(videoDuration > that.maxVideoDuration){
+                that.native.toastWarn("MintnftPage.fileTypeDes5");
+                reject(null);
+                return;
+            }
+            resolve({"duration":audioDuration});
+          })
+          audio.load();
+          audio = null;
+      }catch(err){
+        reject(null);
+      }
+
+    });
+
+  }
+
+
 
 
   async getDidUri(){
@@ -1110,6 +1198,8 @@ export class MintnftPage implements OnInit {
             break;
           case "video":
             tokenJsonV2.data = this.videoObj;
+          case "audio":
+            tokenJsonV2.data = this.audioObj;
             break;
         }
 
