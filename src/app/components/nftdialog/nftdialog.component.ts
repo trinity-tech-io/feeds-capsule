@@ -320,6 +320,7 @@ export class NftdialogComponent implements OnInit {
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, obj);
         this.orderId = item.saleOrderId;
         if(item.type === "video"){
+          await this.getSetChannel(tokenId);
           resolve(item);
         }else{
           await this.getSetChannel(tokenId);

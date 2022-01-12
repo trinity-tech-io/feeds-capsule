@@ -72,7 +72,6 @@ export class SigninPage implements OnInit {
     connectivity.setActiveConnector(null).then(() => {
       this.doSignin();
     }).catch((err)=>{
-       console.log("=====err=====",err);
     });
   }
 
