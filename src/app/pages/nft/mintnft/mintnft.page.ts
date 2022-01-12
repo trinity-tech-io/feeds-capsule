@@ -404,6 +404,8 @@ export class MintnftPage implements OnInit {
           source.setAttribute('src',"");
         }
       }
+   }else if(this.assetType === "audio"){
+    this.accept = "audio/mpeg, audio/ogg,audio/wav";
    }else{
      this.accept = "image/png, image/jpeg, image/jpg, image/gif";
    }

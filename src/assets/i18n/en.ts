@@ -694,7 +694,9 @@ export const en = {
     adult: 'Explicit & Sensitive Content',
     video: 'video',
     fileTypeDes4:'File types supported:',
-    fileTypeDes5: 'The playback length of this video exceeds the limit of 60 minutes'
+    fileTypeDes5: 'The playback length of this video exceeds the limit of 60 minutes',
+    audio: 'audio',
+    fileTypeDes6:'File types supported:',
   },
   AssetdetailsPage: {
     title: 'Collectible Details',
