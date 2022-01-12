@@ -946,7 +946,7 @@ export class NFTContractHelperService {
     size = tokenJson.size || "";
     adult = tokenJson.adult;
     let videoJson: any;
-    if(version === "2" || type === "video"){
+    if(version === "2" || type === "video" || type === "audio"){
       version = "2";
       videoJson = tokenJson.data || "";
     }
@@ -1154,7 +1154,7 @@ export class NFTContractHelperService {
     let version = assistPasarItem.version || "1";
     let type = assistPasarItem.type || "";
     let videoJson:any;
-    if(version === "2" || type === "video"){
+    if(version === "2" || type === "video" || type === "audio"){
       version = "2";
       videoJson = assistPasarItem.data || "";
     }
@@ -1468,7 +1468,7 @@ export class NFTContractHelperService {
     let version = item.version || "1";
     let type = item.type || "";
     let jsonData: any;
-    if(version === "2" || type === "video"){
+    if(version === "2" || type === "video" || type === "audio"){
       version = "2";
       jsonData = item.data || "";
     }

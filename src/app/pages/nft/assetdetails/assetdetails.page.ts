@@ -91,6 +91,9 @@ export class AssetdetailsPage implements OnInit {
     vgfullscreeId: ''
   };
   public thumbnail: string = "";
+  public kind: string = "";
+  public isAudioLoading: boolean = false;
+
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -112,6 +115,7 @@ export class AssetdetailsPage implements OnInit {
   ngOnInit() {
     //this.activatedRoute.queryParams.subscribe(queryParams => {
      let queryParams = this.dataHelper.getAssetPageAssetItem();
+      console.log("queryParams",queryParams);
       this.assItem = _.cloneDeep(queryParams);
       let signInData = this.feedService.getSignInData() || null;
       let did = signInData['did'] || null;
@@ -135,6 +139,18 @@ export class AssetdetailsPage implements OnInit {
         if(this.imageType === "video"){
           this.videoService.intVideoAllId(TAG);
           this.videoIdObj = this.videoService.getVideoAllId();
+        }else if(this.imageType === "audio"){
+          let ipfsUrl = this.ipfsService.getNFTGetUrl();
+          let audioInfo: FeedsData.FeedsAudio = this.assItem.data || null;
+          if(audioInfo === null){
+            this.thumbnail = "";
+            return;
+          }
+
+          this.kind = audioInfo.kind;
+          let audioUri = audioInfo.audio;
+             audioUri = audioUri.replace('feeds:audio:', '');
+          this.assetUri = ipfsUrl + audioUri;
         }else{
           let version = queryParams.version || "1";
           this.assetUri = this.handleImg(queryParams,version);
@@ -169,6 +185,15 @@ export class AssetdetailsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    let audio = document.getElementById("assetdetails-audio") || null;
+    if(audio != null ){
+      this.isAudioLoading = true;
+      audio.addEventListener("loadeddata",()=>{
+         audio.style.display = "block";
+         this.isAudioLoading = false;
+      });
+      audio.style.display = "none";
+    }
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTile();
     this.changeType(this.selectType);
