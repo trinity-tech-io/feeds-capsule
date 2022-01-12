@@ -572,3 +572,8 @@ ion-input {
    }
 }
 
+// 这个方式兼容所有版本的谷歌浏览器
+audio::-webkit-media-controls {
+  overflow: hidden !important
+}
+

@@ -2283,7 +2283,6 @@ export class HomePage implements OnInit {
       //homebidAvatar
     let nftOrderId = post.content.nftOrderId || '';
     if (nftOrderId != '') {
-      console.log("post",post);
       this.nftImageType[nftOrderId] = post.content.nftImageType || '';
       return nftOrderId;
     }

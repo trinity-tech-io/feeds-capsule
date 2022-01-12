@@ -840,4 +840,12 @@ declare namespace FeedsData {
     width: string,
     height:string,
   }
+
+  type FeedsAudio = {
+    kind: string,
+    audio: string,
+    size: string,
+    thumbnail: string,
+    duration: string,
+  }
 }
