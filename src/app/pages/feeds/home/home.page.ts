@@ -156,7 +156,7 @@ export class HomePage implements OnInit {
   public isShowSearchField: boolean = false;
   public pasarsearchPlaceholder: string = "HomePage.search";
   // private searchBeforePasar: any = [];
-  private nftImageType:string = "";
+  private nftImageType:any = {};
   private pasarGridisLoadimage: any = {};
   private pasarListisLoadimage: any = {};
   public isAutoGet: string = 'unAuto';
@@ -1336,6 +1336,7 @@ export class HomePage implements OnInit {
           );
           let priceDes = '';
           let nftQuantity = '';
+          let nftType = "";
           if (nftOrdeId != '') {
             // let nftOrder = await this.handlePrice(nftOrdeId);
             let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
@@ -1421,12 +1422,17 @@ export class HomePage implements OnInit {
                 postImage.setAttribute('src', realImage);
                 if (nftOrdeId != '' && priceDes != '') {
                   let imagesWidth = postImage.clientWidth;
-                  if(this.nftImageType === "avatar"){
+                  if(this.nftImageType[nftOrdeId] === "avatar"){
 
                     let homebidAvatar = document.getElementById(
                       id + 'homebidAvatar'
                     );
                     homebidAvatar.style.display = 'block';
+                  }else if(this.nftImageType[nftOrdeId] === "video"){
+                    let homebidVideo = document.getElementById(
+                      id + 'homebidVideo'
+                    );
+                    homebidVideo.style.display = 'block';
                   }
                   let homebidfeedslogo = document.getElementById(
                     id + 'homebidfeedslogo'
@@ -1452,6 +1458,7 @@ export class HomePage implements OnInit {
 
                 rpostimg.style.display = 'block';
               } else {
+
                 this.feedService.getData(thumbkey).then((thumbImagedata) => {
                   let thumbImage = thumbImagedata || "";
                   if (thumbImage != '') {
@@ -1459,6 +1466,18 @@ export class HomePage implements OnInit {
                     postImage.setAttribute('src', thumbImagedata);
                     if (nftOrdeId != '' && priceDes != '') {
                       let imagesWidth = postImage.clientWidth;
+                      if(this.nftImageType[nftOrdeId] === "avatar"){
+
+                        let homebidAvatar = document.getElementById(
+                          id + 'homebidAvatar'
+                        );
+                        homebidAvatar.style.display = 'block';
+                      }else if(this.nftImageType[nftOrdeId] === "video"){
+                        let homebidVideo = document.getElementById(
+                          id + 'homebidVideo'
+                        );
+                        homebidVideo.style.display = 'block';
+                      }
                       let homebidfeedslogo = document.getElementById(
                         id + 'homebidfeedslogo'
                       );
@@ -2264,7 +2283,8 @@ export class HomePage implements OnInit {
       //homebidAvatar
     let nftOrderId = post.content.nftOrderId || '';
     if (nftOrderId != '') {
-      this.nftImageType = post.content.nftImageType || '';
+      console.log("post",post);
+      this.nftImageType[nftOrderId] = post.content.nftImageType || '';
       return nftOrderId;
     }
     return '';

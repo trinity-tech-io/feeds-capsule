@@ -595,7 +595,6 @@ export class NFTContractHelperService {
         //tokenUri: feeds:json:xxx
         const uri = this.parseTokenUri(tokenUri);
         let tokenJson = await this.fileHelperService.getTokenJsonData(uri);
-        console.log("====tokenJsonUri===",tokenJson);
         if (!tokenJson) {
           tokenJson = await this.getTokenJsonFromIpfs(uri);
         }

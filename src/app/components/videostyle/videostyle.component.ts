@@ -19,7 +19,6 @@ export class VideostyleComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("===1111this.videoIdObj==",this.videoIdObj);
   }
 
 }

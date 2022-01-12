@@ -66,7 +66,7 @@ export class MintnftPage implements OnInit {
   public loadingMaxNumber:string = "";
   private realFile: any = null;
   public  maxAvatarSize:number = 5 * 1024 * 1024;
-  public  assetType:string = "general";
+  public  assetType:string = "image";
   public  adult:boolean = false;
   public videoIdObj: videoId = {
     videoId: '',
@@ -611,8 +611,8 @@ export class MintnftPage implements OnInit {
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       if(this.assetType === "video"){
-        console.log("tokenId",tokenId);
         this.handleCace('onSale', tokenId, orderIndex);
+        await this.getSetChannel(tokenId,orderIndex);
         resolve(SUCCESS);
         return;
       }
@@ -867,7 +867,6 @@ export class MintnftPage implements OnInit {
         //   adult: this.adult
         // };
         item = this.nftContractHelperService.creteItemFormTokenId(tokenInfo, tokenJson, 'created');
-        console.log("====item====",item);
         slist.push(item);
         break;
       case 'onSale':
@@ -983,8 +982,6 @@ export class MintnftPage implements OnInit {
         this.videoService.intVideoAllId(TAG);
         this.videoIdObj = this.videoService.getVideoAllId();
         this.thumbnail = videoInfo.url;
-        console.log("====result===",result.substring(0,100));
-        console.log("===this.videoIdObj==",this.videoIdObj);
         // this.videoService.getVideoPoster(this.thumbnail,result,this.videoObj.kind);
         // let sid = setTimeout(()=>{
         //   let video: any = document.getElementById(this.videoIdObj.videoId) || '';
@@ -1008,7 +1005,6 @@ export class MintnftPage implements OnInit {
         //if (file && file.type.indexOf('video/') == 0) {
           let video = document.createElement('video');
           video.src = file;
-          console.log("=====file====",file.substring(0,100));
           video.addEventListener('loadeddata', function() {
             this.currentTime = 1;
           })
