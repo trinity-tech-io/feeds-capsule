@@ -695,6 +695,8 @@ export const zh = {
     video: '视频',
     fileTypeDes4:'支持视频格式 -',
     fileTypeDes5: '您的视频文件播放长度超出当前限制 (60分钟）',
+    audio: '音频',
+    fileTypeDes6:'支持音频格式 -',
   },
   AssetdetailsPage: {
     title: '收藏品明细',
