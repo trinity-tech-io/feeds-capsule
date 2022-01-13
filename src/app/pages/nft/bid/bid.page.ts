@@ -178,7 +178,7 @@ export class BidPage implements OnInit {
           this.assetUri = ipfsUrl + audioUri;
         }else{
           let version = queryParams.version || "1";
-          this.assetUri = this.handleImg(queryParams,version);
+          this.assetUri = this.handleImg(this.curAssetItem,version);
         }
       this.fixedPrice = queryParams.fixedAmount || null;
       this.royalties = queryParams.royalties || null;
