@@ -132,6 +132,7 @@ export class NfttransferdialogComponent implements OnInit {
      this.dataHelper.setOpenBarcodeScanner(true);
     let scannedContent = (await this.intentService.scanQRCode()) || '';
     if(scannedContent === ''){
+      this.walletAddress = "";
       return;
     }
     if (scannedContent.indexOf('ethereum:') > -1) {
