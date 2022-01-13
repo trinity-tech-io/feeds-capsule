@@ -41,7 +41,7 @@
       <ion-item lines="none" style="border:none;">
          <ion-label  position="stacked">{{ 'MintnftPage.nftAsset' | translate }}
         </ion-label>
-        <div class="fileTypeDes" *ngIf="assetType==='images' || assetType==='avatar'">{{ 'MintnftPage.fileTypeDes' | translate }} PNG,JPEG,JPG,GIF</div>
+        <div class="fileTypeDes" *ngIf="assetType==='image' || assetType==='avatar'">{{ 'MintnftPage.fileTypeDes' | translate }} PNG,JPEG,JPG,GIF</div>
         <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes1' | translate }}</div>
         <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes2' | translate }}</div>
         <div class="fileTypeDes" *ngIf="assetType==='avatar'">{{ 'MintnftPage.fileTypeDes3' | translate }}</div>
@@ -60,7 +60,7 @@
         <div  *ngIf="thumbnail!=''" style="border:none;position:relative;margin: 0 auto;">
          <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()" [ngClass]="{'remove1':assetType==='audio'}"/>
          <img
-         *ngIf="assetType==='avatar' || assetType==='images'"
+         *ngIf="assetType==='avatar' || assetType==='image'"
          style="width:auto;
          max-height:200px;
          border-radius:10px;
