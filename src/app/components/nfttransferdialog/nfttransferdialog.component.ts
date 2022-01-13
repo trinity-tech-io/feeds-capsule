@@ -9,6 +9,7 @@ import { Events } from '../../services/events.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { Config } from 'src/app/services/config';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-nfttransferdialog',
@@ -35,6 +36,7 @@ export class NfttransferdialogComponent implements OnInit {
     private events: Events,
     private nftContractControllerService: NFTContractControllerService,
     private popupProvider: PopupProvider,
+    private dataHelper: DataHelper,
     public theme:ThemeService,
   ) { }
 
@@ -127,14 +129,19 @@ export class NfttransferdialogComponent implements OnInit {
   }
 
  async scanWalletAddress(){
+     this.dataHelper.setOpenBarcodeScanner(true);
     let scannedContent = (await this.intentService.scanQRCode()) || '';
-    if (scannedContent != '' && scannedContent.indexOf('ethereum:') > -1) {
-      this.walletAddress  = scannedContent.replace('ethereum:', '');
-    }else if (scannedContent != '' && scannedContent.indexOf('elastos:') > -1) {
-      this.walletAddress  = scannedContent.replace('elastos:', '');
+    if(scannedContent === ''){
+      return;
     }
-    else {
-      this.walletAddress = scannedContent;
+    if (scannedContent.indexOf('ethereum:') > -1) {
+      this.walletAddress  = scannedContent.replace('ethereum:', '');
+      this.dataHelper.setOpenBarcodeScanner(false);
+    }else if (scannedContent.indexOf('elastos:') > -1) {
+      this.walletAddress  = scannedContent.replace('elastos:', '');
+      this.dataHelper.setOpenBarcodeScanner(false);
+    }else{
+      this.walletAddress  = scannedContent;
     }
   }
 
