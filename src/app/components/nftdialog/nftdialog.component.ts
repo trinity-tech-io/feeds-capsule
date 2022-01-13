@@ -38,7 +38,7 @@ export class NftdialogComponent implements OnInit {
   private orderId: any = '';
   public imgUri: string = "";
   private popoverDialog: any;
-  private assetType: string = "";
+  public assetType: string = "";
   private didUri: string = null;
   private maxSize: number = 5 * 1024 * 1024;
 
@@ -473,34 +473,88 @@ export class NftdialogComponent implements OnInit {
     }
   }
 
+  // async hanldeImg() {
+  //   let imgUri = "";
+  //   let version = this.assItem['version'] || "1";
+  //   let kind = "";
+  //   let size = "";
+  //   if (version === "1") {
+  //     imgUri = this.assItem['thumbnail'] || "";
+  //     kind = this.assItem["kind"];
+  //     size = this.assItem["originAssetSize"];
+  //   } else if (version === "2") {
+  //     let type = this.assItem['type'] || "";
+  //     if(type === "feeds-channel"){
+  //       imgUri = this.assItem['avatar']["image"] || null;
+  //       if(imgUri === null){
+  //         this.imgUri = "";
+  //       }
+
+  //       return;
+  //     }
+  //     let jsonData = this.assItem['data'] || "";
+  //     if (jsonData != "") {
+  //       imgUri = jsonData['thumbnail'] || "";
+  //       kind = jsonData["kind"];
+  //       size = jsonData["size"];
+  //     } else {
+  //        imgUri = "";
+  //     }
+  //   }
+  //   if (imgUri === "") {
+  //     this.imgUri = "";
+  //     return;
+  //   }
+  //   if (!size)
+  //     size = '0';
+  //   if (kind === "gif" && parseInt(size) <= this.maxSize) {
+  //     this.imgUri = this.assItem['asset'];
+  //   }
+  // }
   async hanldeImg() {
     let imgUri = "";
     let version = this.assItem['version'] || "1";
     let kind = "";
     let size = "";
-    if (version === "1") {
+    let type = this.assItem['type'] || "";
+
+    if(type === "feeds-channel"){
+       imgUri = this.assItem['avatar']["image"] || "";
+       if(imgUri === ""){
+        this.imgUri = "";
+        return;
+       }
+    }else if(version === "1"){
       imgUri = this.assItem['thumbnail'] || "";
       kind = this.assItem["kind"];
       size = this.assItem["originAssetSize"];
-    } else if (version === "2") {
-      let jsonData = this.assItem['data'] || "";
-      if (jsonData != "") {
+    }else if(version === "2"){
+      let jsonData  = this.assItem['data'] || "";
+      if(jsonData != ""){
         imgUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
-      } else {
+      }else{
         imgUri = "";
       }
     }
-    if (imgUri === "") {
+    if(imgUri === ""){
       this.imgUri = "";
       return;
     }
     if (!size)
-      size = '0';
+    size = '0';
     if (kind === "gif" && parseInt(size) <= this.maxSize) {
-      imgUri = this.assItem['asset'];
+        imgUri = this.assItem['asset'];
     }
+    if (imgUri.indexOf('feeds:imgage:') > -1) {
+      imgUri = imgUri.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(imgUri.indexOf('feeds:image:') > -1){
+      imgUri = imgUri.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
+    this.imgUri = imgUri;
   }
 
   async getSetChannel(tokenId: any) {

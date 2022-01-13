@@ -356,7 +356,7 @@ export class FeedspreferencesPage implements OnInit {
 
   async newToggle(){
     let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
-    if(channelCollections != null){
+    if(channelCollections != null && this.curFeedPublicStatus ){
         let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
         if(accountAddress === '') {
         this.native.toastWarn('common.connectWallet');
@@ -364,7 +364,6 @@ export class FeedspreferencesPage implements OnInit {
         }
         this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
         return;
-
     }else{
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
       if (server === null) {
@@ -442,16 +441,13 @@ export class FeedspreferencesPage implements OnInit {
       let feedsUrlHash = UtilService.SHA256(feedsUrl);
       let tokenId: string ="0x" + feedsUrlHash;
       tokenId =  UtilService.hex2dec(tokenId);
-      console.log("=====tokenId=====",tokenId);
       let result = await this.pasarAssistService.getPanel(tokenId);
-      console.log("=====result=====",result);
       if(result != null){
        let tokenInfo = result["data"] || "";
        if(tokenInfo === ""){
            return null;
        }
        tokenInfo =  await this.handlePanels(result["data"]);
-        console.log("=====tokenInfo=====",result["data"]);
         return tokenInfo;
        }
       return null;
