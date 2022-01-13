@@ -51,17 +51,16 @@ export class AppService {
       this.router.url.indexOf('/bindservice/issuecredential') > -1
     ) {
       this.createDialog();
-    }else if(this.router.url === "/tabs/search"){
+    }else if(this.router.url === "/tabs/search" || this.router.url === "/tabs/profile" ){
             if(!openBarcodeScanner){
               navigator['app'].exitApp();
-              return
+              return;
             }
             let sid = setTimeout(()=>{
               this.dataHelper.setOpenBarcodeScanner(false);
              clearTimeout(sid);
             },10);
-    }else if (this.router.url === "/tabs/home" ||
-               this.router.url === "/tabs/profile" ||
+    }else if ( this.router.url === "/tabs/home" ||
                this.router.url === "/tabs/notification" ||
                this.router.url === "/signin" ||
                this.router.url === "/disclaimer" ) {
