@@ -1050,7 +1050,6 @@ export class MintnftPage implements OnInit {
           let audio: any = document.getElementById("mintnft-audio") || '';
           audio.setAttribute('type',this.audioObj.kind);
           audio.setAttribute('src',result);
-          console.log("this.audioObj",this.audioObj)
           this.native.hideLoading();
           clearTimeout(sid);
         },0);
@@ -1072,9 +1071,7 @@ export class MintnftPage implements OnInit {
           })
           let that = this;
           video.addEventListener('seeked', function () {
-            console.log("this.duration",this.duration);
             let videoDuration = UtilService.accMul(this.duration,1000);
-            console.log("videoDuration",videoDuration);
             if(videoDuration > that.maxVideoDuration){
                 that.native.toastWarn("MintnftPage.fileTypeDes5");
                 reject(null);
