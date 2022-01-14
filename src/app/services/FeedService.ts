@@ -7815,12 +7815,9 @@ export class FeedService {
         return;
       }
       const loadKey = userDid + "_ess_avatar"
-      console.log("essavatar loadKey === ", loadKey)
       let essavatar = await this.dataHelper.loadUserAvatar(loadKey);
-      console.log("load essavatar === ", essavatar)
 
       if (essavatar) {
-        console.log("load _ess_avatar === ", essavatar)
         resolve(essavatar)
         return
       }
