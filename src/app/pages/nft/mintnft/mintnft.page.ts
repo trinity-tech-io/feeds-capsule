@@ -97,6 +97,7 @@ export class MintnftPage implements OnInit {
     duration: '',
   };
   private maxVideoDuration:number = 60*60*1000;
+  public isOpen: boolean = false;
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -373,8 +374,7 @@ export class MintnftPage implements OnInit {
         type = "audio";
         thumbnail = "";
         ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-      }
-      if(this.assetType === "video"){
+      }else if(this.assetType === "video"){
          type = "video";
         ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
        }else{
