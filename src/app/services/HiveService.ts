@@ -171,7 +171,7 @@ export class HiveService {
       const last_post = obj["last_post"].toString()
       const avatar = obj["avatar"].toString()
       const isSubscribed = Boolean(obj["isSubscribed"])
-      const nodeChannelId = Object(obj["_id"]).$oid;
+      const nodeChannelId = this.dataHelper.getKey(nodeId, channelId, 0, 0)
       // console.log("i = " + i + " nodeChannelId = " + nodeChannelId)
       /*
       avatar: "assets/images/profile-2.svg"
