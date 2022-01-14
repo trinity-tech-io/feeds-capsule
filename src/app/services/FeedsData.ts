@@ -850,34 +850,34 @@ declare namespace FeedsData {
   }
 
   type ChannelCollections = {
-    "version": string,
-    "tokenId": string,
-    "nodeId": string,
-    "did": string,
-    "name": string,
-    "description": string,
-    "ownerName": string,
-    "ownerDid": string,
-    "curQuantity": string,
-    "avatar": GalleriaAvatar,
-    "type": string,
-    "status": string, /*0 未上架 1 已上架*/
-    "panelId": string,
-    "userAddr": string,
-    "diaBalance": string,
-    "entry": GalleriaEntry
+    version: string,
+    tokenId: string,
+    nodeId: string,
+    did: string,
+    name: string,
+    description: string,
+    ownerName: string,
+    ownerDid: string,
+    curQuantity: string,
+    avatar: GalleriaAvatar,
+    type: string,
+    status: string, /*0 未上架 1 已上架*/
+    panelId: string,
+    userAddr: string,
+    diaBalance: string,
+    entry: GalleriaEntry
   }
 
   type GalleriaAvatar = {
-    "image": string,
-    "size": number,
-    "kind": string,
-    "thumbnail": string
+    image: string,
+    size: number,
+    kind: string,
+    thumbnail: string
   }
 
   type GalleriaEntry = {
-    "url": string,
-    "location": string,
-    "version": string
+    url: string,
+    location: string,
+    version: string
   }
 }
