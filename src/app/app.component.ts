@@ -340,7 +340,7 @@ export class MyApp {
       });
   }
 
-  signout() {
+  showSignoutDialog() {
     this.popover = this.popupProvider.ionicConfirm(
       this,
       'ConfirmdialogComponent.signoutTitle',
