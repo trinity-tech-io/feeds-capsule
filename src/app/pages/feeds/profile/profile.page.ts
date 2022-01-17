@@ -1822,7 +1822,7 @@ export class ProfilePage implements OnInit {
           const myChannelId = this.curItem['channelId'];
           const myPostId = this.curItem['postId'] || 0;
           this.hideSharMenuComponent = false;
-          this.native.showLoading("common.generateSharingLink");
+          await this.native.showLoading("common.generateSharingLink");
           try {
             const sharedLink = await this.intentService.createShareLink(myNodeId, myChannelId, myPostId);
             const title = this.intentService.createShareChannelTitle(myNodeId, myChannelId) || "";
@@ -1845,7 +1845,7 @@ export class ProfilePage implements OnInit {
           }
 
           this.hideSharMenuComponent = false;
-          this.native.showLoading("common.generateSharingLink");
+          await this.native.showLoading("common.generateSharingLink");
           try {
             //share post
             const sharedLink = await this.intentService.createShareLink(nodeId, feedId, postId);

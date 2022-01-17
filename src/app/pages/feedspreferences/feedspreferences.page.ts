@@ -286,7 +286,6 @@ export class FeedspreferencesPage implements OnInit {
     let feedsUrl = server.feedsUrl + '/' + this.feedId;
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let curFeedPublicStatus = this.feedPublicStatus[feedsUrlHash] || '';
-    console.log("=====curFeedPublicStatus====",curFeedPublicStatus);
     if (curFeedPublicStatus === '') {
       this.httpService
         .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false)
@@ -325,14 +324,16 @@ export class FeedspreferencesPage implements OnInit {
     if (!this.curFeedPublicStatus) {
       if (this.feedService.getConnectionStatus() !== 0) {
         this.native.toastWarn('common.connectionError');
+        this.native.hideLoading();
         return;
       }
 
       if (!this.isShowQrcode) {
         this.native.toastWarn('common.waitOnChain');
+        this.native.hideLoading();
         return;
       }
-
+      this.native.hideLoading();
       this.mintChannel();
 
       // if (this.developerMode) {
@@ -355,18 +356,22 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   async newToggle(){
+    await this.native.showLoading("common.waitMoment");
     let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
     if(channelCollections != null && this.curFeedPublicStatus ){
         let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
         if(accountAddress === '') {
+        this.native.hideLoading();
         this.native.toastWarn('common.connectWallet');
         return;
         }
+        this.native.hideLoading();
         this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
         return;
     }else{
     let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
       if (server === null) {
+        this.native.hideLoading();
       return;
       }
       let feedsUrl = server.feedsUrl + '/' + this.feedId;
@@ -375,9 +380,11 @@ export class FeedspreferencesPage implements OnInit {
         let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
         if(accountAddress === '') {
         this.native.toastWarn('common.connectWallet');
+        this.native.hideLoading();
         return;
         }
         let channelItem: FeedsData.ChannelCollections = await this.getChannelCollections(tokenInfo,accountAddress);
+        this.native.hideLoading();
         this.menuService.showChannelCollectionsMenu(channelItem);
       }else{
         this.toggle();

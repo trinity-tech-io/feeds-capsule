@@ -522,7 +522,7 @@ export class IntentService {
       return;
     }
 
-    this.native.showLoading("common.parseing", () => { }, 30000);
+   await this.native.showLoading("common.parseing", () => { }, 30000);
     try {
       const orderInfo = await this.nftContractHelperService.getOrderInfo(orderId);
 

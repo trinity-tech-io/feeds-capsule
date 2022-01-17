@@ -76,8 +76,8 @@ export class SigninPage implements OnInit {
   }
 
   doSignin() {
-    this.zone.run(() => {
-      this.native.showLoading('common.waitMoment', isDismiss => {}, 2000);
+    this.zone.run(async () => {
+    await  this.native.showLoading('common.waitMoment', isDismiss => {}, 2000);
     });
     this.feedService.signIn().then(isSuccess => {
       if (isSuccess) {
