@@ -363,7 +363,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideAdult, () => {
       this.zone.run(async () => {
-        this.native.showLoading('common.waitMoment');
+        await this.native.showLoading('common.waitMoment');
         await this.refreshPasarList();
         this.isShowSearchField = false;
         this.native.hideLoading();
@@ -2465,7 +2465,7 @@ export class HomePage implements OnInit {
     let tokenId = this.nftContractControllerService.isTokenId(this.searchText);
     if (tokenId != "") {
       this.zone.run(async () => {
-        this.native.showLoading('common.waitMoment');
+       await this.native.showLoading('common.waitMoment');
         this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.TOKEN_ID, tokenId);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
@@ -2475,7 +2475,7 @@ export class HomePage implements OnInit {
 
     if (this.nftContractControllerService.isAddress(this.searchText)) {
       this.zone.run(async () => {
-        this.native.showLoading('common.waitMoment');
+       await this.native.showLoading('common.waitMoment');
         this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.ROYALTY_ADDRESS, this.searchText);
         this.refreshPasarGridVisibleareaImage();
         this.native.hideLoading();
@@ -2484,7 +2484,7 @@ export class HomePage implements OnInit {
     }
 
     this.zone.run(async () => {
-      this.native.showLoading('common.waitMoment');
+      await this.native.showLoading('common.waitMoment');
       this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
       this.refreshPasarGridVisibleareaImage();
       this.native.hideLoading();
@@ -2683,7 +2683,7 @@ export class HomePage implements OnInit {
     this.sortType = sortType;
     this.dataHelper.setFeedsSortType(sortType);
     event.stopPropagation();
-    this.native.showLoading('common.waitMoment');
+    await this.native.showLoading('common.waitMoment');
     await this.refreshPasarList();
     this.isShowSearchField = false;
     this.native.hideLoading();

@@ -195,11 +195,11 @@ export class SearchPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  init() {
+ async init() {
     let discoverfeeds = this.feedService.getDiscoverfeeds();
     if (discoverfeeds.length === 0) {
       this.pageNum = 1;
-      this.native.showLoading('common.waitMoment');
+     await this.native.showLoading('common.waitMoment');
       this.initData('', false);
     } else {
       this.channelCollectionPageList = this.filterChannelCollection();

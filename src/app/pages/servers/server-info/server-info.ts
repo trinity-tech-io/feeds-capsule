@@ -301,8 +301,8 @@ export class ServerInfoPage implements OnInit {
           text: this.translate.instant('ServerInfoPage.DeletethisFeedSource'),
           role: 'destructive',
           icon: 'trash',
-          handler: () => {
-            this.native.showLoading('common.waitMoment', isDismiss => {});
+          handler: async () => {
+           await this.native.showLoading('common.waitMoment', isDismiss => {});
             this.feedService.deleteFeedSource(this.nodeId).then(() => {
               this.native.toast('ServerInfoPage.removeserver');
               this.native.hideLoading();

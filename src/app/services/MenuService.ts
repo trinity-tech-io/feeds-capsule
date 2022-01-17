@@ -66,7 +66,7 @@ export class MenuService {
             }
 
             this.postDetail.dismiss()
-            this.native.showLoading("common.generateSharingLink");
+            await this.native.showLoading("common.generateSharingLink");
             try {
               const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
               this.intentService
@@ -132,7 +132,7 @@ export class MenuService {
 
             this.postDetail.dismiss();
             //Share post
-            this.native.showLoading("common.generateSharingLink");
+           await this.native.showLoading("common.generateSharingLink");
             try {
               const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
               this.intentService
@@ -480,7 +480,7 @@ export class MenuService {
 
         //home share post
         this.postDetail.dismiss();
-        this.native.showLoading("common.generateSharingLink");
+        await this.native.showLoading("common.generateSharingLink");
         try {
           const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
           this.intentService
@@ -1079,7 +1079,7 @@ export class MenuService {
   }
 
   async sharePasarLink(assItem: any) {
-    this.native.showLoading("common.generateSharingLink");
+   await this.native.showLoading("common.generateSharingLink");
     try {
       const saleOrderId = assItem.saleOrderId;
       Logger.log('Share pasar orderId is', saleOrderId);
