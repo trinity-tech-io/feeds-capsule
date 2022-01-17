@@ -30,7 +30,7 @@
             </ion-menu-toggle>
 
             <ion-menu-toggle>
-                <div (click)="signout()">
+                <div (click)="showSignoutDialog()">
                     <img src="./assets/images/menu/signout.svg" *ngIf="!theme.darkMode">
                     <img src="./assets/images/darkmode/menu/signout.svg" *ngIf="theme.darkMode">
                     <h1>{{ 'app.signout' | translate }}</h1>

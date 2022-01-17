@@ -329,8 +329,7 @@ export class MyApp {
   }
 
   clearData() {
-    this.feedService
-      .signOut()
+    this.feedService.signOut()
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
         this.native.setRootRouter('signin');
