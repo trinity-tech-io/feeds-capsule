@@ -2485,7 +2485,9 @@ export class HomePage implements OnInit {
 
     this.zone.run(async () => {
       await this.native.showLoading('common.waitMoment');
-      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
+      let nameList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.NAME, this.searchText);
+      let desList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DESCRIPTION, this.searchText);
+      this.pasarList = _.unionWith(nameList,desList, _.isEqual);
       this.refreshPasarGridVisibleareaImage();
       this.native.hideLoading();
     });
