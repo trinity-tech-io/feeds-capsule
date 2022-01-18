@@ -115,7 +115,6 @@ export class AssetdetailsPage implements OnInit {
   ngOnInit() {
     //this.activatedRoute.queryParams.subscribe(queryParams => {
      let queryParams = this.dataHelper.getAssetPageAssetItem();
-      console.log("queryParams",queryParams);
       this.assItem = _.cloneDeep(queryParams);
       let signInData = this.feedService.getSignInData() || null;
       let did = signInData['did'] || null;

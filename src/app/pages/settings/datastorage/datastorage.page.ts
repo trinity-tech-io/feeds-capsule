@@ -43,7 +43,6 @@ export class DatastoragePage implements OnInit {
   }
 
   cleanPasarData() {
-    console.log('cleanPasarData');
     this.openAlert();
   }
 

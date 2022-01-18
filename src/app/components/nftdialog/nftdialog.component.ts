@@ -291,7 +291,6 @@ export class NftdialogComponent implements OnInit {
   async handleCreteChannelOrderResult(tokenId: string, tokenInfo: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log("====tokenId====", tokenId);
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, { "tokenId": tokenId, "panelId": tokenInfo[0], });
         resolve('Successs');
       } catch (err) {

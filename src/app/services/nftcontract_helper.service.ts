@@ -1029,9 +1029,7 @@ export class NFTContractHelperService {
         const orderInfo: FeedsData.OrderInfo = await this.getSellerOrderByIndex(index);
         let tokenInfo: FeedsData.TokenInfo = await this.getTokenInfo(String(orderInfo.tokenId), true);
         let tokenJson: any = await this.getTokenJson(tokenInfo.tokenUri);
-        console.log("tokenJson", tokenJson);
         const item = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, "onSale");
-        console.log("item", item);
         const requestDevNet = this.dataHelper.getDevelopNet();
         if (orderInfo.orderState == FeedsData.OrderState.SALEING) {
           this.savePasarItem(String(orderInfo.orderId), item, index, Number.MAX_SAFE_INTEGER, FeedsData.SyncMode.NONE, requestDevNet);

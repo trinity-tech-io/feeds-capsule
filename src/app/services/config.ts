@@ -54,7 +54,6 @@ export class Config {
         }
 
 
-        console.log("Change api", api, ', Base api', Config.BASE_API);
         Config.reset();
     }
 

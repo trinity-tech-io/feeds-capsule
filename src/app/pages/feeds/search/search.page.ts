@@ -964,14 +964,12 @@ async getActivePanelList(){
   try{
    let result = await this.pasarAssistService.
      listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
-   console.log("====result===",result);
    let panelsList:any;
    if(result!=null){
       panelsList = result["data"]["result"];
    }else{
     panelsList = [];
    }
-   console.log("====panelsList===",panelsList);
    this.panelPageNum = this.panelPageNum+1;
    while(result!=null&&panelsList.length > 0){
     await this.handlePanels(panelsList);
@@ -1156,7 +1154,6 @@ filterChannelCollection(){
     return this.handleChannelShow(feed);
   });
   let newChannelCollectionPageList = _.orderBy(channelCollectionPageList,['diaBalance'], ['desc']);
-  console.log("channelCollectionPageList=",newChannelCollectionPageList);
   this.searchChannelCollectionPageList = _.cloneDeep(newChannelCollectionPageList);
   return newChannelCollectionPageList;
 }
