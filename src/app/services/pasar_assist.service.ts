@@ -321,8 +321,11 @@ export class PasarAssistService {
         if (pageSize)
           url = url + '&pageSize=' + pageSize;
 
-        const result = await this.httpService.httpGet(url);
-
+        const result = await this.httpService.httpGet(url) || null;
+        if(result === null){
+          reject(null);
+          return;
+        }
         const resultCode = result.code;
         if (resultCode != 200)
           reject(null);
