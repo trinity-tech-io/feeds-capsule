@@ -106,6 +106,10 @@ export class GuideubuntuPage implements OnInit {
   }
 
   handleAddress(scanResult: string) {
+    scanResult = scanResult || "";
+    if(scanResult === ""){
+      return;
+    }
     if (
       !scanResult.startsWith('feeds://') &&
       !scanResult.startsWith('feeds_raw://')
