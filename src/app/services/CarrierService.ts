@@ -181,7 +181,7 @@ export class CarrierService {
         success(isValid);
       },
       (err: string) => {
-        alert(err);
+        // alert(err);
       },
     );
   }
@@ -377,8 +377,8 @@ export class CarrierService {
   }
 
   errorFun(err, errorFun = null) {
-    alert('error=>' + err);
-    alert('errorFun' + JSON.stringify(errorFun));
+    // alert('error=>' + err);
+    // alert('errorFun' + JSON.stringify(errorFun));
   }
 
   getIdFromAddress(

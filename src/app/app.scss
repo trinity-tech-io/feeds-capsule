@@ -12,6 +12,7 @@
   }
 
 ion-menu {
+    --ion-backdrop-color:#000;
     ion-content {
         .profile-card {
             margin:0 auto;
@@ -97,6 +98,7 @@ ion-menu {
 }
 
 .darkMenu {
+    --ion-backdrop-color:#fff;
     ion-content {
         ion-menu-toggle {
             div {
