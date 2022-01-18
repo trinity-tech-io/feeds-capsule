@@ -272,7 +272,6 @@ export class FeedspreferencesPage implements OnInit {
  async getPublicStatus() {
 
     this.channelCollections = await this.getChannelCollectionsStatus() || null;
-    console.log("==this.channelCollections===",this.channelCollections)
     if(this.channelCollections != null){
       this.zone.run(() => {
         this.curFeedPublicStatus = true;

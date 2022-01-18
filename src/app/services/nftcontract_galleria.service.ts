@@ -127,7 +127,6 @@ export class NFTContractGalleriaService {
       this.checkCreatePanelInterval = setInterval(async () => {
         if (!this.checkCreatePanelInterval) return;
         let info = await this.getUserActivePanelByToken(owerAddress,tokenId);
-        console.log("=====info=====",info);
         if (info[1] === '1') {
           Logger.log(TAG, 'Check createPanel state finish', info);
           clearInterval(this.checkCreatePanelInterval);
@@ -212,7 +211,6 @@ export class NFTContractGalleriaService {
     this.checkRemovePanelInterval = setInterval(async () => {
       if (!this.checkRemovePanelInterval) return;
       let info = await this.getPanelById(panelId);
-      console.log("=====info=====",info);
       if (info[1] != '2') {
         Logger.log(TAG, 'Check removePanel state finish', info);
         clearInterval(this.checkRemovePanelInterval);

@@ -92,7 +92,6 @@ export class FeedinfoPage implements OnInit {
       this.serverDid = channelInfo["did"];
       this.elaAddress = "common.emptyElaAddressDes";
       this.feedsUrl = channelInfo["feedUrl"];
-      console.log("===this.feedsUrl===",this.feedsUrl);
       this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
     }
 

@@ -709,7 +709,6 @@ export class GalleriachannelPage implements OnInit {
     }
 
     if(channelAvatar.startsWith("assets/images/profile")){
-       console.log("channelAvatar",channelAvatar);
        let url = "http://localhost/"+channelAvatar;
        let avatar = await UtilService.downloadFileFromUrl(url);
        let avatarBase64 = await UtilService.blobToDataURL(avatar);

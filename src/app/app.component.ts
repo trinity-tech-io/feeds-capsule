@@ -139,7 +139,6 @@ export class MyApp {
       }).then(async () => {
         this.intentService.addIntentListener(
           (intent: IntentPlugin.ReceivedIntent) => {
-            console.log(TAG, 'Receive intent ', intent);
             this.intentService.onMessageReceived(intent);
             this.intentService.dispatchIntent(intent);
           },
@@ -544,7 +543,6 @@ export class MyApp {
 
   initPublishedActivePanelList(){
     this.dataHelper.loadData('feeds.published.activePanel.list').then((publishedActivePanelList)=>{
-      console.log("=====publishedActivePanelList======",publishedActivePanelList);
           if(publishedActivePanelList === null){
             this.dataHelper.setPublishedActivePanelList([]);
               return;
