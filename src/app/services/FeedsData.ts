@@ -49,7 +49,8 @@ declare namespace FeedsData {
     ROYALTY_ADDRESS,
     OWNER_ADDRESS,
     NAME,
-    DESCRIPTION
+    DESCRIPTION,
+    DEFAULT
   }
 
   const enum SortType {
