@@ -102,26 +102,26 @@ export class PasarAssistService {
         else
           url = Config.PASAR_ASSIST_TESTNET_SERVER + 'searchSaleOrders'
 
+        url = url + '?key=' + key;
         switch (searchType) {
           case FeedsData.SearchType.NAME:
-            url = url + '?searchType=name';
+            url = url + '&searchType=name';
             break;
           case FeedsData.SearchType.ROYALTY_ADDRESS:
-            url = url + '?searchType=royaltyAddress';
+            url = url + '&searchType=royaltyAddress';
             break;
           case FeedsData.SearchType.OWNER_ADDRESS:
-            url = url + '?searchType=ownerAddress';
+            url = url + '&searchType=ownerAddress';
             break;
           case FeedsData.SearchType.TOKEN_ID:
-            url = url + '?searchType=tokenId';
+            url = url + '&searchType=tokenId';
             break;
           case FeedsData.SearchType.DESCRIPTION:
-            url = url + '?searchType=description';
+            url = url + '&searchType=description';
             break;
           default:
             break;
         }
-        url = url + '&key=' + key;
 
         if (!saveMode) {
           url = url + '&adult=false';
