@@ -83,6 +83,7 @@ export class HiveService {
   }
 
   async creatVault() {
+    try {
     // auth
     let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
     let userDid =  (await this.dataHelper.getSigninData()).did
@@ -127,23 +128,32 @@ export class HiveService {
     const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(this.context, provider)
     this.vault = new VaultServices(this.context, provider)
   }
+  catch (error) {
+    console.log(error)
+   }
+  }
 
   async getVault() {
     if (this.vault == null) {
-      await this.creatVault()
+      try {
+        await this.creatVault()
+      }
+      catch (error) {
+        console.log(error)
+      }
     }
     return this.vault
   }
 
  async backupSubscriptionToHive() {
-  console.log("list  ==== 1111")
-
+  try {
   const list = this.dataHelper.getSubscribedFeedsList()
   console.log("list  ==== ", list)
+  let userDid =  (await this.dataHelper.getSigninData()).did
 
-  const feeds_logo_subscription = localStorage.getItem(HiveService.collectName) || '' 
-  const feeds_logo_createCollection = localStorage.getItem(HiveService.createCollection) || '' 
-  const isSync = localStorage.getItem(HiveService.isSync) || '' 
+  const feeds_logo_subscription = localStorage.getItem(userDid + HiveService.collectName) || '' 
+  const feeds_logo_createCollection = localStorage.getItem(userDid + HiveService.createCollection) || '' 
+  const isSync = localStorage.getItem(userDid + HiveService.isSync) || '' 
 
   console.log("feeds_subscription  ==== ", feeds_logo_subscription)
   console.log("feeds_logo_createCollection  ==== ", feeds_logo_createCollection)
@@ -172,20 +182,7 @@ export class HiveService {
       const avatar = obj["avatar"].toString()
       const isSubscribed = Boolean(obj["isSubscribed"])
       const nodeChannelId = this.dataHelper.getKey(nodeId, channelId, 0, 0)
-      // console.log("i = " + i + " nodeChannelId = " + nodeChannelId)
-      /*
-      avatar: "assets/images/profile-2.svg"
-      id: 1
-      introduction: "Feeds team official account"
-      isSubscribed: true
-      last_post: ""
-      last_update: 1631809522000
-      name: "Feeds Help"
-      nodeId: "YDQTAJLcYgi1BYsh6qxLFihVrx39Xta4VhxHpfBwVMF"
-      owner_did: "did:elastos:iUiJQ5FFTeaUwG77PdihuASGSqQSqP7uWL"
-      owner_name: "Feeds-dev"
-      subscribers: 444
-      */
+
       array.push(nodeChannelId)
       i = i + 1
       let channel: FeedsData.Channels = {
@@ -206,34 +203,35 @@ export class HiveService {
 
     const list0 = this.dataHelper.getSubscribedFeedsList() //删除
     console.log("list0  ==== ", list0)//删除
-    localStorage.setItem(HiveService.isSync, "true")
-    localStorage.setItem(HiveService.createCollection, "true")
+    localStorage.setItem(userDid + HiveService.isSync, "true")
+    localStorage.setItem(userDid + HiveService.createCollection, "true")
   }
   else if (feeds_logo_subscription === '' && list.length > 0){
-    console.log("方法 feeds_logo_subscription  ==== 0")//删除
     let vault = await this.getVault()
-    console.log("方法 feeds_logo_subscription  ==== 1")//删除
     await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
     console.log("方法 feeds_logo_subscription  ==== 2")//删除
-    localStorage.setItem(HiveService.collectName, "true")
+    localStorage.setItem(userDid + HiveService.collectName, "true")
   }
   else if (feeds_logo_createCollection === '' && list.length > 0) {
-    console.log("方法 feeds_logo_createCollection  ==== 0")//删除
         let vault = await this.getVault()
-        console.log("方法 feeds_logo_createCollection  ==== 1")//删除
-        localStorage.setItem(HiveService.createCollection, "true")// 容错：拿不到error
+        localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
         await vault.getDatabaseService().createCollection(HiveService.collectName)
-        console.log("方法 feeds_logo_createCollection  ==== 2")//删除
-        localStorage.setItem(HiveService.createCollection, "true")
+        localStorage.setItem(userDid + HiveService.createCollection, "true")
         await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        console.log("方法 feeds_logo_createCollection  ==== 3")//删除
-        localStorage.setItem(HiveService.collectName, "true")
+        localStorage.setItem(userDid + HiveService.collectName, "true")
   }
+}
+catch (error) {
+  console.log(error)
+ }
  }
 
-  insertOne(one: any) {
+  async insertOne(one: any) {
+    try {
     // 检测app启动时是否 备份成功
-    const feeds_subscription = localStorage.getItem(HiveService.collectName) || '' 
+    let userDid =  (await this.dataHelper.getSigninData()).did
+
+    const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || '' 
     if (feeds_subscription === '') {
       this.backupSubscriptionToHive()
     }
@@ -249,9 +247,14 @@ export class HiveService {
       })
     }
   }
+  catch (error) {
+    console.log(error)
+   }
+  }
 
-  deleteOne(one: any) {
-    const feeds_subscription = localStorage.getItem(HiveService.collectName) || '' 
+  async deleteOne(one: any) {
+    let userDid =  (await this.dataHelper.getSigninData()).did
+    const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || '' 
     if (feeds_subscription === '') {
       // 如果本地没有本分成功，则直接返回，不做处理
       this.backupSubscriptionToHive()
@@ -269,8 +272,9 @@ export class HiveService {
     }
   }
 
-  updateOne(origin: FeedsData.Channels, update: FeedsData.Channels) {
-    const feeds_subscription = localStorage.getItem(HiveService.collectName) || '' 
+  async updateOne(origin: FeedsData.Channels, update: FeedsData.Channels) {
+    let userDid =  (await this.dataHelper.getSigninData()).did
+    const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || '' 
     if (feeds_subscription === '') {
       // 如果本地没有本分成功，则直接返回，不做处理
       this.backupSubscriptionToHive()
@@ -291,6 +295,7 @@ export class HiveService {
   }
 
   async getEssAvatar() {
+    try {
     let scriptingService: ScriptingService
     const vault = await this.getVault()
     scriptingService = vault.getScriptingService()
@@ -306,13 +311,22 @@ export class HiveService {
     const rawImage =  rawImageToBase64DataUrl(dataBuffer)
     self.dataHelper.saveUserAvatar(savekey, rawImage)
     await this.backupSubscriptionToHive()
+    }
+    catch (error) {
+      console.log(error)
+    }
   }
   
   async uploadCustomeAvatar(remotePath: string, img: any){
+    try {
     const vault = await this.getVault()
     const fileService = vault.getFilesService()
     const file = await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
   }
+  catch (error) {
+    console.log(error)
+   }
+ }
 }
 
 interface Mime {
