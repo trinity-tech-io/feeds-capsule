@@ -146,6 +146,17 @@ export class FeedspreferencesPage implements OnInit {
       this.zone.run(()=>{
         this.curFeedPublicStatus = false;
         this.isShowMint = false;
+        let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
+        if(publishedActivePanelList.length === 0){
+           return;
+        }
+        let tokenId = channelCollections.tokenId;
+        let itemIndex = _.findIndex(publishedActivePanelList,(item:any)=>{
+          return item.tokenId === tokenId;
+        });
+        this.channelCollections = null;
+        publishedActivePanelList.splice(itemIndex,1);
+        this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
       });
     });
 
@@ -161,6 +172,12 @@ export class FeedspreferencesPage implements OnInit {
     this.zone.run(()=>{
       this.curFeedPublicStatus = true;
       this.isShowMint = false;
+      let newItem  =  _.cloneDeep(obj["assItem"]);
+          newItem["panelId"]  = obj["panelId"];
+          this.channelCollections = newItem;
+      let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
+          publishedActivePanelList.push(newItem);
+          this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
     });
   });
 
@@ -447,6 +464,13 @@ export class FeedspreferencesPage implements OnInit {
       let feedsUrlHash = UtilService.SHA256(feedsUrl);
       let tokenId: string ="0x" + feedsUrlHash;
       tokenId =  UtilService.hex2dec(tokenId);
+      let list = this.dataHelper.getPublishedActivePanelList() || [];
+      let fitleItem = _.find(list,(item)=>{
+          return item.tokenId === tokenId;
+      }) || null;
+      if(fitleItem != null){
+         return fitleItem;
+      }
       let result = await this.pasarAssistService.getPanel(tokenId);
       if(result != null){
        let tokenInfo = result["data"] || "";
@@ -454,7 +478,10 @@ export class FeedspreferencesPage implements OnInit {
            return null;
        }
        tokenInfo =  await this.handlePanels(result["data"]);
-        return tokenInfo;
+       let panelList=this.dataHelper.getPublishedActivePanelList() || [];
+       panelList.push(tokenInfo);
+       this.dataHelper.setPublishedActivePanelList(panelList);
+       return tokenInfo;
        }
       return null;
      } catch (error) {
