@@ -12,6 +12,7 @@ import { Logger } from './logger';
 import { Config } from './config';
 import { ApiUrl } from './ApiUrl';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
+import { DataHelper } from './DataHelper';
 
 const TAG: string = 'GlobalService';
 @Injectable()
@@ -27,6 +28,7 @@ export class GlobalService {
     private nftContractControllerService: NFTContractControllerService,
     private walletConnectControllerService: WalletConnectControllerService,
     private pasarAssistService: PasarAssistService,
+    private dataHelper: DataHelper
   ) {
   }
 
@@ -60,6 +62,7 @@ export class GlobalService {
   }
 
   restartApp() {
+    this.dataHelper.setPublishedActivePanelList([]);
     this.splashScreen.show();
     window.location.href = "/";
   }
