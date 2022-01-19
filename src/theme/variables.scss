@@ -709,7 +709,14 @@ ion-row {
         width: 100%;
         margin-top: 10px;
         padding: 0;
-
+        .retrybutton{
+          height: 30px;
+          width: 60px;
+          --background: #7171bd;
+          --background-activated: #7171bd;
+          position: absolute;
+          right: 1px;
+        }
         ion-col {
           display: flex;
           justify-content: flex-start;
