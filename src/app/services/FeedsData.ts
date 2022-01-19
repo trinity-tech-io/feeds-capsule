@@ -17,6 +17,33 @@ declare namespace FeedsData {
     OUTER_RIGHT = 3,
   }
 
+  const enum ContractEvent {
+    TRANSACTION_HASH = 'transactionHash',
+    RECEIPT = 'receipt',
+    CONFIRMATION = 'confirmation',
+    ERROR = 'error'
+  }
+
+  type ContractEventResult = TransactionHashResult | ReceiptResult | ConfirmationResult | ErrorResult;
+
+  type TransactionHashResult = {
+    hash: string
+  }
+
+  type ReceiptResult = {
+    receipt: string
+  }
+
+  type ConfirmationResult = {
+    confirmationNumber: string,
+    receipt: string
+  }
+
+  type ErrorResult = {
+    error: string,
+    receipt: string
+  }
+
   const enum SearchType {
     TOKEN_ID,
     ROYALTY_ADDRESS,

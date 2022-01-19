@@ -186,7 +186,8 @@ export const en = {
     cleanPasarData: 'Clear Pasar data',
     cleanPasarDataTip: 'Need to restart app after clearing Pasar data',
     unpublished: "Unpublished",
-    published: "Published"
+    published: "Published",
+    queryTransactionResult: 'A transaction has been initiated and the result is being queried'
   },
   app: {
     profileDetails: 'Profile Details',

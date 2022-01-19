@@ -429,8 +429,13 @@ export class BidPage implements OnInit {
        this.showSelfCheckDialog();
        clearTimeout(sId);
     },Config.WAIT_TIME_BUY_ORDER)
-
-    this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity, this.didUri).then(() => {
+      this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity, this.didUri, (eventName: string, result: FeedsData.ContractEventResult) => {
+        if (eventName == FeedsData.ContractEvent.TRANSACTION_HASH) {
+          this.loadingText = 'common.queryTransactionResult';
+          this.loadingCurNumber = null;
+          this.loadingMaxNumber = null;
+        }
+      }).then(() => {
         //Finish buy order
         this.isLoading = false;
         clearTimeout(sId)

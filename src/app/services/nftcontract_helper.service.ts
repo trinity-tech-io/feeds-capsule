@@ -1240,7 +1240,8 @@ export class NFTContractHelperService {
   }
 
   //API
-  buyOrder(item: FeedsData.NFTItem, quantity: string, didUri: string) {
+  buyOrder(item: FeedsData.NFTItem, quantity: string, didUri: string,
+    eventCallback: (eventName: string, result: FeedsData.ContractEventResult) => void): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let accountAddress = this.nftContractControllerService.getAccountAddress();
       // let price = this.fixedPrice;
@@ -1248,12 +1249,18 @@ export class NFTContractHelperService {
       try {
         purchaseStatus = await this.nftContractControllerService
           .getPasar()
-          .buyOrder(accountAddress, item.saleOrderId, item.fixedAmount, didUri);
+          .buyOrder(accountAddress, item.saleOrderId, item.fixedAmount, didUri, eventCallback);
 
         if (!purchaseStatus) {
           reject('Error');
           return;
         }
+
+        if (purchaseStatus == 'timeout') {
+          reject('Timeout');
+          return;
+        }
+
         this.handleBuyResult(item, quantity, didUri);
         resolve('Success');
       } catch (error) {
