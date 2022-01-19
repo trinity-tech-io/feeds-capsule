@@ -7,6 +7,6 @@
      <div class="loadingText">
       {{ loadingText | translate }}
      </div>
-     <div class="loadingNum">{{loadingCurNumber}}/{{loadingMaxNumber}}</div>
+    <div class="loadingNum" *ngIf="loadingCurNumber&&loadingMaxNumber">{{loadingCurNumber}}/{{loadingMaxNumber}}</div>
   </div>
 </div>

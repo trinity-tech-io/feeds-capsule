@@ -186,7 +186,8 @@ export const zh = {
     cleanPasarData: '清除Pasar缓存数据',
     cleanPasarDataTip: '清除Pasar缓存数据后，需要重启应用',
     unpublished: "未公开",
-    published: "已公开"
+    published: "已公开",
+    queryTransactionResult: '已发起交易，正在查询结果'
   },
   app: {
     profileDetails: '档案详情',

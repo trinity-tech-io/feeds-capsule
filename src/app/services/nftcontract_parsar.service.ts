@@ -9,6 +9,7 @@ const TAG: string = 'NFTPasarService';
 const SUCCESS = 'success';
 const FAIL = '';
 const EstimateGasError = 'EstimateGasError';
+const TIMEOUT = 'timeout';
 
 type TXData = {
   from: string;
@@ -306,7 +307,8 @@ export class NFTContractParsarService {
     clearInterval(this.checkPriceInterval);
   }
 
-  buyOrder(accountAddress: string, orderId: string, price: string,didUri :string): Promise<string> {
+  buyOrder(accountAddress: string, orderId: string, price: string,
+    didUri: string, eventCallback: (eventName: string, result: FeedsData.ContractEventResult) => void): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         Logger.log(TAG, 'Buy Order params', accountAddress, orderId, price, didUri);
@@ -329,20 +331,39 @@ export class NFTContractParsarService {
           .send(transactionParams)
           .on('transactionHash', hash => {
             Logger.log(TAG, 'BuyOrder, transactionHash is', hash);
-            resolve(SUCCESS);
+            const hashResult: FeedsData.ContractEventResult = {
+              hash: hash
+            }
+            eventCallback(FeedsData.ContractEvent.TRANSACTION_HASH, hashResult);
           })
           .on('receipt', receipt => {
             Logger.log(TAG, 'BuyOrder, receipt is', receipt);
+            const receiptResult: FeedsData.ContractEventResult = {
+              receipt: receipt
+            }
+            eventCallback(FeedsData.ContractEvent.RECEIPT, receiptResult);
           })
           .on('confirmation', (confirmationNumber, receipt) => {
             Logger.log(TAG, 'BuyOrder, confirmation is', confirmationNumber, receipt);
+            const confirmationResult: FeedsData.ConfirmationResult = {
+              confirmationNumber: confirmationNumber,
+              receipt: receipt
+            }
+            eventCallback(FeedsData.ContractEvent.CONFIRMATION, confirmationResult);
           })
           .on('error', (error, receipt) => {
             resolve(FAIL);
             Logger.error(TAG, 'BuyOrder, error is', error, receipt);
+            const errorResult: FeedsData.ErrorResult = {
+              error: error,
+              receipt: receipt
+            }
+            eventCallback(FeedsData.ContractEvent.ERROR, errorResult);
           });
 
-        this.checkBuyerOrderState(accountAddress, lastIndex, newIndex => {
+        this.checkBuyerOrderState(accountAddress, lastIndex, (result: number | string) => {
+          if (result == TIMEOUT)
+            resolve(TIMEOUT);
           resolve(SUCCESS);
         });
       } catch (error) {
@@ -352,32 +373,36 @@ export class NFTContractParsarService {
     });
   }
 
-  checkBuyerOrderState(
-    accountAddress,
-    lastOrderIndex,
-    callback: (newIndex: number) => void,
-  ) {
-    this.checkBuyOrderStateNum = 0;
-    this.checkBuyerOrderStateInterval = setInterval(async () => {
-      if (!this.checkBuyerOrderStateInterval) return;
-      let buyer = await this.getBuyerByAddr(accountAddress);
-      Logger.log(TAG, 'Buyer info is', buyer);
+  checkBuyerOrderState(accountAddress: string, lastOrderIndex: number, callback: (newIndex: number) => void): Promise<number | string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.checkBuyOrderStateNum = 0;
+        this.checkBuyerOrderStateInterval = setInterval(async () => {
+          if (!this.checkBuyerOrderStateInterval) return;
+          let buyer = await this.getBuyerByAddr(accountAddress);
+          Logger.log(TAG, 'Buyer info is', buyer);
 
-      let newIndex = buyer[2] - 1;
-      if (newIndex != lastOrderIndex) {
-        clearInterval(this.checkBuyerOrderStateInterval);
-        callback(newIndex);
-        this.checkBuyerOrderStateInterval = null;
-        Logger.log(TAG, 'CheckBuyerOrderState , new index is ', newIndex);
-      }
+          let newIndex = buyer[2] - 1;
+          if (newIndex != lastOrderIndex) {
+            clearInterval(this.checkBuyerOrderStateInterval);
+            callback(newIndex);
+            resolve(newIndex);
+            this.checkBuyerOrderStateInterval = null;
+            Logger.log(TAG, 'CheckBuyerOrderState , new index is ', newIndex);
+          }
 
-      this.checkBuyOrderStateNum++;
-      if (this.checkBuyOrderStateNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_BUY_ORDER) {
-        clearInterval(this.checkBuyerOrderStateInterval);
-        this.checkBuyerOrderStateInterval = null;
-        Logger.log(TAG, 'Exit check buy order state by self');
+          this.checkBuyOrderStateNum++;
+          if (this.checkBuyOrderStateNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_BUY_ORDER) {
+            clearInterval(this.checkBuyerOrderStateInterval);
+            this.checkBuyerOrderStateInterval = null;
+            resolve(TIMEOUT);
+            Logger.log(TAG, 'Exit check buy order state by self');
+          }
+        }, Config.CHECK_STATUS_INTERVAL_TIME);
+      } catch (error) {
+        reject(error);
       }
-    }, Config.CHECK_STATUS_INTERVAL_TIME);
+    });
   }
 
   cancelBuyOrderProcess() {
