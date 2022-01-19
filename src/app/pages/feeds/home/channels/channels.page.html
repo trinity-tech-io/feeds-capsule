@@ -230,13 +230,14 @@
             <ion-col>
             </ion-col>
             <ion-col>
-                <ion-icon  style="right: 35px; position:absolute; color: #7171bd;" name="refresh"></ion-icon>
-                <ion-label style="
+                <ion-icon  style="right:66px;top: 0px; position:absolute; color: #7171bd;" name="refresh"></ion-icon>
+                <!-- <ion-label style="
                 position:absolute;
                 right: 1px;
                 font-size: 13px;
                 font-weight: 500;
-                color: #7171bd;" (click)="retry(post.nodeId, post.channel_id, post.id)">{{ "common.retry" | translate }} </ion-label>
+                color: #7171bd;" (click)="retry(post.nodeId, post.channel_id, post.id)">{{ "common.retry" | translate }} </ion-label> -->
+                <ion-button (click)="retry(post.nodeId, post.channel_id, post.id)" class="retrybutton">{{ "common.retry" | translate }}</ion-button>
             </ion-col>
           </ion-row>
         </ion-col>
