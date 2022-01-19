@@ -343,7 +343,7 @@ export class PasarAssistService {
       try {
         let url = '';
         if (this.dataHelper.getDevelopNet() == 'MainNet')
-          url = this.baseAssistUrl + '/galleria/api/v1/getPanel'
+          url = this.baseAssistUrl + 'galleria/api/v1/getPanel'
         else
           url = Config.GALLERIA_ASSIST_TESTNET_SERVER + 'getPanel'
 
