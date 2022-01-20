@@ -837,7 +837,7 @@ export class ProfilePage implements OnInit {
           let arr = [];
           if (
             this.totalLikeList.length - this.pageNumber * this.startIndex >
-            0
+            this.pageNumber
           ) {
             arr = this.totalLikeList.slice(
               this.startIndex * this.pageNumber,

@@ -116,7 +116,7 @@ export class PostdetailPage implements OnInit {
   public commentId: number = 0;
 
   public curComment: any = {};
-
+  private maxCount: number = 0;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -158,7 +158,7 @@ export class PostdetailPage implements OnInit {
     this.startIndex = 0;
     this.totalData = this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
-      this.captainCommentList = this.totalData.slice(0, this.pageNumber);
+      this.captainCommentList = this.totalData.slice(0,this.pageNumber);
 
       this.startIndex++;
       this.infiniteScroll.disabled = false;
@@ -167,6 +167,7 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
+    this.totalData = this.sortCommentList();
   }
 
   initOwnCommentObj() {
@@ -221,6 +222,7 @@ export class PostdetailPage implements OnInit {
         return item.status != 1;
       });
     }
+    this.maxCount = captainCommentList.length;
     return captainCommentList;
   }
 
@@ -1027,7 +1029,7 @@ export class PostdetailPage implements OnInit {
   loadData(event: any) {
     let sId = setTimeout(() => {
       let arr = [];
-      if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+      if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
         arr = this.totalData.slice(
           this.startIndex * this.pageNumber,
           (this.startIndex + 1) * this.pageNumber,

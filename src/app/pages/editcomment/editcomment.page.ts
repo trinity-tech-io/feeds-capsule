@@ -60,6 +60,10 @@ export class EditCommentPage implements OnInit {
       this.titleKey = item.titleKey;
       this.getContent(content);
     });
+    let sid = setTimeout(() => {
+      this.newPostIonTextarea.setFocus();
+      clearTimeout(sid);
+    }, 300);
   }
 
   ionViewWillEnter() {
@@ -118,7 +122,6 @@ export class EditCommentPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    document.getElementById('editComment').click();
   }
 
   ionViewWillLeave() {

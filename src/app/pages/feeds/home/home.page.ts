@@ -953,7 +953,7 @@ export class HomePage implements OnInit {
       case 'feeds':
         let sId = setTimeout(() => {
           let arr = [];
-          if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+          if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
             arr = this.totalData.slice(
               this.startIndex * this.pageNumber,
               (this.startIndex + 1) * this.pageNumber,
@@ -975,7 +975,7 @@ export class HomePage implements OnInit {
               let len = this.postList.length - 1;
               this.postList = this.postList.concat(arr);
               this.refreshImage(len - 1);
-              // this.infiniteScroll.disabled = true;
+              this.infiniteScroll.disabled = true;
               this.initnodeStatus(arr);
               event.target.complete();
             });

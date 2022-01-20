@@ -433,7 +433,7 @@ export class CommentlistPage implements OnInit {
   loadData(event: any) {
     let sId = setTimeout(() => {
       let arr = [];
-      if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+      if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
         arr = this.totalData.slice(
           this.startIndex * this.pageNumber,
           (this.startIndex + 1) * this.pageNumber,
