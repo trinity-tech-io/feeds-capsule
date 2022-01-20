@@ -8,7 +8,7 @@ import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
-import { isEqual, isNil } from 'lodash';
+import { isEqual, isNil, reject } from 'lodash';
 import { on } from 'process';
 
 let TAG: string = 'feeds-HiveService';
@@ -198,6 +198,8 @@ export class HiveService {
             avatar: avatar,
             isSubscribed: isSubscribed,
           }
+
+          console.log('====query===nodeChannelId, channel=', nodeChannelId, channel);
           this.dataHelper.updateChannel(nodeChannelId, channel)
         })
 
@@ -206,19 +208,15 @@ export class HiveService {
         localStorage.setItem(userDid + HiveService.isSync, "true")
         localStorage.setItem(userDid + HiveService.createCollection, "true")
       }
-      else if (feeds_logo_subscription === '' && list.length > 0) {
+      else if (feeds_logo_subscription === '' && feeds_logo_createCollection != '' && list.length > 0) {
         let vault = await this.getVault()
         await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
         console.log("方法 feeds_logo_subscription  ==== 2")//删除
         localStorage.setItem(userDid + HiveService.collectName, "true")
       }
       else if (feeds_logo_createCollection === '' && list.length > 0) {
-        let vault = await this.getVault()
-        localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
-        await vault.getDatabaseService().createCollection(HiveService.collectName)
-        localStorage.setItem(userDid + HiveService.createCollection, "true")
-        await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        localStorage.setItem(userDid + HiveService.collectName, "true")
+        const status = await this.createCollection(userDid, list);
+        console.log('status', status);
       }
     }
     catch (error) {
@@ -328,6 +326,41 @@ export class HiveService {
     } catch (error) {
       console.log("fileService download error: ", error)
     }
+  }
+
+  createCollection(userDid: string, list: FeedsData.Channels[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let vault = await this.getVault()
+      // localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
+      let createCollectionFlag = localStorage.getItem(userDid + HiveService.createCollection) || ""
+      console.log('createCollection, index 111111111111');
+      if (!createCollectionFlag) {
+        console.log('createCollection, index 22222222');
+        try {
+          await vault.getDatabaseService().createCollection(HiveService.collectName)
+          console.log('createCollection, index 3333333333');
+          createCollectionFlag = "true";
+          localStorage.setItem(userDid + HiveService.createCollection, createCollectionFlag)
+        } catch (error) {
+        }
+      }
+
+      if (!createCollectionFlag) {
+        console.log('Collection not create');
+        resolve('NotFinish');
+        return;
+      }
+
+      try {
+        console.log('createCollection, index 44444444444');
+        await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
+        console.log('createCollection, index 555555555555');
+        localStorage.setItem(userDid + HiveService.collectName, "true")
+        resolve('Finish');
+      } catch (error) {
+      }
+    })
+
   }
 }
 
