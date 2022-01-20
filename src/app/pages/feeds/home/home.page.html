@@ -17,7 +17,7 @@
    <img *ngIf="!theme.darkMode" src="assets/images/filter-circle.svg" style="margin-top:28px;"/>
    <img *ngIf="theme.darkMode" src="assets/images/darkmode/filter-circle.svg" style="margin-top:28px;"/>
   </ion-col>
-  <div class="sort" id="sort" *ngIf="isShowSearchField">
+  <div [class.darkSort]="theme.darkMode" [class.sort]="!theme.darkMode" id="sort" *ngIf="isShowSearchField" >
     <p class="titleName">{{"HomePage.sortBy" | translate}}<p>
     <p class="sortName" (click)="changeSortType(0,$event)"><span>{{"HomePage.recentlyAdded" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===0"><p>
     <p class="sortName" (click)="changeSortType(1,$event)"><span>{{"HomePage.Oldest" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===1"><p>
