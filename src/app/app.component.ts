@@ -335,7 +335,11 @@ export class MyApp {
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
         this.native.setRootRouter('signin');
-        this.native.toast('app.des');
+
+        this.feedService.resetConnectionStatus();
+        this.feedService.destroyCarrier();
+        this.globalService.restartApp();
+        // this.native.toast('app.des');
       })
       .catch(err => {
         //TODO
