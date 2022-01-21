@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions, HttpClient } from "@dchagastelles/elastos-hive-js-sdk";
-import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject } from '@elastosfoundation/did-js-sdk';
+import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
 import { resolve } from 'url';
@@ -28,6 +28,7 @@ export class HiveService {
   public avatarScriptName: string
   public image = null
 
+  private avatarVC: VerifiableCredential
   constructor(
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
@@ -95,11 +96,12 @@ export class HiveService {
       // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
       const userDID = DID.from(userDid)
       const userDiddocument = await userDID.resolve()
+      console.log("userDiddocument === ", userDiddocument)
       const ccount = userDiddocument.getCredentialCount()
       const avatarDid = userDid + "#avatar"
-      const cre = userDiddocument.getCredential(avatarDid)
-      if (cre != null) { // 有头像
-        const sub = cre.getSubject()
+      this.avatarVC = userDiddocument.getCredential(avatarDid)
+      if (this.avatarVC != null) { // 有头像
+        const sub = this.avatarVC.getSubject()
         const pro = sub.getProperty("avatar")
         const data: string = pro["data"]
         const type = pro["type"]
@@ -281,26 +283,33 @@ export class HiveService {
     }
   }
 
-  async getEssAvatar() {
+  async downloadEssAvatar() {
     try {
+      // 检测本地是否存在
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const loadKey = userDid + "_ess_avatar"
+      let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
+      if (essavatar) {
+        return
+      }
       let scriptingService: ScriptingService
       const vault = await this.getVault()
+      if (this.avatarVC === null) {
+        console.log("没有avatar")
+        return
+      }
       scriptingService = vault.getScriptingService()
       const result = await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
       const transaction_id = result["download"]["transaction_id"]
       let self = this
-
-      let userDid = (await this.dataHelper.getSigninData()).did
-      let dataBuffer = await scriptingService.downloadFile(transaction_id);
-      const imgstr = dataBuffer.toString()
+      let dataBuffer = await scriptingService.downloadFile(transaction_id)
 
       const savekey = userDid + "_ess_avatar"
-      const rawImage = rawImageToBase64DataUrl(dataBuffer)
+      const rawImage = await rawImageToBase64DataUrl(dataBuffer)
       self.dataHelper.saveUserAvatar(savekey, rawImage)
-      await this.backupSubscriptionToHive()
     }
     catch (error) {
-      console.log("getEssAvatar error: ", error)
+      console.log("downloadEssAvatar error: ", error)
     }
   }
 
@@ -315,14 +324,28 @@ export class HiveService {
     }
   }
 
-  async download(remotePath: string) {
+  async downloadCustomeAvatar(remotePath: string) {
     try {
+      // 检测本地是否存在
+      let userDid = (await this.dataHelper.getSigninData()).did
+      let avatar = await this.dataHelper.loadUserAvatar(userDid);
+      console.log("load Avatar === ,", avatar)
+      if (avatar) {
+        return
+      }
+
       const vault = await this.getVault()
       const fileService = vault.getFilesService()
       let self = this
-      let userDid = (await this.dataHelper.getSigninData()).did
-      let dataBuffer = await fileService.download(remotePath)
-      const imgstr = dataBuffer.toString()
+      let imgstr = ''
+      try {
+        var dataBuffer = await fileService.download(remotePath)
+        dataBuffer = dataBuffer.slice(1, -1)
+        imgstr = dataBuffer.toString()
+        self.dataHelper.saveUserAvatar(userDid, imgstr)
+      } catch (error) {
+        console.log("下载custome avatar 错误：", error)
+      }
     } catch (error) {
       console.log("fileService download error: ", error)
     }
