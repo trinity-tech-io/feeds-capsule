@@ -148,7 +148,7 @@ export class EditprofileimagePage implements OnInit {
   }
 
   async saveAvatar() {
-    await this.hiveService.uploadCustomeAvatar(this.userDid, this.avatar)
+    await this.hiveService.uploadCustomeAvatar("custome", this.avatar)
     await this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
     this.native.pop();
   }

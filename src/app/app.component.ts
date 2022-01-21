@@ -77,8 +77,9 @@ export class MyApp {
     this.initializeApp();
     this.initProfileData();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, () => {
+      this.downloadCustomeAvatar()
+      this.downloadEssAvatar()
       this.initProfileData();
-      this.getEssAvatarAndBackupToHive()
     })
 
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
@@ -572,7 +573,11 @@ export class MyApp {
     });
   }
 
-  async getEssAvatarAndBackupToHive() {
-    await this.hiveService.getEssAvatar()
+  async downloadCustomeAvatar() {
+    await this.hiveService.downloadCustomeAvatar("custome")
   }
+  async downloadEssAvatar() {
+    await this.hiveService.downloadEssAvatar()
+  }
+
 }
