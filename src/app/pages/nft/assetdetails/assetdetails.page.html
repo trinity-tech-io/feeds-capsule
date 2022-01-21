@@ -63,6 +63,11 @@
           </ion-col>
         </ion-row>
       </div>
+      <ion-row class="detail-row removeBorder" style="padding-top: 20px;" (click)="openPasarExplorer()">
+        <ion-col size="12" style="text-align:center;">
+           <span style="color: #0f97ff;border-bottom: 1px solid #0f97ff;padding-bottom:2px;">{{'AssetdetailsPage.pasarExplorer' | translate}}</span>
+        </ion-col>
+      </ion-row>
     </div>
   </ion-grid>
   <div class="footer" *ngIf="price===null">

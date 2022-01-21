@@ -728,7 +728,8 @@ export const en = {
     saleType: 'Sale Type',
     firstSale: 'Primary Sale',
     secondarySale: 'Secondary Sale',
-    dateoNMarket: 'Date on Market'
+    dateoNMarket: 'Date on Market',
+    pasarExplorer: 'See more details on Pasar Explorer'
   },
   BidPage: {
     title: 'Collectible Details',

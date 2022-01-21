@@ -689,4 +689,9 @@ export class AssetdetailsPage implements OnInit {
       }
      }
 
+     openPasarExplorer(){
+      let url = "https://pasarprotocol.io/explorer/collectible/detail/"+this.tokenID;
+       this.native.openUrl(url);
+     }
+
 }

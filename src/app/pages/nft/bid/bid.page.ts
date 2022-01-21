@@ -655,4 +655,9 @@ export class BidPage implements OnInit {
     .catch(() => {});
    }
   }
+
+  openPasarExplorer(){
+   let url = "https://pasarprotocol.io/explorer/collectible/detail/"+this.tokenID;
+    this.native.openUrl(url);
+  }
 }

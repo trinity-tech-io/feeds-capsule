@@ -56,6 +56,11 @@
         </ion-col>
       </ion-row>
     </div>
+    <ion-row class="detail-row removeBorder" style="padding-bottom:10px" (click)="openPasarExplorer()">
+      <ion-col size="12" style="text-align:center;">
+         <span style="color: #0f97ff;border-bottom: 1px solid #0f97ff;padding-bottom:2px;">{{'AssetdetailsPage.pasarExplorer' | translate}}</span>
+      </ion-col>
+    </ion-row>
 
     <ion-row class="detail-row removeBorder" *ngIf="showType==='burn'">
       <ion-col size="12" class="left-col">

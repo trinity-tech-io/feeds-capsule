@@ -732,7 +732,8 @@ export const zh = {
     saleType: '出售类型',
     firstSale: '首次销售',
     secondarySale: '二次转售',
-    dateoNMarket: '上架日期'
+    dateoNMarket: '上架日期',
+    pasarExplorer: '查看更多在Pasar Explorer'
   },
   BidPage: {
     title: '收藏品明细',
