@@ -148,8 +148,15 @@ export class EditprofileimagePage implements OnInit {
   }
 
   async saveAvatar() {
-    await this.hiveService.uploadCustomeAvatar("custome", this.avatar)
-    await this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
-    this.native.pop();
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveService.uploadCustomeAvatar("custome", this.avatar)
+      this.native.hideLoading()
+      await this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
+      this.native.pop();
+    } catch (error) {
+      this.native.hideLoading()
+      this.native.toast('common.saveFailed');
+    }
   }
 }
