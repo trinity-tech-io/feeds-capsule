@@ -1816,6 +1816,7 @@ export class HomePage implements OnInit {
     const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
     if (content.version == '2.0') {
       // video.setAttribute('src', './assets/icon/reserve.svg');
+
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
         const elements = mediaDatas[0];

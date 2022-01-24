@@ -72,20 +72,45 @@ export class PostHelperService {
             const element = imagesBase64[index];
             if (!element || element == '')
               continue;
-            const originMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(element);
+
+            const elementBlob = this.base64ToBlob(element);
+            const originMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(elementBlob);
+            if (originMediaData) {
+              const cid = originMediaData.cid;
+              this.fileHelperService.savePostData(cid, elementBlob);
+            }
+
             const thumbnail = await UtilService.compress(element);
-            const thumbnailMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(thumbnail)
-            if (!originMediaData || !thumbnailMediaData)
-              continue
-            const mediaData = this.createMediaData("image", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, 0, 0, {}, {});
-            mediasData.push(mediaData);
+            const thumbnailBlob = this.base64ToBlob(thumbnail);
+            const thumbnailMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(thumbnailBlob);
+            if (thumbnailMediaData) {
+              const cid = thumbnailMediaData.cid;
+              this.fileHelperService.savePostData(cid, thumbnailBlob);
+            }
+
+            if (originMediaData && thumbnailMediaData) {
+              const mediaData = this.createMediaData("image", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, 0, 0, {}, {});
+              mediasData.push(mediaData);
+            }
           }
         }
         // TODO Video data 
 
         if (videoData) {
-          const originMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(videoData.video);
-          const thumbnailMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(videoData.thumbnail);
+          const videoBlob = this.base64ToBlob(videoData.video);
+          const originMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(videoBlob);
+          if (originMediaData) {
+            const cid = originMediaData.cid;
+            this.fileHelperService.savePostData(cid, videoBlob);
+          }
+
+          const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
+          const thumbnailMediaData: FeedsData.originMediaData = await this.uploadDataToIpfs(videoThumbBlob);
+          if (thumbnailMediaData) {
+            const cid = thumbnailMediaData.cid;
+            this.fileHelperService.savePostData(cid, videoThumbBlob);
+          }
+
           if (originMediaData && thumbnailMediaData) {
             const mediaData = this.createMediaData("video", originMediaData.cid, originMediaData.type, originMediaData.size, thumbnailMediaData.cid, videoData.duration, 0, {}, {});
             mediasData.push(mediaData);
@@ -101,14 +126,9 @@ export class PostHelperService {
     });
   }
 
-  uploadDataToIpfs(base64Data: string): Promise<FeedsData.originMediaData> {
+  uploadDataToIpfs(elementBlob: Blob): Promise<FeedsData.originMediaData> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!base64Data && base64Data == '') {
-          Logger.error('Upload data to Ipfs error, input is null');
-          resolve(null);
-        }
-        const elementBlob = UtilService.base64ToBlob(base64Data);
         const size = elementBlob.size;
         const type = elementBlob.type;
         const cid = await this.ipfsService.uploadData(elementBlob);
@@ -436,5 +456,13 @@ export class PostHelperService {
         reject(error);
       }
     });
+  }
+
+  base64ToBlob(base64Data: string): Blob {
+    if (!base64Data && base64Data == '') {
+      Logger.error('Base64 data to blob error, input is null');
+      return null;
+    }
+    return UtilService.base64ToBlob(base64Data);
   }
 }
