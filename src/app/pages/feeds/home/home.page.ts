@@ -2409,7 +2409,7 @@ export class HomePage implements OnInit {
 
     if (ponit.scrollTop > 0) {
       this.homeTittleBar.style.display = "none";
-      this.homeTab.setAttribute("style", "top:0px;height:45px;line-height:37px;");
+      this.homeTab.setAttribute("style", "top:0px;height:47px;line-height:37px;");
       let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
       if (sort != null) {
         sort.setAttribute("style", "top:93px;");
@@ -2427,7 +2427,7 @@ export class HomePage implements OnInit {
   handelIosScroll(ponit: any) {
     if (ponit.scrollTop > 0) {
       this.homeTittleBar.style.display = "none";
-      this.homeTab.setAttribute("style", "top:0px;height:45px;line-height:37px;");
+      this.homeTab.setAttribute("style", "top:0px;height:47px;line-height:37px;");
     } else {
       this.homeTittleBar.style.display = "block";
       this.homeTab.setAttribute("style", "top:36px;height:34px;");
