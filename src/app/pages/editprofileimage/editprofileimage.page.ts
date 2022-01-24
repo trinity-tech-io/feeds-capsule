@@ -152,7 +152,7 @@ export class EditprofileimagePage implements OnInit {
     try {
       await this.hiveService.uploadCustomeAvatar("custome", this.avatar)
       this.native.hideLoading()
-      await this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
+      this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
       this.native.pop();
     } catch (error) {
       this.native.hideLoading()

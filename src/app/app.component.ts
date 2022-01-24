@@ -76,10 +76,15 @@ export class MyApp {
   ) {
     this.initializeApp();
     this.initProfileData();
-    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, () => {
-      this.downloadCustomeAvatar()
-      this.downloadEssAvatar()
-      this.initProfileData();
+    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async () => {
+      try {
+        await this.downloadEssAvatar()
+        this.downloadCustomeAvatar()
+
+        this.initProfileData();
+      } catch (error) {
+        console.log('error', error);
+      }
     })
 
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
@@ -335,12 +340,8 @@ export class MyApp {
     this.feedService.signOut()
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
-        this.native.setRootRouter('signin');
-
-        this.feedService.resetConnectionStatus();
-        this.feedService.destroyCarrier();
         this.globalService.restartApp();
-        // this.native.toast('app.des');
+        this.native.setRootRouter('signin');
       })
       .catch(err => {
         //TODO
