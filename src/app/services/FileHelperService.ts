@@ -160,6 +160,19 @@ export class FileHelperService {
     });
   }
 
+  savePostData(fileName: string, data: Blob): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileEntry = await this.getPostFileEntry(fileName);
+        await this.writeCacheFileData(fileEntry, data);
+        resolve('Success');
+      } catch (error) {
+        Logger.error("Get NFT data error");
+        reject(error);
+      }
+    });
+  }
+
   getNFTData(fileUrl: string, fileName: string, type: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -199,9 +212,9 @@ export class FileHelperService {
           resolve('');
           return;
         }
-
         this.dataHelper.addDownloadingUrl(fileUrl);
         let blob = await UtilService.downloadFileFromUrl(fileUrl);
+
         const result2 = await this.transBlobToBase64(blob);
         await this.writeCacheFileData(fileEntry, blob);
         this.dataHelper.deleteDownloadingUrl(fileUrl);

@@ -660,7 +660,7 @@ export class UtilService {
     });
   }
 
-  public static compress(imgData: string): Promise<any> {
+  public static compress(imgData: string): Promise<string> {
     return new Promise((resolve, reject) => {
       if (imgData.length < 50 * 1000) {
         resolve(imgData);

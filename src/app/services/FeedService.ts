@@ -7411,8 +7411,10 @@ export class FeedService {
     nodeId: string,
     feedId: number,
     tempId: number,
-    content: FeedsData.Content,
+    contentText: string,
   ) {
+
+    let content = this.parseContent(nodeId, feedId, tempId, 0, contentText);
     let post: FeedsData.Post = {
       nodeId: nodeId,
       channel_id: feedId,
@@ -7470,6 +7472,7 @@ export class FeedService {
     };
 
     let key = this.getPostId(nodeId, feedId, tempId);
+
     this.dataHelper.updatePost(key, post);
 
     let contentHash = UtilService.SHA256(contentReal);
