@@ -13,8 +13,8 @@
             "custom":"feeds"
         },
         "version": {
-            "code": 20010,
-            "name": "2.0.10"
+            "code": 20100,
+            "name": "2.1.0"
         }
     }
 }
