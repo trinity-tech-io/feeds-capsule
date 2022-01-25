@@ -11,7 +11,7 @@ import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restcli
 import { isEqual, isNil, reject } from 'lodash';
 import { on } from 'process';
 
-let TAG: string = 'feeds-HiveService';
+let TAG: string = 'Feeds-HiveService';
 
 @Injectable()
 export class HiveService {
@@ -48,7 +48,6 @@ export class HiveService {
         let self = this
         this.context = await AppContext.build({
           getLocalDataDir(): string {
-            console.log("path  TODO: =============== ", path)
             return path
           },
           getAppInstanceDocument(): Promise<DIDDocument> {
@@ -66,7 +65,6 @@ export class HiveService {
             return new Promise(async (resolve, reject) => {
               try {
                 const authToken = await self.standardAuthService.generateHiveAuthPresentationJWT(jwtToken)
-                console.log("authToken === ", authToken)
                 resolve(authToken)
               } catch (error) {
                 Logger.error(TAG, "get Authorization Error: ", error)
@@ -96,7 +94,6 @@ export class HiveService {
       // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
       const userDID = DID.from(userDid)
       const userDiddocument = await userDID.resolve()
-      console.log("userDiddocument === ", userDiddocument)
       const ccount = userDiddocument.getCredentialCount()
       const avatarDid = userDid + "#avatar"
       this.avatarVC = userDiddocument.getCredential(avatarDid)
@@ -125,13 +122,12 @@ export class HiveService {
       const serviceDid = userDid + "#hivevault"
       const service = userDiddocument.getService(serviceDid)
       const provider = service.getServiceEndpoint() + ":443"
-      console.log("provider ====================", provider)
 
       const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(this.context, provider)
       this.vault = new VaultServices(this.context, provider)
     }
     catch (error) {
-      console.log("creatVault error: ", error)
+      Logger.error(TAG, 'Create vault error:', error);
     }
   }
 
@@ -142,7 +138,7 @@ export class HiveService {
       }
       return this.vault
     } catch (error) {
-      console.log("getVault error: ", error)
+      Logger.error(TAG, 'Get vault error:', error);
     }
 
   }
@@ -150,16 +146,11 @@ export class HiveService {
   async backupSubscriptionToHive() {
     try {
       const list = this.dataHelper.getSubscribedFeedsList()
-      console.log("list  ==== ", list)
       let userDid = (await this.dataHelper.getSigninData()).did
 
       const feeds_logo_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
       const feeds_logo_createCollection = localStorage.getItem(userDid + HiveService.createCollection) || ''
       const isSync = localStorage.getItem(userDid + HiveService.isSync) || ''
-
-      console.log("feeds_subscription  ==== ", feeds_logo_subscription)
-      console.log("feeds_logo_createCollection  ==== ", feeds_logo_createCollection)
-      console.log("isSync  ==== ", isSync)
 
       if (isSync === '' && list.length === 0 && feeds_logo_subscription === '') { // 新用户/换手机
         let query = {}
@@ -167,7 +158,6 @@ export class HiveService {
         // 容错处理： 新用户去hive端拿备份数据 会拿不到error，会有风险 // 
         localStorage.setItem(HiveService.isSync, "true")
         const result = await vault.getDatabaseService().query(HiveService.collectName, query, null)
-        console.log("拿到query结果 ===== ", result)
 
         let i = 0
         let array = []
@@ -201,28 +191,25 @@ export class HiveService {
             isSubscribed: isSubscribed,
           }
 
-          console.log('====query===nodeChannelId, channel=', nodeChannelId, channel);
           this.dataHelper.updateChannel(nodeChannelId, channel)
         })
 
         const list0 = this.dataHelper.getSubscribedFeedsList() //删除
-        console.log("list0  ==== ", list0)//删除
+
         localStorage.setItem(userDid + HiveService.isSync, "true")
         localStorage.setItem(userDid + HiveService.createCollection, "true")
       }
       else if (feeds_logo_subscription === '' && feeds_logo_createCollection != '' && list.length > 0) {
         let vault = await this.getVault()
         await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        console.log("方法 feeds_logo_subscription  ==== 2")//删除
         localStorage.setItem(userDid + HiveService.collectName, "true")
       }
       else if (feeds_logo_createCollection === '' && list.length > 0) {
         const status = await this.createCollection(userDid, list);
-        console.log('status', status);
       }
     }
     catch (error) {
-      console.log(error)
+      Logger.error(TAG, 'Backup error', error);
     }
   }
 
@@ -237,11 +224,11 @@ export class HiveService {
       else {
         let vault = await this.getVault()
         let result = vault.getDatabaseService().insertOne(HiveService.collectName, one, new InsertOptions(false, true))
-        console.log("insertOne successed: ", result)
+        Logger.log(TAG, 'Insert success', result);
       }
     }
     catch (error) {
-      console.log("insertOne error: ", error)
+      Logger.error(TAG, 'Insert error:', error);
     }
   }
 
@@ -256,10 +243,10 @@ export class HiveService {
       else {
         let vault = await this.getVault()
         let result = vault.getDatabaseService().deleteOne(HiveService.collectName, one)
-        console.log("deleteOne success === ", result)
+        Logger.log(TAG, 'Delete success', result);
       }
     } catch (error) {
-      console.log("deleteOne error: ", error)
+      Logger.error(TAG, 'Delete error', error);
     }
   }
 
@@ -276,10 +263,10 @@ export class HiveService {
         let vault = await this.getVault()
         let updateNode = { "$set": update }
         let result = vault.getDatabaseService().updateOne(HiveService.collectName, origin, updateNode, new UpdateOptions(false, true))
-        console.log("updateOne success === ", result)
+        Logger.log(TAG, 'Update success', result);
       }
     } catch (error) {
-      console.log("updateOne error: ", error)
+      Logger.error(TAG, 'Update error', error);
     }
   }
 
@@ -295,7 +282,6 @@ export class HiveService {
       let scriptingService: ScriptingService
       const vault = await this.getVault()
       if (this.avatarVC === null) {
-        console.log("没有avatar")
         return
       }
       scriptingService = vault.getScriptingService()
@@ -309,7 +295,7 @@ export class HiveService {
       self.dataHelper.saveUserAvatar(savekey, rawImage)
     }
     catch (error) {
-      console.log("downloadEssAvatar error: ", error)
+      Logger.error(TAG, "Download Ess Avatar error: ", error);
     }
   }
 
@@ -320,7 +306,7 @@ export class HiveService {
       const file = await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
     }
     catch (error) {
-      console.log("fileService upload error: ", error)
+      Logger.error(TAG, "Upload custome avatar error: ", error);
     }
   }
 
@@ -329,7 +315,7 @@ export class HiveService {
       // 检测本地是否存在
       let userDid = (await this.dataHelper.getSigninData()).did
       let avatar = await this.dataHelper.loadUserAvatar(userDid);
-      console.log("load Avatar === ,", avatar)
+
       if (avatar) {
         return
       }
@@ -344,10 +330,10 @@ export class HiveService {
         imgstr = dataBuffer.toString()
         self.dataHelper.saveUserAvatar(userDid, imgstr)
       } catch (error) {
-        console.log("下载custome avatar 错误：", error)
+        Logger.error(TAG, 'Download custom avatar error', error);
       }
     } catch (error) {
-      console.log("fileService download error: ", error)
+      Logger.error(TAG, 'Download error', error);
     }
   }
 
@@ -356,12 +342,10 @@ export class HiveService {
       let vault = await this.getVault()
       // localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
       let createCollectionFlag = localStorage.getItem(userDid + HiveService.createCollection) || ""
-      console.log('createCollection, index 111111111111');
+
       if (!createCollectionFlag) {
-        console.log('createCollection, index 22222222');
         try {
           await vault.getDatabaseService().createCollection(HiveService.collectName)
-          console.log('createCollection, index 3333333333');
           createCollectionFlag = "true";
           localStorage.setItem(userDid + HiveService.createCollection, createCollectionFlag)
         } catch (error) {
@@ -369,15 +353,12 @@ export class HiveService {
       }
 
       if (!createCollectionFlag) {
-        console.log('Collection not create');
         resolve('NotFinish');
         return;
       }
 
       try {
-        console.log('createCollection, index 44444444444');
         await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        console.log('createCollection, index 555555555555');
         localStorage.setItem(userDid + HiveService.collectName, "true")
         resolve('Finish');
       } catch (error) {
@@ -472,7 +453,6 @@ export function pictureMimeType(rawOrBase64ImageData: Buffer | string): Promise<
   const fileReader = new FileReader()
   let p = new Promise<string>((resolve) => {
     fileReader.onloadend = e => {
-      //console.log("DEBUG ONLOADEND", e);
       if (!e || !fileReader.result) {
         resolve(null)
         return

@@ -585,109 +585,6 @@ export class CreatenewpostPage implements OnInit {
     }
   }
 
-  // createThumbnail(path: string) {
-  //   this.videoEditor
-  //     .createThumbnail({
-  //       fileUri: path,
-  //       outputFileName: `${Date.now()}`,
-  //       atTime: this.duration / 10,
-  //       width: 320,
-  //       height: 480,
-  //       quality: 30,
-  //     })
-  //     .then(newfileUri => {
-  //       console.log('newfileUri', newfileUri);
-  //       let pathObj = this.handlePath(newfileUri);
-  //       let fileName = pathObj['fileName'];
-  //       let filepath = pathObj['filepath'];
-  //       console.log('filepath', filepath);
-  //       this.readThumbnail(fileName, filepath);
-
-  //       this.transcodeVideo(path).then(newfileUri => {
-  //         this.transcode = 100;
-  //         console.log('newfileUri', newfileUri);
-  //         let pathObj = this.handlePath(newfileUri);
-  //         let fileName = pathObj['fileName'];
-  //         let filepath = pathObj['filepath'];
-  //         console.log('filepath2', filepath);
-  //         this.readFile(fileName, filepath);
-  //       });
-  //     });
-  // }
-
-  // handlePath(fileUri: string) {
-  //   let pathObj = {};
-  //   if (this.platform.is('android')) {
-  //     fileUri = 'cdvfile://localhost' + fileUri.replace('file//', '');
-  //     fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
-  //     let lastIndex = fileUri.lastIndexOf('/');
-  //     pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
-  //     pathObj['filepath'] = fileUri.substring(0, lastIndex);
-  //   } else if (this.platform.is('ios')) {
-  //     let lastIndex = fileUri.lastIndexOf('/');
-  //     pathObj['fileName'] = fileUri.substring(lastIndex + 1, fileUri.length);
-  //     let filepath = fileUri.substring(0, lastIndex);
-  //     filepath = filepath.startsWith('file://')
-  //       ? filepath
-  //       : `file://${filepath}`;
-  //     pathObj['filepath'] = filepath;
-  //   }
-
-  //   return pathObj;
-  // }
-
-  // readThumbnail(fileName: string, filepath: string) {
-  //   console.log('readThumbnail======================', filepath, fileName);
-  //   window.resolveLocalFileSystemURL(
-  //     filepath,
-  //     (dirEntry: DirectoryEntry) => {
-  //       dirEntry.getFile(
-  //         fileName,
-  //         { create: true, exclusive: false },
-  //         fileEntry => {
-  //           fileEntry.file(
-  //             file => {
-  //               let fileReader = new FileReader();
-  //               fileReader.onloadend = (event: any) => {
-  //                 this.zone.run(() => {
-  //                   this.posterImg = fileReader.result;
-  //                 });
-  //               };
-
-  //               fileReader.onprogress = (event: any) => {
-  //               };
-
-  //               fileReader.readAsDataURL(file);
-  //             },
-  //             err => {
-  //               Logger.error(TAG,
-  //                 "Excute 'readThumbnail' in createpost page is error , readFile error, error msg is ",
-  //                 err
-  //               );
-  //             },
-  //           );
-  //         },
-  //         err => {
-  //           Logger.error(TAG,
-  //             "Excute 'readThumbnail' in createpost page is error , getFile error, error msg is ",
-  //             err
-  //           );
-  //         },
-  //       );
-  //     },
-  //     (err: any) => {
-  //       Logger.error(TAG,
-  //         "Excute 'readThumbnail' in createpost page is error , path error, error msg is ",
-  //         err
-  //       );
-  //     },
-  //   );
-  // }
-
-  // handleTotal(duration: any) {
-  //   return UtilService.timeFilter(duration);
-  // }
-
   clickFeedAvatar() {
     if (this.feedList.length > 1) {
       this.hideSwitchFeed = true;
@@ -752,8 +649,6 @@ export class CreatenewpostPage implements OnInit {
       let filePath = pathObj['filepath'];
       // that.zone.run(async () => {
       //   const file: File = await that.fileHelperService.getUserFile(filePath, fileName);
-
-      //   console.log('file', file);
       //   that.ipfsService.uploadData(file);
       // });
       return  that.getFlieObj(fileName, filePath, that);

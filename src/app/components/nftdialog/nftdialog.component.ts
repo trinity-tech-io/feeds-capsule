@@ -61,7 +61,7 @@ export class NftdialogComponent implements OnInit {
     this.title = this.navParams.get('title');
     this.menuType = this.navParams.get('menuType');
     let assItem = this.navParams.get('assItem');
-    console.log("assItem", assItem);
+
     this.curAssItem = assItem;
     let curAmount = assItem.fixedAmount || null;
     if (curAmount != null) {

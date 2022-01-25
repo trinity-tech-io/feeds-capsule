@@ -418,7 +418,6 @@ export class StandardAuthService {
       let didAccess = new DID.DIDAccess();
       this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
       this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
-      console.log("this.appIdCredential");
 
       this.appIdCredential = await this.getAppIdCredentialFromStorage(
         this.appIdCredential,
