@@ -119,9 +119,9 @@ export class CreatenewfeedPage implements OnInit {
         this.zone.run(() => {
           let nodeId = createTopicSuccessData.nodeId;
           let channelId = createTopicSuccessData.channelId;
-          this.publicFeeds(nodeId, channelId);
           this.native.hideLoading();
           this.navCtrl.pop().then(() => {
+            this.publicFeeds(nodeId, channelId);
           });
         });
       },

@@ -1061,7 +1061,7 @@ export class ProfilePage implements OnInit {
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
-      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
     return thumbnailUri + "-" + kind + "-" + size + "-profile";
   }
