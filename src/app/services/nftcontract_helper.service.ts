@@ -1526,7 +1526,7 @@ export class NFTContractHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const isShowAdult = this.dataHelper.getAdultStatus();
-        const result = await this.pasarAssistService.searchPasarOrder(searchType, key, isShowAdult);
+        const result = await this.pasarAssistService.searchPasarOrder(searchType, key, !isShowAdult);
         const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH);
         resolve(list);
       } catch (error) {

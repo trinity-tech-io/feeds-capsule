@@ -5026,6 +5026,10 @@ export class FeedService {
       let newAvatar = avatar.replace('feeds:imgage:', '');
       newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
       return newAvatar;
+    }else if(avatar.startsWith('pasar:image:')){
+      let newAvatar = avatar.replace('pasar:image:', '');
+      newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
+      return newAvatar;
     }
     return avatar;
   }
