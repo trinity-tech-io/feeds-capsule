@@ -98,7 +98,28 @@ export class GalleriachannelPage implements OnInit {
     this.channel = this.feedService.getChannelFromId(this.nodeId, Number(this.channelId));
     this.nftName = this.channel["name"];
     this.nftDescription = this.channel["introduction"];
-
+    let galleriachannelAvatar =  document.getElementById("galleriachannelAvatar") || null;
+    if(galleriachannelAvatar != null){
+      let avatar =  this.channel.avatar || "";
+      if (avatar.startsWith('img://')) {
+        let newAvatar = avatar.replace('img://', '');
+        galleriachannelAvatar.setAttribute("src",newAvatar);
+      } else if(avatar.startsWith('feeds:image:')){
+        let newAvatar = avatar.replace('feeds:image:', '');
+        newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
+        galleriachannelAvatar.setAttribute("src",newAvatar);
+      }else if(avatar.startsWith('feeds:imgage:')){
+        let newAvatar = avatar.replace('feeds:imgage:', '');
+        newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
+        galleriachannelAvatar.setAttribute("src",newAvatar);
+      }else if(avatar.startsWith('pasar:image:')){
+        let newAvatar = avatar.replace('pasar:image:', '');
+        newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
+        galleriachannelAvatar.setAttribute("src",newAvatar);
+      }else{
+        galleriachannelAvatar.setAttribute("src",avatar);
+      }
+    }
     if (this.walletConnectControllerService.getAccountAddress() == '')
       this.walletConnectControllerService.connect();
 
