@@ -95,7 +95,8 @@ export class ProfileimagePage implements OnInit {
     // Check if an uploaded avatar exists. If so, select it and have it displayed
     if (this.selectedAvatar.indexOf('data:image') === -1 &&
         this.selectedAvatar.indexOf('feeds:imgage:') === -1 &&
-        this.selectedAvatar.indexOf('feeds:image:') === -1
+        this.selectedAvatar.indexOf('feeds:image:') === -1 &&
+        this.selectedAvatar.indexOf('pasar:image:') === -1
         ) {
       this.uploadedAvatar = null;
     } else {
@@ -105,6 +106,9 @@ export class ProfileimagePage implements OnInit {
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       }else if(this.selectedAvatar.indexOf('feeds:image:') > -1){
         imgUri = this.selectedAvatar.replace('feeds:image:', '');
+        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      }else if(this.selectedAvatar.indexOf('pasar:image:') > -1){
+        imgUri = this.selectedAvatar.replace('pasar:image:', '');
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       }else{
         imgUri = this.selectedAvatar;

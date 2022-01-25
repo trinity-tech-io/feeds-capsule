@@ -527,12 +527,22 @@ export class NftdialogComponent implements OnInit {
       imgUri = this.assItem['thumbnail'] || "";
       kind = this.assItem["kind"];
       size = this.assItem["originAssetSize"];
+      if (!size)
+      size = '0';
+      if (kind === "gif" && parseInt(size) <= this.maxSize) {
+          imgUri = this.assItem['asset'] || "";
+      }
     }else if(version === "2"){
       let jsonData  = this.assItem['data'] || "";
       if(jsonData != ""){
         imgUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
+        if (!size)
+        size = '0';
+        if (kind === "gif" && parseInt(size) <= this.maxSize) {
+            imgUri = jsonData['image'] || "";
+        }
       }else{
         imgUri = "";
       }
@@ -541,16 +551,15 @@ export class NftdialogComponent implements OnInit {
       this.imgUri = "";
       return;
     }
-    if (!size)
-    size = '0';
-    if (kind === "gif" && parseInt(size) <= this.maxSize) {
-        imgUri = this.assItem['asset'];
-    }
+
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }else if(imgUri.indexOf('feeds:image:') > -1){
       imgUri = imgUri.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }else if(imgUri.indexOf('pasar:image:') > -1){
+      imgUri = imgUri.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
     this.imgUri = imgUri;

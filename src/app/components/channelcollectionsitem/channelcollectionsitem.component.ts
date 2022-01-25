@@ -43,6 +43,8 @@ export class ChannelcollectionsitemComponent implements OnInit {
       this.channelCollectionAvatarId = channelAvatarUri;
     } else if (channelAvatar.indexOf('feeds:image:') > -1) {
       channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+    } else if (channelAvatar.indexOf('pasar:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('pasar:image:', '');
     }
     this.channelCollectionAvatarId = "channelCollectionsPage-avatar-"+channelAvatarUri;
   }

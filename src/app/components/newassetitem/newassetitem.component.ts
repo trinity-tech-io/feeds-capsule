@@ -48,23 +48,28 @@ export class NewassetitemComponent implements OnInit {
       thumbnailUri = this.assetItem['thumbnail'] || "";
       kind = this.assetItem["kind"];
       size = this.assetItem["originAssetSize"];
+      if (!size)
+      size = '0';
+    if (kind === "gif" && parseInt(size) <= this.maxSize) {
+      thumbnailUri = this.assetItem['asset'] || "";
+    }
     } else if (version === "2") {
       let jsonData = this.assetItem['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= this.maxSize) {
+        thumbnailUri = jsonData['image'] || "";
+      }
       } else {
         thumbnailUri = "";
       }
     }
     if (thumbnailUri === "") {
       return "";
-    }
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= this.maxSize) {
-      thumbnailUri = this.assetItem['asset'];
     }
 
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
@@ -73,6 +78,10 @@ export class NewassetitemComponent implements OnInit {
       fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+      fileName = thumbnailUri;
+      fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
       fileName = thumbnailUri;
       fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
     }

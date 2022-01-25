@@ -213,7 +213,11 @@ export class ProfiledetailPage implements OnInit {
     }else if(this.avatar.indexOf('feeds:image:') > -1){
       imgUri = this.avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else{
+    }else if(this.avatar.indexOf('pasar:image:') > -1){
+      imgUri = this.avatar.replace('pasar:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
+    else{
       imgUri = this.avatar;
     }
     return imgUri;

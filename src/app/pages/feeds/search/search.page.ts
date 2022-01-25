@@ -1058,6 +1058,8 @@ handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections){
     channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
   } else if (channelAvatar.indexOf('feeds:image:') > -1) {
     channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+  } else if (channelAvatar.indexOf('pasar:image:') > -1) {
+    channelAvatarUri = channelAvatar.replace('pasar:image:', '');
   }
   return "serachPage-"+channelAvatarUri+"-"+kind;
 }
@@ -1071,6 +1073,8 @@ handleCollectionImgId(channelCollections: FeedsData.ChannelCollections){
     channelCollectionAvatarId = channelAvatarUri;
   } else if (channelAvatar.indexOf('feeds:image:') > -1) {
     channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+  } else if (channelAvatar.indexOf('pasar:image:') > -1) {
+    channelAvatarUri = channelAvatar.replace('pasar:image:', '');
   }
   channelCollectionAvatarId = "serachPage-avatar-"+channelAvatarUri;
   return channelCollectionAvatarId;

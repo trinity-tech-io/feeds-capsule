@@ -384,7 +384,11 @@ export class MyApp {
     } else if (avatar.indexOf('feeds:image:') > -1) {
       imgUri = avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else {
+    } else if (avatar.indexOf('pasar:image:') > -1) {
+      imgUri = avatar.replace('pasar:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
+    else {
       imgUri = avatar;
     }
     this.avatar = imgUri;

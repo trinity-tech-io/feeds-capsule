@@ -249,7 +249,9 @@ export class DiscoverfeedinfoPage implements OnInit {
     let channelAvatar = this.feedInfo['feedsAvatar'];
     if (channelAvatar.indexOf('data:image') > -1 ||
         channelAvatar.indexOf('feeds:imgage:') > -1 ||
-        channelAvatar.indexOf('feeds:image:') > -1) {
+        channelAvatar.indexOf('feeds:image:') > -1 ||
+        channelAvatar.indexOf('pasar:image:') > -1
+        ) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(channelAvatar);
     } else if (channelAvatar.indexOf('assets/images') > -1) {
@@ -287,7 +289,11 @@ export class DiscoverfeedinfoPage implements OnInit {
     }else if( avatar.indexOf('feeds:image:') > -1){
       imgUri = avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else{
+    }else if( avatar.indexOf('pasar:image:') > -1){
+      imgUri = avatar.replace('pasar:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
+    else{
       imgUri = avatar;
     }
     return imgUri;

@@ -145,37 +145,85 @@ export class NftavatarlistPage implements OnInit {
 
 
   getProfileNftImagePage(item: any) {
-    let thumbnailUri = item['thumbnail'];
-    let kind = item["kind"];
-    let size = item["originAssetSize"];
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
+    let version = item['version'] || "1";
+    let thumbnailUri = "";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+      thumbnailUri = item['thumbnail'] || "";
+      kind = item["kind"];
+      size = item["originAssetSize"];
+      if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = item['asset'] || "";
+      }
+    }else if(version === "2"){
+      let jsonData = item['data'] || "";
+      if (jsonData != "") {
+        thumbnailUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = jsonData['image'] || "";
+      }
+      } else {
+        thumbnailUri = "";
+      }
     }
-
+    if(thumbnailUri === ""){
+      return;
+    }
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
     return thumbnailUri + "-" + kind + "-" + size + "-nftavatarlistPage";
   }
 
   getChannelAvatarId(item: any) {
-    let thumbnailUri = item['thumbnail'];
-    let kind = item["kind"];
-    let size = item["originAssetSize"];
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
+    let version = item['version'] || "1";
+    let thumbnailUri = "";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+      thumbnailUri = item['thumbnail'] || "";
+      kind = item["kind"];
+      size = item["originAssetSize"];
+      if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = item['asset'] || "";
+      }
+    }else if(version === "2"){
+      let jsonData = item['data'] || "";
+      if (jsonData != "") {
+        thumbnailUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = jsonData['image'] || "";
+      }
+      } else {
+        thumbnailUri = "";
+      }
     }
-
+    if(thumbnailUri === ""){
+      return;
+    }
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
     return "nftavatarlistPage-avatar-" + thumbnailUri;
   }
