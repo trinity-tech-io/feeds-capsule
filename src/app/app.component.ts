@@ -83,7 +83,7 @@ export class MyApp {
 
         this.initProfileData();
       } catch (error) {
-        console.log('error', error);
+        Logger.error(TAG, error)
       }
     })
 

@@ -250,30 +250,6 @@ export class PostdetailPage implements OnInit {
       this.getImage(this.postContent);
     }
     if (this.mediaType === FeedsData.MediaType.containsVideo) {
-
-      // if (this.postContent.version == '2.0') {
-      //   this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
-      //   const mediaDatas = this.postContent.mediaDatas;
-      //   console.log('mediaDatas', mediaDatas);
-      //   if (mediaDatas && mediaDatas.length > 0) {
-      //     const elements = mediaDatas[0];
-      //     this.postHelperService.getPostData(elements.thumbnailCid, elements.type).then((value) => {
-      //       console.log('postImage', value);
-      //       this.posterImg = value;
-      //       let sid = setTimeout(() => {
-      //         let video: any =
-      //           document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
-      //         console.log('this.postContent =>', this.postContent);
-      //         video.setAttribute('poster', this.posterImg);
-      //         this.setFullScreen();
-      //         this.setOverPlay();
-      //         clearTimeout(sid);
-      //       }, 0);
-      //     });
-      //   }
-      //   return;
-      // }
-
       if (this.postContent.version == '2.0') {
         this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
         const mediaDatas = this.postContent.mediaDatas;

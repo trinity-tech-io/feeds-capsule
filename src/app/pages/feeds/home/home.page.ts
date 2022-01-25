@@ -401,7 +401,6 @@ export class HomePage implements OnInit {
 
     //   this.zone.run(async () => {
     //     const list = this.dataHelper.getPasarItemList();
-    //     console.log('FeedsEvent.PublishType.nftUpdateList', list);
     //     // await this.refreshPasarList();
     //   });
     // });

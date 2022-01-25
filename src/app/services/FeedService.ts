@@ -7806,13 +7806,11 @@ export class FeedService {
     return new Promise(async (resolve, reject) => {
       let signinData = this.getSignInData();
       let userDid = signinData.did;
-      console.log("getUserAvatar === ", userDid)
       if (!signinData) {
         resolve('assets/images/default-contact.svg');
         return;
       }
       let avatar = await this.dataHelper.loadUserAvatar(userDid);
-      console.log("avatar === ,", avatar)
       if (avatar) {
         resolve(avatar);
         return;

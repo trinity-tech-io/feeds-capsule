@@ -187,8 +187,6 @@ export class DataHelper {
   }
 
   updateChannel(key: string, channel: FeedsData.Channels) {
-    console.log('====updateChannel===nodeChannelId, channel=', key, channel);
-    console.log('====updateChannel===this.channelsMap', this.channelsMap);
     this.channelsMap[key] = channel;
     this.saveData(FeedsData.PersistenceKey.channelsMap, this.channelsMap);
   }
