@@ -2631,12 +2631,22 @@ export class HomePage implements OnInit {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
+      if (!size)
+      size = '0';
+    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+      thumbnailUri = item['asset'] || "";
+    }
     } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = jsonData['image'] || "";;
+      }
       } else {
         thumbnailUri = "";
       }
@@ -2645,15 +2655,12 @@ export class HomePage implements OnInit {
       return "";
     }
 
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
-    }
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
     return thumbnailUri + "-" + kind + "-" + size;
   }

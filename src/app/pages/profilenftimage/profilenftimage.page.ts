@@ -116,19 +116,44 @@ export class ProfilenftimagePage implements OnInit {
   async clickItem(item: any) {
 
     if (this.type === "postImages") {
-      let thumbnailUri = item['thumbnail'];
-      let kind = item["kind"];
-      let size = item["originAssetSize"];
-      if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = item['asset'];
+      let version = item['version'] || "1";
+      let thumbnailUri = "";
+      let kind = "";
+      let size = "";
+      if(version === "1"){
+        thumbnailUri = item['thumbnail'] || "";
+        kind = item["kind"];
+        size = item["originAssetSize"];
+        if (!size)
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = item['asset'] || "";
+        }
+      }else if(version === "2"){
+        let jsonData = item['data'] || "";
+        if (jsonData != "") {
+          thumbnailUri = jsonData['thumbnail'] || "";
+          kind = jsonData["kind"];
+          size = jsonData["size"];
+          if (!size)
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";
+        }
+        } else {
+          thumbnailUri = "";
+        }
+      }
+      if(thumbnailUri === ""){
+        return;
       }
 
       if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
         thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
       } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
         thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+      } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+        thumbnailUri = thumbnailUri.replace('pasar:image:', '');
       }
       await this.native.showLoading('common.waitMoment', isDismiss => { }, 30000);
       let fetchUrl = this.ipfsService.getNFTGetUrl() + thumbnailUri;
@@ -145,18 +170,40 @@ export class ProfilenftimagePage implements OnInit {
         this.native.hideLoading();
       });
     } else {
-      let imgUri = item['asset'];
-      let size = item["originAssetSize"];
-      if (!size)
-        size = '0';
-      if (parseInt(size) > 5 * 1024 * 1024) {
-        imgUri = item['thumbnail'];
+      let version = item['version'] || "1";
+      let imgUri = "";
+      let size  = "";
+      if(version === "1"){
+        imgUri = item['asset'] || "";
+        size = item["originAssetSize"];
+        if (!size)
+          size = '0';
+        if (parseInt(size) > 5 * 1024 * 1024) {
+          imgUri = item['thumbnail'] || "";
+        }
+      }else if(version === "2"){
+        let jsonData = item['data'] || "";
+        if (jsonData != "") {
+          imgUri = jsonData['image'] || "";
+          size = jsonData["size"];
+          if (!size)
+          size = '0';
+        if (parseInt(size) > 5 * 1024 * 1024) {
+          imgUri = jsonData['thumbnail'] || "";
+        }
+        } else {
+          imgUri = "";
+        }
       }
+
       if (imgUri.indexOf('feeds:imgage:') > -1) {
         imgUri = imgUri.replace('feeds:imgage:', '');
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       } else if (imgUri.indexOf('feeds:image:') > -1) {
         imgUri = imgUri.replace('feeds:image:', '');
+        imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+      } else if (imgUri.indexOf('pasar:image:') > -1) {
+        imgUri = imgUri.replace('pasar:image:', '');
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       }
       this.native.navigateForward(['editimage'], { replaceUrl: true });
@@ -180,43 +227,88 @@ export class ProfilenftimagePage implements OnInit {
   }
 
   getProfileNftImagePage(item: any) {
-    let thumbnailUri = item['thumbnail'] || "";
-    if (thumbnailUri === "") {
-      return "";
+    let version = item['version'] || "1";
+    let thumbnailUri = "";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+      thumbnailUri = item['thumbnail'] || "";
+      kind = item["kind"];
+      size = item["originAssetSize"];
+      if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = item['asset'] || "";
+      }
+    }else if(version === "2"){
+      let jsonData = item['data'] || "";
+      if (jsonData != "") {
+        thumbnailUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = jsonData['image'] || "";
+      }
+      } else {
+        thumbnailUri = "";
+      }
     }
-    let kind = item["kind"];
-    let size = item["originAssetSize"];
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
+    if(thumbnailUri === ""){
+      return;
     }
 
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
     return thumbnailUri + "-" + kind + "-" + size + "-profileNftImage";
   }
 
   getChannelAvatarId(item: any) {
-    let thumbnailUri = item['thumbnail'] || "";
-    if (thumbnailUri === "") {
-      return "";
+
+    let version = item['version'] || "1";
+    let thumbnailUri = "";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+      thumbnailUri = item['thumbnail'] || "";
+      kind = item["kind"];
+      size = item["originAssetSize"];
+      if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = item['asset'] || "";
+      }
+    }else if(version === "2"){
+      let jsonData = item['data'] || "";
+      if (jsonData != "") {
+        thumbnailUri = jsonData['thumbnail'] || "";
+        kind = jsonData["kind"];
+        size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = jsonData['image'] || "";
+      }
+      } else {
+        thumbnailUri = "";
+      }
     }
-    let kind = item["kind"];
-    let size = item["originAssetSize"];
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
+    if(thumbnailUri === ""){
+      return;
     }
 
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    }  else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
     return thumbnailUri + "-" + kind + "-" + size + "-profileNftImage";
   }

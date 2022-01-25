@@ -521,6 +521,9 @@ export class BidPage implements OnInit {
     } else if (imageUri.indexOf('feeds:image:') > -1) {
       imageUri = imageUri.replace('feeds:image:', '');
       fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
+    } else if (imageUri.indexOf('pasar:image:') > -1) {
+      imageUri = imageUri.replace('pasar:image:', '');
+      fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     }
     return fetchUrl;
   }

@@ -299,6 +299,8 @@ export class ChannelcollectionsPage implements OnInit {
       channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
     } else if (channelAvatar.indexOf('feeds:image:') > -1) {
       channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+    } else if (channelAvatar.indexOf('pasar:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('pasar:image:', '');
     }
     return "channelCollectionsPage-"+channelAvatarUri+"-"+kind;
   }

@@ -398,7 +398,11 @@ export class ProfilePage implements OnInit {
     } else if (avatar.indexOf('feeds:image:') > -1) {
       imgUri = avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else {
+    } else if (avatar.indexOf('pasar:image:') > -1) {
+      imgUri = avatar.replace('pasar:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
+    else {
       imgUri = avatar;
     }
 
@@ -1027,13 +1031,22 @@ export class ProfilePage implements OnInit {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
-
+      if (!size)
+      size = '0';
+    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+      thumbnailUri = item['asset'] || "";
+    }
     } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = jsonData['image'] || "";
+      }
       } else {
         thumbnailUri = "";
       }
@@ -1043,15 +1056,11 @@ export class ProfilePage implements OnInit {
       return "";
     }
 
-    if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'];
-    }
-
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
+      thumbnailUri = thumbnailUri.replace('feeds:image:', '');
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
     }
     return thumbnailUri + "-" + kind + "-" + size + "-profile";
@@ -2235,6 +2244,9 @@ export class ProfilePage implements OnInit {
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     } else if (imgUri.indexOf('feeds:image:') > -1) {
       imgUri = imgUri.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else if (imgUri.indexOf('pasar:image:') > -1) {
+      imgUri = imgUri.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
     return imgUri;
