@@ -920,7 +920,7 @@ export const zh = {
   GalleriachannelPage: {
     title: "频道收藏品",
     publicGallericaFailed: "公开到探索频道失败",
-    mintingData: '正在创建 NFT 收藏品',
+    mintingData: '正在创建频道收藏品',
     settingApproval: '等待授权委托收藏品到 Galleria 合约处理',
     creatingOrder: '正在创建出售订单',
     createOrderSuccess: '创建出售订单成功',
