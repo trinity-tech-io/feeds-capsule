@@ -59,7 +59,7 @@ export class SearchPage implements OnInit {
   private channelCollectionsAvatarisLoad: any = {};
   public channelCollectionPageList: any = [];//页面显示用
   public searchChannelCollectionPageList: any = [];//搜索使用
-  private panelPageSize:number = 5;//一页多少个
+  private panelPageSize:number = 10;//一页多少个
   private panelPageNum:number = 1;//页码
 
   // {
@@ -328,6 +328,7 @@ export class SearchPage implements OnInit {
       this.feedService.updateSubscribedFeed();
       this.feedService.setDiscoverfeeds([]);
       this.curtotalNum = 0;
+      this.panelPageNum = 1;
       this.pageNum = 1;
       this.initData(event, false);
       //event.target.complete();
@@ -966,7 +967,7 @@ async getActivePanelList(){
      listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
    let panelsList:any;
    if(result!=null){
-      panelsList = result["data"]["result"];
+      panelsList = result["data"]["result"] || [];
    }else{
     panelsList = [];
    }
@@ -976,10 +977,11 @@ async getActivePanelList(){
     result = await this.pasarAssistService.
     listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
     if(result!=null){
-      panelsList = result["data"]["result"];
+      panelsList = result["data"]["result"] || [];
    }else{
     panelsList = [];
    }
+   this.panelPageNum = this.panelPageNum+1;
    await this.handlePanels(panelsList);
    }
   }catch (error) {
