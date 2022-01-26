@@ -2251,7 +2251,7 @@ export class FeedService {
         // memo        :   "", //Added 2.0
       };
       this.dataHelper.updateChannel(nodeChannelId, channel);
-      this.hiveService.insertOne(channel)
+      // this.hiveService.insertOne(channel)
       eventBus.publish(
         FeedsEvent.PublishType.editFeedInfoFinish,
         nodeChannelId,
@@ -2267,7 +2267,7 @@ export class FeedService {
     if (subscribers != 0) originChannel.subscribers = subscribers;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -2455,7 +2455,7 @@ export class FeedService {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
 
     this.dataHelper.updateChannel(nodeChannelId, channel);
-    this.hiveService.insertOne(channel)
+    // this.hiveService.insertOne(channel)
 
     let createTopicSuccessData: FeedsEvent.CreateTopicSuccessData = {
       nodeId: nodeId,
@@ -2746,7 +2746,7 @@ export class FeedService {
         };
 
         this.dataHelper.updateChannel(nodeChannelId, channel);
-        this.hiveService.insertOne(channel)
+        // this.hiveService.insertOne(channel)
       }
 
       this.syncPost(nodeId, id);
@@ -2817,7 +2817,7 @@ export class FeedService {
         originChannel.last_update = result[index].last_update * 1000;
       }
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
-      this.hiveService.updateOne(originChannelForHive, originChannel)
+      // this.hiveService.updateOne(originChannelForHive, originChannel)
     }
   }
 
@@ -2850,7 +2850,7 @@ export class FeedService {
     originChannel.subscribers = subscribers;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
   }
 
   async handleGetSubscribedChannelsResult(
@@ -2916,7 +2916,7 @@ export class FeedService {
         originChannel.isSubscribed = true;
       }
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
-      this.hiveService.updateOne(originChannelForHive, originChannel)
+      // this.hiveService.updateOne(originChannelForHive, originChannel)
 
       if (request.max_count == 1) {
         isAddFeeds = true;
@@ -3264,7 +3264,7 @@ export class FeedService {
       if (nodeChannelId != null) {
         originChannel.isSubscribed = false;
         this.dataHelper.updateChannel(nodeChannelId, originChannel);
-        this.hiveService.updateOne(originChannelForHive, originChannel)
+        // this.hiveService.updateOne(originChannelForHive, originChannel)
       }
       let unsubscribeData: FeedsEvent.unsubscribeData = {
         nodeId: nodeId,
@@ -3287,7 +3287,7 @@ export class FeedService {
     if (nodeChannelId != null) {
       originChannel.isSubscribed = false;
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
-      this.hiveService.updateOne(originChannelForHive, originChannel)
+      // this.hiveService.updateOne(originChannelForHive, originChannel)
     }
     this.deletePostFromChannel(nodeId, request.id);
 
@@ -3319,7 +3319,7 @@ export class FeedService {
     if (desc != '') originChannel.introduction = desc;
     if (avatarBin != '') originChannel.avatar = avatar;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
   }
 
@@ -3346,7 +3346,7 @@ export class FeedService {
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
 
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
     let subscribeFinishData: FeedsEvent.SubscribeFinishData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -3367,7 +3367,7 @@ export class FeedService {
     let subscribeNum = originChannel.subscribers;
     if (subscribeNum > 0) originChannel.subscribers = subscribeNum - 1;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
     let subscribeFinishData: FeedsEvent.SubscribeFinishData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -3388,7 +3388,7 @@ export class FeedService {
     if (subscribeNum > 0) originChannel.subscribers = subscribeNum - 1;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
 
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
     let unsubscribeData: FeedsEvent.unsubscribeData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -3407,7 +3407,7 @@ export class FeedService {
     originChannel.subscribers = subscribeNum + 1;
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
     let unsubscribeData: FeedsEvent.unsubscribeData = {
       nodeId: nodeId,
       channelId: channelId,
@@ -4468,7 +4468,7 @@ export class FeedService {
 
     originChannel.subscribers = subscribesCount;
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
-    this.hiveService.updateOne(originChannelForHive, originChannel)
+    // this.hiveService.updateOne(originChannelForHive, originChannel)
   }
 
   async handleGetMultiLikesAndCommentsCount(
