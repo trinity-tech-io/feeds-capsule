@@ -916,7 +916,7 @@ export const en = {
   GalleriachannelPage: {
      title: "Channel Collections",
      publicGallericaFailed: "Failed to publish to Explore Feeds",
-     mintingData: 'Collectible is being created',
+     mintingData: 'Channel Collectible is being created',
      settingApproval: 'Waiting for authorization to delegate Collectible to Galleria',
      creatingOrder: 'Sale order for the Collectible is now being created',
      createOrderSuccess: 'Failed to create a sale order for the Collectible',
