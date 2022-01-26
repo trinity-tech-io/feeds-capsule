@@ -925,7 +925,7 @@ export const zh = {
     creatingOrder: '正在创建出售订单',
     createOrderSuccess: '创建出售订单成功',
     createOrderFail: '创建出售订单失败',
-    checkingCollectibleResult: '等待创建的收藏品在合约中生效',
+    checkingCollectibleResult: '等待创建的频道收藏品在合约中生效',
     mintSuccess: '公开收藏品成功',
     mintSuccessDesc: '恭喜您，公开收藏品成功',
     mintSuccessDesc1: '恭喜您，公开收藏品成功，是否删除中心化服务服务上的feeds',
