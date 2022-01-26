@@ -972,9 +972,9 @@ async getActivePanelList(){
    }else{
     panelsList = [];
    }
-   this.panelPageNum = this.panelPageNum+1;
    while(result!=null&&panelsList.length > 0){
     await this.handlePanels(panelsList);
+    this.panelPageNum = this.panelPageNum+1;
     result = await this.pasarAssistService.
     listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
     if(result!=null){
@@ -982,9 +982,8 @@ async getActivePanelList(){
    }else{
     panelsList = [];
    }
-   this.panelPageNum = this.panelPageNum+1;
-   await this.handlePanels(panelsList);
    }
+   this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
   }catch (error) {
     this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
   }
