@@ -123,10 +123,9 @@ export class PasarAssistService {
             break;
         }
 
-        // if (!saveMode) {
-        //   url = url + '&adult=false';
-        url = url + '&adult='+saveMode;
-        //}
+        if (!saveMode) {
+           url = url + '&adult=false';
+        }
         const result = await this.httpService.httpGet(url);
 
 
