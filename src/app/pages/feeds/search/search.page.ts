@@ -156,6 +156,7 @@ export class SearchPage implements OnInit {
             this.feedService.getToBeAddedFeedsList() || [];
           this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
           this.channelCollectionPageList = this.filterChannelCollection();
+          this.refreshChannelCollectionAvatar();
           this.discoverSquareList = this.filterdiscoverSquareList(
             this.discoverSquareList,
           );
