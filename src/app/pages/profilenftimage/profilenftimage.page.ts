@@ -310,7 +310,7 @@ export class ProfilenftimagePage implements OnInit {
     }  else if (thumbnailUri.indexOf('pasar:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
-    return thumbnailUri + "-" + kind + "-" + size + "-profileNftImage";
+    return "profileNftImagePage-post-"+thumbnailUri;
   }
 
   ionScroll() {
