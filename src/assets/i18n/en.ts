@@ -921,7 +921,7 @@ export const en = {
      creatingOrder: 'Sale order for the Collectible is now being created',
      createOrderSuccess: 'Failed to create a sale order for the Collectible',
      createOrderFail: 'Failed to create a sale order for the Collectible',
-     checkingCollectibleResult: 'Waiting for the NFT Collectible to take effect in the contract',
+     checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
      mintSuccess: 'Open collection success',
      mintSuccessDesc: 'Congratulations on the success of the open collection',
      mintSuccessDesc1: 'Congratulations, the collection has been published successfully. Do you want to delete the feeds on the centralized service',
