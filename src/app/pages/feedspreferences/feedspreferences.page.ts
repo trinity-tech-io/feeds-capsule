@@ -123,6 +123,8 @@ export class FeedspreferencesPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftCancelChannelOrder);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
   }
 
   addEvent() {
