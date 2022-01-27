@@ -730,9 +730,9 @@ export class GalleriachannelPage implements OnInit {
     }
 
     if(channelAvatar.startsWith("assets/images/profile")){
-       let url = "http://localhost/"+channelAvatar;
-       let avatar = await UtilService.downloadFileFromUrl(url);
-       let avatarBase64 = await UtilService.blobToDataURL(avatar);
+       //let url = "http://localhost/"+channelAvatar;
+       //let avatar = await UtilService.downloadFileFromUrl(url);
+       let avatarBase64      =  await this.getAvatarBase64Image(channelAvatar);
       return avatarBase64;
     }
 
@@ -741,6 +741,33 @@ export class GalleriachannelPage implements OnInit {
       let avatarBase64 = await UtilService.blobToDataURL(avatar);
       return avatarBase64;
     }
-  }
+ }
+
+ getBase64Image(img:any) {
+    let canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    let ext = img.src.substring(img.src.lastIndexOf(".")+1).toLowerCase();
+    let dataURL = canvas.toDataURL("image/"+ext);
+    return dataURL;
+ }
+
+ getAvatarBase64Image(path: string):Promise<any>{
+  return new Promise((resolve, reject) => {
+    try{
+      let image = new Image();
+      image.src = path;
+      image.onload = ()=>{
+        let base64 = this.getBase64Image(image);
+        resolve(base64);
+      }
+    }catch(err){
+      resolve(null);
+    }
+  });
+}
+
 
 }
