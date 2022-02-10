@@ -1053,6 +1053,7 @@ subscribeChannelCollection(channelCollections: FeedsData.ChannelCollections){
 }
 
 handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections){
+  let tokenId:string = channelCollections.tokenId;
   let channelAvatar = channelCollections.avatar.image;
   let kind = channelCollections.avatar.kind;
   let channelAvatarUri = "";
@@ -1063,11 +1064,12 @@ handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections){
   } else if (channelAvatar.indexOf('pasar:image:') > -1) {
     channelAvatarUri = channelAvatar.replace('pasar:image:', '');
   }
-  return "serachPage-"+channelAvatarUri+"-"+kind;
+  return "serachPage-"+channelAvatarUri+"-"+kind+"-"+tokenId;
 }
 
 handleCollectionImgId(channelCollections: FeedsData.ChannelCollections){
   let channelAvatar = channelCollections.avatar.image;
+  let tokenId:string = channelCollections.tokenId;
   let channelCollectionAvatarId = "";
   let channelAvatarUri = "";
   if (channelAvatar.indexOf('feeds:imgage:') > -1) {
@@ -1078,7 +1080,7 @@ handleCollectionImgId(channelCollections: FeedsData.ChannelCollections){
   } else if (channelAvatar.indexOf('pasar:image:') > -1) {
     channelAvatarUri = channelAvatar.replace('pasar:image:', '');
   }
-  channelCollectionAvatarId = "serachPage-avatar-"+channelAvatarUri;
+  channelCollectionAvatarId = "serachPage-avatar-"+channelAvatarUri+"-"+tokenId;
   return channelCollectionAvatarId;
 }
 
@@ -1090,9 +1092,10 @@ setChannelCollectionAvatar(){
     let arr = item.getAttribute("id").split("-");
     let avatarUri = arr[1];
     let kind = arr[2];
-    let thumbImage =  document.getElementById('serachPage-avatar-'+avatarUri);
+    let tokenId:string = arr[3];
+    let thumbImage =  document.getElementById('serachPage-avatar-'+avatarUri+"-"+tokenId);
     let srcStr =  thumbImage.getAttribute("src") || "";
-    let isload = this.channelCollectionsAvatarisLoad[avatarUri] || '';
+    let isload = this.channelCollectionsAvatarisLoad[tokenId] || '';
     try {
        if (
         avatarUri != '' &&
@@ -1100,19 +1103,19 @@ setChannelCollectionAvatar(){
          thumbImage.getBoundingClientRect().top <= this.clientHeight
        ) {
          if(isload === ""){
-          this.channelCollectionsAvatarisLoad[avatarUri] = '12';
+          this.channelCollectionsAvatarisLoad[tokenId] = '12';
           let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
           this.fileHelperService.getNFTData(fetchUrl,avatarUri, kind).then((data) => {
             this.zone.run(() => {
-              this.channelCollectionsAvatarisLoad[avatarUri] = '13';
+              this.channelCollectionsAvatarisLoad[tokenId] = '13';
               let dataSrc = data || "";
               if(dataSrc!=""){
                 thumbImage.setAttribute("src",data);
               }
             });
           }).catch((err)=>{
-            if(this.channelCollectionsAvatarisLoad[avatarUri] === '13'){
-              this.channelCollectionsAvatarisLoad[avatarUri] = '';
+            if(this.channelCollectionsAvatarisLoad[tokenId] === '13'){
+              this.channelCollectionsAvatarisLoad[tokenId] = '';
               thumbImage.setAttribute('src', './assets/icon/reserve.svg');
              }
           });
@@ -1122,15 +1125,15 @@ setChannelCollectionAvatar(){
          srcStr = thumbImage.getAttribute('src') || '';
          if (
            thumbImage.getBoundingClientRect().top < -100 &&
-           this.channelCollectionsAvatarisLoad[avatarUri] === '13' &&
+           this.channelCollectionsAvatarisLoad[tokenId] === '13' &&
            srcStr != './assets/icon/reserve.svg'
          ) {
-          this.channelCollectionsAvatarisLoad[avatarUri] = '';
+          this.channelCollectionsAvatarisLoad[tokenId] = '';
            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
          }
        }
     } catch (error) {
-      this.channelCollectionsAvatarisLoad[avatarUri] = '';
+      this.channelCollectionsAvatarisLoad[tokenId] = '';
      thumbImage.setAttribute('src', './assets/icon/reserve.svg');
     }
   }
