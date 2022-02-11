@@ -152,11 +152,20 @@ export class SearchPage implements OnInit {
       FeedsEvent.PublishType.addFeedStatusChanged,
       (addFeedStatusChangedData: FeedsEvent.AddFeedStatusChangedData) => {
         this.zone.run(() => {
+          let nodeId = addFeedStatusChangedData.nodeId;
+          let channelId = addFeedStatusChangedData.feedId;
           this.addingChanneList =
             this.feedService.getToBeAddedFeedsList() || [];
           this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-          this.channelCollectionPageList = this.filterChannelCollection();
-          this.refreshChannelCollectionAvatar();
+          let arrIndex = _.findIndex(this.channelCollectionPageList,(item:any)=>{
+            let feedNodeId = item['nodeId'];
+            let feedUrl = item['url'] || item.entry.url;
+            let feedId = feedUrl.split('/')[4];
+                return nodeId==feedNodeId && channelId == feedId;
+          });
+          if(arrIndex != -1){
+            this.channelCollectionPageList.splice(arrIndex,1);
+          }
           this.discoverSquareList = this.filterdiscoverSquareList(
             this.discoverSquareList,
           );
@@ -397,18 +406,18 @@ export class SearchPage implements OnInit {
           that.addingChanneList =
             that.feedService.getToBeAddedFeedsList() || [];
           that.searchAddingChanneList = _.cloneDeep(that.addingChanneList);
-
-          let channelCollectionPageList = _.filter(that.channelCollectionPageList, feed => {
+          let allChannelCollectionList = that.dataHelper.getPublishedActivePanelList();
+          let channelCollectionPageList = _.filter(allChannelCollectionList, feed => {
             let feedNodeId = feed['nodeId'];
-            let feedUrl = feed['url'];
+            let feedUrl = feed['url'] || feed.entry.url;
             let feedId = feedUrl.split('/')[4];
             return feedNodeId == nodeId && feedId == srcfeedId;
           });
-
           if(channelCollectionPageList.length>0){
             let feed = channelCollectionPageList[0];
             that.channelCollectionPageList.push(feed);
             that.searchChannelCollectionPageList = _.cloneDeep(that.channelCollectionPageList);
+            that.refreshChannelCollectionAvatar();
             return;
           }
 
