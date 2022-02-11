@@ -34,8 +34,8 @@ export class CreatenewpostPage implements OnInit {
   public isLoading: boolean = false;
   public loadingTitle: string = "common.waitMoment";
   public loadingText: string = "common.uploading";
-  public loadingCurNumber: string = "1";
-  public loadingMaxNumber: string = "1";
+  public loadingCurNumber: string = null;
+  public loadingMaxNumber: string = null;
   public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = '';
