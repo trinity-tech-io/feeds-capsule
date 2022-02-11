@@ -64,7 +64,7 @@ export class SettingsPage implements OnInit {
 
   ionViewWillEnter() {
     this.loadIpfsShowName();
-    this.loadAssistShowName();
+    //this.loadAssistShowName();
     this.pasarListGrid = this.feedService.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
