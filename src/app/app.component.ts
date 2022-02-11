@@ -299,12 +299,12 @@ export class MyApp {
   }
 
   initAssist(){
-    let assistBaseUrl = localStorage.getItem("selectedAssistPasarNetwork") || '';
-    if(assistBaseUrl === ""){
-      assistBaseUrl = Config.defaultAssistApi();
-      localStorage.setItem("selectedAssistPasarNetwork",assistBaseUrl);
-    }
-    ApiUrl.setAssist(assistBaseUrl);
+    // let assistBaseUrl = localStorage.getItem("selectedAssistPasarNetwork") || '';
+    // if(assistBaseUrl === ""){
+    //   assistBaseUrl = Config.defaultAssistApi();
+    //   localStorage.setItem("selectedAssistPasarNetwork",assistBaseUrl);
+    // }
+    ApiUrl.setAssist(Config.ASSIST_SERVER);
     this.globalService.refreshBaseAssistUrl();
   }
 
