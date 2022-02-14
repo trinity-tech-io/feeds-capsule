@@ -917,18 +917,23 @@ export class MenuService {
 
   async doCancelChannelOrder(that: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let panelId = this.assItem['panelId'] || '';
-      if (panelId === '') {
-        reject('error');
-        return;
-      }
-      let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
-      if (cancelStatus===null) {
-        reject('error');
-        return;
-      }
-      that.events.publish(FeedsEvent.PublishType.nftCancelChannelOrder, this.assItem);
-      resolve('Success');
+
+        let panelId = this.assItem['panelId'] || '';
+        if (panelId === '') {
+          reject('error');
+          return;
+        }
+        try {
+          let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
+          if (cancelStatus===null) {
+            reject('error');
+            return;
+          }
+          that.events.publish(FeedsEvent.PublishType.nftCancelChannelOrder, this.assItem);
+          resolve('Success');
+        } catch (error) {
+          reject('error');
+        }
     });
 
   }

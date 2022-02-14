@@ -191,6 +191,9 @@ export class NFTContractGalleriaService {
           })
           .on('error', (error, receipt) => {
             Logger.error(TAG, 'removePanel process, error is', error, receipt);
+            // this.checkRemovePanelInterval = null;
+            // clearInterval(this.checkRemovePanelInterval);
+            reject(error);
           });
 
           this.checkRemovePanelState(panelId, info => {
@@ -209,9 +212,14 @@ export class NFTContractGalleriaService {
   checkRemovePanelState(panelId: string, callback: (tokenInfo: any) => void) {
     this.checkRemovePanelNum = 0;
     this.checkRemovePanelInterval = setInterval(async () => {
-      if (!this.checkRemovePanelInterval) return;
+      if (!this.checkRemovePanelInterval){
+        // Logger.log(TAG, 'Check removePanel state finish', "test");
+        // clearInterval(this.checkRemovePanelInterval);
+        // callback(null);
+        return;
+      }
       let info = await this.getPanelById(panelId);
-      if (info[1] != '2') {
+      if (info[1] === '2') {
         Logger.log(TAG, 'Check removePanel state finish', info);
         clearInterval(this.checkRemovePanelInterval);
         callback(info);
@@ -222,6 +230,7 @@ export class NFTContractGalleriaService {
       if (this.checkRemovePanelNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
         clearInterval(this.checkRemovePanelInterval);
         this.checkRemovePanelInterval = null;
+        callback(null);
         Logger.log(TAG, 'Exit check token state by self');
       }
     }, Config.CHECK_STATUS_INTERVAL_TIME);
