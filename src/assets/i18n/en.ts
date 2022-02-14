@@ -586,6 +586,10 @@ export const en = {
   },
   EidtchannelPage: {
     title: 'Edit Channel Info',
+    des: 'Prompt Box',
+    des1: "This channel is already public on the Explore Feeds and needs to unpublic from the Explore Feeds before it can be edited.",
+    des2: "This channel is already a collection and is public on the  Explore Feeds. It needs to unpublic from the  Explore Feeds and the collection can only be edited after deleting the collection.",
+    des3: "This channel is already a collection, you need to delete the collection before it can be edited.",
   },
   EditPostPage: {
     title: 'Edit Post',
