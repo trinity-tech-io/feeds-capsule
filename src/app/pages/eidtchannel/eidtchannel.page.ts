@@ -12,6 +12,11 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import _ from 'lodash';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { PasarAssistService } from 'src/app/services/pasar_assist.service';
+import { CarrierService } from 'src/app/services/CarrierService';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-eidtchannel',
@@ -34,7 +39,8 @@ export class EidtchannelPage implements OnInit {
   private channelSubscribes: number = null;
   private followStatus: boolean = false;
   private isClickConfirm: boolean = false;
-
+  private channelCollections: FeedsData.ChannelCollections = null;
+  private popover: any = null;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -46,6 +52,11 @@ export class EidtchannelPage implements OnInit {
     private httpService: HttpService,
     private popoverController: PopoverController,
     private titleBarService: TitleBarService,
+    private dataHelper: DataHelper,
+    private nftContractControllerService: NFTContractControllerService,
+    private pasarAssistService: PasarAssistService,
+    private carrierService: CarrierService,
+    private popupProvider: PopupProvider,
   ) {}
 
   ngOnInit() {
@@ -64,7 +75,6 @@ export class EidtchannelPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.getPublicStatus();
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
@@ -81,7 +91,7 @@ export class EidtchannelPage implements OnInit {
         channelInfo["name"] = this.name;
         channelInfo["des"] = this.des;
         this.feedService.setChannelInfo(channelInfo);
-        this.updatePublicData();
+        //this.updatePublicData();
         this.native.hideLoading();
         this.native.pop();
       });
@@ -136,7 +146,7 @@ export class EidtchannelPage implements OnInit {
     this.native.pop();
   }
 
-  confirm() {
+  async confirm() {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -146,10 +156,24 @@ export class EidtchannelPage implements OnInit {
       this.native.toastWarn('common.connectionError1');
       return;
     }
-
+    await this.native.showLoading('common.waitMoment', isDismiss => {})
+    await this.getPublicStatus();
+    this.native.hideLoading();
+    if(this.isPublic === "1"){
+      this.open("EidtchannelPage.des","EidtchannelPage.des1")
+      return;
+    }
+    if(this.isPublic === "2"){
+      this.open("EidtchannelPage.des","EidtchannelPage.des2")
+      return;
+    }
+    if(this.isPublic === "3"){
+      this.open("EidtchannelPage.des","EidtchannelPage.des3")
+      return;
+    }
     this.isClickConfirm = true;
 
-    if (this.checkparms()) {
+    if (this.checkparms() && this.isPublic === "") {
       this.native
         .showLoading('common.waitMoment', isDismiss => {})
         .then(() => {
@@ -227,21 +251,136 @@ export class EidtchannelPage implements OnInit {
     });
   }
 
-  getPublicStatus() {
+  async getPublicStatus() {
+    this.channelCollections = await this.getChannelCollectionsStatus() || null;
+    if(this.channelCollections != null){
+      this.zone.run(() => {
+        this.isPublic = '2';
+      });
+      return;
+    }
+
     let serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
     let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
+    let tokenInfo = await this.isExitStrick(feedsUrl);
+    if(tokenInfo != null){
+       this.isPublic = '3';
+       return;
+    }
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    this.httpService
-      .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false)
-      .then(result => {
-        if (result['code'] === 200) {
-          let resultData = result['data'] || '';
-          if (resultData != '') {
-            this.isPublic = '1';
-          } else {
-            this.isPublic = '';
-          }
+    try {
+      let result = await this.httpService
+      .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false) || null;
+    if(result === null){
+       this.isPublic = '';
+        return;
+    }
+    if(result['code'] === 200) {
+        let resultData = result['data'] || '';
+        if (resultData != '') {
+          this.isPublic = '1';
+        } else {
+          this.isPublic = '';
         }
-      });
+    }
+    } catch (error) {
+
+    }
   }
+
+  async getChannelCollectionsStatus(){
+    try {
+      let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      if (server === null) {
+      return;
+      }
+      let feedsUrl = server.feedsUrl + '/' + this.channelId;
+      let feedsUrlHash = UtilService.SHA256(feedsUrl);
+      let tokenId: string ="0x" + feedsUrlHash;
+      tokenId =  UtilService.hex2dec(tokenId);
+      let list = this.dataHelper.getPublishedActivePanelList() || [];
+      let fitleItem = _.find(list,(item)=>{
+          return item.tokenId === tokenId;
+      }) || null;
+      if(fitleItem != null){
+         return fitleItem;
+      }
+      let result = await this.pasarAssistService.getPanel(tokenId);
+      if(result != null){
+       let tokenInfo = result["data"] || "";
+       if(tokenInfo === ""){
+           return null;
+       }
+       tokenInfo =  await this.handlePanels(result["data"]);
+       let panelList=this.dataHelper.getPublishedActivePanelList() || [];
+       panelList.push(tokenInfo);
+       this.dataHelper.setPublishedActivePanelList(panelList);
+       return tokenInfo;
+       }
+      return null;
+     } catch (error) {
+      return null;
+     }
+   }
+
+   async isExitStrick(feedsUrl: string) {
+
+    try {
+     let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
+     tokenId =  UtilService.hex2dec(tokenId);
+     //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
+     let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+     if(tokenInfo[0]!='0' && tokenInfo[2]!='0'){
+          return tokenInfo;
+     }
+     return null;
+    } catch (error) {
+     return null;
+    }
+   }
+
+   async handlePanels(item :any){
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+     channelCollections.version = item.version;
+     channelCollections.panelId = item.panelId;
+     channelCollections.userAddr = item.user;
+     //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
+     channelCollections.diaBalance = "0";
+     channelCollections.type = item.type;
+     channelCollections.tokenId = item.tokenId;
+     channelCollections.name = item.name;
+     channelCollections.description = item.description;
+     channelCollections.avatar = item.avatar;
+     channelCollections.entry = item.entry;
+     channelCollections.ownerDid = item.tokenDid.did;
+     let didJsON = this.feedService.getSignInData() || {};
+     channelCollections.ownerName = didJsON["name"];
+     let url: string = channelCollections.entry.url;
+     let urlArr = url.replace("feeds://","").split("/");
+     channelCollections.did = urlArr[0];
+     let carrierAddress = urlArr[1];
+     let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
+     channelCollections.nodeId = nodeId;
+     return channelCollections;
+  }
+
+  open(des1: string,des2: string){
+    this.popover = this.popupProvider.showalertdialog(
+      this,
+      des1,
+      des2,
+      this.ok,
+      'finish.svg',
+      'common.ok',
+    );
+  }
+
+  ok(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+      this.popover = null;
+      that.native.pop();
+    }
+  }
+
 }

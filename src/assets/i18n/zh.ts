@@ -586,6 +586,10 @@ export const zh = {
   },
   EidtchannelPage: {
     title: '编辑频道信息',
+    des: '提示框',
+    des1: "此频道已经在探索Feeds公开，需要先从探索Feeds下架，才可以修改。",
+    des2: "此频道已经是收藏品且在探索Feeds公开，需要从探索Feeds下架，销毁收藏品才可以修改。",
+    des3: "此频道已经是收藏品，需要销毁收藏品后才可以修改。",
   },
   EditPostPage: {
     title: '编辑微说',
