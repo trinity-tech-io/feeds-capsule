@@ -31,7 +31,7 @@ export class CommentComponent implements OnInit {
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   public newComment = '';
-  public isAndroid = true;
+  public isAndroid = '';
   constructor(
     public theme: ThemeService,
     public native: NativeService,
@@ -41,7 +41,9 @@ export class CommentComponent implements OnInit {
 
   ngOnInit() {
     if (this.platform.is('ios')) {
-      this.isAndroid = false;
+      this.isAndroid = "ios";
+    }else{
+      this.isAndroid = "android";
     }
   }
 
