@@ -773,7 +773,7 @@ export const en = {
     congratulations: 'Congratulations!',
   },
   ExplorefeedsPage: {
-    pasar: 'Pasar',
+    pasar: 'Pasar Lite',
     explorefeeds: 'Explore Feeds',
     hotBids: 'Hot Bids',
     latest: 'Latest',

@@ -777,7 +777,7 @@ export const zh = {
     congratulations: '恭喜！',
   },
   ExplorefeedsPage: {
-    pasar: 'Pasar',
+    pasar: 'Pasar Lite',
     explorefeeds: '探索 Feeds',
     hotBids: '热门竞标',
     latest: '最近',
