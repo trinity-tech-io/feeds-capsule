@@ -1,5 +1,5 @@
 <div [class.mask]="!theme.darkMode" [class.darkMask]="theme.darkMode" (click)="hideComponent()"></div>
-<ion-footer>
+<ion-footer [class.androidFooter]="isAndroid" [class.iosFooter]="!isAndroid" >
   <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
 
     <ion-item class="removeBorder" lines="none">

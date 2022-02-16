@@ -9,7 +9,7 @@ import {
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
-import { IonTextarea } from '@ionic/angular';
+import { IonTextarea, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-comment',
@@ -31,16 +31,22 @@ export class CommentComponent implements OnInit {
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   public newComment = '';
-
+  public isAndroid = true;
   constructor(
     public theme: ThemeService,
     public native: NativeService,
     private feedService: FeedService,
+    private platform: Platform,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.platform.is('ios')) {
+      this.isAndroid = false;
+    }
+  }
 
   ionViewDidEnter() {
+
     const timer = setTimeout(() => {
       this.comment.setFocus();
       clearTimeout(timer);
