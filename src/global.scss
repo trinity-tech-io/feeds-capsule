@@ -535,7 +535,7 @@ ion-input {
 
 .swiper-pagination {
   bottom: 0px !important;
-  bottom: calc(env(safe-area-inset-bottom) + 0px) !important;
+  // bottom: calc(env(safe-area-inset-bottom) + 0px) !important;
   --swiper-pagination-color:#7624fe;
 }
 
