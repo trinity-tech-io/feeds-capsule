@@ -239,6 +239,10 @@ const routes: Routes = [
     path: 'channelcollections',
     loadChildren: () => import('./pages/channelcollections/channelcollections.module').then( m => m.ChannelcollectionsPageModule)
   },
+  {
+    path: 'mintpost',
+    loadChildren: () => import('./pages/mintpost/mintpost.module').then( m => m.MintpostPageModule)
+  },
 ];
 
 @NgModule({

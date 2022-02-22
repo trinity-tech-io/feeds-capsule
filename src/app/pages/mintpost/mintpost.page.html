@@ -1,0 +1,29 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-list>
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'MintnftPage.nftName' | translate }}</ion-label>
+        <ion-input clearInput  required type="text" placeholder="{{'MintnftPage.nftNamePlaceholder'|translate}}" [(ngModel)]="postTextJson.name"></ion-input>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-label position="stacked">{{ 'MintnftPage.nftDescription' | translate }}</ion-label>
+      <ion-input clearInput required type="text" placeholder="{{'MintnftPage.nftDescriptionPlaceholder'|translate}}" [(ngModel)]="postTextJson.description"></ion-input>
+    </ion-item>
+    </ion-list>
+    <ion-row class="btn-row" style="justify-content:flex-start;">
+      <ion-button (click)="mint()" style="margin-top:-26px;;margin-bottom:20px;">
+          <ion-label> {{'MintnftPage.create'|translate}}</ion-label>
+      </ion-button>
+  </ion-row>
+  </ion-grid>
+</ion-content>
+<app-nftloading
+ *ngIf="isLoading"
+ [loadingTitle] = "loadingTitle"
+ [loadingText] = "loadingText"
+ [loadingCurNumber] = "loadingCurNumber"
+ [loadingMaxNumber] = "loadingMaxNumber"
+>
+</app-nftloading>

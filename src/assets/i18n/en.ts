@@ -187,7 +187,8 @@ export const en = {
     cleanPasarDataTip: 'Need to restart app after clearing Pasar data',
     unpublished: "Unpublished",
     published: "Published",
-    queryTransactionResult: 'A transaction has been initiated and the result is being queried'
+    queryTransactionResult: 'A transaction has been initiated and the result is being queried',
+    mintpost: 'mint Post',
   },
   app: {
     profileDetails: 'Profile Details',

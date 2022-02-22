@@ -395,6 +395,20 @@ export class MenuService {
           },
         },
         {
+          text: this.translate.instant('common.mintpost'),
+          icon: 'create',
+          handler: () => {
+            // this.handlePostDetailMenun(
+            //   nodeId,
+            //   channelId,
+            //   channelName,
+            //   postId,
+            //   'editPost',
+            // );
+           this.native.navigateForward(['mintpost'], {queryParams:{"nodeId":nodeId,"channelId":channelId,"postId":postId,"channelName":channelName}});
+          },
+        },
+        {
           text: this.translate.instant('common.removepost'),
           role: 'destructive',
           icon: 'trash',
