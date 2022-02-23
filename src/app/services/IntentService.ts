@@ -388,6 +388,42 @@ export class IntentService {
     });
   }
 
+  async createShareFullLink(nodeId: string, channelId: number, postId: number): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const server = this.dataHelper.getServer(nodeId);
+
+        const address = server.carrierAddress;
+        const serverDid = server.did;
+
+        const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
+        const channel = this.dataHelper.getChannel(key);
+
+        const ownerName = channel.owner_name;
+        const ownerDid = channel.owner_did;
+        const channelName = channel.name;
+        const channelDesc = channel.introduction;
+
+        let url = "https://feeds.trinity-feeds.app/feeds/"
+          + "?address=" + address
+          + "&channelId=" + channelId
+          + "&channelDesc=" + encodeURIComponent(channelDesc)
+          + "&ownerName=" + encodeURIComponent(ownerName)
+          + "&serverDid=" + encodeURIComponent(serverDid)
+          + "&channelName=" + encodeURIComponent(channelName)
+          + "&ownerDid=" + encodeURIComponent(ownerDid)
+          + "&postId=" + postId
+
+        // let encodeURL = encodeURI(url);
+        Logger.log(TAG, "Shared link url is " + url);
+        resolve(url);
+        return url;
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   async createSharePasarLink(orderId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {

@@ -53,7 +53,7 @@ export class MintpostPage implements OnInit {
     "data": {
         "text_body":"",
         "text_source":"",
-        "feeds-channel":"",
+        "feeds_channel":"",
     },
     "adult": false
   };
@@ -75,11 +75,10 @@ export class MintpostPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams:any) => {
-       console.log("===queryParams===",queryParams);
        this.nodeId = queryParams.nodeId;
        this.channelId = queryParams.channelId;
        this.postId = queryParams.postId;
-       this.postTextJson.data['feeds-channel'] = queryParams.channelName;
+       this.postTextJson.data['feeds_channel'] = queryParams.channelName;
     });
   }
 
@@ -96,7 +95,6 @@ export class MintpostPage implements OnInit {
     );
 
    this.postTextJson.data.text_body =  this.feedService.parsePostContentText(post.content);
-   console.log("===post==",post);
   }
 
   ionViewWillLeave() {
@@ -119,7 +117,6 @@ export class MintpostPage implements OnInit {
     }
     this.postTextJson.data.text_source = await this.getUrl();
     this.doMint();
-    console.log("===post===="+JSON.stringify(this.postTextJson));
   }
 
   checkParms() {
@@ -143,10 +140,10 @@ export class MintpostPage implements OnInit {
   }
 
  async getUrl(){
-    await this.native.showLoading("common.generateSharingLink");
+   // await this.native.showLoading("common.generateSharingLink");
     try {
-      const sharedLink = await this.intentService.createShareLink(this.nodeId, this.channelId, this.postId);
-      this.native.hideLoading();
+      const sharedLink = await this.intentService.createShareFullLink(this.nodeId, this.channelId, this.postId);
+      //this.native.hideLoading();
       return sharedLink;
     } catch (error) {
     }
