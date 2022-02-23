@@ -188,7 +188,7 @@ export const zh = {
     unpublished: "未公开",
     published: "已公开",
     queryTransactionResult: '已发起交易，正在查询结果',
-    mintpost: 'mint微说',
+    mintpost: '创建微说收藏品',
   },
   app: {
     profileDetails: '档案详情',
