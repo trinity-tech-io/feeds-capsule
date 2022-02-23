@@ -195,9 +195,13 @@ export class ProfilePage implements OnInit {
   ) {
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log("ProfilePage")
+  }
 
   initMyFeeds() {
+    console.log("刷新myfeeds ======= ")
+    // 频道
     this.channels = this.feedService.getMyChannelList() || [];
     this.myFeedsSum = this.channels.length;
     let followedList = this.feedService.getFollowedChannelList() || [];
@@ -206,6 +210,7 @@ export class ProfilePage implements OnInit {
   }
 
   initLike() {
+    // 赞/收藏
     this.startIndex = 0;
     this.initRefresh();
     this.initnodeStatus(this.likeList);

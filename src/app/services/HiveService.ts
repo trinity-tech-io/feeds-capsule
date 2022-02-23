@@ -10,6 +10,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 import { isEqual, isNil, reject } from 'lodash';
 import { on } from 'process';
+import { VideoService } from './video.service';
 
 let TAG: string = 'Feeds-HiveService';
 
@@ -140,7 +141,124 @@ export class HiveService {
     } catch (error) {
       Logger.error(TAG, 'Get vault error:', error);
     }
+  }
 
+  async createChannel(channelName: string): Promise<void> {
+    // 创建channle表
+    return (await this.getVault()).getDatabaseService().createCollection(channelName)
+  }
+
+  async postChannleInfo(channelName: string, intro: string, avatar: any): Promise<InsertResult> {
+    const channel_id = 0
+    const created_at = 0
+    const updated_at = 0
+    const memo = ""
+    const doc = { "channel_id": channel_id, "intro": intro, "avatar": avatar, "created_at": created_at, "updated_at": updated_at, "memo": memo, }
+    return (await this.getVault()).getDatabaseService().insertOne(channelName, doc, new InsertOptions(false, true))
+  }
+
+  async postChannleContent(channelName: string, content: any, status: string): Promise<InsertResult> {
+    const channel_id = 0
+    const post_id = 0
+    const created_at = 0
+    const update_at = 0
+    const memo = ""
+    const type = ""
+    const tag = ""
+    // content 中可能包含文字和图片
+    const doc = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
+    return (await this.getVault()).getDatabaseService().insertOne(channelName, doc, new InsertOptions(false, true))
+  }
+
+  async updatePost(channelName: string, origin: any, content: any, status: string): Promise<UpdateResult> {
+    const channel_id = 0
+    const post_id = 0
+    const created_at = 0
+    const update_at = 0
+    const memo = ""
+    const type = ""
+    const tag = ""
+    // content 中可能包含文字和图片
+    const update = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
+    let updateNode = { "$set": update }
+    const doc = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
+    return (await this.getVault()).getDatabaseService().updateOne(channelName, origin, updateNode, new UpdateOptions(false, true))
+  }
+
+  async deleatePost(channelName: string, one: any,): Promise<void> {
+    return (await this.getVault()).getDatabaseService().deleteOne(channelName, one)
+  }
+
+  async getMyChannelList() {
+    let userDid = (await this.dataHelper.getSigninData()).did
+    this.dataHelper.getMyChannelListWithHive(userDid)
+  }
+
+  async downloadEssAvatar() {
+    try {
+      // 检测本地是否存在
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const loadKey = userDid + "_ess_avatar"
+      let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
+      if (essavatar) {
+        return
+      }
+      let scriptingService: ScriptingService
+      const vault = await this.getVault()
+      if (this.avatarVC === null) {
+        return
+      }
+      scriptingService = vault.getScriptingService()
+      const result = await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
+      const transaction_id = result["download"]["transaction_id"]
+      let self = this
+      let dataBuffer = await scriptingService.downloadFile(transaction_id)
+
+      const savekey = userDid + "_ess_avatar"
+      const rawImage = await rawImageToBase64DataUrl(dataBuffer)
+      self.dataHelper.saveUserAvatar(savekey, rawImage)
+    }
+    catch (error) {
+      Logger.error(TAG, "Download Ess Avatar error: ", error);
+    }
+  }
+
+  async uploadCustomeAvatar(remotePath: string, img: any) {
+    try {
+      const vault = await this.getVault()
+      const fileService = vault.getFilesService()
+      const file = await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
+    }
+    catch (error) {
+      Logger.error(TAG, "Upload custome avatar error: ", error);
+    }
+  }
+
+  async downloadCustomeAvatar(remotePath: string) {
+    try {
+      // 检测本地是否存在
+      let userDid = (await this.dataHelper.getSigninData()).did
+      let avatar = await this.dataHelper.loadUserAvatar(userDid);
+
+      if (avatar) {
+        return
+      }
+
+      const vault = await this.getVault()
+      const fileService = vault.getFilesService()
+      let self = this
+      let imgstr = ''
+      try {
+        var dataBuffer = await fileService.download(remotePath)
+        // dataBuffer = dataBuffer.slice(1, -1)
+        imgstr = dataBuffer.toString()
+        self.dataHelper.saveUserAvatar(userDid, imgstr)
+      } catch (error) {
+        Logger.error(TAG, 'Download custom avatar error: ', JSON.stringify(error))
+      }
+    } catch (error) {
+      Logger.error(TAG, 'Download error', error)
+    }
   }
 
   async backupSubscriptionToHive() {
@@ -267,73 +385,6 @@ export class HiveService {
       }
     } catch (error) {
       Logger.error(TAG, 'Update error', error);
-    }
-  }
-
-  async downloadEssAvatar() {
-    try {
-      // 检测本地是否存在
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const loadKey = userDid + "_ess_avatar"
-      let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
-      if (essavatar) {
-        return
-      }
-      let scriptingService: ScriptingService
-      const vault = await this.getVault()
-      if (this.avatarVC === null) {
-        return
-      }
-      scriptingService = vault.getScriptingService()
-      const result = await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
-      const transaction_id = result["download"]["transaction_id"]
-      let self = this
-      let dataBuffer = await scriptingService.downloadFile(transaction_id)
-
-      const savekey = userDid + "_ess_avatar"
-      const rawImage = await rawImageToBase64DataUrl(dataBuffer)
-      self.dataHelper.saveUserAvatar(savekey, rawImage)
-    }
-    catch (error) {
-      Logger.error(TAG, "Download Ess Avatar error: ", error);
-    }
-  }
-
-  async uploadCustomeAvatar(remotePath: string, img: any) {
-    try {
-      const vault = await this.getVault()
-      const fileService = vault.getFilesService()
-      const file = await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
-    }
-    catch (error) {
-      Logger.error(TAG, "Upload custome avatar error: ", error);
-    }
-  }
-
-  async downloadCustomeAvatar(remotePath: string) {
-    try {
-      // 检测本地是否存在
-      let userDid = (await this.dataHelper.getSigninData()).did
-      let avatar = await this.dataHelper.loadUserAvatar(userDid);
-
-      if (avatar) {
-        return
-      }
-
-      const vault = await this.getVault()
-      const fileService = vault.getFilesService()
-      let self = this
-      let imgstr = ''
-      try {
-        var dataBuffer = await fileService.download(remotePath)
-        dataBuffer = dataBuffer.slice(1, -1)
-        imgstr = dataBuffer.toString()
-        self.dataHelper.saveUserAvatar(userDid, imgstr)
-      } catch (error) {
-        Logger.error(TAG, 'Download custom avatar error', error);
-      }
-    } catch (error) {
-      Logger.error(TAG, 'Download error', error);
     }
   }
 

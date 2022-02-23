@@ -5,7 +5,8 @@ import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
-
+import { HiveService } from '../../services/HiveService'
+import { from } from 'rxjs';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -26,16 +27,18 @@ export class MyfeedsComponent implements OnInit {
     private native: NativeService,
     private viewHelper: ViewHelper,
     public popupProvider: PopupProvider,
+    private hiveService: HiveService
   ) {}
 
   ngOnInit() {
+    console.log("MyfeedsComponent")
   }
 
   moreName(name: string) {
     return UtilService.moreNanme(name);
   }
 
-  createNewFeed() {
+  createNewFeed() { // 创建频道
     this.checkDid();
   }
 
@@ -62,6 +65,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   handleClientNumber(nodeId) {
+    console.log("nodeId ====== ", nodeId)
     return this.feedService.getServerStatisticsNumber(nodeId);
   }
 
@@ -73,32 +77,33 @@ export class MyfeedsComponent implements OnInit {
   }
 
   checkDid() {
-    this.feedService.setProfileIamge('assets/images/profile-1.svg');
-    this.feedService.setSelsectIndex(1);
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+    // this.feedService.setProfileIamge('assets/images/profile-1.svg');
+    // this.feedService.setSelsectIndex(1);
+    // if (this.feedService.getConnectionStatus() != 0) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
-    let bindServer = this.feedService.getBindingServer();
+    // let bindServer = this.feedService.getBindingServer();
 
-    if (bindServer != null && bindServer != undefined) {
-      if (this.feedService.getConnectionStatus() != 0) {
-        this.native.toastWarn('common.connectionError');
-        return;
-      }
+    // if (bindServer != null && bindServer != undefined) {
+      // if (this.feedService.getConnectionStatus() != 0) {
+      //   this.native.toastWarn('common.connectionError');
+      //   return;
+      // }
 
-      if (
-        !this.feedService.checkBindingServerVersion(() => {
-          this.feedService.hideAlertPopover();
-        })
-      )
-        return;
+      // if (
+      //   !this.feedService.checkBindingServerVersion(() => {
+      //     this.feedService.hideAlertPopover();
+      //   })
+      // )
+      //   return;
 
+    console.log("点击了创建feeds 按钮 ====== ")
       this.native.navigateForward(['/createnewfeed'], '');
-    } else {
-      this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-    }
+    // } else {
+    //   this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+    // }
   }
 
   clickFollowing() {

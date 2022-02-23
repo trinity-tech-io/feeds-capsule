@@ -15,6 +15,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { HiveService } from 'src/app/services/HiveService'
 
 @Component({
   selector: 'app-createnewfeed',
@@ -50,16 +51,19 @@ export class CreatenewfeedPage implements OnInit {
     private titleBarService: TitleBarService,
     private popup: PopupProvider,
     private languageService: LanguageService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private hiveService: HiveService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log("create channle ====== ")
+  }
 
   ionViewWillEnter() {
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
     this.developerMode = this.feedService.getDeveloperMode();
-    this.selectedServer = this.feedService.getBindingServer();
+    // this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
@@ -94,6 +98,7 @@ export class CreatenewfeedPage implements OnInit {
             }
           })
           .then(() => {
+            console.log("1 ====================")
             this.feedService.createTopic(
               this.selectedServer.nodeId,
               name,
@@ -172,32 +177,46 @@ export class CreatenewfeedPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
+  // 创建频道
+  async createChannel(name: HTMLInputElement, desc: HTMLInputElement) {
+    // if (this.feedService.getConnectionStatus() != 0) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
-  createChannel(name: HTMLInputElement, desc: HTMLInputElement) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    // let feedList = this.feedService.getMyChannelList() || [];
+
+    // if (feedList.length >= 5) {
+    //   this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
+    //   return;
+    // }
+
+    // this.feedService.checkDIDOnSideChain(
+    //   this.selectedServer.did,
+    //   isOnSideChain => {
+    //     this.zone.run(() => {
+    //       if (!isOnSideChain) {
+    //         this.native.toastWarn('common.waitOnChain');
+    //         return;
+    //       }
+    //       this.processCreateChannel(name, desc);
+    //     });
+    //   },
+    // );
+    this.processCreateChannel(name, desc);
+    try {
+      await this.native.showLoading('common.waitMoment');
+      await this.hiveService.createChannel(name.value)
+      console.log("create channel success =========")
+      await this.hiveService.postChannleInfo(name.value, desc.value, this.avatar)
+      console.log("post Channle Info success =========")
+      this.native.hideLoading()
+      this.native.pop()
+    } catch (error) {
+      this.native.hideLoading()
+      console.log("create channel error =========", JSON.stringify(error))
+      this.native.toast('common.saveFailed'); // 需要更改错误提示
     }
-
-    let feedList = this.feedService.getMyChannelList() || [];
-
-    if (feedList.length >= 5) {
-      this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
-      return;
-    }
-
-    this.feedService.checkDIDOnSideChain(
-      this.selectedServer.did,
-      isOnSideChain => {
-        this.zone.run(() => {
-          if (!isOnSideChain) {
-            this.native.toastWarn('common.waitOnChain');
-            return;
-          }
-          this.processCreateChannel(name, desc);
-        });
-      },
-    );
   }
 
   processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement) {
@@ -234,10 +253,10 @@ export class CreatenewfeedPage implements OnInit {
 
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
-    if (this.selectedServer == null) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsg3');
-      return;
-    }
+    // if (this.selectedServer == null) {
+    //   this.native.toast_trans('CreatenewfeedPage.tipMsg3');
+    //   return;
+    // }
 
     let checkRes = this.feedService.checkValueValid(name.value);
     if (checkRes) {
@@ -245,7 +264,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    this.createDialog(name.value, desc.value);
+    // this.createDialog(name.value, desc.value);
   }
 
   profileimage() {

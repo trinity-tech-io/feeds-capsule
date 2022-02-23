@@ -250,6 +250,11 @@ export class DataHelper {
     return this.getChannelsListFromNodeId(nodeId);
   }
 
+  //// myChannelsMap
+  getMyChannelListWithHive(userId: string) {
+    return this.getChannelsListFromNodeId(userId);
+  }
+
   //// postMap
   setPostMap(postMap: { [ncpId: string]: FeedsData.Post }) {
     this.postMap = postMap;
