@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NavParams } from '@ionic/angular';
 import { Events } from '../../services/events.service';
+import { HiveService } from 'src/app/services/HiveService'
 
 @Component({
   selector: 'app-tipdialog',
@@ -18,6 +19,8 @@ export class TipdialogComponent implements OnInit {
     public theme: ThemeService,
     private navParams: NavParams,
     private events: Events,
+    private hiveService: HiveService
+
   ) {}
 
   ngOnInit() {
@@ -37,6 +40,6 @@ export class TipdialogComponent implements OnInit {
       name: this.feedName,
       desc: this.feedDesc,
     };
-    this.events.publish(FeedsEvent.PublishType.tipdialogConfirm, tipDialogData);
+    // this.events.publish(FeedsEvent.PublishType.tipdialogConfirm, tipDialogData);
   }
 }
