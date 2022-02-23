@@ -49,7 +49,7 @@ export class MintpostPage implements OnInit {
     "version": "2",
     "name":"",
     "description":"",
-    "type":"FeedsPost",
+    "type":"feeds-post",
     "data": {
         "text_body":"",
         "text_source":"",
