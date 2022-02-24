@@ -190,9 +190,10 @@ export const zh = {
     queryTransactionResult: '已发起交易，正在查询结果',
     sorry: "抱歉",
     auction: "此订单为拍卖订单，暂不支持购买",
-    editedContentDes:"确认取消吗？取消将会丢弃您已编辑的内容！",
-    editedContentDes1:"确定",
-    editedContentDes2:"取消",
+    editedContentDes: "确认取消吗？取消将会丢弃您已编辑的内容！",
+    editedContentDes1: "确定",
+    editedContentDes2: "取消",
+    migrateFeedsServiceData: '迁移 Feeds Service 数据到 Hive Vault'
   },
   app: {
     profileDetails: '档案详情',
@@ -710,10 +711,10 @@ export const zh = {
     assetType: '资产类型',
     adult: '明确和敏感的内容',
     video: '视频',
-    fileTypeDes4:'支持视频格式 -',
+    fileTypeDes4: '支持视频格式 -',
     fileTypeDes5: '您的视频文件播放长度超出当前限制 (60分钟）',
     audio: '音频',
-    fileTypeDes6:'支持音频格式 -',
+    fileTypeDes6: '支持音频格式 -',
   },
   AssetdetailsPage: {
     title: '收藏品明细',
@@ -756,7 +757,7 @@ export const zh = {
     currentBid: '当前出价',
     changePrice: '更新价格',
     cancelOrder: '取消出售',
-    des:'购买前请确认创建者地址',
+    des: '购买前请确认创建者地址',
     verifiedCreator: '原创者',
     verified: '(已验证)'
   },
@@ -938,11 +939,11 @@ export const zh = {
     mintSuccess: '创建频道收藏品成功',
     mintSuccessDesc: '恭喜您，创建频道收藏品成功',
     mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
- },
- ScanPage: {
-   title: "扫描器",
-   noQrErr: '在所选图片中未检测到二维码。 请再试一次。',
-   scanErr: '扫描您选择的照片时出了点问题。 请再试一次。',
-   galleryErr: '访问图库时出了点问题。 请再试一次。',
- }
+  },
+  ScanPage: {
+    title: "扫描器",
+    noQrErr: '在所选图片中未检测到二维码。 请再试一次。',
+    scanErr: '扫描您选择的照片时出了点问题。 请再试一次。',
+    galleryErr: '访问图库时出了点问题。 请再试一次。',
+  }
 };

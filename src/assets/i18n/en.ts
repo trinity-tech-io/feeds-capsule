@@ -190,9 +190,10 @@ export const en = {
     queryTransactionResult: 'A transaction has been initiated and the result is being queried',
     sorry: "Sorry",
     auction: "This order is an auction order. Purchase is not supported temporarily",
-    editedContentDes:"Are you sure to cancel? Canceling will discard your edited content!",
-    editedContentDes1:"Confirm",
-    editedContentDes2:"Cancel"
+    editedContentDes: "Are you sure to cancel? Canceling will discard your edited content!",
+    editedContentDes1: "Confirm",
+    editedContentDes2: "Cancel",
+    migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault'
   },
   app: {
     profileDetails: 'Profile Details',
@@ -706,10 +707,10 @@ export const en = {
     assetType: 'Asset Type',
     adult: 'Explicit & Sensitive Content',
     video: 'video',
-    fileTypeDes4:'File types supported:',
+    fileTypeDes4: 'File types supported:',
     fileTypeDes5: 'The playback length of this video exceeds the limit of 60 minutes',
     audio: 'audio',
-    fileTypeDes6:'File types supported:',
+    fileTypeDes6: 'File types supported:',
   },
   AssetdetailsPage: {
     title: 'Collectible Details',
@@ -910,7 +911,7 @@ export const en = {
   WhitelistPage: {
     title: 'Verified Creators'
   },
-  AssistpasarPage:{
+  AssistpasarPage: {
     title: "Assist Pasar API",
     assistProviderDes: "Secondary assist pasar service for reading data"
   },
@@ -923,22 +924,33 @@ export const en = {
     cancelPublicCollections: "Cancel public collections"
   },
   GalleriachannelPage: {
-     title: "Channel Collections",
-     publicGallericaFailed: "Failed to publish to Explore Feeds",
-     mintingData: 'Channel Collectible is being created',
-     settingApproval: 'Waiting for authorization to delegate Collectible to Galleria',
-     creatingOrder: 'Sale order for the Collectible is now being created',
-     createOrderSuccess: 'Failed to create a sale order for the Collectible',
-     createOrderFail: 'Failed to create a sale order for the Collectible',
-     checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
-     mintSuccess: 'Channel NFT Collectible created',
-     mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
-     mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
+    title: "Channel Collections",
+    publicGallericaFailed: "Failed to publish to Explore Feeds",
+    mintingData: 'Channel Collectible is being created',
+    settingApproval: 'Waiting for authorization to delegate Collectible to Galleria',
+    creatingOrder: 'Sale order for the Collectible is now being created',
+    createOrderSuccess: 'Failed to create a sale order for the Collectible',
+    createOrderFail: 'Failed to create a sale order for the Collectible',
+    checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
+    mintSuccess: 'Channel NFT Collectible created',
+    mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
+    mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
   },
   ScanPage: {
     title: "Scanner",
     noQrErr: 'No QR code was detected in the selected picture. Please try again.',
     scanErr: 'Something went wrong while scanning your selected picture. Please try again.',
     galleryErr: 'Something went wrong while accessing your photo library. Please try again.',
+    title: "Channel Collections",
+    publicGallericaFailed: "Failed to publish to Explore Feeds",
+    mintingData: 'Channel Collectible is being created',
+    settingApproval: 'Waiting for authorization to delegate Collectible to Galleria',
+    creatingOrder: 'Sale order for the Collectible is now being created',
+    createOrderSuccess: 'Failed to create a sale order for the Collectible',
+    createOrderFail: 'Failed to create a sale order for the Collectible',
+    checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
+    mintSuccess: 'Channel NFT Collectible created',
+    mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
+    mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
   }
 };

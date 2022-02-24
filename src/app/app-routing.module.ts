@@ -190,31 +190,31 @@ const routes: Routes = [
   },
   {
     path: 'developer',
-    loadChildren: () => import('./pages/developer/developer.module').then( m => m.DeveloperPageModule)
+    loadChildren: () => import('./pages/developer/developer.module').then(m => m.DeveloperPageModule)
   },
   {
     path: 'select-net',
-    loadChildren: () => import('./pages/select-net/select-net.module').then( m => m.SelectNetPageModule)
+    loadChildren: () => import('./pages/select-net/select-net.module').then(m => m.SelectNetPageModule)
   },
   {
     path: 'guidemac',
-    loadChildren: () => import('./pages/guidemac/guidemac.module').then( m => m.GuidemacPageModule)
+    loadChildren: () => import('./pages/guidemac/guidemac.module').then(m => m.GuidemacPageModule)
   },
   {
     path: 'guideubuntu',
-    loadChildren: () => import('./pages/guideubuntu/guideubuntu.module').then( m => m.GuideubuntuPageModule)
+    loadChildren: () => import('./pages/guideubuntu/guideubuntu.module').then(m => m.GuideubuntuPageModule)
   },
   {
     path: 'select-ipfs-net',
-    loadChildren: () => import('./pages/select-ipfs-net/select-ipfs-net.module').then( m => m.SelectIpfsNetPageModule)
+    loadChildren: () => import('./pages/select-ipfs-net/select-ipfs-net.module').then(m => m.SelectIpfsNetPageModule)
   },
   {
     path: 'nftavatarlist',
-    loadChildren: () => import('./pages/nftavatarlist/nftavatarlist.module').then( m => m.NftavatarlistPageModule)
+    loadChildren: () => import('./pages/nftavatarlist/nftavatarlist.module').then(m => m.NftavatarlistPageModule)
   },
   {
     path: 'whitelist',
-    loadChildren: () => import('./pages/whitelist/whitelist.module').then( m => m.WhitelistPageModule)
+    loadChildren: () => import('./pages/whitelist/whitelist.module').then(m => m.WhitelistPageModule)
   },
   {
     path: 'datastorage',
@@ -222,12 +222,20 @@ const routes: Routes = [
   },
   {
     path: 'galleriachannel',
-    loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then( m => m.GalleriachannelPageModule)
+    loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then(m => m.GalleriachannelPageModule)
   },
   {
     path: 'scan',
-    loadChildren: () => import('./pages/scan/scan.module').then( m => m.ScanPageModule)
-  }
+    loadChildren: () => import('./pages/scan/scan.module').then(m => m.ScanPageModule)
+  },
+  {
+    path: 'channelcollections',
+    loadChildren: () => import('./pages/channelcollections/channelcollections.module').then(m => m.ChannelcollectionsPageModule)
+  },
+  {
+    path: 'migrationdata',
+    loadChildren: () => import('./pages/settings/migrationdata/migrationdata.module').then(m => m.MigrationdataPageModule)
+  },
 ];
 
 @NgModule({
@@ -236,4 +244,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -79,7 +79,7 @@ export class SettingsPage implements OnInit {
   loadIpfsShowName() {
     let localIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
     if (localIPFSApiProviderName === 'https://ipfs0.trinity-feeds.app/') {
-        this.curIPFSApiProviderName = 'ipfs0.trinity-feeds.app'
+      this.curIPFSApiProviderName = 'ipfs0.trinity-feeds.app'
     }
     else if (localIPFSApiProviderName === 'https://ipfs1.trinity-feeds.app/') {
       this.curIPFSApiProviderName = 'ipfs1.trinity-feeds.app'
@@ -90,16 +90,16 @@ export class SettingsPage implements OnInit {
   }
 
   loadAssistShowName() {
-  let selectedAssistPasarNetwork  = localStorage.getItem("selectedAssistPasarNetwork");
-  if (selectedAssistPasarNetwork === 'https://assist0.trinity-feeds.app/') {
+    let selectedAssistPasarNetwork = localStorage.getItem("selectedAssistPasarNetwork");
+    if (selectedAssistPasarNetwork === 'https://assist0.trinity-feeds.app/') {
       this.curAssistApiProviderName = 'assist0.trinity-feeds.app'
-  }
-  else if (selectedAssistPasarNetwork === 'https://assist1.trinity-feeds.app/') {
-    this.curAssistApiProviderName = 'assist1.trinity-feeds.app'
-  }
-  else {
-    this.curAssistApiProviderName = 'assist2.trinity-feeds.app'
-  }
+    }
+    else if (selectedAssistPasarNetwork === 'https://assist1.trinity-feeds.app/') {
+      this.curAssistApiProviderName = 'assist1.trinity-feeds.app'
+    }
+    else {
+      this.curAssistApiProviderName = 'assist2.trinity-feeds.app'
+    }
   }
 
   getCurlanguageName() {
@@ -118,12 +118,12 @@ export class SettingsPage implements OnInit {
       this.popoverController.dismiss();
     }
     this.events.publish(FeedsEvent.PublishType.search);
-    if(this.isListGrid){
+    if (this.isListGrid) {
       this.events.publish(FeedsEvent.PublishType.pasarListGrid);
       this.isListGrid = false;
     }
 
-    if(this.isClickAdult){
+    if (this.isClickAdult) {
       this.events.publish(FeedsEvent.PublishType.hideAdult);
       this.isClickAdult = false;
     }
@@ -233,12 +233,16 @@ export class SettingsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/developer']);
   }
 
-  navWhiteList(){
+  navWhiteList() {
     this.native.getNavCtrl().navigateForward(['/whitelist']);
   }
 
   navDataStorage() {
     this.native.getNavCtrl().navigateForward(['/datastorage']);
+  }
+
+  navMigrationData() {
+    this.native.getNavCtrl().navigateForward(['/migrationdata']);
   }
 
   setPasarListGrid() {
@@ -250,16 +254,16 @@ export class SettingsPage implements OnInit {
     this.isListGrid = true;
   }
 
-  navAssistPasarProvider(){
+  navAssistPasarProvider() {
     this.native.getNavCtrl().navigateForward(['/assistpasar']);
   }
 
-  toggleHideAdult(){
+  toggleHideAdult() {
     this.zone.run(() => {
       this.isShowAdult = !this.isShowAdult;
     });
     this.isClickAdult = true;
     this.dataHelper.changeAdultStatus(this.isShowAdult);
-    this.dataHelper.saveData('feeds.hideAdult',this.isShowAdult);
+    this.dataHelper.saveData('feeds.hideAdult', this.isShowAdult);
   }
 }
