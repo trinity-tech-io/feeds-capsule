@@ -80,6 +80,10 @@ import { VideoService } from 'src/app/services/video.service';
 
 import { HiveService } from './services/HiveService';
 
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveVaultApi } from 'src/app/services/api_hivevault.service';
+import { MigrateDataService } from 'src/app/services/migratedata.service';
+
 import * as Sentry from '@sentry/browser';
 
 Sentry.init({
@@ -218,6 +222,9 @@ export function TranslateLoaderFactory() {
     PostHelperService,
     VideoService,
     HiveService,
+    FeedsServiceApi,
+    HiveVaultApi,
+    MigrateDataService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],
