@@ -10,6 +10,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { IonTextarea, Platform } from '@ionic/angular';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 @Component({
   selector: 'app-comment',
@@ -37,12 +38,13 @@ export class CommentComponent implements OnInit {
     public native: NativeService,
     private feedService: FeedService,
     private platform: Platform,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     if (this.platform.is('ios')) {
       this.isAndroid = "ios";
-    }else{
+    } else {
       this.isAndroid = "android";
     }
   }
@@ -77,7 +79,7 @@ export class CommentComponent implements OnInit {
   }
 
   publishComment() {
-    this.feedService.postComment(
+    this.feedsServiceApi.postComment(
       this.nodeId,
       Number(this.channelId),
       Number(this.postId),

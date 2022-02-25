@@ -22,6 +22,8 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
@@ -59,8 +61,8 @@ export class SearchPage implements OnInit {
   private channelCollectionsAvatarisLoad: any = {};
   public channelCollectionPageList: any = [];//页面显示用
   public searchChannelCollectionPageList: any = [];//搜索使用
-  private panelPageSize:number = 10;//一页多少个
-  private panelPageNum:number = 1;//页码
+  private panelPageSize: number = 10;//一页多少个
+  private panelPageNum: number = 1;//页码
 
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
@@ -96,7 +98,8 @@ export class SearchPage implements OnInit {
     private carrierService: CarrierService,
     private fileHelperService: FileHelperService,
     private pasarAssistService: PasarAssistService,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
@@ -157,14 +160,14 @@ export class SearchPage implements OnInit {
           this.addingChanneList =
             this.feedService.getToBeAddedFeedsList() || [];
           this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-          let arrIndex = _.findIndex(this.channelCollectionPageList,(item:any)=>{
+          let arrIndex = _.findIndex(this.channelCollectionPageList, (item: any) => {
             let feedNodeId = item['nodeId'];
             let feedUrl = item['url'] || item.entry.url;
             let feedId = feedUrl.split('/')[4];
-                return nodeId==feedNodeId && channelId == feedId;
+            return nodeId == feedNodeId && channelId == feedId;
           });
-          if(arrIndex != -1){
-            this.channelCollectionPageList.splice(arrIndex,1);
+          if (arrIndex != -1) {
+            this.channelCollectionPageList.splice(arrIndex, 1);
           }
           this.discoverSquareList = this.filterdiscoverSquareList(
             this.discoverSquareList,
@@ -204,11 +207,11 @@ export class SearchPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
- async init() {
+  async init() {
     let discoverfeeds = this.feedService.getDiscoverfeeds();
     if (discoverfeeds.length === 0) {
       this.pageNum = 1;
-     await this.native.showLoading('common.waitMoment');
+      await this.native.showLoading('common.waitMoment');
       this.initData('', false);
     } else {
       this.channelCollectionPageList = this.filterChannelCollection();
@@ -244,7 +247,7 @@ export class SearchPage implements OnInit {
       return;
     }
 
-    this.feedService.subscribeChannel(nodeId, id);
+    this.feedsServiceApi.subscribeChannel(nodeId, id);
   }
 
   getItems(events: any) {
@@ -312,11 +315,11 @@ export class SearchPage implements OnInit {
     );
 
     this.channelCollectionPageList = this.searchChannelCollectionPageList.filter(
-      (feed: FeedsData.ChannelCollections)=> feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
+      (feed: FeedsData.ChannelCollections) => feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
     );
 
-    if(this.channelCollectionPageList.length > 0){
-        this.refreshChannelCollectionAvatar();
+    if (this.channelCollectionPageList.length > 0) {
+      this.refreshChannelCollectionAvatar();
     }
 
     this.unfollowedFeed = this.searchUnfollowedFeed.filter(
@@ -327,21 +330,21 @@ export class SearchPage implements OnInit {
     this.discoverSquareList = this.searchSquareList.filter(
       feed => feed.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
     );
-    if(this.discoverSquareList.length > 0 ){
+    if (this.discoverSquareList.length > 0) {
       this.refreshDiscoverSquareFeedAvatar();
     }
   }
 
   doRefresh(event) {
     //let sid = setTimeout(() => {
-      this.feedService.updateSubscribedFeed();
-      this.feedService.setDiscoverfeeds([]);
-      this.curtotalNum = 0;
-      this.panelPageNum = 1;
-      this.pageNum = 1;
-      this.initData(event, false);
-      //event.target.complete();
-      //clearTimeout(sid);
+    this.feedService.updateSubscribedFeed();
+    this.feedService.setDiscoverfeeds([]);
+    this.curtotalNum = 0;
+    this.panelPageNum = 1;
+    this.pageNum = 1;
+    this.initData(event, false);
+    //event.target.complete();
+    //clearTimeout(sid);
     //}, 2000);
   }
 
@@ -412,7 +415,7 @@ export class SearchPage implements OnInit {
             let feedId = feedUrl.split('/')[4];
             return feedNodeId == nodeId && feedId == srcfeedId;
           });
-          if(channelCollectionPageList.length>0){
+          if (channelCollectionPageList.length > 0) {
             let feed = channelCollectionPageList[0];
             that.channelCollectionPageList.push(feed);
             that.searchChannelCollectionPageList = _.cloneDeep(that.channelCollectionPageList);
@@ -465,7 +468,7 @@ export class SearchPage implements OnInit {
   }
 
   checkValid(result: string) {
-    if(result === ""){
+    if (result === "") {
       return;
     }
     if (
@@ -495,10 +498,10 @@ export class SearchPage implements OnInit {
     this.httpService
       .ajaxGet(
         ApiUrl.listPage +
-          '?pageNum=' +
-          this.pageNum +
-          '&pageSize=' +
-          this.pageSize,
+        '?pageNum=' +
+        this.pageNum +
+        '&pageSize=' +
+        this.pageSize,
         false,
       )
       .then(result => {
@@ -531,10 +534,10 @@ export class SearchPage implements OnInit {
           this.loadData(events);
         }
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 
- async initData(events: any, isLoading: boolean = true) {
+  async initData(events: any, isLoading: boolean = true) {
     this.isLoading = true;
     await this.getActivePanelList();
     this.channelCollectionPageList = this.filterChannelCollection();
@@ -542,10 +545,10 @@ export class SearchPage implements OnInit {
     this.httpService
       .ajaxGet(
         ApiUrl.listPage +
-          '?pageNum=' +
-          this.pageNum +
-          '&pageSize=' +
-          this.pageSize,
+        '?pageNum=' +
+        this.pageNum +
+        '&pageSize=' +
+        this.pageSize,
         isLoading,
       )
       .then(result => {
@@ -578,21 +581,21 @@ export class SearchPage implements OnInit {
 
   clickItem(feed: any) {
     let isClick = false;
-    if(isClick){
-        return;
+    if (isClick) {
+      return;
     }
     isClick = true;
     let feedsUrlHash = feed.feedsUrlHash
-    this.getAvatar(feedsUrlHash).then((result)=>{
+    this.getAvatar(feedsUrlHash).then((result) => {
       isClick = false;
-      if(result!=null){
+      if (result != null) {
         this.removeSubscribe();
         feed.feedsAvatar = result;
         this.native.go('discoverfeedinfo', {
           params: feed,
         });
       }
-    }).catch((err)=>{
+    }).catch((err) => {
       isClick = false;
     });
   }
@@ -617,14 +620,14 @@ export class SearchPage implements OnInit {
       return false;
     }
 
-    let channelCollectionPageList = _.filter(this.channelCollectionPageList,(item: FeedsData.ChannelCollections)=>{
-        let url = item.entry.url;
-        let urlArr = url.replace("feeds://","").split("/");
-        let channelId = urlArr[2];
-        return feedNodeId == item['nodeId'] && feedId == channelId;
+    let channelCollectionPageList = _.filter(this.channelCollectionPageList, (item: FeedsData.ChannelCollections) => {
+      let url = item.entry.url;
+      let urlArr = url.replace("feeds://", "").split("/");
+      let channelId = urlArr[2];
+      return feedNodeId == item['nodeId'] && feedId == channelId;
     });
 
-    if(channelCollectionPageList.length > 0){
+    if (channelCollectionPageList.length > 0) {
       return false;
     }
 
@@ -669,32 +672,32 @@ export class SearchPage implements OnInit {
 
   discoverSubscribe(feedInfo: any) {
     let feedUrl = feedInfo['url'];
-    let feedsUrlHash =  feedInfo['feedsUrlHash'];
+    let feedsUrlHash = feedInfo['feedsUrlHash'];
     let followers = feedInfo['followers'];
     let feedName = feedInfo['name'];
     let desc = feedInfo['description'];
     let ownerName = feedInfo['ownerName'];
     //let avatar = this.avatarList[feedsUrlHash];
     let isClick = false;
-    if(isClick){
+    if (isClick) {
       return;
     }
     isClick = true;
-    this.getAvatar(feedsUrlHash).then((result:any)=>{
+    this.getAvatar(feedsUrlHash).then((result: any) => {
       isClick = false;
-      if(result!=null){
+      if (result != null) {
         let avatar = result;
         this.feedService
-        .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
-        .then(isSuccess => {
-          if (isSuccess) {
-            this.zone.run(() => {
-            });
-          }
-        })
-        .catch(err => {});
+          .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
+          .then(isSuccess => {
+            if (isSuccess) {
+              this.zone.run(() => {
+              });
+            }
+          })
+          .catch(err => { });
       }
-    }).catch((err)=>{
+    }).catch((err) => {
       isClick = false;
     });
 
@@ -828,24 +831,24 @@ export class SearchPage implements OnInit {
     this.native.navigateForward(['createnewpost'], '');
   }
 
-  clickAddingchannel(addingchannel:any){
+  clickAddingchannel(addingchannel: any) {
 
     let isClick = false;
-    if(isClick){
-        return;
+    if (isClick) {
+      return;
     }
     let nodeId = addingchannel["nodeId"];
     let srcFeedId = addingchannel["feedId"];
-    let feed = _.find(this.httpAllData,(item)=>{
+    let feed = _.find(this.httpAllData, (item) => {
       let feedUrl = item['url'];
       let feedId = feedUrl.split('/')[4];
-          return item.nodeId == nodeId && feedId == srcFeedId;
+      return item.nodeId == nodeId && feedId == srcFeedId;
     });
     let feedsUrlHash = feed['feedsUrlHash'];
     isClick = true;
-    this.getAvatar(feedsUrlHash).then((result)=>{
+    this.getAvatar(feedsUrlHash).then((result) => {
       isClick = false;
-      if(result!=null){
+      if (result != null) {
         this.removeSubscribe();
         feed["carrierAddress"] = addingchannel["carrierAddress"];
         feed.feedsAvatar = result;
@@ -853,346 +856,346 @@ export class SearchPage implements OnInit {
           params: feed,
         });
       }
-    }).catch((err)=>{
+    }).catch((err) => {
       isClick = false;
     });
   }
 
 
-ionScroll(){
-  this.native.throttle(this.setDiscoverSquareFeedAvatar(), 200, this, true);
-  this.native.throttle(this.setChannelCollectionAvatar(), 200, this, true);
-}
+  ionScroll() {
+    this.native.throttle(this.setDiscoverSquareFeedAvatar(), 200, this, true);
+    this.native.throttle(this.setChannelCollectionAvatar(), 200, this, true);
+  }
 
-setDiscoverSquareFeedAvatar(){
-  let discoverSquareFeed = document.getElementsByClassName("discoverSquareFeed") || [];
-  let len = discoverSquareFeed.length;
-  for(let itemIndex = 0;itemIndex<len;itemIndex++){
-    let item = discoverSquareFeed[itemIndex];
-    let feedsUrlHash = item.getAttribute("id");
-    let thumbImage =  document.getElementById(feedsUrlHash+'-avatar');
-    let srcStr =  thumbImage.getAttribute("src") || "";
-    let isload = this.pasarGridisLoadimage[feedsUrlHash] || '';
-    try {
-       if (
-        feedsUrlHash != '' &&
-         thumbImage.getBoundingClientRect().top >= -100 &&
-         thumbImage.getBoundingClientRect().top <= this.clientHeight
-       ) {
-         if(isload === ""){
-          this.pasarGridisLoadimage[feedsUrlHash] = '12';
-          let key = feedsUrlHash+"-Channel-avatar";
-          this.dataHelper.loadData(key).then((result)=>{
-               if(result!=null){
+  setDiscoverSquareFeedAvatar() {
+    let discoverSquareFeed = document.getElementsByClassName("discoverSquareFeed") || [];
+    let len = discoverSquareFeed.length;
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
+      let item = discoverSquareFeed[itemIndex];
+      let feedsUrlHash = item.getAttribute("id");
+      let thumbImage = document.getElementById(feedsUrlHash + '-avatar');
+      let srcStr = thumbImage.getAttribute("src") || "";
+      let isload = this.pasarGridisLoadimage[feedsUrlHash] || '';
+      try {
+        if (
+          feedsUrlHash != '' &&
+          thumbImage.getBoundingClientRect().top >= -100 &&
+          thumbImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if (isload === "") {
+            this.pasarGridisLoadimage[feedsUrlHash] = '12';
+            let key = feedsUrlHash + "-Channel-avatar";
+            this.dataHelper.loadData(key).then((result) => {
+              if (result != null) {
                 this.zone.run(() => {
-                 this.pasarGridisLoadimage[feedsUrlHash] = '13';
-                 thumbImage.setAttribute("src",result);
+                  this.pasarGridisLoadimage[feedsUrlHash] = '13';
+                  thumbImage.setAttribute("src", result);
                 });
-          }else{
-            let  avatarUrl =  ApiUrl.getAvatar+"?feedsUrlHash="+feedsUrlHash;
-            this.httpService.ajaxGet(avatarUrl,false).then((result:any)=>{
-                    let code = result['code'];
-                    if(code === 200){
-                      let data = result['data'];
-                      this.zone.run(() => {
-                        this.pasarGridisLoadimage[feedsUrlHash] = '13';
-                        thumbImage.setAttribute("src",data['feedsAvatar']);
-                       });
-                      this.dataHelper.saveData(key,data['feedsAvatar']);
-                    }
-            }).catch((err)=>{
+              } else {
+                let avatarUrl = ApiUrl.getAvatar + "?feedsUrlHash=" + feedsUrlHash;
+                this.httpService.ajaxGet(avatarUrl, false).then((result: any) => {
+                  let code = result['code'];
+                  if (code === 200) {
+                    let data = result['data'];
+                    this.zone.run(() => {
+                      this.pasarGridisLoadimage[feedsUrlHash] = '13';
+                      thumbImage.setAttribute("src", data['feedsAvatar']);
+                    });
+                    this.dataHelper.saveData(key, data['feedsAvatar']);
+                  }
+                }).catch((err) => {
 
-            });
+                });
+              }
+            }).catch(err => {
+
+            })
+
           }
-          }).catch(err=>{
-
-          })
-
-         }
-       }else{
-         srcStr = thumbImage.getAttribute('src') || '';
-         if (
-           thumbImage.getBoundingClientRect().top < -100 &&
-           this.pasarGridisLoadimage[feedsUrlHash] === '13' &&
-           srcStr != './assets/icon/reserve.svg'
-         ) {
-           this.pasarGridisLoadimage[feedsUrlHash] = '';
-           thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-         }
-       }
-    } catch (error) {
-     this.pasarGridisLoadimage[feedsUrlHash] = '';
-     thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+        } else {
+          srcStr = thumbImage.getAttribute('src') || '';
+          if (
+            thumbImage.getBoundingClientRect().top < -100 &&
+            this.pasarGridisLoadimage[feedsUrlHash] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
+            this.pasarGridisLoadimage[feedsUrlHash] = '';
+            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
+      } catch (error) {
+        this.pasarGridisLoadimage[feedsUrlHash] = '';
+        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+      }
     }
   }
-}
 
-refreshDiscoverSquareFeedAvatar(){
-  let sid = setTimeout(()=>{
-    this.pasarGridisLoadimage = {};
-    this.setDiscoverSquareFeedAvatar();
-    clearTimeout(sid);
-  },100);
-}
+  refreshDiscoverSquareFeedAvatar() {
+    let sid = setTimeout(() => {
+      this.pasarGridisLoadimage = {};
+      this.setDiscoverSquareFeedAvatar();
+      clearTimeout(sid);
+    }, 100);
+  }
 
-handleId(feed:any){
-  return feed.feedsUrlHash+"-avatar";
-}
+  handleId(feed: any) {
+    return feed.feedsUrlHash + "-avatar";
+  }
 
-getAvatar(feedsUrlHash: string){
- return new Promise((resolve,reject)=>{
-  let key = feedsUrlHash+"-Channel-avatar";
-  this.dataHelper.loadData(key).then((result)=>{
-       if(result!=null){
-         resolve(result);
-       }else{
-      let  avatarUrl =  ApiUrl.getAvatar+"?feedsUrlHash="+feedsUrlHash;
-      this.httpService.ajaxGet(avatarUrl,false).then((result:any)=>{
+  getAvatar(feedsUrlHash: string) {
+    return new Promise((resolve, reject) => {
+      let key = feedsUrlHash + "-Channel-avatar";
+      this.dataHelper.loadData(key).then((result) => {
+        if (result != null) {
+          resolve(result);
+        } else {
+          let avatarUrl = ApiUrl.getAvatar + "?feedsUrlHash=" + feedsUrlHash;
+          this.httpService.ajaxGet(avatarUrl, false).then((result: any) => {
             let code = result['code'];
-            if(code === 200){
+            if (code === 200) {
               let data = result['data'];
               resolve(data['feedsAvatar']);
-              this.dataHelper.saveData(key,data['feedsAvatar']);
-            }else{
+              this.dataHelper.saveData(key, data['feedsAvatar']);
+            } else {
               resolve(null);
             }
-    }).catch((err)=>{
-      reject(null)
+          }).catch((err) => {
+            reject(null)
+          });
+        }
+      }).catch(err => {
+        reject(null)
+      })
     });
   }
-  }).catch(err=>{
-    reject(null)
-  })
- });
-}
 
-async getActivePanelList(){
-  this.channelCollectionList = [];
-  this.channelCollectionPageList = [];
-  try{
-   let result = await this.pasarAssistService.
-     listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
-   let panelsList:any;
-   if(result!=null){
-      panelsList = result["data"]["result"] || [];
-   }else{
-    panelsList = [];
-   }
-   while(result!=null&&panelsList.length > 0){
-    await this.handlePanels(panelsList);
-    this.panelPageNum = this.panelPageNum+1;
-    result = await this.pasarAssistService.
-    listGalleriaPanelsFromService(this.panelPageNum,this.panelPageSize);
-    if(result!=null){
-      panelsList = result["data"]["result"] || [];
-   }else{
-    panelsList = [];
-   }
-   }
-   this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
-  }catch (error) {
+  async getActivePanelList() {
+    this.channelCollectionList = [];
+    this.channelCollectionPageList = [];
+    try {
+      let result = await this.pasarAssistService.
+        listGalleriaPanelsFromService(this.panelPageNum, this.panelPageSize);
+      let panelsList: any;
+      if (result != null) {
+        panelsList = result["data"]["result"] || [];
+      } else {
+        panelsList = [];
+      }
+      while (result != null && panelsList.length > 0) {
+        await this.handlePanels(panelsList);
+        this.panelPageNum = this.panelPageNum + 1;
+        result = await this.pasarAssistService.
+          listGalleriaPanelsFromService(this.panelPageNum, this.panelPageSize);
+        if (result != null) {
+          panelsList = result["data"]["result"] || [];
+        } else {
+          panelsList = [];
+        }
+      }
+      this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
+    } catch (error) {
+      this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
+    }
+  }
+
+  async handlePanels(result: []) {
+    for (let index = 0; index < result.length; index++) {
+      let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+      let item: any = result[index];
+      channelCollections.version = item.version;
+      channelCollections.panelId = item.panelId;
+      channelCollections.userAddr = item.user;
+      channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
+      channelCollections.type = item.type;
+      channelCollections.tokenId = item.tokenId;
+      channelCollections.name = item.name;
+      channelCollections.description = item.description;
+      channelCollections.avatar = item.avatar;
+      channelCollections.entry = item.entry;
+      channelCollections.ownerDid = item.tokenDid.did;
+      let didJsON = await this.feedService.resolveDidObjectForName(channelCollections.ownerDid);
+      let didName = didJsON["name"] || "";
+      channelCollections.ownerName = didName;
+      let url: string = channelCollections.entry.url;
+      let urlArr = url.replace("feeds://", "").split("/");
+      channelCollections.did = urlArr[0];
+      let carrierAddress = urlArr[1];
+      let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
+      channelCollections.nodeId = nodeId;
+      this.channelCollectionList.push(channelCollections);
+    }
     this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
   }
-}
 
-async handlePanels(result:[]){
-  for(let index = 0; index < result.length; index++) {
-    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-    let item:any = result[index];
-    channelCollections.version = item.version;
-    channelCollections.panelId = item.panelId;
-    channelCollections.userAddr = item.user;
-    channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
-    channelCollections.type = item.type;
-    channelCollections.tokenId = item.tokenId;
-    channelCollections.name = item.name;
-    channelCollections.description = item.description;
-    channelCollections.avatar = item.avatar;
-    channelCollections.entry = item.entry;
-    channelCollections.ownerDid = item.tokenDid.did;
-    let didJsON = await this.feedService.resolveDidObjectForName(channelCollections.ownerDid);
-    let didName = didJsON["name"] || "";
-    channelCollections.ownerName = didName;
-    let url: string = channelCollections.entry.url;
-    let urlArr = url.replace("feeds://","").split("/");
-    channelCollections.did = urlArr[0];
-    let carrierAddress = urlArr[1];
-    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
-    channelCollections.nodeId = nodeId;
-    this.channelCollectionList.push(channelCollections);
+
+
+  clickChannelCollection(channelCollections: FeedsData.ChannelCollections) {
+    let avatarId = this.handleCollectionImgId(channelCollections);
+    let feedsAvatar = document.getElementById(avatarId).getAttribute("src") || "";
+    let newChannelCollections: any = _.cloneDeep(channelCollections);
+    newChannelCollections.feedsAvatar = feedsAvatar;
+    newChannelCollections.url = channelCollections.entry.url;
+    this.removeSubscribe();
+    this.native.go('discoverfeedinfo', {
+      params: newChannelCollections,
+    });
   }
-  this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);
-}
 
+  subscribeChannelCollection(channelCollections: FeedsData.ChannelCollections) {
 
+    let feedUrl = channelCollections.entry.url;
+    let followers = 0;
+    let feedName = channelCollections.name;
+    let desc = channelCollections.description;
+    let ownerName = channelCollections.ownerName;
+    //let avatarId = this.handleCollectionImgId(channelCollections);
+    let avatar = channelCollections.avatar.image;
+    this.feedService
+      .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
+      .then(isSuccess => {
+        if (isSuccess) {
+          this.zone.run(() => {
+          });
+        }
+      })
+      .catch(err => { });
+  }
 
-clickChannelCollection(channelCollections: FeedsData.ChannelCollections){
-   let avatarId = this.handleCollectionImgId(channelCollections);
-   let feedsAvatar = document.getElementById(avatarId).getAttribute("src") || "";
-   let newChannelCollections: any = _.cloneDeep(channelCollections);
-   newChannelCollections.feedsAvatar = feedsAvatar;
-   newChannelCollections.url = channelCollections.entry.url;
-   this.removeSubscribe();
-   this.native.go('discoverfeedinfo', {
-     params: newChannelCollections,
-   });
-}
-
-subscribeChannelCollection(channelCollections: FeedsData.ChannelCollections){
-
-  let feedUrl = channelCollections.entry.url;
-  let followers = 0;
-  let feedName = channelCollections.name;
-  let desc = channelCollections.description;
-  let ownerName = channelCollections.ownerName;
-  //let avatarId = this.handleCollectionImgId(channelCollections);
-  let avatar = channelCollections.avatar.image;
-  this.feedService
-  .addFeed(feedUrl,avatar,followers, feedName, ownerName, desc)
-  .then(isSuccess => {
-    if (isSuccess) {
-      this.zone.run(() => {
-      });
+  handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections) {
+    let tokenId: string = channelCollections.tokenId;
+    let channelAvatar = channelCollections.avatar.image;
+    let kind = channelCollections.avatar.kind;
+    let channelAvatarUri = "";
+    if (channelAvatar.indexOf('feeds:imgage:') > -1) {
+      channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
+    } else if (channelAvatar.indexOf('feeds:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+    } else if (channelAvatar.indexOf('pasar:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('pasar:image:', '');
     }
-  })
-  .catch(err => {});
-}
-
-handleChannelCollectionId(channelCollections: FeedsData.ChannelCollections){
-  let tokenId:string = channelCollections.tokenId;
-  let channelAvatar = channelCollections.avatar.image;
-  let kind = channelCollections.avatar.kind;
-  let channelAvatarUri = "";
-  if (channelAvatar.indexOf('feeds:imgage:') > -1) {
-    channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
-  } else if (channelAvatar.indexOf('feeds:image:') > -1) {
-    channelAvatarUri = channelAvatar.replace('feeds:image:', '');
-  } else if (channelAvatar.indexOf('pasar:image:') > -1) {
-    channelAvatarUri = channelAvatar.replace('pasar:image:', '');
+    return "serachPage-" + channelAvatarUri + "-" + kind + "-" + tokenId;
   }
-  return "serachPage-"+channelAvatarUri+"-"+kind+"-"+tokenId;
-}
 
-handleCollectionImgId(channelCollections: FeedsData.ChannelCollections){
-  let channelAvatar = channelCollections.avatar.image;
-  let tokenId:string = channelCollections.tokenId;
-  let channelCollectionAvatarId = "";
-  let channelAvatarUri = "";
-  if (channelAvatar.indexOf('feeds:imgage:') > -1) {
-    channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
-    channelCollectionAvatarId = channelAvatarUri;
-  } else if (channelAvatar.indexOf('feeds:image:') > -1) {
-    channelAvatarUri = channelAvatar.replace('feeds:image:', '');
-  } else if (channelAvatar.indexOf('pasar:image:') > -1) {
-    channelAvatarUri = channelAvatar.replace('pasar:image:', '');
+  handleCollectionImgId(channelCollections: FeedsData.ChannelCollections) {
+    let channelAvatar = channelCollections.avatar.image;
+    let tokenId: string = channelCollections.tokenId;
+    let channelCollectionAvatarId = "";
+    let channelAvatarUri = "";
+    if (channelAvatar.indexOf('feeds:imgage:') > -1) {
+      channelAvatarUri = channelAvatar.replace('feeds:imgage:', '');
+      channelCollectionAvatarId = channelAvatarUri;
+    } else if (channelAvatar.indexOf('feeds:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('feeds:image:', '');
+    } else if (channelAvatar.indexOf('pasar:image:') > -1) {
+      channelAvatarUri = channelAvatar.replace('pasar:image:', '');
+    }
+    channelCollectionAvatarId = "serachPage-avatar-" + channelAvatarUri + "-" + tokenId;
+    return channelCollectionAvatarId;
   }
-  channelCollectionAvatarId = "serachPage-avatar-"+channelAvatarUri+"-"+tokenId;
-  return channelCollectionAvatarId;
-}
 
-setChannelCollectionAvatar(){
-  let discoverSquareFeed = document.getElementsByClassName("channelCollectionFeeds") || [];
-  let len = discoverSquareFeed.length;
-  for(let itemIndex = 0;itemIndex<len;itemIndex++){
-    let item = discoverSquareFeed[itemIndex];
-    let arr = item.getAttribute("id").split("-");
-    let avatarUri = arr[1];
-    let kind = arr[2];
-    let tokenId:string = arr[3];
-    let thumbImage =  document.getElementById('serachPage-avatar-'+avatarUri+"-"+tokenId);
-    let srcStr =  thumbImage.getAttribute("src") || "";
-    let isload = this.channelCollectionsAvatarisLoad[tokenId] || '';
-    try {
-       if (
-        avatarUri != '' &&
-         thumbImage.getBoundingClientRect().top >= -100 &&
-         thumbImage.getBoundingClientRect().top <= this.clientHeight
-       ) {
-         if(isload === ""){
-          this.channelCollectionsAvatarisLoad[tokenId] = '12';
-          let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
-          this.fileHelperService.getNFTData(fetchUrl,avatarUri, kind).then((data) => {
-            this.zone.run(() => {
-              this.channelCollectionsAvatarisLoad[tokenId] = '13';
-              let dataSrc = data || "";
-              if(dataSrc!=""){
-                thumbImage.setAttribute("src",data);
+  setChannelCollectionAvatar() {
+    let discoverSquareFeed = document.getElementsByClassName("channelCollectionFeeds") || [];
+    let len = discoverSquareFeed.length;
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
+      let item = discoverSquareFeed[itemIndex];
+      let arr = item.getAttribute("id").split("-");
+      let avatarUri = arr[1];
+      let kind = arr[2];
+      let tokenId: string = arr[3];
+      let thumbImage = document.getElementById('serachPage-avatar-' + avatarUri + "-" + tokenId);
+      let srcStr = thumbImage.getAttribute("src") || "";
+      let isload = this.channelCollectionsAvatarisLoad[tokenId] || '';
+      try {
+        if (
+          avatarUri != '' &&
+          thumbImage.getBoundingClientRect().top >= -100 &&
+          thumbImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if (isload === "") {
+            this.channelCollectionsAvatarisLoad[tokenId] = '12';
+            let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
+            this.fileHelperService.getNFTData(fetchUrl, avatarUri, kind).then((data) => {
+              this.zone.run(() => {
+                this.channelCollectionsAvatarisLoad[tokenId] = '13';
+                let dataSrc = data || "";
+                if (dataSrc != "") {
+                  thumbImage.setAttribute("src", data);
+                }
+              });
+            }).catch((err) => {
+              if (this.channelCollectionsAvatarisLoad[tokenId] === '13') {
+                this.channelCollectionsAvatarisLoad[tokenId] = '';
+                thumbImage.setAttribute('src', './assets/icon/reserve.svg');
               }
             });
-          }).catch((err)=>{
-            if(this.channelCollectionsAvatarisLoad[tokenId] === '13'){
-              this.channelCollectionsAvatarisLoad[tokenId] = '';
-              thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-             }
-          });
 
-         }
-       }else{
-         srcStr = thumbImage.getAttribute('src') || '';
-         if (
-           thumbImage.getBoundingClientRect().top < -100 &&
-           this.channelCollectionsAvatarisLoad[tokenId] === '13' &&
-           srcStr != './assets/icon/reserve.svg'
-         ) {
-          this.channelCollectionsAvatarisLoad[tokenId] = '';
-           thumbImage.setAttribute('src', './assets/icon/reserve.svg');
-         }
-       }
-    } catch (error) {
-      this.channelCollectionsAvatarisLoad[tokenId] = '';
-     thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        } else {
+          srcStr = thumbImage.getAttribute('src') || '';
+          if (
+            thumbImage.getBoundingClientRect().top < -100 &&
+            this.channelCollectionsAvatarisLoad[tokenId] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
+            this.channelCollectionsAvatarisLoad[tokenId] = '';
+            thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
+      } catch (error) {
+        this.channelCollectionsAvatarisLoad[tokenId] = '';
+        thumbImage.setAttribute('src', './assets/icon/reserve.svg');
+      }
     }
   }
-}
 
-refreshChannelCollectionAvatar(){
-  let sid = setTimeout(()=>{
-    this.channelCollectionsAvatarisLoad = {};
-    this.setChannelCollectionAvatar();
-    clearTimeout(sid);
-  },100);
-}
-
-filterChannelCollection(){
-  let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
-  let channelCollectionList =  _.cloneDeep(publishedActivePanelList);
-  const signinData = this.feedService.getSignInData();
-  let ownerDid = signinData.did;
-  let channelCollectionPageList = [];
-  channelCollectionPageList = _.filter(channelCollectionList,(item: FeedsData.ChannelCollections)=>{
-        return item.ownerDid != ownerDid;
-  });
-  this.followedList = this.feedService.getChannelsList() || [];
-  this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-  this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-  channelCollectionPageList = _.filter(channelCollectionPageList, (feed: any) => {
-    return this.handleChannelShow(feed);
-  });
-  let newChannelCollectionPageList = _.orderBy(channelCollectionPageList,['diaBalance'], ['desc']);
-  this.searchChannelCollectionPageList = _.cloneDeep(newChannelCollectionPageList);
-  return newChannelCollectionPageList;
-}
-
-handleChannelShow(feed: any) {
-  let feedNodeId = feed['nodeId'];
-  let feedUrl = feed['url'] || feed.entry.url;
-  let feedId = feedUrl.split('/')[4];
-  let followFeed = _.filter(this.followedList, (item: any) => {
-    return feedNodeId == item['nodeId'] && feedId == item['id'];
-  });
-
-  if (followFeed.length > 0) {
-    return false;
-  }
-  let addingFeed = _.filter(this.addingChanneList, (item: any) => {
-    return feedNodeId == item['nodeId'] && feedId == item['feedId'];
-  });
-
-  if (addingFeed.length > 0) {
-    return false;
+  refreshChannelCollectionAvatar() {
+    let sid = setTimeout(() => {
+      this.channelCollectionsAvatarisLoad = {};
+      this.setChannelCollectionAvatar();
+      clearTimeout(sid);
+    }, 100);
   }
 
-  return true;
-}
+  filterChannelCollection() {
+    let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
+    let channelCollectionList = _.cloneDeep(publishedActivePanelList);
+    const signinData = this.feedService.getSignInData();
+    let ownerDid = signinData.did;
+    let channelCollectionPageList = [];
+    channelCollectionPageList = _.filter(channelCollectionList, (item: FeedsData.ChannelCollections) => {
+      return item.ownerDid != ownerDid;
+    });
+    this.followedList = this.feedService.getChannelsList() || [];
+    this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+    this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+    channelCollectionPageList = _.filter(channelCollectionPageList, (feed: any) => {
+      return this.handleChannelShow(feed);
+    });
+    let newChannelCollectionPageList = _.orderBy(channelCollectionPageList, ['diaBalance'], ['desc']);
+    this.searchChannelCollectionPageList = _.cloneDeep(newChannelCollectionPageList);
+    return newChannelCollectionPageList;
+  }
+
+  handleChannelShow(feed: any) {
+    let feedNodeId = feed['nodeId'];
+    let feedUrl = feed['url'] || feed.entry.url;
+    let feedId = feedUrl.split('/')[4];
+    let followFeed = _.filter(this.followedList, (item: any) => {
+      return feedNodeId == item['nodeId'] && feedId == item['id'];
+    });
+
+    if (followFeed.length > 0) {
+      return false;
+    }
+    let addingFeed = _.filter(this.addingChanneList, (item: any) => {
+      return feedNodeId == item['nodeId'] && feedId == item['feedId'];
+    });
+
+    if (addingFeed.length > 0) {
+      return false;
+    }
+
+    return true;
+  }
 
 }

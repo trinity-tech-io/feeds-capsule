@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 const TAG = 'MigrateDataService';
 
@@ -10,7 +11,8 @@ export class MigrateDataService {
   private bindServer: FeedsData.Server;
   public constructor(
     private feedsService: FeedService,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private feedsServiceApi: FeedsServiceApi
   ) {
     this.bindServer = this.initBindServerData();
   }
@@ -23,7 +25,7 @@ export class MigrateDataService {
   //API
   syncChannelData(): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.feedsService.getChannels(this.bindServer.nodeId, Communication.field.id, 0, 0, 0);
+      this.feedsServiceApi.getChannels(this.bindServer.nodeId, Communication.field.id, 0, 0, 0);
 
     });
   }

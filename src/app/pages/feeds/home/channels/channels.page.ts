@@ -19,6 +19,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { PostHelperService } from 'src/app/services/post_helper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
@@ -136,8 +137,9 @@ export class ChannelsPage implements OnInit {
     public popupProvider: PopupProvider,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private postHelperService: PostHelperService
-  ) {}
+    private postHelperService: PostHelperService,
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   subscribe() {
     if (this.feedService.getConnectionStatus() != 0) {
@@ -150,7 +152,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
+    this.feedsServiceApi.subscribeChannel(this.nodeId, Number(this.channelId));
   }
 
   tip() {
@@ -159,7 +161,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || {};
+    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || {};
     let elaAddress = server['elaAddress'] || null;
     if (elaAddress == null) {
       this.native.toast('common.noElaAddress');
@@ -333,7 +335,7 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.streamGetBinaryResponse,
       () => {
-        this.zone.run(() => {});
+        this.zone.run(() => { });
       },
     );
 
@@ -509,8 +511,8 @@ export class ChannelsPage implements OnInit {
       },
     );
 
-    this.events.subscribe(FeedsEvent.PublishType.channelRightMenu,()=>{
-         this.clickAvatar();
+    this.events.subscribe(FeedsEvent.PublishType.channelRightMenu, () => {
+      this.clickAvatar();
     });
   }
 
@@ -573,7 +575,7 @@ export class ChannelsPage implements OnInit {
     this.hideFullScreen();
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -581,10 +583,10 @@ export class ChannelsPage implements OnInit {
       this.translate.instant('ChannelsPage.feeds'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    if(!this.theme.darkMode){
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelRightMenu","assets/icon/dot.ico");
-    }else{
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelRightMenu","assets/icon/dark/dot.ico");
+    if (!this.theme.darkMode) {
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelRightMenu", "assets/icon/dot.ico");
+    } else {
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelRightMenu", "assets/icon/dark/dot.ico");
     }
   }
 
@@ -603,11 +605,11 @@ export class ChannelsPage implements OnInit {
     if (!this.feedService.checkPostIsAvalible(post)) return;
 
     if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedService.postUnlike(nodeId, Number(channelId), Number(postId), 0);
+      this.feedsServiceApi.postUnlike(nodeId, Number(channelId), Number(postId), 0);
       return;
     }
 
-    this.feedService.postLike(nodeId, Number(channelId), Number(postId), 0);
+    this.feedsServiceApi.postLike(nodeId, Number(channelId), Number(postId), 0);
   }
 
   getChannel(nodeId: string, channelId: number): any {
@@ -620,21 +622,21 @@ export class ChannelsPage implements OnInit {
   }
 
   getContentText(content: string): string {
-    return this.feedService.parsePostContentText(content);
+    return this.feedsServiceApi.parsePostContentText(content);
   }
 
   getContentShortText(post: any): string {
     let content = post.content;
-    let text = this.feedService.parsePostContentText(content) || '';
+    let text = this.feedsServiceApi.parsePostContentText(content) || '';
     return text.substring(0, 180) + '...';
   }
 
   getContentImg(content: any): string {
-    return this.feedService.parsePostContentImg(content);
+    return this.feedsServiceApi.parsePostContentImg(content);
   }
 
   getPostContentTextSize(content: string) {
-    let text = this.feedService.parsePostContentText(content);
+    let text = this.feedsServiceApi.parsePostContentText(content);
     let size = UtilService.getSize(text);
     return size;
   }
@@ -956,16 +958,16 @@ export class ChannelsPage implements OnInit {
                 this.isLoadimage[id] = '13';
                 postImage.setAttribute('src', realImage);
               } else {
-                this.feedService.getData(thumbkey).then((thumbImagedata) =>{
+                this.feedService.getData(thumbkey).then((thumbImagedata) => {
                   let thumbImage = thumbImagedata || '';
-                  if(thumbImage!= ''){
+                  if (thumbImage != '') {
                     this.isLoadimage[id] = '13';
                     postImage.setAttribute('src', thumbImagedata);
-                  }else{
+                  } else {
                     this.isLoadimage[id] = '12';
                     rpostImage.style.display = 'none';
                   }
-                }).catch(()=>{
+                }).catch(() => {
                   rpostImage.style.display = 'none';
                 })
               }
@@ -1118,7 +1120,7 @@ export class ChannelsPage implements OnInit {
           this.isLoadVideoiamge[id] = '';
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   refreshImage() {
@@ -1508,9 +1510,9 @@ export class ChannelsPage implements OnInit {
       let nodeId = arrKey[0];
       let channelId = arrKey[1];
       let postId = arrKey[2];
-      let id = nodeId+"-"+channelId+"-"+postId;
+      let id = nodeId + "-" + channelId + "-" + postId;
       let postImage = document.getElementById(id + 'postimgchannel') || null;
-      if(postImage!=null){
+      if (postImage != null) {
         postImage.setAttribute('src', value);
       }
       this.viewHelper.openViewer(
@@ -1578,7 +1580,7 @@ export class ChannelsPage implements OnInit {
 
   clickAvatar() {
     if (this.channelAvatar.indexOf('data:image') > -1 ||
-       this.channelAvatar.startsWith('https:')) {
+      this.channelAvatar.startsWith('https:')) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(this.channelAvatar);
     } else if (this.channelAvatar.indexOf('assets/images') > -1) {
@@ -1598,7 +1600,7 @@ export class ChannelsPage implements OnInit {
       followStatus: this.followStatus,
       channelSubscribes: this.channelSubscribes,
       updatedTime: this.updatedTime,
-      channelOwner:this.channelOwner
+      channelOwner: this.channelOwner
     });
     this.native.navigateForward(['/feedinfo'], '');
   }
@@ -1607,13 +1609,13 @@ export class ChannelsPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    let text = this.feedService.parsePostContentText(postContent);
+    let text = this.feedsServiceApi.parsePostContentText(postContent);
     this.native
       .copyClipboard(text)
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickDashang(nodeId: string, channelId: number, postId: number) {
@@ -1622,7 +1624,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(nodeId) || {};
+    let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || {};
     let elaAddress = server['elaAddress'] || null;
     if (elaAddress == null) {
       this.native.toast('common.noElaAddress');

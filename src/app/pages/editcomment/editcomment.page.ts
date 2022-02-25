@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 
@@ -46,7 +47,8 @@ export class EditCommentPage implements OnInit {
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe(data => {
@@ -170,7 +172,7 @@ export class EditCommentPage implements OnInit {
     }
 
     this.native
-      .showLoading('common.waitMoment', isDismiss => {})
+      .showLoading('common.waitMoment', isDismiss => { })
       .then(() => {
         this.editComment();
       })
@@ -180,7 +182,7 @@ export class EditCommentPage implements OnInit {
   }
 
   private editComment() {
-    this.feedService.editComment(
+    this.feedsServiceApi.editComment(
       this.nodeId,
       Number(this.channelId),
       Number(this.postId),

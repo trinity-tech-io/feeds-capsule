@@ -16,26 +16,25 @@ import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { AddFeedService } from 'src/app/services/AddFeedService';
 import { IntentService } from 'src/app/services/IntentService';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import { connectivity, logger } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { UserDIDService } from 'src/app/services/userdid.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
-import { UtilService } from './utilService';
+
 import { Config } from './config';
 import { Logger } from './logger';
 import { IPFSService } from './ipfs.service';
 import { HiveService } from 'src/app/services/HiveService';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { UtilService } from './utilService';
+import { FeedsUtil } from './feeds_util.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 
 const TAG: string = 'Feeds-service';
-let versionCode: number = 20001;
-let newAuthVersion: number = 10400;
-let newCommentVersion: number = 10400;
-let newMultiPropCountVersion: number = 10500;
 
 let bindingServerCache: FeedsData.Server;
 let cacheBindingAddress: string = '';
@@ -87,7 +86,6 @@ export class FeedService {
   public hideDeletedPosts: boolean = false;
   public hideDeletedComments: boolean = false;
   public hideOfflineFeeds: boolean = true;
-  public localSignInData: SignInData = null;
   public currentLang: string = '';
   public curtab: string = 'home';
   public channelInfo: any = {};
@@ -135,7 +133,9 @@ export class FeedService {
     private pasarAssistService: PasarAssistService,
     private userDIDService: UserDIDService,
     private hiveService: HiveService,
-    private postHelperService: PostHelperService
+    private postHelperService: PostHelperService,
+    private feedsServiceApi: FeedsServiceApi,
+    private feedsUtil: FeedsUtil
   ) {
     eventBus = events;
     this.init();
@@ -385,7 +385,7 @@ export class FeedService {
     for (let index = 0; index < list.length; index++) {
       let channel = list[index];
       if (nodeId == channel.nodeId)
-        this.getChannelDetail(channel.nodeId, channel.id);
+        this.feedsServiceApi.getChannelDetail(channel.nodeId, channel.id);
     }
   }
 
@@ -399,7 +399,7 @@ export class FeedService {
   }
 
   createTopic(nodeId: string, channel: string, desc: string, avatar: any) {
-    this.createChannel(nodeId, channel, desc, avatar);
+    this.feedsServiceApi.createChannel(nodeId, channel, desc, avatar);
   }
 
   carrierReadyCallback() {
@@ -475,9 +475,9 @@ export class FeedService {
 
   doFriendConnection(friendId: string) {
     let accessToken = this.dataHelper.getAccessToken(friendId) || null;
-    if (this.checkExp(accessToken)) {
+    if (this.feedsServiceApi.checkExp(accessToken)) {
       Logger.log(TAG, 'Prepare signin server, access token expired, server nodeId is ', friendId);
-      this.signinChallengeRequest(friendId, true);
+      this.feedsServiceApi.signinChallengeRequest(friendId, true);
     } else {
       Logger.log(TAG, 'Prepare connect, nodeId is ', friendId, ' access token is ', accessToken);
       this.prepare(friendId);
@@ -492,7 +492,7 @@ export class FeedService {
       let nodeId = msg.friendInfo.userInfo.userId;
       if (this.dataHelper.isBindingServer(nodeId)) return;
 
-      let server = this.getServerbyNodeId(nodeId);
+      let server = this.feedsServiceApi.getServerbyNodeId(nodeId);
       if (server != null && server != undefined)
         this.resolveServer(server, status);
     });
@@ -774,14 +774,6 @@ export class FeedService {
     });
   }
 
-  getCurrentTime(): string {
-    return new Date().getTime().toString();
-  }
-
-  getCurrentTimeNum(): number {
-    return new Date().getTime();
-  }
-
   checkDIDValidity() { }
 
   parseDid(feedUrl: string): DidData {
@@ -1027,17 +1019,7 @@ export class FeedService {
 
   checkSignInServerStatus(nodeId: string): boolean {
     let accessToken = this.dataHelper.getAccessToken(nodeId);
-    return this.checkExp(accessToken);
-  }
-
-  hasAccessToken(nodeId: string): boolean {
-    let accessToken = this.dataHelper.getAccessToken(nodeId) || null;
-    if (this.checkExp(accessToken)) {
-      this.signinChallengeRequest(nodeId, true);
-      return false;
-    } else {
-      return true;
-    }
+    return this.feedsServiceApi.checkExp(accessToken);
   }
 
   parseResult(didData: DidData, service: DIDPlugin.Service) {
@@ -1064,22 +1046,7 @@ export class FeedService {
     if (didData.carrierAddress != null && didData.serviceId == null) {
       if (didData.carrierAddress == service.getEndpoint()) return true;
     }
-
     return false;
-  }
-
-  getServerbyNodeId(nodeId: string): FeedsData.Server {
-    return this.dataHelper.getServer(nodeId);
-  }
-
-  getServerNameByNodeId(nodeId: string): string {
-    let serverName = this.translate.instant('common.unknown');
-    let server = this.getServerbyNodeId(nodeId);
-    if (server != undefined) {
-      serverName = server.name;
-    }
-
-    return serverName;
   }
 
   getFeedNameById(nodeId: string, channelId: number): string {
@@ -1107,7 +1074,7 @@ export class FeedService {
     description: string,
   ): Promise<SignInData> {
     return new Promise((resolve, reject) => {
-      this.localSignInData = this.generateSignInData(
+      const signinData = this.generateSignInData(
         did,
         name,
         avatar,
@@ -1117,30 +1084,32 @@ export class FeedService {
         nickname,
         description,
       );
-      this.checkSignInDataChange(this.localSignInData)
+      this.dataHelper.setLocalSignInData(signinData);
+
+      this.checkSignInDataChange(this.dataHelper.getLocalSignInData())
         .then(async isChange => {
           if (isChange) {
             Logger.log(TAG, 'Signin data is changed, did is', did);
             await this.cleanAllData();
             this.storeService.set(
               FeedsData.PersistenceKey.signInData,
-              this.localSignInData,
+              this.dataHelper.getLocalSignInData(),
             );
             this.storeService.set(
               FeedsData.PersistenceKey.lastSignInData,
-              this.localSignInData,
+              this.dataHelper.getLocalSignInData(),
             );
-            resolve(this.localSignInData);
+            resolve(this.dataHelper.getLocalSignInData());
           } else {
             this.storeService.set(
               FeedsData.PersistenceKey.signInData,
-              this.localSignInData,
+              this.dataHelper.getLocalSignInData(),
             );
             this.storeService.set(
               FeedsData.PersistenceKey.lastSignInData,
-              this.localSignInData,
+              this.dataHelper.getLocalSignInData(),
             );
-            resolve(this.localSignInData);
+            resolve(this.dataHelper.getLocalSignInData());
           }
         })
         .catch(reason => {
@@ -1168,17 +1137,17 @@ export class FeedService {
       location,
       nickname,
       description,
-      this.getCurrentTimeNum() + this.getDaysTS(expDay),
+      UtilService.getCurrentTimeNum() + this.getDaysTS(expDay),
     );
   }
 
   saveSignInData2(signInData: SignInData) {
-    this.localSignInData = signInData;
+    this.dataHelper.setLocalSignInData(signInData);
     this.storeService.set(FeedsData.PersistenceKey.signInData, signInData);
   }
 
   getSignInData(): SignInData {
-    return this.localSignInData;
+    return this.dataHelper.getLocalSignInData();
   }
 
   checkSignInDataChange(signInData: SignInData): Promise<boolean> {
@@ -1239,16 +1208,17 @@ export class FeedService {
     onSuccess: (signInData: SignInData) => void,
     onError?: (errorData: any) => void,
   ) {
-    if (this.localSignInData != null || this.localSignInData != undefined) {
-      onSuccess(this.localSignInData);
+    const localSignInData = this.dataHelper.getLocalSignInData();
+    if (localSignInData != null || localSignInData != undefined) {
+      onSuccess(localSignInData);
       return;
     }
 
     this.storeService
       .get(FeedsData.PersistenceKey.signInData)
       .then(signinData => {
-        this.localSignInData = signinData;
-        onSuccess(this.localSignInData);
+        this.dataHelper.setLocalSignInData(signinData);
+        onSuccess(signinData);
       })
       .catch(error => {
         onError(error);
@@ -1260,7 +1230,7 @@ export class FeedService {
   }
 
   updateSignInDataExpTime(signInData: SignInData) {
-    signInData.expiresTS = this.getCurrentTimeNum() + this.getDaysTS(expDay);
+    signInData.expiresTS = UtilService.getCurrentTimeNum() + this.getDaysTS(expDay);
     this.saveSignInData2(signInData);
   }
 
@@ -1305,485 +1275,10 @@ export class FeedService {
     return localList;
   }
 
-  //// new request
-  createChannel(
-    nodeId: string,
-    name: string,
-    introduction: string,
-    avatar: any,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    //TODO 2.0
-    let tipMethods = 'NA';
-    //TODO 2.0
-    let proof = 'NA';
-    this.connectionService.createChannel(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      name,
-      introduction,
-      avatar,
-      accessToken,
-      tipMethods,
-      proof,
-    );
-  }
-
-  publishPost(nodeId: string, channelId: number, content: any, tempId: number) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    this.prepareTempPost(nodeId, channelId, tempId, content);
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    // let contentHash = UtilService.SHA256(content);
-    this.connectionService.publishPost(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      content,
-      accessToken,
-      tempId,
-    );
-  }
-
-  declarePost(
-    nodeId: string,
-    channelId: number,
-    content: any,
-    withNotify: boolean,
-    tempId: number,
-    transDataChannel: FeedsData.TransDataChannel,
-    imageData: string,
-    videoData: string,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    //TODO 2.0
-    let thumbnails = this.serializeDataService.encodeData('');
-
-    //TODO 2.0
-    let hashId = 'NA';
-
-    //TODO 2.0
-    let proof = 'NA';
-
-    //TODO 2.0
-    let originPostUrl = 'NA';
-
-    this.prepareTempMediaPost(
-      nodeId,
-      channelId,
-      tempId,
-      0,
-      content,
-      transDataChannel,
-      videoData,
-      imageData,
-    );
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.declarePost(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      content,
-      withNotify,
-      accessToken,
-      tempId,
-      thumbnails,
-      hashId,
-      proof,
-      originPostUrl,
-    );
-
-    eventBus.publish(FeedsEvent.PublishType.updateTab, true);
-  }
-
-  notifyPost(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    tempId: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.notifyPost(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      accessToken,
-      tempId,
-    );
-  }
-
-  postComment(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-    content: any,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.postComment(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      commentId,
-      content,
-      accessToken,
-    );
-  }
-
-  postLike(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.postLike(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      commentId,
-      accessToken,
-    );
-    if (!this.connectionService.checkServerConnection(nodeId)) {
-      return;
-    }
-    this.doPostLikeFinish(nodeId, channelId, postId, commentId);
-  }
-
-  postUnlike(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.postUnlike(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      commentId,
-      accessToken,
-    );
-    if (!this.connectionService.checkServerConnection(nodeId)) {
-      return;
-    }
-    this.doPostUnLikeFinish(nodeId, channelId, postId, commentId);
-  }
-
-  getMyChannels(
-    nodeId: string,
-    field: Communication.field,
-    upper_bound: number,
-    lower_bound: number,
-    max_counts: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getMyChannels(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      field,
-      upper_bound,
-      lower_bound,
-      max_counts,
-      accessToken,
-    );
-  }
-
-  getChannels(
-    nodeId: string,
-    field: Communication.field,
-    upper_bound: number,
-    lower_bound: number,
-    max_counts: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getChannels(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      field,
-      upper_bound,
-      lower_bound,
-      max_counts,
-      accessToken,
-    );
-  }
-
-  getChannelDetail(nodeId: string, id: number) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getChannelDetail(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      id,
-      accessToken,
-    );
-  }
-
-  getSubscribedChannels(
-    nodeId: string,
-    field: Communication.field,
-    upper_bound: number,
-    lower_bound: number,
-    max_counts: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getSubscribedChannels(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      field,
-      upper_bound,
-      lower_bound,
-      max_counts,
-      accessToken,
-    );
-  }
-
-  getPost(
-    nodeId: string,
-    channel_id: number,
-    by: Communication.field,
-    upper_bound: number,
-    lower_bound: number,
-    max_counts: number,
-    memo: any,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getPost(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channel_id,
-      by,
-      upper_bound,
-      lower_bound,
-      max_counts,
-      memo,
-      accessToken,
-    );
-  }
-
-  getComments(
-    nodeId: string,
-    channel_id: number,
-    post_id: number,
-    by: Communication.field,
-    upper_bound: number,
-    lower_bound: number,
-    max_counts: number,
-    isShowOfflineToast: boolean,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getComments(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channel_id,
-      post_id,
-      by,
-      upper_bound,
-      lower_bound,
-      max_counts,
-      isShowOfflineToast,
-      accessToken,
-    );
-  }
-
-  getStatistics(nodeId: string) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getStatistics(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      accessToken,
-    );
-  }
-
-  subscribeChannel(nodeId: string, id: number) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let proof: string = 'NA';
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.subscribeChannel(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      id,
-      proof,
-      accessToken,
-    );
-
-    if (!this.connectionService.checkServerConnection(nodeId)) {
-      return;
-    }
-
-    this.doSubscribeChannelFinish(nodeId, id);
-  }
-
-  unsubscribeChannel(nodeId: string, id: number) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.unsubscribeChannel(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      id,
-      accessToken,
-    );
-
-    if (!this.connectionService.checkServerConnection(nodeId)) {
-      return;
-    }
-
-    this.doUnsubscribeChannelFinish(nodeId, id);
-  }
-
-  editFeedInfo(
-    nodeId: string,
-    channelId: number,
-    name: string,
-    desc: string,
-    avatar: any,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let avatarBin = this.serializeDataService.encodeData(avatar);
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    //TODO 2.0
-    let tipMethods = 'NA';
-    //TODO 2.0
-    let proof = 'NA';
-    this.connectionService.editFeedInfo(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      name,
-      desc,
-      avatarBin,
-      accessToken,
-      tipMethods,
-      proof,
-    );
-  }
-
-  editPost(nodeId: string, channelId: number, postId: number, content: any) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.editPost(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      content,
-      accessToken,
-    );
-  }
-
-  deletePost(nodeId: string, channelId: number, postId: number) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.deletePost(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      accessToken,
-    );
-  }
-
-  editComment(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-    commentById: number,
-    content: any,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.editComment(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      commentId,
-      commentById,
-      content,
-      accessToken,
-    );
-  }
-
-  deleteComment(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.deleteComment(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      commentId,
-      accessToken,
-    );
-  }
-
   getServerVersion(nodeId: string) {
     this.connectionService.getServerVersion(
-      this.getServerNameByNodeId(nodeId),
+      this.feedsServiceApi.getServerNameByNodeId(nodeId),
       nodeId,
-    );
-  }
-
-  updateCredential(nodeId: string, credential: string) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.updateCredential(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      credential,
-      accessToken,
     );
   }
 
@@ -1862,18 +1357,6 @@ export class FeedService {
     this.afterFriendConnection(nodeId);
   }
 
-  enableNotification(nodeId: string) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.enableNotification(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      accessToken,
-    );
-  }
-
   ////handle push
   handleNewPostNotification(nodeId: string, params: any) {
     let channel_id: number = params.channel_id;
@@ -1900,7 +1383,7 @@ export class FeedService {
 
     let contentStr = this.serializeDataService.decodeData(contentBin);
 
-    let content = this.parseContent(nodeId, channel_id, id, 0, contentStr);
+    let content = this.feedsServiceApi.parseContent(nodeId, channel_id, id, 0, contentStr);
 
     let key = this.getPostId(nodeId, channel_id, id);
     let post = this.dataHelper.generatePost(
@@ -2119,7 +1602,7 @@ export class FeedService {
         postId: postId,
         commentId: commentId,
       },
-      time: this.getCurrentTimeNum(),
+      time: UtilService.getCurrentTimeNum(),
       readStatus: 1,
     };
 
@@ -2307,7 +1790,7 @@ export class FeedService {
       status = FeedsData.PostCommentStatus.edited;
 
     let contentStr = this.serializeDataService.decodeData(contentBin);
-    let content = this.parseContent(nodeId, channelId, postId, 0, contentStr);
+    let content = this.feedsServiceApi.parseContent(nodeId, channelId, postId, 0, contentStr);
 
     let key = this.getPostId(nodeId, channelId, postId);
 
@@ -2448,7 +1931,7 @@ export class FeedService {
       owner_name: owner_name,
       owner_did: owner_did,
       subscribers: 0,
-      last_update: this.getCurrentTimeNum(),
+      last_update: UtilService.getCurrentTimeNum(),
       last_post: '',
       avatar: avatar,
       isSubscribed: false,
@@ -2469,7 +1952,7 @@ export class FeedService {
     );
     eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
 
-    this.subscribeChannel(nodeId, channelId);
+    this.feedsServiceApi.subscribeChannel(nodeId, channelId);
   }
 
   handlePublishPostResult(
@@ -2503,7 +1986,7 @@ export class FeedService {
     tempId: number,
   ) {
     let contentStr = this.serializeDataService.decodeData(contentBin);
-    let content = this.parseContent(nodeId, channelId, postId, 0, contentStr);
+    let content = this.feedsServiceApi.parseContent(nodeId, channelId, postId, 0, contentStr);
 
     let post: FeedsData.Post = {
       nodeId: nodeId,
@@ -2512,8 +1995,8 @@ export class FeedService {
       content: content,
       comments: 0,
       likes: 0,
-      created_at: this.getCurrentTimeNum(),
-      updated_at: this.getCurrentTimeNum(),
+      created_at: UtilService.getCurrentTimeNum(),
+      updated_at: UtilService.getCurrentTimeNum(),
       post_status: FeedsData.PostCommentStatus.available,
     };
 
@@ -2564,7 +2047,7 @@ export class FeedService {
     tempId: number,
   ) {
     let contentStr = this.serializeDataService.decodeData(contentBin);
-    let content = this.parseContent(nodeId, channelId, postId, 0, contentStr);
+    let content = this.feedsServiceApi.parseContent(nodeId, channelId, postId, 0, contentStr);
 
     let post: FeedsData.Post = {
       nodeId: nodeId,
@@ -2573,8 +2056,8 @@ export class FeedService {
       content: content,
       comments: 0,
       likes: 0,
-      created_at: this.getCurrentTimeNum(),
-      updated_at: this.getCurrentTimeNum(),
+      created_at: UtilService.getCurrentTimeNum(),
+      updated_at: UtilService.getCurrentTimeNum(),
       post_status: FeedsData.PostCommentStatus.available,
     };
 
@@ -2741,7 +2224,7 @@ export class FeedService {
           owner_name: this.getSignInData().name,
           owner_did: this.getSignInData().did,
           subscribers: subscribers,
-          last_update: this.getCurrentTimeNum(),
+          last_update: UtilService.getCurrentTimeNum(),
           last_post: '',
           avatar: avatar,
           isSubscribed: false,
@@ -2971,7 +2454,7 @@ export class FeedService {
       let likes = result[index].likes;
       let createAt = result[index].created_at || 0;
       let contentStr = this.serializeDataService.decodeData(contentBin);
-      let content = this.parseContent(nodeId, channel_id, id, 0, contentStr);
+      let content = this.feedsServiceApi.parseContent(nodeId, channel_id, id, 0, contentStr);
 
       let updatedAt = result[index].updated_at || createAt;
       let status =
@@ -3032,7 +2515,7 @@ export class FeedService {
         this.dataHelper.receiveNewPost();
       }
 
-      if (this.getServerVersionCodeByNodeId(nodeId) < newCommentVersion) {
+      if (this.feedsServiceApi.getServerVersionCodeByNodeId(nodeId) < Config.newCommentVersion) {
         this.syncCommentOld(nodeId, channel_id, id);
       }
     }
@@ -3187,7 +2670,7 @@ export class FeedService {
     error: any,
   ) {
     if (error != null && error != undefined && error.code == -4) {
-      this.getSubscribedChannels(
+      this.feedsServiceApi.getSubscribedChannels(
         nodeId,
         Communication.field.id,
         request.id,
@@ -3249,7 +2732,7 @@ export class FeedService {
     let status = result.status;
     Logger.log(TAG, 'Receive result from subscribe_channel, status is ', status);
 
-    this.getSubscribedChannels(
+    this.feedsServiceApi.getSubscribedChannels(
       nodeId,
       Communication.field.id,
       request.id,
@@ -3334,31 +2817,6 @@ export class FeedService {
     this.updateData(nodeId);
   }
 
-  doSubscribeChannelFinish(nodeId: string, channelId: number) {
-    let nodeChannelId = this.getChannelId(nodeId, channelId);
-    let originChannel = this.dataHelper.getChannel(nodeChannelId);
-
-    const originChannelForHive = originChannel
-    if (originChannel == null) return;
-
-    originChannel.isSubscribed = true;
-
-    let subscribeNum = originChannel.subscribers;
-    originChannel.subscribers = subscribeNum + 1;
-
-    this.dataHelper.updateChannel(nodeChannelId, originChannel);
-
-    // this.hiveService.updateOne(originChannelForHive, originChannel)
-    let subscribeFinishData: FeedsEvent.SubscribeFinishData = {
-      nodeId: nodeId,
-      channelId: channelId,
-    };
-    eventBus.publish(
-      FeedsEvent.PublishType.subscribeFinish,
-      subscribeFinishData,
-    );
-  }
-
   doSubscribeChannelError(nodeId: string, channelId: number) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
@@ -3380,24 +2838,7 @@ export class FeedService {
     );
   }
 
-  doUnsubscribeChannelFinish(nodeId: string, channelId: number) {
-    let nodeChannelId = this.getChannelId(nodeId, channelId);
-    let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-    const originChannelForHive = originChannel
-    originChannel.isSubscribed = false;
-    let subscribeNum = originChannel.subscribers;
-    if (subscribeNum > 0) originChannel.subscribers = subscribeNum - 1;
-    this.dataHelper.updateChannel(nodeChannelId, originChannel);
-
-    // this.hiveService.updateOne(originChannelForHive, originChannel)
-    let unsubscribeData: FeedsEvent.unsubscribeData = {
-      nodeId: nodeId,
-      channelId: channelId,
-      channelName: originChannel.name,
-    };
-    eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, unsubscribeData);
-  }
 
   doUnsubscribeChannelError(nodeId: string, channelId: number) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
@@ -3416,65 +2857,6 @@ export class FeedService {
       channelName: originChannel.name,
     };
     eventBus.publish(FeedsEvent.PublishType.unsubscribeFinish, unsubscribeData);
-  }
-
-  doPostLikeFinish(
-    nodeId: string,
-    channel_id: number,
-    post_id: number,
-    comment_id: number,
-  ) {
-    let key = this.getPostId(nodeId, channel_id, post_id);
-    if (comment_id == 0) {
-      let likesObj = this.dataHelper.generateLikes(
-        nodeId,
-        channel_id,
-        post_id,
-        0,
-      );
-      this.dataHelper.updateLikesWithoutSave(key, likesObj);
-
-      let originPost = this.dataHelper.getPost(key);
-      originPost.likes = originPost.likes + 1;
-      this.dataHelper.updatePostWithoutSave(key, originPost);
-
-      eventBus.publish(
-        FeedsEvent.PublishType.updateLikeList,
-        this.getLikeList(),
-      );
-      eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
-    } else {
-      let commentKey = this.getLikeCommentId(
-        nodeId,
-        channel_id,
-        post_id,
-        comment_id,
-      );
-      let likedComment = this.dataHelper.generatedLikedComment(
-        nodeId,
-        channel_id,
-        post_id,
-        comment_id,
-      );
-      this.dataHelper.updateLikedComment(commentKey, likedComment);
-
-      let originComment = this.dataHelper.getComment(
-        nodeId,
-        channel_id,
-        post_id,
-        comment_id,
-      );
-      originComment.likes = originComment.likes + 1;
-      this.dataHelper.updateComment(
-        nodeId,
-        channel_id,
-        post_id,
-        comment_id,
-        originComment,
-      );
-
-      eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
-    }
   }
 
   doPostLikeError(
@@ -3528,55 +2910,7 @@ export class FeedService {
     }
   }
 
-  doPostUnLikeFinish(
-    nodeId: string,
-    channel_id: number,
-    post_id: number,
-    comment_id: number,
-  ) {
-    let key = this.getPostId(nodeId, channel_id, post_id);
 
-    if (comment_id == 0) {
-      this.dataHelper.deleteLikes(key);
-      let originPost = this.dataHelper.getPost(key);
-      let likeNum = originPost.likes;
-      if (likeNum > 0) {
-        originPost.likes = likeNum - 1;
-        this.dataHelper.updatePostWithoutSave(key, originPost);
-      }
-      eventBus.publish(
-        FeedsEvent.PublishType.updateLikeList,
-        this.getLikeList(),
-      );
-      eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
-    } else {
-      let originComment = this.dataHelper.getComment(
-        nodeId,
-        channel_id,
-        post_id,
-        comment_id,
-      );
-      let likeNum = originComment.likes;
-      if (likeNum > 0) {
-        originComment.likes = likeNum - 1;
-        this.dataHelper.updateComment(
-          nodeId,
-          channel_id,
-          post_id,
-          comment_id,
-          originComment,
-        );
-      }
-      let commentKey = this.getLikeCommentId(
-        nodeId,
-        channel_id,
-        post_id,
-        comment_id,
-      );
-      this.dataHelper.deleteLikedComment(commentKey);
-      eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
-    }
-  }
 
   doPostUnLikeError(
     nodeId: string,
@@ -3796,7 +3130,7 @@ export class FeedService {
     lower_bound: number,
     maxCount: number,
   ) {
-    this.getPost(
+    this.feedsServiceApi.getPost(
       nodeId,
       channelId,
       Communication.field.last_update,
@@ -3808,7 +3142,7 @@ export class FeedService {
   }
 
   updateFeedsByFeedId(nodeId: string, feedId: number) {
-    this.getChannels(nodeId, Communication.field.id, feedId, feedId, 1);
+    this.feedsServiceApi.getChannels(nodeId, Communication.field.id, feedId, feedId, 1);
   }
 
   updateMultiCommentsWithTime(
@@ -3818,7 +3152,7 @@ export class FeedService {
     lower_bound: number,
     max_counts: number,
   ) {
-    this.getMultiComments(
+    this.feedsServiceApi.getMultiComments(
       nodeId,
       feedsId,
       0,
@@ -3837,7 +3171,7 @@ export class FeedService {
     lower_bound: number,
     max_counts: number,
   ) {
-    this.getComments(
+    this.feedsServiceApi.getComments(
       nodeId,
       channelId,
       postId,
@@ -3856,7 +3190,7 @@ export class FeedService {
   }
 
   updatePostWithId(nodeId: string, feedsId: number, from: number, to: number) {
-    this.getPost(nodeId, feedsId, Communication.field.id, to, from, 1, '');
+    this.feedsServiceApi.getPost(nodeId, feedsId, Communication.field.id, to, from, 1, '');
   }
 
   updatePostFromId(nodeId: string, feedsId: number) {
@@ -3888,7 +3222,7 @@ export class FeedService {
     lastSubscribedFeedsTime = this.dataHelper.getLastSubscribedFeedsUpdateTime(
       nodeId,
     );
-    this.getSubscribedChannels(
+    this.feedsServiceApi.getSubscribedChannels(
       nodeId,
       Communication.field.last_update,
       0,
@@ -3971,26 +3305,6 @@ export class FeedService {
     );
   }
 
-  parsePostContentText(content: any): string {
-    let contentObj = this.native.parseJSON(content) || '';
-
-    if (contentObj.text != undefined) return contentObj.text;
-
-    if (typeof contentObj != 'string') return '';
-
-    return contentObj;
-  }
-
-  parsePostContentImg(content: any): string {
-    let contentObj = this.native.parseJSON(content) || '';
-
-    if (contentObj.img != undefined) return contentObj.img;
-
-    if (typeof contentObj != 'string') return '';
-
-    return contentObj;
-  }
-
   async publishDid(
     payload: string,
     onSuccess?: (ret: any) => void,
@@ -4024,21 +3338,6 @@ export class FeedService {
   clearSigninTimeout(nodeId: string) {
     this.isLogging[nodeId] = false;
     clearTimeout(this.signinChallengeTimeout);
-  }
-
-  signinChallengeRequest(nodeId: string, requiredCredential: boolean) {
-    Logger.log(TAG, 'Start signin server, nodeId is', nodeId);
-    if (this.getServerVersionCodeByNodeId(nodeId) < newAuthVersion) {
-      this.connectionService.signinChallengeRequest(
-        this.getServerNameByNodeId(nodeId),
-        nodeId,
-        requiredCredential,
-        this.getSignInData().did,
-      );
-      return;
-    }
-
-    this.standardSignIn(nodeId);
   }
 
   signinConfirmRequest(
@@ -4097,7 +3396,7 @@ export class FeedService {
 
   declareOwnerRequest(nodeId: string, carrierAddress: string, nonce: string) {
     this.connectionService.declareOwnerRequest(
-      this.getServerNameByNodeId(nodeId),
+      this.feedsServiceApi.getServerNameByNodeId(nodeId),
       nodeId,
       nonce,
       this.getSignInData().did,
@@ -4112,7 +3411,7 @@ export class FeedService {
     index: number,
   ) {
     this.connectionService.importDidRequest(
-      this.getServerNameByNodeId(nodeId),
+      this.feedsServiceApi.getServerNameByNodeId(nodeId),
       nodeId,
       mnemonic,
       passphrase,
@@ -4122,14 +3421,14 @@ export class FeedService {
 
   createDidRequest(nodeId: string) {
     this.connectionService.createDidRequest(
-      this.getServerNameByNodeId(nodeId),
+      this.feedsServiceApi.getServerNameByNodeId(nodeId),
       nodeId,
     );
   }
 
   issueCredentialRequest(nodeId: string, credential: string) {
     this.connectionService.issueCredentialRequest(
-      this.getServerNameByNodeId(nodeId),
+      this.feedsServiceApi.getServerNameByNodeId(nodeId),
       nodeId,
       credential,
     );
@@ -4284,7 +3583,7 @@ export class FeedService {
     }
 
     eventBus.publish(FeedsEvent.PublishType.updateCredentialFinish);
-    this.signinChallengeRequest(nodeId, true);
+    this.feedsServiceApi.signinChallengeRequest(nodeId, true);
   }
 
   handleSetBinaryResponse(nodeId, result, requestParams, error, memo: any) {
@@ -4350,7 +3649,7 @@ export class FeedService {
           // server = this.dataHelper.generateServer();
         }
         this.dataHelper.updateServer(nodeId, server);
-        this.standardDidAuth(nodeId, standAuthResult.jwtToken);
+        this.feedsServiceApi.standardDidAuth(nodeId, standAuthResult.jwtToken);
       });
   }
 
@@ -4572,7 +3871,7 @@ export class FeedService {
         cachedServer.introduction = serverDesc;
         cachedServer.elaAddress = elaAddress;
         this.dataHelper.updateCachedUpdateServer(nodeId, cachedServer);
-        this.updateCredential(nodeId, credential);
+        this.feedsServiceApi.updateCredential(nodeId, credential);
       },
       () => { },
     );
@@ -4742,26 +4041,14 @@ export class FeedService {
     );
     eventBus.publish(FeedsEvent.PublishType.issue_credential);
     eventBus.publish(FeedsEvent.PublishType.bindServerFinish, bindingServer);
-    this.signinChallengeRequest(nodeId, true);
+    this.feedsServiceApi.signinChallengeRequest(nodeId, true);
   }
 
-  checkExp(mAccessToken: FeedsData.AccessToken): boolean {
-    let accessToken = mAccessToken || null;
-    if (accessToken == null || accessToken == undefined) {
-      return true;
-    }
 
-    let isExpire = accessToken.isExpire;
-    if (isExpire) {
-      return true;
-    }
-
-    return false;
-  }
 
   prepare(friendId: string) {
-    this.getStatistics(friendId);
-    this.enableNotification(friendId);
+    this.feedsServiceApi.getStatistics(friendId);
+    this.feedsServiceApi.enableNotification(friendId);
     // this.updateData(friendId);
     // if (!this.addFeedService.checkIsTobeAddedFeeds(friendId, 0)){
     //   this.updateData(friendId);
@@ -4769,7 +4056,7 @@ export class FeedService {
   }
 
   updateCommentData(nodeId: string, feedsId: number) {
-    if (this.getServerVersionCodeByNodeId(nodeId) < newCommentVersion) {
+    if (this.feedsServiceApi.getServerVersionCodeByNodeId(nodeId) < Config.newCommentVersion) {
       let postList = this.getPostListFromChannel(nodeId, feedsId);
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
         let post: FeedsData.Post = postList[postIndex];
@@ -4800,7 +4087,7 @@ export class FeedService {
   }
 
   syncComment(nodeId: string, feedsId: number) {
-    if (this.getServerVersionCodeByNodeId(nodeId) >= newCommentVersion) {
+    if (this.feedsServiceApi.getServerVersionCodeByNodeId(nodeId) >= Config.newCommentVersion) {
       this.syncMultiComment(nodeId, feedsId);
     } else {
       let postList = this.getPostListFromChannel(nodeId, feedsId);
@@ -4828,12 +4115,12 @@ export class FeedService {
     );
     for (let index = 0; index < toBeAddedFeeds.length; index++) {
       let toBeAddedFeed = toBeAddedFeeds[index];
-      this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
+      this.feedsServiceApi.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
     }
 
     if (this.dataHelper.isBindingServer(friendId)) {
       if (this.getMyChannelList().length == 0)
-        this.getMyChannels(friendId, Communication.field.last_update, 0, 0, 0);
+        this.feedsServiceApi.getMyChannels(friendId, Communication.field.last_update, 0, 0, 0);
     }
 
     let list = this.getSubscribedChannelsFromNodeId(friendId);
@@ -4849,9 +4136,9 @@ export class FeedService {
     }
 
     if (
-      this.getServerVersionCodeByNodeId(friendId) >= newMultiPropCountVersion
+      this.feedsServiceApi.getServerVersionCodeByNodeId(friendId) >= Config.newMultiPropCountVersion
     ) {
-      this.getMultiSubscribersCount(friendId, 0);
+      this.feedsServiceApi.getMultiSubscribersCount(friendId, 0);
       this.updateMultiLikesAndCommentsCount(friendId);
     }
 
@@ -4871,9 +4158,9 @@ export class FeedService {
     }
     this.lastMultiLikesAndCommentsCountUpdateMapCache[nodeId] = {
       nodeId: nodeId,
-      time: this.getCurrentTimeNum(),
+      time: UtilService.getCurrentTimeNum(),
     };
-    this.getMultiLikesAndCommentsCount(
+    this.feedsServiceApi.getMultiLikesAndCommentsCount(
       nodeId,
       0,
       0,
@@ -4917,7 +4204,7 @@ export class FeedService {
   }
 
   async removeSigninData() {
-    this.localSignInData = null;
+    this.dataHelper.setLocalSignInData(null);
     await this.storeService.remove(FeedsData.PersistenceKey.signInData);
   }
 
@@ -5213,7 +4500,7 @@ export class FeedService {
 
   restoreData(nodeId: string) {
     if (!this.checkIsTobeAddedFeeds(nodeId, 0)) {
-      this.getSubscribedChannels(
+      this.feedsServiceApi.getSubscribedChannels(
         nodeId,
         Communication.field.last_update,
         0,
@@ -5223,7 +4510,7 @@ export class FeedService {
     }
 
     if (this.dataHelper.isBindingServer(nodeId)) {
-      this.getMyChannels(nodeId, Communication.field.last_update, 0, 0, 0);
+      this.feedsServiceApi.getMyChannels(nodeId, Communication.field.last_update, 0, 0, 0);
     }
   }
 
@@ -5357,7 +4644,7 @@ export class FeedService {
         let originAccessToken = this.dataHelper.getAccessToken(nodeId);
         originAccessToken.isExpire = true;
         this.dataHelper.updateAccessToken(nodeId, originAccessToken);
-        this.signinChallengeRequest(nodeId, true);
+        this.feedsServiceApi.signinChallengeRequest(nodeId, true);
         return;
       case -6:
         errorMessage = this.translate.instant('ErrorInfo.internalError');
@@ -5380,7 +4667,7 @@ export class FeedService {
         this.native.toastWarn(
           this.translate.instant('common.theFeedSource') +
           ' #' +
-          this.getServerNameByNodeId(nodeId) +
+          this.feedsServiceApi.getServerNameByNodeId(nodeId) +
           this.translate.instant('ErrorInfo.needUpdateServerVersion'),
         );
         return;
@@ -5393,7 +4680,7 @@ export class FeedService {
     }
     this.native.toastWarn(
       this.formatInfoService.formatErrorMsg(
-        this.getServerNameByNodeId(nodeId),
+        this.feedsServiceApi.getServerNameByNodeId(nodeId),
         errorMessage,
       ),
     );
@@ -5403,7 +4690,7 @@ export class FeedService {
     let memo = {
       action: FeedsData.RequestAction.refreshPostDetail,
     };
-    this.getPost(
+    this.feedsServiceApi.getPost(
       nodeId,
       channelId,
       Communication.field.id,
@@ -5801,7 +5088,7 @@ export class FeedService {
   ) {
     if (videoData != '') {
       let key = this.getVideoKey(nodeId, channelId, postId, commentId, index);
-      this.setBinaryFromMsg(
+      this.feedsServiceApi.setBinaryFromMsg(
         nodeId,
         key,
         videoData,
@@ -5812,7 +5099,7 @@ export class FeedService {
       );
     } else if (imgData != '') {
       let key = this.getImageKey(nodeId, channelId, postId, commentId, index);
-      this.setBinaryFromMsg(
+      this.feedsServiceApi.setBinaryFromMsg(
         nodeId,
         key,
         imgData,
@@ -5822,48 +5109,6 @@ export class FeedService {
         tempId,
       );
     }
-  }
-
-  setBinaryFromMsg(
-    nodeId: string,
-    key: string,
-    content: any,
-    feedId: number,
-    postId: number,
-    commentId: number,
-    tempId: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-
-    this.storeService.set(key, content);
-    let memo = {
-      feedId: feedId,
-      postId: postId,
-      commentId: commentId,
-      tempId: tempId,
-    };
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.setBinary(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      key,
-      content,
-      accessToken,
-      memo,
-    );
-  }
-
-  getBinaryFromMsg(nodeId: string, key: string) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getBinary(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      key,
-      accessToken,
-    );
   }
 
   createContent(
@@ -5901,241 +5146,6 @@ export class FeedService {
 
     let contentStr = JSON.stringify(content);
     return contentStr;
-  }
-
-  parseContent(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-    content: any,
-  ): FeedsData.Content {
-    let contentObj = this.native.parseJSON(content) || '';
-    if (contentObj.version != undefined && contentObj.version === '1.0') {
-      return this.parseContentV1(
-        nodeId,
-        channelId,
-        postId,
-        commentId,
-        contentObj,
-      );
-    } else if (contentObj.version === '2.0') {
-      return this.parseContentV2(
-        nodeId,
-        channelId,
-        postId,
-        commentId,
-        contentObj
-      );
-    } else {
-      return this.parseContentV0(
-        nodeId,
-        channelId,
-        postId,
-        commentId,
-        contentObj,
-      );
-    }
-  }
-
-  parseContentV2(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-    contentObj: any,
-  ): FeedsData.Content {
-    let mVersion = contentObj.version || '';
-    let mText = contentObj.text || '';
-    let videoThumb = contentObj.videoThumbnail || '';
-    let mMediaType = FeedsData.MediaType.noMeida;
-    let nftTokenId = contentObj.nftTokenId || '';
-    let nftOrderId = contentObj.nftOrderId || '';
-    let nftImageType = contentObj.nftImageType || '';
-    let mMediaDatas: FeedsData.mediaData[] = [];
-    mVersion = contentObj.version
-    mText = contentObj.text
-
-    nftTokenId = contentObj.nftTokenId;
-    nftOrderId = contentObj.nftOrderId;
-    nftImageType = contentObj.nftImageType;
-
-    // {"version":"1.0","text":"testText","imageThumbnail":[{"index":0,"imgThumb":"this.imgUrl"}],"videoThumbnail":"this.posterImg"}
-    const mediaDatas = contentObj.data;
-
-    for (let index = 0; index < mediaDatas.length; index++) {
-      const element = mediaDatas[index];
-
-      const duration = element.duration;
-      const kind = element.kind;
-      const type = element.type;
-      const thumbnailCid = element.thumbnailCid;
-      const originMediaCid = element.originMediaCid;
-      const size = element.size;
-      const memo = element.memo;
-      const additionalInfo = element.additionalInfo;
-      const imageIndex = element.imageIndex;
-
-      if (kind == 'image') {
-        mMediaType = FeedsData.MediaType.containsImg;
-      } else if (kind == 'video') {
-        mMediaType = FeedsData.MediaType.containsVideo
-      } else {
-        mMediaType = FeedsData.MediaType.noMeida
-      }
-
-      const mData: FeedsData.mediaData = {
-        kind: kind,
-        originMediaCid: originMediaCid,
-        type: type,
-        size: size,
-        imageIndex: index,
-        thumbnailCid: thumbnailCid,
-        duration: duration,
-        additionalInfo: additionalInfo,
-        memo: memo
-      }
-      mMediaDatas.push(mData);
-    }
-
-    const content: FeedsData.Content = {
-      version: mVersion,
-      text: mText,
-      mediaType: mMediaType,
-      videoThumbKey: null,
-      imgThumbKeys: null,
-      nftTokenId: nftTokenId,
-      nftOrderId: nftOrderId,
-      nftImageType: nftImageType,
-      mediaDatas: mMediaDatas
-    };
-
-    return content;
-  }
-
-
-  parseContentV1(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-    contentObj: any,
-  ): FeedsData.Content {
-    // {"version":"1.0","text":"testText","imageThumbnail":[{"index":0,"imgThumb":"this.imgUrl"}],"videoThumbnail":"this.posterImg"}
-    let mVersion = contentObj.version || '';
-    let mText = contentObj.text || '';
-    let videoThumb = contentObj.videoThumbnail || '';
-    let mMediaType = FeedsData.MediaType.noMeida;
-    let nftTokenId = contentObj.nftTokenId || '';
-    let nftOrderId = contentObj.nftOrderId || '';
-    let nftImageType = contentObj.nftImageType || '';
-
-    let videoThumbKeyObj: FeedsData.VideoThumbKey = undefined;
-    if (videoThumb != '') {
-      let mDuration = videoThumb.duration;
-      let size = videoThumb.videoSize || 0;
-      let mVideoThumbKey = this.getVideoThumbKey(
-        nodeId,
-        channelId,
-        postId,
-        commentId,
-        0,
-      );
-      this.storeService.set(mVideoThumbKey, videoThumb.videoThumb);
-      mMediaType = FeedsData.MediaType.containsVideo;
-
-      videoThumbKeyObj = {
-        videoThumbKey: mVideoThumbKey,
-        duration: mDuration,
-        videoSize: size,
-      };
-    }
-
-    let imageThumbs = contentObj.imageThumbnail || '';
-    let imgThumbKeys: FeedsData.ImageThumbKey[] = [];
-    if (imageThumbs != '') {
-      for (let index = 0; index < imageThumbs.length; index++) {
-        let imageThumb: FeedsData.ImgThumb = imageThumbs[index];
-        let thumbIndex = imageThumb.index;
-        let image = imageThumb.imgThumb;
-        let size = imageThumb.imgSize;
-        let key = this.getImageThumbnailKey(
-          nodeId,
-          channelId,
-          postId,
-          commentId,
-          thumbIndex,
-        );
-        this.storeService.set(key, image);
-
-        imgThumbKeys[index] = {
-          index: thumbIndex,
-          imgThumbKey: key,
-          imgSize: size,
-        };
-      }
-      mMediaType = FeedsData.MediaType.containsImg;
-    }
-
-    let content: FeedsData.Content = {
-      version: mVersion,
-      text: mText,
-      mediaType: mMediaType,
-      videoThumbKey: videoThumbKeyObj,
-      imgThumbKeys: imgThumbKeys,
-      nftTokenId: nftTokenId,
-      nftOrderId: nftOrderId,
-      nftImageType: nftImageType,
-      mediaDatas: null
-    };
-
-    return content;
-  }
-
-  parseContentV0(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    commentId: number,
-    contentObj: any,
-  ): FeedsData.Content {
-    // {"text":"test","img":""}
-    let text = this.parsePostContentText(contentObj) || '';
-    let img = this.parsePostContentImg(contentObj) || '';
-    let imgThumbKeys: FeedsData.ImageThumbKey[] = [];
-    let mMediaType = FeedsData.MediaType.noMeida;
-    if (img != '') {
-      let key = this.getImageThumbnailKey(
-        nodeId,
-        channelId,
-        postId,
-        commentId,
-        0,
-      );
-      let size = img.length || 0;
-      this.storeService.set(key, img);
-
-      imgThumbKeys[0] = {
-        index: 0,
-        imgThumbKey: key,
-        imgSize: size,
-      };
-      mMediaType = FeedsData.MediaType.containsImg;
-    }
-
-    let content: FeedsData.Content = {
-      version: '0',
-      text: text,
-      mediaType: mMediaType,
-      videoThumbKey: undefined,
-      imgThumbKeys: imgThumbKeys,
-      nftTokenId: null,
-      nftOrderId: null,
-      nftImageType: null,
-      mediaDatas: null,
-    };
-
-    return content;
   }
 
   getContentFromId(
@@ -6690,7 +5700,7 @@ export class FeedService {
       return;
     }
 
-    this.getBinaryFromMsg(nodeId, key);
+    this.feedsServiceApi.getBinaryFromMsg(nodeId, key);
     onSuccess(FeedsData.TransDataChannel.MESSAGE);
     return;
   }
@@ -6852,7 +5862,7 @@ export class FeedService {
     }
     this.native.toastWarn(
       this.formatInfoService.formatErrorMsg(
-        this.getServerNameByNodeId(nodeId),
+        this.feedsServiceApi.getServerNameByNodeId(nodeId),
         errorMsg,
       ),
     );
@@ -6867,9 +5877,9 @@ export class FeedService {
     if (serverVersion == null || serverVersion == undefined) return;
 
     let serverVersionName = this.getServerVersionByNodeId(bindingServer.nodeId);
-    let currentVC = this.getServerVersionCodeByNodeId(bindingServer.nodeId);
+    let currentVC = this.feedsServiceApi.getServerVersionCodeByNodeId(bindingServer.nodeId);
     // let currentVC = this.serverVersions[bindingServer.nodeId].versionCode;
-    if (serverVersionName == '' || currentVC < versionCode) {
+    if (serverVersionName == '' || currentVC < Config.versionCode) {
       this.popupProvider
         .ionicAlert(this, '', 'common.mustUpdate', quit, 'tskth.svg')
         .then(popover => {
@@ -6890,100 +5900,9 @@ export class FeedService {
     return this.dataHelper.getServerVersionName(nodeId);
   }
 
-  getServerVersionCodeByNodeId(nodeId: string): number {
-    return this.dataHelper.getServerVersionCode(nodeId);
-  }
-
-  standardSignIn(nodeId: string) {
-    Logger.log(TAG, 'Start getting instance did, nodeId: ', nodeId);
-
-    let connectors = connectivity.getAvailableConnectors();
-    Logger.log(TAG, 'Get available connectors', connectors);
-
-    this.standardAuth.getInstanceDIDDoc().then(didDocument => {
-      Logger.log(TAG, 'Standard sign in, nodeId is ', nodeId, ' didDocument is ', didDocument);
-      this.connectionService.standardSignIn(
-        this.getServerNameByNodeId(nodeId),
-        nodeId,
-        didDocument,
-      );
-    });
-  }
-
-  standardDidAuth(nodeId: string, verifiablePresentation: string) {
-    this.connectionService.standardDidAuth(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      verifiablePresentation,
-      this.getSignInData().name,
-    );
-  }
-
-  getMultiComments(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    by: Communication.field,
-    upperBound: number,
-    lowerBound: number,
-    maxCounts: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getMultiComments(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      by,
-      upperBound,
-      lowerBound,
-      maxCounts,
-      accessToken,
-    );
-  }
-
   afterFriendConnection(friendId: string) {
     let server = this.dataHelper.getServer(friendId) || null;
     if (server != null) this.doFriendConnection(friendId);
-  }
-
-  getMultiSubscribersCount(nodeId: string, channelId: number) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getMultiSubscribers(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      accessToken,
-    );
-  }
-
-  getMultiLikesAndCommentsCount(
-    nodeId: string,
-    channelId: number,
-    postId: number,
-    by: Communication.field,
-    upperBound: number,
-    lowerBound: number,
-    maxCount: number,
-  ) {
-    if (!this.hasAccessToken(nodeId)) return;
-    let accessToken: FeedsData.AccessToken =
-      this.dataHelper.getAccessToken(nodeId) || null;
-    this.connectionService.getMultiLikesAndCommentsCount(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      channelId,
-      postId,
-      by,
-      upperBound,
-      lowerBound,
-      maxCount,
-      accessToken,
-    );
   }
 
   addFeed(
@@ -7028,7 +5947,7 @@ export class FeedService {
               toBeAddedFeed.feedId,
             );
             if (!isSubscribed) {
-              this.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
+              this.feedsServiceApi.subscribeChannel(toBeAddedFeed.nodeId, toBeAddedFeed.feedId);
             }
 
             this.saveServer(
@@ -7413,91 +6332,7 @@ export class FeedService {
     return (this.discoverfeeds = discoverfeeds);
   }
 
-  prepareTempPost(
-    nodeId: string,
-    feedId: number,
-    tempId: number,
-    contentText: string,
-  ) {
 
-    let content = this.parseContent(nodeId, feedId, tempId, 0, contentText);
-    let post: FeedsData.Post = {
-      nodeId: nodeId,
-      channel_id: feedId,
-      id: tempId,
-      content: content,
-      comments: 0,
-      likes: 0,
-      created_at: this.getCurrentTimeNum(),
-      updated_at: this.getCurrentTimeNum(),
-      post_status: FeedsData.PostCommentStatus.sending,
-    };
-
-    let key = this.getPostId(nodeId, feedId, tempId);
-    this.dataHelper.updatePost(key, post);
-
-    let contentHash = UtilService.SHA256(JSON.stringify(content).toString());
-    let tempData = this.dataHelper.generateTempData(
-      nodeId,
-      feedId,
-      0,
-      0,
-      contentHash,
-      FeedsData.SendingStatus.normal,
-      FeedsData.TransDataChannel.MESSAGE,
-      '',
-      '',
-      tempId,
-      0,
-      content,
-    );
-    this.dataHelper.updateTempData(key, tempData);
-  }
-
-  prepareTempMediaPost(
-    nodeId: string,
-    feedId: number,
-    tempId: number,
-    commentId: number,
-    contentReal: any,
-    transDataChannel: FeedsData.TransDataChannel,
-    videoData: string,
-    imageData: string,
-  ) {
-    let content = this.parseContent(nodeId, feedId, tempId, 0, contentReal);
-    let post: FeedsData.Post = {
-      nodeId: nodeId,
-      channel_id: feedId,
-      id: tempId,
-      content: content,
-      comments: 0,
-      likes: 0,
-      created_at: this.getCurrentTimeNum(),
-      updated_at: this.getCurrentTimeNum(),
-      post_status: FeedsData.PostCommentStatus.sending,
-    };
-
-    let key = this.getPostId(nodeId, feedId, tempId);
-
-    this.dataHelper.updatePost(key, post);
-
-    let contentHash = UtilService.SHA256(contentReal);
-    let tempData = this.dataHelper.generateTempData(
-      nodeId,
-      feedId,
-      0,
-      0,
-      contentHash,
-      FeedsData.SendingStatus.needDeclearPost,
-      transDataChannel,
-      videoData,
-      imageData,
-      tempId,
-      0,
-      contentReal,
-    );
-    this.dataHelper.updateTempData(key, tempData);
-  }
 
   generateTempPostId() {
     return this.dataHelper.generateLastTempIdData();
@@ -7656,7 +6491,7 @@ export class FeedService {
     if (tempData == null || tempData == undefined) return;
     tempData.status = FeedsData.SendingStatus.needNotifyPost;
     this.dataHelper.updateTempData(key, tempData);
-    this.notifyPost(
+    this.feedsServiceApi.notifyPost(
       tempData.nodeId,
       tempData.feedId,
       tempData.postId,
@@ -7685,7 +6520,7 @@ export class FeedService {
       case FeedsData.SendingStatus.normal:
         const tempContent = tempData.content;
         const content = this.postHelperService.createContent(tempContent.text, tempContent.mediaDatas);
-        this.publishPost(
+        this.feedsServiceApi.publishPost(
           tempData.nodeId,
           tempData.feedId,
           content,
@@ -7693,7 +6528,7 @@ export class FeedService {
         );
         return;
       case FeedsData.SendingStatus.needDeclearPost:
-        this.declarePost(
+        this.feedsServiceApi.declarePost(
           tempData.nodeId,
           tempData.feedId,
           tempData.content,
@@ -7734,7 +6569,7 @@ export class FeedService {
           return;
         }
       case FeedsData.SendingStatus.needNotifyPost:
-        this.notifyPost(
+        this.feedsServiceApi.notifyPost(
           tempData.nodeId,
           tempData.feedId,
           tempData.postId,

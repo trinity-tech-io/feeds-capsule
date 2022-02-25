@@ -21,6 +21,8 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 
@@ -80,7 +82,8 @@ export class EditPostPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private postHelperService: PostHelperService,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe(data => {
@@ -301,7 +304,7 @@ export class EditPostPage implements OnInit {
     }
 
     this.native
-      .showLoading('common.waitMoment', isDismiss => {})
+      .showLoading('common.waitMoment', isDismiss => { })
       .then(() => {
         this.editPost();
       })
@@ -403,7 +406,7 @@ export class EditPostPage implements OnInit {
   }
 
   publishEditedPost(content: any) {
-    this.feedService.editPost(
+    this.feedsServiceApi.editPost(
       this.nodeId,
       this.channelId,
       this.postId,
@@ -462,7 +465,7 @@ export class EditPostPage implements OnInit {
         const elements = mediaDatas[0];
         this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
           .then((value) => {
-          this.imgUrl = value || '';
+            this.imgUrl = value || '';
           })
           .catch(() => {
             //TODO
@@ -495,8 +498,8 @@ export class EditPostPage implements OnInit {
       this.postId,
     );
     let postContent = post.content;
-    this.oldNewPost = this.feedService.parsePostContentText(postContent) || '';
-    this.newPost = this.feedService.parsePostContentText(postContent) || '';
+    this.oldNewPost = this.feedsServiceApi.parsePostContentText(postContent) || '';
+    this.newPost = this.feedsServiceApi.parsePostContentText(postContent) || '';
   }
 
   initData() {
@@ -544,7 +547,7 @@ export class EditPostPage implements OnInit {
           this.getVideoInfo(videodata);
         });
       },
-      error => {},
+      error => { },
       { limit: 1, duration: 30 },
     );
   }
@@ -596,7 +599,7 @@ export class EditPostPage implements OnInit {
                     let result = fileReader.result;
                     if (typeof result == 'string') this.flieUri = result;
                     else {
-                      ab2str(result, function(str) {
+                      ab2str(result, function (str) {
                         this.flieUri = str;
                       });
                     }
@@ -991,7 +994,7 @@ function ab2str(u, f) {
   var b = new Blob([u]);
   var r = new FileReader();
   r.readAsText(b, 'utf-8');
-  r.onload = function() {
+  r.onload = function () {
     if (f) f.call(null, r.result);
   };
 }

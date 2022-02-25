@@ -12,6 +12,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private localSignInData: SignInData = null;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
   private isShowAdult: boolean = true;
@@ -66,8 +67,6 @@ export class DataHelper {
   private cacheBindingAddress: string = '';
   private localCredential: string = '';
   private cachedPost: { [key: string]: FeedsData.Post } = {};
-
-  private localSignInData = null; //TODO
 
   private developerMode = false;
   private hideDeletedPosts = false;
@@ -129,6 +128,15 @@ export class DataHelper {
     private storageService: StorageService,
     private events: Events
   ) { }
+
+  //localSignInData
+  setLocalSignInData(signInData: SignInData) {
+    this.localSignInData = signInData;
+  }
+
+  getLocalSignInData(): SignInData {
+    return this.localSignInData;
+  }
 
   ////subscribedChannelsMap
   getSubscribedFeedsList(): FeedsData.Channels[] {

@@ -11,6 +11,7 @@ import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 @Injectable()
 export class MenuService {
@@ -42,7 +43,8 @@ export class MenuService {
     private viewHelper: ViewHelper,
     private nftContractControllerService: NFTContractControllerService,
     private events: Events,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private feedsServiceApi: FeedsServiceApi
   ) { }
 
   async showChannelMenu(
@@ -62,7 +64,7 @@ export class MenuService {
               this.feedService.getPostFromId(nodeId, channelId, postId) || null;
             let postContent = '';
             if (post != null) {
-              postContent = this.feedService.parsePostContentText(post.content);
+              postContent = this.feedsServiceApi.parsePostContentText(post.content);
             }
 
             this.postDetail.dismiss()
@@ -86,7 +88,7 @@ export class MenuService {
               return;
             }
 
-            this.feedService.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
           },
         },
         {
@@ -127,12 +129,12 @@ export class MenuService {
               this.feedService.getPostFromId(nodeId, channelId, postId) || null;
             let postContent = '';
             if (post != null) {
-              postContent = this.feedService.parsePostContentText(post.content);
+              postContent = this.feedsServiceApi.parsePostContentText(post.content);
             }
 
             this.postDetail.dismiss();
             //Share post
-           await this.native.showLoading("common.generateSharingLink");
+            await this.native.showLoading("common.generateSharingLink");
             try {
               const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
               this.intentService
@@ -211,7 +213,7 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: () => {
-            this.feedService.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
           },
         },
         {
@@ -245,7 +247,7 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: () => {
-            this.feedService.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
           },
         },
         {
@@ -418,7 +420,7 @@ export class MenuService {
               return;
             }
 
-            this.feedService.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
           },
         },
         {
@@ -452,7 +454,7 @@ export class MenuService {
     this.nodeId = nodeId;
     this.channelId = channelId;
     this.postId = postId;
-    let server = this.feedService.getServerbyNodeId(nodeId);
+    let server = this.feedsServiceApi.getServerbyNodeId(nodeId);
 
     switch (clickName) {
       case 'editPost':
@@ -475,7 +477,7 @@ export class MenuService {
           this.feedService.getPostFromId(nodeId, channelId, postId) || null;
         let postContent = '';
         if (post != null) {
-          postContent = this.feedService.parsePostContentText(post.content);
+          postContent = this.feedsServiceApi.parsePostContentText(post.content);
         }
 
         //home share post
@@ -831,13 +833,13 @@ export class MenuService {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    that.events.publish(FeedsEvent.PublishType.startLoading,{des:"common.cancelingOrderDesc",title:"common.waitMoment",curNum:"1",maxNum:"1",type:"changePrice"});
-    let sId = setTimeout(()=>{
+    that.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.cancelingOrderDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    let sId = setTimeout(() => {
       that.nftContractControllerService.getGalleria().cancelRemovePanelProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
       clearTimeout(sId);
       that.popupProvider.showSelfCheckDialog('common.cancelOrderTimeoutDesc');
-    },Config.WAIT_TIME_CANCEL_ORDER)
+    }, Config.WAIT_TIME_CANCEL_ORDER)
 
     that.doCancelChannelOrder(that)
       .then(() => {
@@ -912,28 +914,28 @@ export class MenuService {
 
 
   async cancelChannelOrder(that: any, panelId: string) {
-  return await that.nftContractControllerService.getGalleria().removePanel(panelId);
+    return await that.nftContractControllerService.getGalleria().removePanel(panelId);
   }
 
   async doCancelChannelOrder(that: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
 
-        let panelId = this.assItem['panelId'] || '';
-        if (panelId === '') {
+      let panelId = this.assItem['panelId'] || '';
+      if (panelId === '') {
+        reject('error');
+        return;
+      }
+      try {
+        let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
+        if (cancelStatus === null) {
           reject('error');
           return;
         }
-        try {
-          let cancelStatus = await that.cancelChannelOrder(that, panelId) || null;
-          if (cancelStatus===null) {
-            reject('error');
-            return;
-          }
-          that.events.publish(FeedsEvent.PublishType.nftCancelChannelOrder, this.assItem);
-          resolve('Success');
-        } catch (error) {
-          reject('error');
-        }
+        that.events.publish(FeedsEvent.PublishType.nftCancelChannelOrder, this.assItem);
+        resolve('Success');
+      } catch (error) {
+        reject('error');
+      }
     });
 
   }
@@ -1084,7 +1086,7 @@ export class MenuService {
   }
 
   async sharePasarLink(assItem: any) {
-   await this.native.showLoading("common.generateSharingLink");
+    await this.native.showLoading("common.generateSharingLink");
     try {
       const saleOrderId = assItem.saleOrderId;
       Logger.log('Share pasar orderId is', saleOrderId);
@@ -1178,7 +1180,7 @@ export class MenuService {
     });
 
     this.channelCollectionsPublishedMenu.onWillDismiss().then(() => {
-      if (this.channelCollectionsPublishedMenu!= null) {
+      if (this.channelCollectionsPublishedMenu != null) {
         this.channelCollectionsPublishedMenu = null;
       }
     });

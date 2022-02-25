@@ -13,6 +13,7 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
@@ -77,7 +78,8 @@ export class CommentlistPage implements OnInit {
     public modalController: ModalController,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   initData(isInit: boolean) {
     if (isInit) {
@@ -301,7 +303,7 @@ export class CommentlistPage implements OnInit {
     this.isOwnComment = {};
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -317,7 +319,7 @@ export class CommentlistPage implements OnInit {
   }
 
   getContentImg(content: any): string {
-    return this.feedService.parsePostContentImg(content);
+    return this.feedsServiceApi.parsePostContentImg(content);
   }
 
   indexText(text: string, limit: number, indexLength: number): string {
@@ -370,7 +372,7 @@ export class CommentlistPage implements OnInit {
     }
 
     if (this.checkMyLike()) {
-      this.feedService.postUnlike(
+      this.feedsServiceApi.postUnlike(
         this.nodeId,
         Number(this.channelId),
         Number(this.postId),
@@ -379,7 +381,7 @@ export class CommentlistPage implements OnInit {
       return;
     }
 
-    this.feedService.postLike(
+    this.feedsServiceApi.postLike(
       this.nodeId,
       Number(this.channelId),
       Number(this.postId),
@@ -399,7 +401,7 @@ export class CommentlistPage implements OnInit {
     }
 
     if (this.checkLikedComment(commentId)) {
-      this.feedService.postUnlike(
+      this.feedsServiceApi.postUnlike(
         this.nodeId,
         Number(this.channelId),
         Number(this.postId),
@@ -408,7 +410,7 @@ export class CommentlistPage implements OnInit {
       return;
     }
 
-    this.feedService.postLike(
+    this.feedsServiceApi.postLike(
       this.nodeId,
       Number(this.channelId),
       Number(this.postId),
@@ -525,13 +527,13 @@ export class CommentlistPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    let text = this.feedService.parsePostContentText(postContent);
+    let text = this.feedsServiceApi.parsePostContentText(postContent);
     this.native
       .copyClipboard(text)
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickUrl(event: any) {

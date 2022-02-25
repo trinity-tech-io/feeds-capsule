@@ -17,6 +17,7 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IntentService } from 'src/app/services/IntentService';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 
@@ -25,7 +26,7 @@ class Attribute {
     public iconName: string,
     public attrName: string,
     public attrValue: string,
-  ) {}
+  ) { }
 }
 
 @Component({
@@ -81,10 +82,11 @@ export class ServerInfoPage implements OnInit {
     private platform: Platform,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private intentService: IntentService
-  ) {}
+    private intentService: IntentService,
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   initData() {
     this.developerMode = this.feedService.getDeveloperMode();
@@ -92,7 +94,7 @@ export class ServerInfoPage implements OnInit {
     this.bindingServer = this.feedService.getBindingServer() || null;
     if (this.bindingServer !== null) {
       this.nodeId = this.bindingServer.nodeId;
-      server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
       if (server == null || server == undefined) server = this.bindingServer;
 
       this.isBindServer = true;
@@ -170,7 +172,7 @@ export class ServerInfoPage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   ionViewWillLeave() {
     this.titleBarService.setIcon(
@@ -302,7 +304,7 @@ export class ServerInfoPage implements OnInit {
           role: 'destructive',
           icon: 'trash',
           handler: async () => {
-           await this.native.showLoading('common.waitMoment', isDismiss => {});
+            await this.native.showLoading('common.waitMoment', isDismiss => { });
             this.feedService.deleteFeedSource(this.nodeId).then(() => {
               this.native.toast('ServerInfoPage.removeserver');
               this.native.hideLoading();
@@ -318,7 +320,7 @@ export class ServerInfoPage implements OnInit {
           text: this.translate.instant('ServerInfoPage.cancel'),
           role: 'cancel',
           icon: 'close-circle',
-          handler: () => {},
+          handler: () => { },
         },
       ],
     });
@@ -500,7 +502,7 @@ export class ServerInfoPage implements OnInit {
         .then(() => {
           this.native.toast_trans('common.textcopied');
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }
 
