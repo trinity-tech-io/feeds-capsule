@@ -1036,12 +1036,11 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
         this.elaPrice = this.feedService.getElaUsdPrice();
-        this.handleRefresherInfinite(false);
         this.zone.run(async () => {
           await this.refreshPasarList();
           event.target.complete();
+          this.handleRefresherInfinite(false);
           this.refreshEvent = null;
-
         });
         break;
     }
@@ -2110,9 +2109,13 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
         await this.content.scrollToTop(0);
-        this.handleRefresherInfinite(false);
+        if(this.pasarList.length === 0){
+          this.refresher.disabled = false;
+          this.infiniteScroll.disabled = true;
+        }else{
+          this.handleRefresherInfinite(false);
+        }
         this.elaPrice = this.feedService.getElaUsdPrice();
-        this.infiniteScroll.disabled = false;
         let value =
           this.popoverController.getTop()['__zone_symbol__value'] || '';
         if (value != '') {
