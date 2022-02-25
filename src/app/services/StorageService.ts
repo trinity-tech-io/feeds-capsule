@@ -14,10 +14,12 @@ export class StorageService {
     return this.storage.set(key, value);
   }
 
+  getSync(key: string) {
+    return this.storage.get(key);
+  }
   get(key: string): Promise<any> {
     return this.storage.get(key);
   }
-
   public remove(key: string): Promise<any> {
     return this.storage.remove(key);
   }

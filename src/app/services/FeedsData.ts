@@ -518,16 +518,26 @@ declare namespace FeedsData {
   };
 
   type Channels = {
-    nodeId: string;
-    id: number;
+    channel_id: number;
+    created_at: number;
+    updated_at: number;
     name: string;
     introduction: string;
+    avatar: string;
+    memo: string;
+    type: string;// private  public  group  friends
+
+    // 旧
+    nodeId: string;
+    id: number;
+    // name: string;
+    // introduction: string;
     owner_name: string;
     owner_did: string;
     subscribers: number;
     last_update: number;
     last_post: any;
-    avatar: any;
+    // avatar: any;
     isSubscribed: boolean;
   };
 
@@ -558,6 +568,17 @@ declare namespace FeedsData {
   };
 
   type Post = {
+    // post_id: string;
+    // channel_id: number;
+    // created_at: number;
+    // update_at: number;
+    // content: FeedsData.Content;
+    // status: number; // 2除删已 1改修已 0通普 
+    // memo: number;
+    // type: number;
+    // tag: number;
+
+    // 旧
     nodeId: string;
     channel_id: number;
     id: number;

@@ -163,6 +163,7 @@ export class DataHelper {
   ////channelsMap
   setChannelsMap(channelsMap: { [nodeChannelId: string]: FeedsData.Channels }) {
     this.channelsMap = channelsMap;
+    console.log("FeedsData.PersistenceKey.channelsMap" + "setChannelsMap");
     this.saveData(FeedsData.PersistenceKey.channelsMap, this.channelsMap);
   }
 
@@ -170,6 +171,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         if (JSON.stringify(this.channelsMap) == '{}') {
+          console.log("FeedsData.PersistenceKey.channelsMap" + "loadChannelsMap");
           this.channelsMap =
             (await this.loadData(FeedsData.PersistenceKey.channelsMap)) || {};
           resolve(this.channelsMap);
@@ -195,12 +197,26 @@ export class DataHelper {
 
   updateChannel(key: string, channel: FeedsData.Channels) {
     this.channelsMap[key] = channel;
+    console.log("FeedsData.PersistenceKey.channelsMap" + "updateChannel");
+
+    console.log("save FeedsData.Channels Test")
+
+    let channel_id = channel.channel_id
+    let created_at = channel.created_at
+    let updated_at = channel.updated_at
+    // let name = name
+    let introduction = channel.introduction
+    let avatar = channel.avatar
+    let memo = channel.memo
+    let type = channel.type
+    
     this.saveData(FeedsData.PersistenceKey.channelsMap, this.channelsMap);
   }
 
   deleteChannel(key: string): Promise<any> {
     this.channelsMap[key] = null;
     delete this.channelsMap[key];
+    console.log("FeedsData.PersistenceKey.channelsMap" + "deleteChannel");
     return this.saveData(
       FeedsData.PersistenceKey.channelsMap,
       this.channelsMap,
@@ -237,9 +253,13 @@ export class DataHelper {
   getChannelsListFromNodeId(nodeId: string): FeedsData.Channels[] {
     let list: FeedsData.Channels[] = [];
     let keys: string[] = Object.keys(this.channelsMap);
+    console.log("keys ===== ", keys)
     for (const index in keys) {
       let feed = this.getChannel(keys[index]);
       if (feed == null) continue;
+      console.log("feed.nodeId  ===== ", feed.nodeId)
+      console.log("nodeId  ===== ", nodeId)
+      console.log("-====== feed.name  ===== " + feed.name)
 
       if (feed.nodeId == nodeId) list.push(feed);
     }

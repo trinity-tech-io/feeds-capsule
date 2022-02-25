@@ -26,6 +26,7 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveService } from 'src/app/services/HiveService';
 
 let TAG: string = 'Feeds-profile';
 
@@ -199,10 +200,12 @@ export class ProfilePage implements OnInit {
     console.log("ProfilePage")
   }
 
-  initMyFeeds() {
+  async initMyFeeds() {
     console.log("刷新myfeeds ======= ")
     // 频道
-    this.channels = this.feedService.getMyChannelList() || [];
+    this.channels = await this.feedService.getHiveMyChannelList() || [];
+    console.log("channels ===== ", this.channels)
+
     this.myFeedsSum = this.channels.length;
     let followedList = this.feedService.getFollowedChannelList() || [];
     this.followers = followedList.length;
@@ -438,6 +441,7 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () => {
       this.zone.run(() => {
+        console.log("channelsDataUpdate ===== ")
         this.initMyFeeds();
       });
     });
@@ -1973,39 +1977,43 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  createPost() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+  async createPost() {
+    // if (this.feedService.getConnectionStatus() != 0) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
-    let bindingServer = this.feedService.getBindingServer();
-    if (bindingServer == null || bindingServer == undefined) {
-      this.viewHelper.showPublisherDialog("profile");
-      return;
-    }
+    // let bindingServer = this.feedService.getBindingServer();
+    // if (bindingServer == null || bindingServer == undefined) {
+    //   this.viewHelper.showPublisherDialog("profile");
+    //   return;
+    // }
 
-    let nodeId = bindingServer['nodeId'];
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // let nodeId = bindingServer['nodeId'];
+    // if (this.checkServerStatus(nodeId) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
-    if (
-      !this.feedService.checkBindingServerVersion(() => {
-        this.feedService.hideAlertPopover();
-      })
-    )
-      return;
+    // if (
+    //   !this.feedService.checkBindingServerVersion(() => {
+    //     this.feedService.hideAlertPopover();
+    //   })
+    // )
+    //   return;
 
     this.clearData();
-
-    if (this.feedService.getMyChannelList().length === 0) {
+    const channels = await this.feedService.getHiveMyChannelList()
+    console.log("create post channels ======== ", channels)
+    if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
       return;
     }
 
-    let currentFeed = this.feedService.getCurrentFeed();
+    let currentFeed = channels[0];
+    console.log("create post currentFeed ======== ", currentFeed)
+    this.feedService.setCurrentFeed(currentFeed);
+
     if (currentFeed === null) {
       let myFeed = this.feedService.getMyChannelList()[0];
       let currentFeed = {

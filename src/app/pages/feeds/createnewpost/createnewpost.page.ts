@@ -105,10 +105,13 @@ export class CreatenewpostPage implements OnInit {
   }
 
   initFeed() {
-    let currentFeed = this.feedService.getCurrentFeed();
+    let currentFeed: FeedsData.Channels = this.feedService.getCurrentFeed();
 
-    this.nodeId = currentFeed['nodeId'];
-    this.channelId = currentFeed['feedId'];
+
+
+    // this.nodeId = currentFeed.channel_id;
+    this.channelId = currentFeed.channel_id;
+    console.log("currentFeed = ", this.channelId);
 
     let myFeed =
       this.feedService.getChannelFromId(this.nodeId, this.channelId) || {};
