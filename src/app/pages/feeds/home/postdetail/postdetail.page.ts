@@ -16,6 +16,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { PostHelperService } from 'src/app/services/post_helper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -133,7 +134,8 @@ export class PostdetailPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private postHelperService: PostHelperService,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   initData(isInit: boolean) {
     let channel =
@@ -158,7 +160,7 @@ export class PostdetailPage implements OnInit {
     this.startIndex = 0;
     this.totalData = this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
-      this.captainCommentList = this.totalData.slice(0,this.pageNumber);
+      this.captainCommentList = this.totalData.slice(0, this.pageNumber);
 
       this.startIndex++;
       this.infiniteScroll.disabled = false;
@@ -455,9 +457,9 @@ export class PostdetailPage implements OnInit {
           let value = getBinaryData.value;
           Logger.log(TAG,
             'Received streamGetBinarySuccess event, nodeId is ' +
-              nodeId +
-              ', key is ' +
-              key,
+            nodeId +
+            ', key is ' +
+            key,
             TAG,
           );
           if (this.nodeId != nodeId) {
@@ -651,7 +653,7 @@ export class PostdetailPage implements OnInit {
     this.hideFullScreen();
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -663,11 +665,11 @@ export class PostdetailPage implements OnInit {
   }
 
   getContentText(content: string): string {
-    return this.feedService.parsePostContentText(content);
+    return this.feedsServiceApi.parsePostContentText(content);
   }
 
   getContentImg(content: any): string {
-    return this.feedService.parsePostContentImg(content);
+    return this.feedsServiceApi.parsePostContentImg(content);
   }
 
   indexText(text: string, limit: number, indexLength: number): string {
@@ -727,7 +729,7 @@ export class PostdetailPage implements OnInit {
     }
 
     if (this.checkMyLike()) {
-      this.feedService.postUnlike(
+      this.feedsServiceApi.postUnlike(
         this.nodeId,
         Number(this.channelId),
         Number(this.postId),
@@ -736,7 +738,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    this.feedService.postLike(
+    this.feedsServiceApi.postLike(
       this.nodeId,
       Number(this.channelId),
       Number(this.postId),
@@ -756,7 +758,7 @@ export class PostdetailPage implements OnInit {
     }
 
     if (this.checkLikedComment(commentId)) {
-      this.feedService.postUnlike(
+      this.feedsServiceApi.postUnlike(
         this.nodeId,
         Number(this.channelId),
         Number(this.postId),
@@ -765,7 +767,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    this.feedService.postLike(
+    this.feedsServiceApi.postLike(
       this.nodeId,
       Number(this.channelId),
       Number(this.postId),
@@ -970,13 +972,13 @@ export class PostdetailPage implements OnInit {
         .getData(imageKey)
         .then(image => {
           let realImage = image || '';
-          if(realImage!=""){
+          if (realImage != "") {
             this.postImage = realImage;
-          }else{
-            this.feedService.getData(thumbkey).then((thumbImagedata) =>{
+          } else {
+            this.feedService.getData(thumbkey).then((thumbImagedata) => {
               let thumbImage = thumbImagedata || '';
               this.postImage = thumbImage;
-            }).catch(reason=>{
+            }).catch(reason => {
               Logger.log(TAG,
                 "Excute 'getImage' in post page is error , get image data error, error msg is ",
                 reason
@@ -1113,7 +1115,7 @@ export class PostdetailPage implements OnInit {
           this.videoisShow = false;
         }
       })
-      .catch(err => {});
+      .catch(err => { });
   }
 
   getVideo(key: string) {
@@ -1374,13 +1376,13 @@ export class PostdetailPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    let text = this.feedService.parsePostContentText(postContent);
+    let text = this.feedsServiceApi.parsePostContentText(postContent);
     this.native
       .copyClipboard(text)
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickUrl(event: any) {
@@ -1431,7 +1433,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || {};
+    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || {};
     let elaAddress = server['elaAddress'] || null;
 
     if (elaAddress == null) {
@@ -1442,7 +1444,7 @@ export class PostdetailPage implements OnInit {
     this.viewHelper.showPayPrompt(this.nodeId, this.channelId, elaAddress);
   }
 
-  clickComment(comment: any,event?:any) {
+  clickComment(comment: any, event?: any) {
     if (this.isPress) {
       this.isPress = false;
       return;

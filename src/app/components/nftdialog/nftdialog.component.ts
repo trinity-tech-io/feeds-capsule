@@ -14,6 +14,7 @@ import { Config } from 'src/app/services/config';
 import { PopupProvider } from 'src/app/services/popup';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 let TAG: string = 'NFTDialog';
 @Component({
@@ -55,6 +56,7 @@ export class NftdialogComponent implements OnInit {
     private popupProvider: PopupProvider,
     private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
+    private feedsServiceApi: FeedsServiceApi
   ) { }
 
   ngOnInit() {
@@ -291,7 +293,7 @@ export class NftdialogComponent implements OnInit {
   async handleCreteChannelOrderResult(tokenId: string, tokenInfo: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        this.events.publish(FeedsEvent.PublishType.nftUpdateList, { "tokenId": tokenId, "panelId": tokenInfo[0],"assItem":this.curAssItem});
+        this.events.publish(FeedsEvent.PublishType.nftUpdateList, { "tokenId": tokenId, "panelId": tokenInfo[0], "assItem": this.curAssItem });
         resolve('Successs');
       } catch (err) {
         Logger.error(err);
@@ -517,37 +519,37 @@ export class NftdialogComponent implements OnInit {
     let size = "";
     let type = this.assItem['type'] || "";
 
-    if(type === "feeds-channel"){
-       imgUri = this.assItem['avatar']["image"] || "";
-       if(imgUri === ""){
+    if (type === "feeds-channel") {
+      imgUri = this.assItem['avatar']["image"] || "";
+      if (imgUri === "") {
         this.imgUri = "";
         return;
-       }
-    }else if(version === "1"){
+      }
+    } else if (version === "1") {
       imgUri = this.assItem['thumbnail'] || "";
       kind = this.assItem["kind"];
       size = this.assItem["originAssetSize"];
       if (!size)
-      size = '0';
+        size = '0';
       if (kind === "gif" && parseInt(size) <= this.maxSize) {
-          imgUri = this.assItem['asset'] || "";
+        imgUri = this.assItem['asset'] || "";
       }
-    }else if(version === "2"){
-      let jsonData  = this.assItem['data'] || "";
-      if(jsonData != ""){
+    } else if (version === "2") {
+      let jsonData = this.assItem['data'] || "";
+      if (jsonData != "") {
         imgUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
+          size = '0';
         if (kind === "gif" && parseInt(size) <= this.maxSize) {
-            imgUri = jsonData['image'] || "";
+          imgUri = jsonData['image'] || "";
         }
-      }else{
+      } else {
         imgUri = "";
       }
     }
-    if(imgUri === ""){
+    if (imgUri === "") {
       this.imgUri = "";
       return;
     }
@@ -555,10 +557,10 @@ export class NftdialogComponent implements OnInit {
     if (imgUri.indexOf('feeds:imgage:') > -1) {
       imgUri = imgUri.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('feeds:image:') > -1){
+    } else if (imgUri.indexOf('feeds:image:') > -1) {
       imgUri = imgUri.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(imgUri.indexOf('pasar:image:') > -1){
+    } else if (imgUri.indexOf('pasar:image:') > -1) {
       imgUri = imgUri.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
@@ -626,7 +628,7 @@ export class NftdialogComponent implements OnInit {
     nftContent['nftOrderId'] = this.orderId;
     nftContent['nftImageType'] = this.assetType;
 
-    this.feedService.declarePost(
+    this.feedsServiceApi.declarePost(
       nodeId,
       channelId,
       JSON.stringify(nftContent),

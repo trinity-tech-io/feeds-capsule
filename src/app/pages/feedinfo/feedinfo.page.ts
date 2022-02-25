@@ -14,8 +14,9 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IntentService } from 'src/app/services/IntentService';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
-import  _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-feedinfo',
@@ -62,14 +63,15 @@ export class FeedinfoPage implements OnInit {
     private platform: Platform,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private intentService: IntentService
-  ) {}
+    private intentService: IntentService,
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
 
   }
 
-  initChannelInfo(){
+  initChannelInfo() {
     let item = this.feedService.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
@@ -79,16 +81,16 @@ export class FeedinfoPage implements OnInit {
     this.channelId = channelInfo['channelId'] || '';
     this.name = channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
-    this.serverInfo = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    this.serverInfo = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
     let feedsUrl = "";
-    if(this.serverInfo != null){
+    if (this.serverInfo != null) {
       this.elaAddress =
-      this.serverInfo['elaAddress'] || 'common.emptyElaAddressDes';
+        this.serverInfo['elaAddress'] || 'common.emptyElaAddressDes';
       this.serverDid = this.serverInfo['did'];
       feedsUrl = this.serverInfo['feedsUrl'] || null;
       this.feedsUrl = feedsUrl + '/' + this.channelId;
       this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
-    }else{
+    } else {
       this.serverDid = channelInfo["did"];
       this.elaAddress = "common.emptyElaAddressDes";
       this.feedsUrl = channelInfo["feedUrl"];
@@ -115,13 +117,13 @@ export class FeedinfoPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     let avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-    document.getElementById("feedsInfoAvatar").setAttribute("src",avatar);
+    document.getElementById("feedsInfoAvatar").setAttribute("src", avatar);
     this.addEvents();
   }
 
   addEvents() {
 
-    this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu, () => {
       this.clickEdit();
     });
 
@@ -141,7 +143,7 @@ export class FeedinfoPage implements OnInit {
         this.zone.run(() => {
           let nodeId = subscribeFinishData.nodeId;
           let channelId = subscribeFinishData.channelId;
-          this.checkFollowStatus(nodeId,channelId);
+          this.checkFollowStatus(nodeId, channelId);
         });
       },
     );
@@ -182,7 +184,7 @@ export class FeedinfoPage implements OnInit {
 
   initTitle() {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-   //this.titleBarService.setTitleBarMoreMemu(this.titleBar);
+    //this.titleBarService.setTitleBarMoreMemu(this.titleBar);
     this.titleBarService.setTitle(
       this.titleBar,
       this.translate.instant('FeedinfoPage.title'),
@@ -192,11 +194,11 @@ export class FeedinfoPage implements OnInit {
       this.channelId,
     );
 
-    if(this.isMine&&this.type===""){
-      if(!this.theme.darkMode){
-        this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dot.ico");
-      }else{
-        this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dark/dot.ico");
+    if (this.isMine && this.type === "") {
+      if (!this.theme.darkMode) {
+        this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dot.ico");
+      } else {
+        this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dark/dot.ico");
       }
     }
 
@@ -229,7 +231,7 @@ export class FeedinfoPage implements OnInit {
       return;
     }
 
-    this.feedService.subscribeChannel(this.nodeId, Number(this.channelId));
+    this.feedsServiceApi.subscribeChannel(this.nodeId, Number(this.channelId));
   }
 
   unsubscribe() {
@@ -306,6 +308,6 @@ export class FeedinfoPage implements OnInit {
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 }

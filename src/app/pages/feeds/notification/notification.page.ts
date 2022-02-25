@@ -11,6 +11,8 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { StorageService } from 'src/app/services/StorageService';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+
 @Component({
   selector: 'slides-example',
   templateUrl: './notification.page.html',
@@ -43,21 +45,21 @@ export class NotificationPage {
     private titleBarService: TitleBarService,
     private actionSheetController: ActionSheetController,
     private storageService: StorageService,
-    public popoverController: PopoverController
-
+    public popoverController: PopoverController,
+    private feedsServiceApi: FeedsServiceApi
   ) {
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   addEvent() {
 
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
+    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
       let pageName = dialogData.pageName;
       let dialogName = dialogData.dialogName;
       let dialogbutton = dialogData.clickButton;
-      if(pageName === "notification"){
-        this.handleDialog(dialogName,dialogbutton,pageName);
+      if (pageName === "notification") {
+        this.handleDialog(dialogName, dialogbutton, pageName);
       }
     });
 
@@ -218,7 +220,7 @@ export class NotificationPage {
   }
 
   getContentText(content: FeedsData.Content): string {
-    return this.feedService.parsePostContentText(content);
+    return this.feedsServiceApi.parsePostContentText(content);
   }
 
   moreName(name: string) {
@@ -372,45 +374,45 @@ export class NotificationPage {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  handleDialog(dialogName: string,dialogbutton: string,pageName: string) {
-    switch(dialogName){
+  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
+    switch (dialogName) {
       case "publisherAccount":
-          this.publisherAccount(dialogbutton,pageName)
-      break;
+        this.publisherAccount(dialogbutton, pageName)
+        break;
       case "guide":
         this.guide(dialogbutton);
-      break;
+        break;
     }
   }
 
- async publisherAccount(dialogbutton: string,pageName: string) {
-  switch(dialogbutton){
-    case "createNewPublisherAccount":
-      this.feedService.setBindPublisherAccountType('new');
-     break;
-    case "bindExistingPublisherAccount":
-      this.feedService.setBindPublisherAccountType('exit');
-      await this.native.navigateForward(['bindservice/scanqrcode'],"");
-      await this.popoverController.dismiss();
-    break;
-  }
+  async publisherAccount(dialogbutton: string, pageName: string) {
+    switch (dialogbutton) {
+      case "createNewPublisherAccount":
+        this.feedService.setBindPublisherAccountType('new');
+        break;
+      case "bindExistingPublisherAccount":
+        this.feedService.setBindPublisherAccountType('exit');
+        await this.native.navigateForward(['bindservice/scanqrcode'], "");
+        await this.popoverController.dismiss();
+        break;
+    }
   }
 
-  async guide(dialogbutton: string){
-  switch(dialogbutton){
-    case "guidemac":
-       await this.native.navigateForward(["guidemac"],"");
-       await this.popoverController.dismiss();
+  async guide(dialogbutton: string) {
+    switch (dialogbutton) {
+      case "guidemac":
+        await this.native.navigateForward(["guidemac"], "");
+        await this.popoverController.dismiss();
 
-     break;
-    case "guideubuntu":
-       await this.native.navigateForward(["guideubuntu"],"");
-       await this.popoverController.dismiss();
-    break;
-    case "skip":
-      await this.native.navigateForward(['bindservice/scanqrcode'],"");
-      await this.popoverController.dismiss();
-    break;
-  }
+        break;
+      case "guideubuntu":
+        await this.native.navigateForward(["guideubuntu"], "");
+        await this.popoverController.dismiss();
+        break;
+      case "skip":
+        await this.native.navigateForward(['bindservice/scanqrcode'], "");
+        await this.popoverController.dismiss();
+        break;
+    }
   }
 }

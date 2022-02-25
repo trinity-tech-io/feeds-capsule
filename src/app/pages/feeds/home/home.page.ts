@@ -39,6 +39,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PostHelperService } from 'src/app/services/post_helper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -190,8 +191,8 @@ export class HomePage implements OnInit {
     private keyboard: Keyboard,
     private fileHelperService: FileHelperService,
     private postHelperService: PostHelperService,
-  ) {
-  }
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = false;
@@ -289,7 +290,7 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
-        if(this.searchText != "" ||  this.searchText != null){
+        if (this.searchText != "" || this.searchText != null) {
           return;
         }
         await this.refreshLocalPasarData();
@@ -769,23 +770,23 @@ export class HomePage implements OnInit {
   }
 
   getContentText(content: string): string {
-    return this.feedService.parsePostContentText(content);
+    return this.feedsServiceApi.parsePostContentText(content);
   }
 
   getContentShortText(post: any): string {
     let content = post.content;
-    let text = this.feedService.parsePostContentText(content) || '';
+    let text = this.feedsServiceApi.parsePostContentText(content) || '';
     return text.substring(0, 180) + '...';
   }
 
   getPostContentTextSize(content: string) {
-    let text = this.feedService.parsePostContentText(content);
+    let text = this.feedsServiceApi.parsePostContentText(content);
     let size = UtilService.getSize(text);
     return size;
   }
 
   getContentImg(content: any): string {
-    return this.feedService.parsePostContentImg(content);
+    return this.feedsServiceApi.parsePostContentImg(content);
   }
 
   getChannelOwnerName(nodeId, channelId): string {
@@ -815,11 +816,11 @@ export class HomePage implements OnInit {
     if (!this.feedService.checkPostIsAvalible(post)) return;
 
     if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedService.postUnlike(nodeId, Number(channelId), Number(postId), 0);
+      this.feedsServiceApi.postUnlike(nodeId, Number(channelId), Number(postId), 0);
       return;
     }
 
-    this.feedService.postLike(nodeId, Number(channelId), Number(postId), 0);
+    this.feedsServiceApi.postLike(nodeId, Number(channelId), Number(postId), 0);
   }
 
   navTo(nodeId: string, channelId: number, postId: number) {
@@ -1159,15 +1160,15 @@ export class HomePage implements OnInit {
 
   initTitleBar() {
     let title = this.translate.instant('FeedsPage.tabTitle1');
-    if("FeedsPage.tabTitle1" === title){
-     let code = localStorage.getItem('io.trinity.feeds.language') || "";
-     if(code === "zh"){
-         title = "主页";
-     }else if(code === "en"){
-         title = "Home";
-     }else{
-         title = "Home";
-     }
+    if ("FeedsPage.tabTitle1" === title) {
+      let code = localStorage.getItem('io.trinity.feeds.language') || "";
+      if (code === "zh") {
+        title = "主页";
+      } else if (code === "en") {
+        title = "Home";
+      } else {
+        title = "Home";
+      }
     }
     this.titleBarService.setTitle(this.titleBar, title);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
@@ -2054,7 +2055,7 @@ export class HomePage implements OnInit {
       this.isPress = true;
     }
 
-    let text = this.feedService.parsePostContentText(postContent);
+    let text = this.feedsServiceApi.parsePostContentText(postContent);
     this.native
       .copyClipboard(text)
       .then(() => {
@@ -2069,7 +2070,7 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(nodeId) || {};
+    let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || {};
     let elaAddress = server['elaAddress'] || null;
     if (elaAddress == null) {
       this.native.toast('common.noElaAddress');
@@ -2123,10 +2124,10 @@ export class HomePage implements OnInit {
         break;
       case 'pasar':
         await this.content.scrollToTop(0);
-        if(this.pasarList.length === 0){
+        if (this.pasarList.length === 0) {
           this.refresher.disabled = false;
           this.infiniteScroll.disabled = true;
-        }else{
+        } else {
           this.handleRefresherInfinite(false);
         }
         this.elaPrice = this.feedService.getElaUsdPrice();
@@ -2481,7 +2482,7 @@ export class HomePage implements OnInit {
   handlePasarSearch() {
     this.zone.run(async () => {
       await this.native.showLoading('common.waitMoment');
-      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText,this.sortType);
+      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText, this.sortType);
       this.refreshPasarGridVisibleareaImage();
       this.native.hideLoading();
     });
@@ -2649,10 +2650,10 @@ export class HomePage implements OnInit {
       kind = item["kind"];
       size = item["originAssetSize"];
       if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'] || "";
-    }
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = item['asset'] || "";
+      }
     } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
@@ -2660,10 +2661,10 @@ export class HomePage implements OnInit {
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = jsonData['image'] || "";;
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";;
+        }
       } else {
         thumbnailUri = "";
       }
@@ -2688,10 +2689,10 @@ export class HomePage implements OnInit {
     event.stopPropagation();
     await this.native.showLoading('common.waitMoment');
     let searchText = this.searchText || '';
-    if(searchText != ''){
-      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText,this.sortType);
+    if (searchText != '') {
+      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText, this.sortType);
       this.refreshPasarGridVisibleareaImage();
-    }else{
+    } else {
       await this.refreshPasarList();
     }
     this.isShowSearchField = false;

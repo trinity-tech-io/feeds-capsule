@@ -83,6 +83,7 @@ import { HiveService } from './services/HiveService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultApi } from 'src/app/services/api_hivevault.service';
 import { MigrateDataService } from 'src/app/services/migratedata.service';
+import { FeedsUtil } from 'src/app/services/feeds_util.service';
 
 import * as Sentry from '@sentry/browser';
 
@@ -225,6 +226,7 @@ export function TranslateLoaderFactory() {
     FeedsServiceApi,
     HiveVaultApi,
     MigrateDataService,
+    FeedsUtil,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],

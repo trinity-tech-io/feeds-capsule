@@ -17,6 +17,7 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { PopupProvider } from 'src/app/services/popup';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 @Component({
   selector: 'app-eidtchannel',
@@ -57,7 +58,8 @@ export class EidtchannelPage implements OnInit {
     private pasarAssistService: PasarAssistService,
     private carrierService: CarrierService,
     private popupProvider: PopupProvider,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     let item = this.feedService.getChannelInfo();
@@ -111,15 +113,15 @@ export class EidtchannelPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   ionViewWillLeave() {
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
     }
-    if(!this.isClickConfirm){
-     this.feedService.setProfileIamge(this.oldChannelAvatar);
+    if (!this.isClickConfirm) {
+      this.feedService.setProfileIamge(this.oldChannelAvatar);
     }
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
@@ -156,28 +158,28 @@ export class EidtchannelPage implements OnInit {
       this.native.toastWarn('common.connectionError1');
       return;
     }
-    await this.native.showLoading('common.waitMoment', isDismiss => {})
+    await this.native.showLoading('common.waitMoment', isDismiss => { })
     await this.getPublicStatus();
     this.native.hideLoading();
-    if(this.isPublic === "1"){
-      this.open("EidtchannelPage.des","EidtchannelPage.des1")
+    if (this.isPublic === "1") {
+      this.open("EidtchannelPage.des", "EidtchannelPage.des1")
       return;
     }
-    if(this.isPublic === "2"){
-      this.open("EidtchannelPage.des","EidtchannelPage.des2")
+    if (this.isPublic === "2") {
+      this.open("EidtchannelPage.des", "EidtchannelPage.des2")
       return;
     }
-    if(this.isPublic === "3"){
-      this.open("EidtchannelPage.des","EidtchannelPage.des3")
+    if (this.isPublic === "3") {
+      this.open("EidtchannelPage.des", "EidtchannelPage.des3")
       return;
     }
     this.isClickConfirm = true;
 
     if (this.checkparms() && this.isPublic === "") {
       this.native
-        .showLoading('common.waitMoment', isDismiss => {})
+        .showLoading('common.waitMoment', isDismiss => { })
         .then(() => {
-          this.feedService.editFeedInfo(
+          this.feedsServiceApi.editFeedInfo(
             this.nodeId,
             Number(this.channelId),
             this.name,
@@ -235,7 +237,7 @@ export class EidtchannelPage implements OnInit {
     if (this.isPublic === '') {
       return;
     }
-    let serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
+    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.nodeId);
     let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let obj = {
@@ -253,118 +255,118 @@ export class EidtchannelPage implements OnInit {
 
   async getPublicStatus() {
     this.channelCollections = await this.getChannelCollectionsStatus() || null;
-    if(this.channelCollections != null){
+    if (this.channelCollections != null) {
       this.zone.run(() => {
         this.isPublic = '2';
       });
       return;
     }
 
-    let serverInfo = this.feedService.getServerbyNodeId(this.nodeId);
+    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.nodeId);
     let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
     let tokenInfo = await this.isExitStrick(feedsUrl);
-    if(tokenInfo != null){
-       this.isPublic = '3';
-       return;
+    if (tokenInfo != null) {
+      this.isPublic = '3';
+      return;
     }
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     try {
       let result = await this.httpService
-      .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false) || null;
-    if(result === null){
-       this.isPublic = '';
+        .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false) || null;
+      if (result === null) {
+        this.isPublic = '';
         return;
-    }
-    if(result['code'] === 200) {
+      }
+      if (result['code'] === 200) {
         let resultData = result['data'] || '';
         if (resultData != '') {
           this.isPublic = '1';
         } else {
           this.isPublic = '';
         }
-    }
+      }
     } catch (error) {
 
     }
   }
 
-  async getChannelCollectionsStatus(){
+  async getChannelCollectionsStatus() {
     try {
-      let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
       if (server === null) {
-      return;
+        return;
       }
       let feedsUrl = server.feedsUrl + '/' + this.channelId;
       let feedsUrlHash = UtilService.SHA256(feedsUrl);
-      let tokenId: string ="0x" + feedsUrlHash;
-      tokenId =  UtilService.hex2dec(tokenId);
+      let tokenId: string = "0x" + feedsUrlHash;
+      tokenId = UtilService.hex2dec(tokenId);
       let list = this.dataHelper.getPublishedActivePanelList() || [];
-      let fitleItem = _.find(list,(item)=>{
-          return item.tokenId === tokenId;
+      let fitleItem = _.find(list, (item) => {
+        return item.tokenId === tokenId;
       }) || null;
-      if(fitleItem != null){
-         return fitleItem;
+      if (fitleItem != null) {
+        return fitleItem;
       }
       let result = await this.pasarAssistService.getPanel(tokenId);
-      if(result != null){
-       let tokenInfo = result["data"] || "";
-       if(tokenInfo === ""){
-           return null;
-       }
-       tokenInfo =  await this.handlePanels(result["data"]);
-       let panelList=this.dataHelper.getPublishedActivePanelList() || [];
-       panelList.push(tokenInfo);
-       this.dataHelper.setPublishedActivePanelList(panelList);
-       return tokenInfo;
-       }
+      if (result != null) {
+        let tokenInfo = result["data"] || "";
+        if (tokenInfo === "") {
+          return null;
+        }
+        tokenInfo = await this.handlePanels(result["data"]);
+        let panelList = this.dataHelper.getPublishedActivePanelList() || [];
+        panelList.push(tokenInfo);
+        this.dataHelper.setPublishedActivePanelList(panelList);
+        return tokenInfo;
+      }
       return null;
-     } catch (error) {
-      return null;
-     }
-   }
-
-   async isExitStrick(feedsUrl: string) {
-
-    try {
-     let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
-     tokenId =  UtilService.hex2dec(tokenId);
-     //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
-     let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
-     if(tokenInfo[0]!='0' && tokenInfo[2]!='0'){
-          return tokenInfo;
-     }
-     return null;
     } catch (error) {
-     return null;
+      return null;
     }
-   }
-
-   async handlePanels(item :any){
-    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-     channelCollections.version = item.version;
-     channelCollections.panelId = item.panelId;
-     channelCollections.userAddr = item.user;
-     //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
-     channelCollections.diaBalance = "0";
-     channelCollections.type = item.type;
-     channelCollections.tokenId = item.tokenId;
-     channelCollections.name = item.name;
-     channelCollections.description = item.description;
-     channelCollections.avatar = item.avatar;
-     channelCollections.entry = item.entry;
-     channelCollections.ownerDid = item.tokenDid.did;
-     let didJsON = this.feedService.getSignInData() || {};
-     channelCollections.ownerName = didJsON["name"];
-     let url: string = channelCollections.entry.url;
-     let urlArr = url.replace("feeds://","").split("/");
-     channelCollections.did = urlArr[0];
-     let carrierAddress = urlArr[1];
-     let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
-     channelCollections.nodeId = nodeId;
-     return channelCollections;
   }
 
-  open(des1: string,des2: string){
+  async isExitStrick(feedsUrl: string) {
+
+    try {
+      let tokenId: string = "0x" + UtilService.SHA256(feedsUrl);
+      tokenId = UtilService.hex2dec(tokenId);
+      //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
+      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+      if (tokenInfo[0] != '0' && tokenInfo[2] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async handlePanels(item: any) {
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+    channelCollections.version = item.version;
+    channelCollections.panelId = item.panelId;
+    channelCollections.userAddr = item.user;
+    //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
+    channelCollections.diaBalance = "0";
+    channelCollections.type = item.type;
+    channelCollections.tokenId = item.tokenId;
+    channelCollections.name = item.name;
+    channelCollections.description = item.description;
+    channelCollections.avatar = item.avatar;
+    channelCollections.entry = item.entry;
+    channelCollections.ownerDid = item.tokenDid.did;
+    let didJsON = this.feedService.getSignInData() || {};
+    channelCollections.ownerName = didJsON["name"];
+    let url: string = channelCollections.entry.url;
+    let urlArr = url.replace("feeds://", "").split("/");
+    channelCollections.did = urlArr[0];
+    let carrierAddress = urlArr[1];
+    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
+    channelCollections.nodeId = nodeId;
+    return channelCollections;
+  }
+
+  open(des1: string, des2: string) {
     this.popover = this.popupProvider.showalertdialog(
       this,
       des1,

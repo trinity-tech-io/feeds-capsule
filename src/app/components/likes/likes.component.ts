@@ -7,6 +7,7 @@ import { NativeService } from '../../services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
 import { AppService } from '../../services/AppService';
 import { ViewHelper } from '../../services/viewhelper.service';
+import { FeedsServiceApi } from '../../services/api_feedsservice.service';
 
 @Component({
   selector: 'app-likes',
@@ -48,7 +49,8 @@ export class LikesComponent implements OnInit {
     private native: NativeService,
     private viewHelper: ViewHelper,
     public appService: AppService,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     if (this.platform.is('ios')) {
@@ -95,25 +97,25 @@ export class LikesComponent implements OnInit {
     }
 
     if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedService.postUnlike(nodeId, Number(channelId), Number(postId), 0);
+      this.feedsServiceApi.postUnlike(nodeId, Number(channelId), Number(postId), 0);
       return;
     }
 
-    this.feedService.postLike(nodeId, Number(channelId), Number(postId), 0);
+    this.feedsServiceApi.postLike(nodeId, Number(channelId), Number(postId), 0);
   }
 
   getContentText(content: string): string {
-    return this.feedService.parsePostContentText(content);
+    return this.feedsServiceApi.parsePostContentText(content);
   }
 
   getContentShortText(post: any): string {
     let content = post.content;
-    let text = this.feedService.parsePostContentText(content) || '';
+    let text = this.feedsServiceApi.parsePostContentText(content) || '';
     return text.substring(0, 180) + '...';
   }
 
   getPostContentTextSize(content: string) {
-    let text = this.feedService.parsePostContentText(content);
+    let text = this.feedsServiceApi.parsePostContentText(content);
     let size = UtilService.getSize(text);
     return size;
   }
@@ -289,13 +291,13 @@ export class LikesComponent implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    let text = this.feedService.parsePostContentText(postContent);
+    let text = this.feedsServiceApi.parsePostContentText(postContent);
     this.native
       .copyClipboard(text)
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickDashang(nodeId: string, channelId: number, postId: number) {
@@ -304,7 +306,7 @@ export class LikesComponent implements OnInit {
       return;
     }
 
-    let server = this.feedService.getServerbyNodeId(nodeId) || {};
+    let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || {};
     let elaAddress = server['elaAddress'] || null;
     if (elaAddress == null) {
       this.native.toast('common.noElaAddress');

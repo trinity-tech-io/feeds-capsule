@@ -19,6 +19,7 @@ import { File } from '@ionic-native/file/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -88,8 +89,9 @@ export class CreatenewpostPage implements OnInit {
     private file: File,
     private fileHelperService: FileHelperService,
     private ipfsService: IPFSService,
-    private postHelperService: PostHelperService
-  ) {}
+    private postHelperService: PostHelperService,
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     let sid = setTimeout(() => {
@@ -234,7 +236,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.search);
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -285,19 +287,18 @@ export class CreatenewpostPage implements OnInit {
     });
   }
 
-  prepareTempPost() {}
+  prepareTempPost() { }
 
   async sendPost() {
-
-      const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
-      let tempPostId = this.feedService.generateTempPostId();
-      //TODO
-      this.feedService.publishPost(
-        this.nodeId,
-        this.channelId,
-        content,
-        tempPostId,
-      );
+    const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
+    let tempPostId = this.feedService.generateTempPostId();
+    //TODO
+    this.feedService.publishPost(
+      this.nodeId,
+      this.channelId,
+      content,
+      tempPostId,
+    );
     // //Only text content
     // if (this.imgUrl == '' && this.flieUri == '') {
     //   let content = this.feedService.createContent(this.newPost, null, null);
@@ -356,7 +357,7 @@ export class CreatenewpostPage implements OnInit {
       content = this.feedService.createContent(this.newPost, imgThumbs, null);
     }
 
-    this.feedService.declarePost(
+    this.feedsServiceApi.declarePost(
       this.nodeId,
       this.channelId,
       content,
@@ -382,7 +383,7 @@ export class CreatenewpostPage implements OnInit {
       (err: any) => {
         Logger.error(TAG, 'Add img err', err);
         let imgUrl = this.imgUrl || '';
-        if (imgUrl==="") {
+        if (imgUrl === "") {
           this.native.toast_trans('common.noImageSelected');
         }
       },
@@ -632,7 +633,7 @@ export class CreatenewpostPage implements OnInit {
     this.native.navigateForward(['mintnft'], {});
   }
 
-  clickImageMenu(){
+  clickImageMenu() {
     this.pictureMenu = this.menuService.showPictureMenu(
       this,
       this.openCamera,
@@ -642,7 +643,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   openNft(that: any) {
-    that.native.navigateForward(['profilenftimage'], {queryParams: { type: 'postImages' }});
+    that.native.navigateForward(['profilenftimage'], { queryParams: { type: 'postImages' } });
   }
 
   openGallery(that: any) {
@@ -656,7 +657,7 @@ export class CreatenewpostPage implements OnInit {
       //   const file: File = await that.fileHelperService.getUserFile(filePath, fileName);
       //   that.ipfsService.uploadData(file);
       // });
-      return  that.getFlieObj(fileName, filePath, that);
+      return that.getFlieObj(fileName, filePath, that);
 
     }).then((fileBase64: string) => {
       that.zone.run(() => {
@@ -684,19 +685,19 @@ export class CreatenewpostPage implements OnInit {
       (err: any) => {
         //Logger.error(TAG, 'Add img err', err);
         let imgUrl = that.imgUrl || '';
-        if (imgUrl==="") {
+        if (imgUrl === "") {
           that.native.toast_trans('common.noImageSelected');
         }
       },
     );
   }
 
-  removeImg(){
+  removeImg() {
     this.imgUrl = "";
     this.feedService.setSelsectNftImage("");
   }
 
-  handleImgUri(type: number,that:any): Promise<any> {
+  handleImgUri(type: number, that: any): Promise<any> {
     return new Promise((resolve, reject) => {
       that.camera.openCamera(
         100,
@@ -754,7 +755,7 @@ function ab2str(u, f) {
   var b = new Blob([u]);
   var r = new FileReader();
   r.readAsText(b, 'utf-8');
-  r.onload = function() {
+  r.onload = function () {
     if (f) f.call(null, r.result);
   };
 }

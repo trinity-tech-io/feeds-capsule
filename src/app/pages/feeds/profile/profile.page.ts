@@ -25,6 +25,7 @@ import { Logger } from 'src/app/services/logger';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PostHelperService } from 'src/app/services/post_helper.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 let TAG: string = 'Feeds-profile';
 
@@ -189,7 +190,8 @@ export class ProfilePage implements OnInit {
     private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService,
-    private postHelperService: PostHelperService
+    private postHelperService: PostHelperService,
+    private feedsServiceApi: FeedsServiceApi
   ) {
   }
 
@@ -1035,10 +1037,10 @@ export class ProfilePage implements OnInit {
       kind = item["kind"];
       size = item["originAssetSize"];
       if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-      thumbnailUri = item['asset'] || "";
-    }
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+        thumbnailUri = item['asset'] || "";
+      }
     } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
@@ -1046,10 +1048,10 @@ export class ProfilePage implements OnInit {
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = jsonData['image'] || "";
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";
+        }
       } else {
         thumbnailUri = "";
       }
@@ -1822,7 +1824,7 @@ export class ProfilePage implements OnInit {
           return;
         }
 
-        this.feedService.unsubscribeChannel(nodeId, feedId);
+        this.feedsServiceApi.unsubscribeChannel(nodeId, feedId);
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
         break;
@@ -1852,7 +1854,7 @@ export class ProfilePage implements OnInit {
             this.feedService.getPostFromId(nodeId, feedId, postId) || null;
           let postContent = '';
           if (post != null) {
-            postContent = this.feedService.parsePostContentText(post.content);
+            postContent = this.feedsServiceApi.parsePostContentText(post.content);
           }
 
           this.hideSharMenuComponent = false;
@@ -1901,7 +1903,7 @@ export class ProfilePage implements OnInit {
   getQrCodeString(feed: any) {
     let nodeId = feed['nodeId'];
     this.shareNodeId = nodeId;
-    let serverInfo = this.feedService.getServerbyNodeId(nodeId);
+    let serverInfo = this.feedsServiceApi.getServerbyNodeId(nodeId);
     let feedsUrl = serverInfo['feedsUrl'] || null;
     let feedId = feed['channelId'] || '';
     this.shareFeedId = feedId;

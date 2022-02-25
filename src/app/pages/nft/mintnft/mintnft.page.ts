@@ -16,6 +16,7 @@ import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { VideoService } from 'src/app/services/video.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import _ from 'lodash';
 const SUCCESS = 'success';
@@ -59,15 +60,15 @@ export class MintnftPage implements OnInit {
   private imageObj: any = {};
   private orderId: any = '';
   public popover: any;
-  public isLoading:boolean = false;
-  public loadingTitle:string = "common.waitMoment";
-  public loadingText:string = "";
-  public loadingCurNumber:string = "";
-  public loadingMaxNumber:string = "";
+  public isLoading: boolean = false;
+  public loadingTitle: string = "common.waitMoment";
+  public loadingText: string = "";
+  public loadingCurNumber: string = "";
+  public loadingMaxNumber: string = "";
   private realFile: any = null;
-  public  maxAvatarSize:number = 5 * 1024 * 1024;
-  public  assetType:string = "image";
-  public  adult:boolean = false;
+  public maxAvatarSize: number = 5 * 1024 * 1024;
+  public assetType: string = "image";
+  public adult: boolean = false;
   public videoIdObj: videoId = {
     videoId: '',
     sourceId: '',
@@ -76,10 +77,10 @@ export class MintnftPage implements OnInit {
     vgoverlayplayId: '',
     vgfullscreeId: ''
   };
-  public  accept: string = "image/png, image/jpeg, image/jpg, image/gif";
-  private didUri:string = null;
-  public  videoUrl: string ="";
-  private videoObj:FeedsData.FeedsVideo = {
+  public accept: string = "image/png, image/jpeg, image/jpg, image/gif";
+  private didUri: string = null;
+  public videoUrl: string = "";
+  private videoObj: FeedsData.FeedsVideo = {
     kind: '',
     video: '',
     size: '',
@@ -89,14 +90,14 @@ export class MintnftPage implements OnInit {
     height: ''
   };
 
-  private audioObj:FeedsData.FeedsAudio = {
+  private audioObj: FeedsData.FeedsAudio = {
     kind: '',
     audio: '',
     size: '',
     thumbnail: '',
     duration: '',
   };
-  private maxVideoDuration:number = 60*60*1000;
+  private maxVideoDuration: number = 60 * 60 * 1000;
   public isOpen: boolean = false;
   constructor(
     private translate: TranslateService,
@@ -112,8 +113,9 @@ export class MintnftPage implements OnInit {
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
     private nftContractHelperService: NFTContractHelperService,
-    private videoService: VideoService
-  ) {}
+    private videoService: VideoService,
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
 
@@ -190,7 +192,7 @@ export class MintnftPage implements OnInit {
 
   async doMint() {
     //Start loading
-    let sid = setTimeout(()=>{
+    let sid = setTimeout(() => {
       this.isLoading = false;
       this.nftContractControllerService
         .getSticker()
@@ -203,11 +205,11 @@ export class MintnftPage implements OnInit {
         .cancelCreateOrderProcess();
       this.showSelfCheckDialog();
       clearTimeout(sid);
-    },Config.WAIT_TIME_MINT);
+    }, Config.WAIT_TIME_MINT);
 
     this.loadingCurNumber = "1";
     this.loadingMaxNumber = "3";
-    if(this.curPublishtoPasar){
+    if (this.curPublishtoPasar) {
       this.loadingMaxNumber = "5";
     }
     this.loadingText = "common.uploadingData"
@@ -217,7 +219,7 @@ export class MintnftPage implements OnInit {
     let jsonHash = '';
     //this.native.changeLoadingDesc("common.uploadingData");
     this.uploadData()
-      .then(async(result) => {
+      .then(async (result) => {
         Logger.log(TAG, 'Upload Result', result);
         //this.native.changeLoadingDesc("common.uploadDataSuccess");
         this.loadingCurNumber = "1";
@@ -229,10 +231,10 @@ export class MintnftPage implements OnInit {
         this.loadingCurNumber = "2";
         this.loadingText = "common.mintingData";
         //let did = this.feedService.
-        let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
+        let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties), 10000);
 
         let didUri = await this.getDidUri();
-        return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString(),didUri);
+        return this.mintContract(tokenId, jsonHash, this.nftQuantity, nftRoyalties.toString(), didUri);
       })
       .then(mintResult => {
         if (mintResult != '' && this.curPublishtoPasar) {
@@ -258,13 +260,13 @@ export class MintnftPage implements OnInit {
         return this.handleOrderResult(tokenId, orderIndex);
       })
       .then((status) => {
-        if(status === SKIP){
+        if (status === SKIP) {
           this.loadingCurNumber = "3";
           this.loadingText = "common.checkingCollectibleResult";
         }
         //Finish
-        if(!this.curPublishtoPasar){
-          this.handleCace('created',tokenId);
+        if (!this.curPublishtoPasar) {
+          this.handleCace('created', tokenId);
         }
         //this.native.hideLoading();
         this.isLoading = false;
@@ -311,13 +313,13 @@ export class MintnftPage implements OnInit {
           }
 
           let tokenId = '0x' + UtilService.SHA256(hash);
-          if(this.assetType === "video"){
-              this.videoObj.size = result['Size'];
-              this.videoObj.video = 'feeds:video:' + hash;
-          }else if(this.assetType === "audio"){
-               this.audioObj.size = result["size"];
-               this.audioObj.audio = 'feeds:audio:' + hash;
-          }else{
+          if (this.assetType === "video") {
+            this.videoObj.size = result['Size'];
+            this.videoObj.video = 'feeds:video:' + hash;
+          } else if (this.assetType === "audio") {
+            this.audioObj.size = result["size"];
+            this.audioObj.audio = 'feeds:audio:' + hash;
+          } else {
             this.imageObj['imgSize'] = result['Size'];
             this.imageObj['imgHash'] = 'feeds:image:' + hash;
           }
@@ -346,11 +348,11 @@ export class MintnftPage implements OnInit {
             return;
           }
 
-          if(this.assetType === "video"){
+          if (this.assetType === "video") {
             this.videoObj.thumbnail = 'feeds:image:' + hash;
-          }else{
-           this.thumbnail = thumbnailBase64;
-           this.imageObj['thumbnail'] = 'feeds:image:' + hash;
+          } else {
+            this.thumbnail = thumbnailBase64;
+            this.imageObj['thumbnail'] = 'feeds:image:' + hash;
           }
           resolve('');
         })
@@ -364,22 +366,22 @@ export class MintnftPage implements OnInit {
 
     return new Promise(async (resolve, reject) => {
       let type = "image";
-      let ipfsJSON:any = null;
+      let ipfsJSON: any = null;
       let thumbnail = this.imageObj['thumbnail'];
-      if(this.assetType === "avatar"){
-         type = "avatar";
-         thumbnail = this.imageObj['imgHash'];
+      if (this.assetType === "avatar") {
+        type = "avatar";
+        thumbnail = this.imageObj['imgHash'];
       }
-      if(this.assetType === "audio"){
+      if (this.assetType === "audio") {
         type = "audio";
         thumbnail = "";
-        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-      }else if(this.assetType === "video"){
-         type = "video";
-        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-       }else{
-        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-       }
+        ipfsJSON = this.getTokenJsonV2(type, thumbnail);
+      } else if (this.assetType === "video") {
+        type = "video";
+        ipfsJSON = this.getTokenJsonV2(type, thumbnail);
+      } else {
+        ipfsJSON = this.getTokenJsonV2(type, thumbnail);
+      }
 
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
@@ -403,20 +405,20 @@ export class MintnftPage implements OnInit {
   }
 
   removeImg() {
-    if(this.assetType === "video"){
+    if (this.assetType === "video") {
       this.accept = "video/*";
       let source: any = document.getElementById(this.videoIdObj.sourceId) || '';
-      if(source!=""){
+      if (source != "") {
         let videoUri = source.getAttribute('src') || '';
-        if(videoUri!=""){
-          source.setAttribute('src',"");
+        if (videoUri != "") {
+          source.setAttribute('src', "");
         }
       }
-   }else if(this.assetType === "audio"){
-    this.accept = "audio/mpeg, audio/ogg,audio/wav";
-   }else{
-     this.accept = "image/png, image/jpeg, image/jpg, image/gif";
-   }
+    } else if (this.assetType === "audio") {
+      this.accept = "audio/mpeg, audio/ogg,audio/wav";
+    } else {
+      this.accept = "image/png, image/jpeg, image/jpg, image/gif";
+    }
     this.thumbnail = '';
     this.assetBase64 = '';
     this.realFile = null;
@@ -486,12 +488,12 @@ export class MintnftPage implements OnInit {
       return false;
     }
 
-    if (this.nftRoyalties!="0"&&regNumber.test(this.nftRoyalties) == false) {
+    if (this.nftRoyalties != "0" && regNumber.test(this.nftRoyalties) == false) {
       this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
       return false;
     }
 
-    if(parseInt(this.nftRoyalties)<0 || parseInt(this.nftRoyalties)>15){
+    if (parseInt(this.nftRoyalties) < 0 || parseInt(this.nftRoyalties) > 15) {
       this.native.toastWarn('MintnftPage.royaltiesErrorMsg');
       return false;
     }
@@ -540,7 +542,7 @@ export class MintnftPage implements OnInit {
     return new Promise(async (resolve, reject) => {
       const MINT_ERROR = 'Mint process error';
       let result = '';
-      if(didUri === null){
+      if (didUri === null) {
         reject(MINT_ERROR);
         return;
       }
@@ -548,7 +550,7 @@ export class MintnftPage implements OnInit {
       try {
         result = await this.nftContractControllerService
           .getSticker()
-          .mint(tokenId, supply, uri, royalty,didUri);
+          .mint(tokenId, supply, uri, royalty, didUri);
       } catch (error) {
         reject(error);
         return;
@@ -601,7 +603,7 @@ export class MintnftPage implements OnInit {
       try {
         orderIndex = await this.nftContractControllerService
           .getPasar()
-          .createOrderForSale(tokenId, this.nftQuantity, salePrice,this.didUri);
+          .createOrderForSale(tokenId, this.nftQuantity, salePrice, this.didUri);
       } catch (error) {
         reject(orderIndex);
       }
@@ -620,19 +622,19 @@ export class MintnftPage implements OnInit {
     orderIndex: number,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      if(this.assetType === "audio"){
+      if (this.assetType === "audio") {
         this.handleCace('onSale', tokenId, orderIndex);
         resolve(SUCCESS);
         return;
       }
-      if(this.assetType === "video"){
+      if (this.assetType === "video") {
         this.handleCace('onSale', tokenId, orderIndex);
-        await this.getSetChannel(tokenId,orderIndex);
+        await this.getSetChannel(tokenId, orderIndex);
         resolve(SUCCESS);
         return;
       }
       this.handleCace('onSale', tokenId, orderIndex);
-      await this.getSetChannel(tokenId,orderIndex);
+      await this.getSetChannel(tokenId, orderIndex);
       resolve(SUCCESS);
     });
   }
@@ -643,18 +645,18 @@ export class MintnftPage implements OnInit {
     return new Promise((resolve, reject) => {
       try {
         let img = new Image();
-        img.crossOrigin='*';
+        img.crossOrigin = '*';
         img.crossOrigin = "Anonymous";
         img.src = path;
-        img.onload = () =>{
+        img.onload = () => {
           let maxWidth = img.width / 4;
           let maxHeight = img.height / 4;
-          if(this.assetType === "avatar"){
+          if (this.assetType === "avatar") {
             maxWidth = img.width;
             maxHeight = img.height;
           }
-         let imgBase64 = UtilService.resizeImg(img,maxWidth,maxHeight,1);
-         resolve(imgBase64);
+          let imgBase64 = UtilService.resizeImg(img, maxWidth, maxHeight, 1);
+          resolve(imgBase64);
         };
       } catch (err) {
         Logger.error(TAG, "Compress image error", err);
@@ -663,15 +665,15 @@ export class MintnftPage implements OnInit {
     });
   }
 
-  async getSetChannel(tokenId: any,orderIndex:any) {
+  async getSetChannel(tokenId: any, orderIndex: any) {
 
     let order = await this.nftContractControllerService
-    .getPasar()
-    .getSellerOrderByIndex(orderIndex);
+      .getPasar()
+      .getSellerOrderByIndex(orderIndex);
     this.orderId = order[0];
 
     let setChannel = this.feedService.getCollectibleStatus();
-    let isTipToast:boolean = false;
+    let isTipToast: boolean = false;
     for (let key in setChannel) {
       let value = setChannel[key] || '';
       if (value) {
@@ -682,7 +684,7 @@ export class MintnftPage implements OnInit {
       }
     }
 
-    if(isTipToast){
+    if (isTipToast) {
       this.native.toast("CreatenewpostPage.tipMsg1");
     }
   }
@@ -723,12 +725,12 @@ export class MintnftPage implements OnInit {
     let nftContent = {};
     nftContent['version'] = '1.0';
     nftContent['imageThumbnail'] = imgThumbs;
-    nftContent['text'] = this.nftName+" - "+ this.nftDescription;
+    nftContent['text'] = this.nftName + " - " + this.nftDescription;
     nftContent['nftTokenId'] = tokenId;
     nftContent['nftOrderId'] = this.orderId;
     nftContent['nftImageType'] = this.assetType;
 
-    this.feedService.declarePost(
+    this.feedsServiceApi.declarePost(
       nodeId,
       channelId,
       JSON.stringify(nftContent),
@@ -753,7 +755,7 @@ export class MintnftPage implements OnInit {
       if (this.realFile == null)
         console.log("Not select image");
 
-      if(this.assetType === "audio"){
+      if (this.assetType === "audio") {
         this.sendIpfsImage(this.realFile).then((cid) => {
           tokenId = cid;
         }).then(() => {
@@ -763,7 +765,7 @@ export class MintnftPage implements OnInit {
         }).catch((error) => {
           reject('upload file error');
         });
-      }else{
+      } else {
         this.sendIpfsImage(this.realFile).then((cid) => {
           tokenId = cid;
           return this.sendIpfsThumbnail(this.thumbnail);
@@ -839,9 +841,9 @@ export class MintnftPage implements OnInit {
     }
   }
 
-  handleQuantity(events:any){
+  handleQuantity(events: any) {
     let quantity = events.target.value || '';
-    if(quantity == ""){
+    if (quantity == "") {
       return true;
     }
     let regNumber = /^\+?[1-9][0-9]*$/;
@@ -851,24 +853,24 @@ export class MintnftPage implements OnInit {
     }
   }
 
-  async handleCace(type:string,tokenId:any,orderIndex?: number){
+  async handleCace(type: string, tokenId: any, orderIndex?: number) {
     let tokenInfo = await this.nftContractControllerService
-    .getSticker()
-    .tokenInfo(tokenId);
+      .getSticker()
+      .tokenInfo(tokenId);
     const tokenJson = await this.nftContractHelperService.getTokenJson(tokenInfo.tokenUri);;
     tokenId = tokenInfo[0];
     // let createTime = tokenInfo[7];
     // let creator = tokenInfo[4];//原作者
     // let royalties = UtilService.accMul(this.nftRoyalties,10000);
     let accAddress =
-    this.nftContractControllerService.getAccountAddress() || '';
+      this.nftContractControllerService.getAccountAddress() || '';
 
     let slist = this.nftPersistenceHelper.getCollectiblesList(accAddress);
     // let imageType = "image";
     // if(this.assetType === "avatar"){
     //    imageType = "avatar";
     // }
-    let item:any = {};
+    let item: any = {};
     switch (type) {
       case 'created':
         // item = {
@@ -906,8 +908,8 @@ export class MintnftPage implements OnInit {
 
   handleImg() {
     let imgUri = this.thumbnail;
-    if(this.imageObj['imgFormat'] === "gif"){
-        imgUri = this.assetBase64;
+    if (this.imageObj['imgFormat'] === "gif") {
+      imgUri = this.assetBase64;
     }
     return imgUri;
   }
@@ -921,9 +923,9 @@ export class MintnftPage implements OnInit {
     Logger.log("Real File is", event.target.files[0]);
 
     //add avatar
-    if(this.assetType === "avatar"){
+    if (this.assetType === "avatar") {
       let fileSize = this.realFile.size;
-      if(fileSize > this.maxAvatarSize){
+      if (fileSize > this.maxAvatarSize) {
         this.native.toastWarn("MintnftPage.fileTypeDes2");
         event.target.value = null;
         return false;
@@ -935,31 +937,31 @@ export class MintnftPage implements OnInit {
     let imgFormat = fileName.substr(index + 1);
     this.imageObj['imgFormat'] = imgFormat;
 
-    this.createImagePreview(this.realFile,event);
+    this.createImagePreview(this.realFile, event);
   }
 
-  createImagePreview(file:any,inputEvent?:any) {
+  createImagePreview(file: any, inputEvent?: any) {
     const reader = new FileReader();
 
     reader.readAsDataURL(file);
     reader.onload = async event => {
       try {
         //add avatar
-        if(this.assetType === "avatar"){
+        if (this.assetType === "avatar") {
           let image = new Image();
-          image.onload = async ()=>{
-          let width = image.width;
-          let height = image.height;
-          if(width!=600 || height!=600){
-            this.native.toastWarn("MintnftPage.fileTypeDes1");
-            inputEvent.target.value = null;
-            return false;
+          image.onload = async () => {
+            let width = image.width;
+            let height = image.height;
+            if (width != 600 || height != 600) {
+              this.native.toastWarn("MintnftPage.fileTypeDes1");
+              inputEvent.target.value = null;
+              return false;
+            }
+            this.assetBase64 = event.target.result.toString();
+            this.thumbnail = await this.compressImage(this.assetBase64);
           }
-          this.assetBase64 = event.target.result.toString();
-          this.thumbnail = await this.compressImage(this.assetBase64);
-         }
-         image.src = event.target.result.toString();
-        }else{
+          image.src = event.target.result.toString();
+        } else {
           this.assetBase64 = event.target.result.toString();
           this.thumbnail = await this.compressImage(this.assetBase64);
         }
@@ -969,17 +971,17 @@ export class MintnftPage implements OnInit {
     }
   }
 
- handleMintEvent(event:any){
+  handleMintEvent(event: any) {
     event.target.value = null;
-    document.getElementById("mintfile").onchange = async (event)=>{
-      if(this.assetType === "video"){
+    document.getElementById("mintfile").onchange = async (event) => {
+      if (this.assetType === "video") {
         await this.handleFeedsVideo(event);
-           return;
+        return;
       }
-      if(this.assetType === "audio"){
+      if (this.assetType === "audio") {
         await this.handleFeedsAudio(event);
         return;
-      }else{
+      } else {
         this.onChange(event);
       }
     };
@@ -997,11 +999,11 @@ export class MintnftPage implements OnInit {
 
     reader.onload = async event => {
       try {
-        let result =  event.target.result.toString();
-        let videoInfo:any = await this.getVideoImage(result);
-        if(videoInfo === null){
-            this.native.hideLoading();
-            return;
+        let result = event.target.result.toString();
+        let videoInfo: any = await this.getVideoImage(result);
+        if (videoInfo === null) {
+          this.native.hideLoading();
+          return;
         }
         this.videoObj.duration = videoInfo.duration;
         this.videoObj.width = videoInfo.width;
@@ -1018,12 +1020,12 @@ export class MintnftPage implements OnInit {
         //   this.native.hideLoading();
         //   clearTimeout(sid);
         // },0);
-        this.videoService.getVideoPoster(this.thumbnail,this.videoObj.kind,result);
+        this.videoService.getVideoPoster(this.thumbnail, this.videoObj.kind, result);
       } catch (error) {
         this.native.hideLoading();
         Logger.error('Get image thumbnail error', error);
       }
-  }
+    }
   }
 
   async handleFeedsAudio(event: any) {
@@ -1038,65 +1040,65 @@ export class MintnftPage implements OnInit {
 
     reader.onload = async event => {
       try {
-        let result =  event.target.result.toString();
-        let videoInfo:any = await this.getAudioInfo(result);
-        if(videoInfo === null){
-            this.native.hideLoading();
-            return;
+        let result = event.target.result.toString();
+        let videoInfo: any = await this.getAudioInfo(result);
+        if (videoInfo === null) {
+          this.native.hideLoading();
+          return;
         }
         this.audioObj.duration = videoInfo.duration;
         this.thumbnail = "11111";
-        let sid = setTimeout(()=>{
+        let sid = setTimeout(() => {
           let audio: any = document.getElementById("mintnft-audio") || '';
-          audio.setAttribute('type',this.audioObj.kind);
-          audio.setAttribute('src',result);
+          audio.setAttribute('type', this.audioObj.kind);
+          audio.setAttribute('src', result);
           this.native.hideLoading();
           clearTimeout(sid);
-        },0);
+        }, 0);
       } catch (error) {
         this.native.hideLoading();
         Logger.error('Get image thumbnail error', error);
       }
-  }
+    }
   }
 
   getVideoImage(file: any) {
     return new Promise((resolve, reject) => {
-      try{
+      try {
         //if (file && file.type.indexOf('video/') == 0) {
-          let video = document.createElement('video');
-          video.src = file;
-          video.addEventListener('loadeddata', function() {
-            this.currentTime = 1;
-          })
-          let that = this;
-          video.addEventListener('seeked', function () {
-            let videoDuration = UtilService.accMul(this.duration,1000);
-            if(videoDuration > that.maxVideoDuration){
-                that.native.toastWarn("MintnftPage.fileTypeDes5");
-                reject(null);
-                return;
-            }
-              this.width = this.videoWidth;
-              this.height = this.videoHeight;
-              let canvas = document.createElement('canvas');
-              let ctx = canvas.getContext('2d');
-              canvas.width = this.width*0.3;
-              canvas.height = this.height*0.3;
-              ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
-              let image:any = {
-                  url: canvas.toDataURL('image/jpeg', 1),
-                  width: this.width,
-                  height: this.height,
-                  duration: this.duration,
-              };
-              video = null;
-              canvas = null;
-              resolve(image);
-          });
-          video.load();
+        let video = document.createElement('video');
+        video.src = file;
+        video.addEventListener('loadeddata', function () {
+          this.currentTime = 1;
+        })
+        let that = this;
+        video.addEventListener('seeked', function () {
+          let videoDuration = UtilService.accMul(this.duration, 1000);
+          if (videoDuration > that.maxVideoDuration) {
+            that.native.toastWarn("MintnftPage.fileTypeDes5");
+            reject(null);
+            return;
+          }
+          this.width = this.videoWidth;
+          this.height = this.videoHeight;
+          let canvas = document.createElement('canvas');
+          let ctx = canvas.getContext('2d');
+          canvas.width = this.width * 0.3;
+          canvas.height = this.height * 0.3;
+          ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+          let image: any = {
+            url: canvas.toDataURL('image/jpeg', 1),
+            width: this.width,
+            height: this.height,
+            duration: this.duration,
+          };
+          video = null;
+          canvas = null;
+          resolve(image);
+        });
+        video.load();
         //}
-      }catch(err){
+      } catch (err) {
         reject(null);
       }
 
@@ -1106,23 +1108,23 @@ export class MintnftPage implements OnInit {
 
   getAudioInfo(file: any) {
     return new Promise((resolve, reject) => {
-      try{
-          let audio = document.createElement('audio');
-          audio.src = file;
-          let that = this;
-          audio.addEventListener('loadeddata', function() {
-            let audioDuration = UtilService.accMul(this.duration,1000);
-            let videoDuration = UtilService.accMul(this.duration,1000);
-            if(videoDuration > that.maxVideoDuration){
-                that.native.toastWarn("MintnftPage.fileTypeDes5");
-                reject(null);
-                return;
-            }
-            resolve({"duration":audioDuration});
-          })
-          audio.load();
-          audio = null;
-      }catch(err){
+      try {
+        let audio = document.createElement('audio');
+        audio.src = file;
+        let that = this;
+        audio.addEventListener('loadeddata', function () {
+          let audioDuration = UtilService.accMul(this.duration, 1000);
+          let videoDuration = UtilService.accMul(this.duration, 1000);
+          if (videoDuration > that.maxVideoDuration) {
+            that.native.toastWarn("MintnftPage.fileTypeDes5");
+            reject(null);
+            return;
+          }
+          resolve({ "duration": audioDuration });
+        })
+        audio.load();
+        audio = null;
+      } catch (err) {
         reject(null);
       }
 
@@ -1133,17 +1135,17 @@ export class MintnftPage implements OnInit {
 
 
 
-  async getDidUri(){
+  async getDidUri() {
     return await this.feedService.getDidUri();
   }
 
-  clickAdult(){
+  clickAdult() {
     this.zone.run(() => {
       this.adult = !this.adult;
     });
   }
 
-  getTokenJsonV1(type :string,thumbnail: string){
+  getTokenJsonV1(type: string, thumbnail: string) {
     let tokenJsonV1: FeedsData.TokenJsonV1 = {
       description: '',
       image: '',
@@ -1155,51 +1157,51 @@ export class MintnftPage implements OnInit {
       version: '',
       adult: false
     };
-        tokenJsonV1.version = "1";
-        tokenJsonV1.type = type;
-        tokenJsonV1.name = this.nftName;
-        tokenJsonV1.description = this.nftDescription;
-        tokenJsonV1.image = this.imageObj['imgHash'];
-        tokenJsonV1.kind = this.imageObj['imgFormat'];
-        tokenJsonV1.size = this.imageObj['imgSize'];
-        tokenJsonV1.thumbnail = thumbnail;
-        tokenJsonV1.adult = this.adult;
-      return tokenJsonV1;
+    tokenJsonV1.version = "1";
+    tokenJsonV1.type = type;
+    tokenJsonV1.name = this.nftName;
+    tokenJsonV1.description = this.nftDescription;
+    tokenJsonV1.image = this.imageObj['imgHash'];
+    tokenJsonV1.kind = this.imageObj['imgFormat'];
+    tokenJsonV1.size = this.imageObj['imgSize'];
+    tokenJsonV1.thumbnail = thumbnail;
+    tokenJsonV1.adult = this.adult;
+    return tokenJsonV1;
   }
 
-  getTokenJsonV2(type :string,thumbnail: string){
+  getTokenJsonV2(type: string, thumbnail: string) {
 
     let tokenJsonV2: FeedsData.TokenJsonV2 = {
       version: '',
       name: '',
       description: '',
       type: '',
-      data:null,
+      data: null,
       adult: false
     };
-        tokenJsonV2.version = "2";
-        tokenJsonV2.type = type;
-        tokenJsonV2.name = this.nftName;
-        tokenJsonV2.description = this.nftDescription;
-        tokenJsonV2.adult = this.adult;
-        switch(type){
-          case "image":
-          case "avatar":
-            let mintJsonData = {
-              image: this.imageObj['imgHash'],
-              kind: this.imageObj['imgFormat'],
-              size: this.imageObj['imgSize'],
-              thumbnail:thumbnail
-            }
-            tokenJsonV2.data = mintJsonData;
-            break;
-          case "video":
-            tokenJsonV2.data = this.videoObj;
-          case "audio":
-            tokenJsonV2.data = this.audioObj;
-            break;
+    tokenJsonV2.version = "2";
+    tokenJsonV2.type = type;
+    tokenJsonV2.name = this.nftName;
+    tokenJsonV2.description = this.nftDescription;
+    tokenJsonV2.adult = this.adult;
+    switch (type) {
+      case "image":
+      case "avatar":
+        let mintJsonData = {
+          image: this.imageObj['imgHash'],
+          kind: this.imageObj['imgFormat'],
+          size: this.imageObj['imgSize'],
+          thumbnail: thumbnail
         }
+        tokenJsonV2.data = mintJsonData;
+        break;
+      case "video":
+        tokenJsonV2.data = this.videoObj;
+      case "audio":
+        tokenJsonV2.data = this.audioObj;
+        break;
+    }
 
-      return tokenJsonV2;
+    return tokenJsonV2;
   }
 }

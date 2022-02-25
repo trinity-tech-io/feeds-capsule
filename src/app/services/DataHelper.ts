@@ -67,8 +67,6 @@ export class DataHelper {
   private localCredential: string = '';
   private cachedPost: { [key: string]: FeedsData.Post } = {};
 
-  private localSignInData = null; //TODO
-
   private developerMode = false;
   private hideDeletedPosts = false;
   private hideDeletedComments = false;
@@ -129,6 +127,15 @@ export class DataHelper {
     private storageService: StorageService,
     private events: Events
   ) { }
+
+  //localSignInData
+  setLocalSignInData(signInData: SignInData) {
+    this.localSignInData = signInData;
+  }
+
+  getLocalSignInData(): SignInData {
+    return this.localSignInData;
+  }
 
   ////subscribedChannelsMap
   getSubscribedFeedsList(): FeedsData.Channels[] {

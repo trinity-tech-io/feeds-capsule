@@ -21,6 +21,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { MenuService } from 'src/app/services/MenuService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 @Component({
   selector: 'app-feedspreferences',
@@ -72,7 +73,8 @@ export class FeedspreferencesPage implements OnInit {
     private carrierService: CarrierService,
     private menuService: MenuService,
     private pasarAssistService: PasarAssistService,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
   ngOnInit() {
     this.activeRoute.queryParams.subscribe((params: Params) => {
@@ -97,7 +99,7 @@ export class FeedspreferencesPage implements OnInit {
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
     this.getPublicStatus();
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
     if (server != null) {
       this.feedService.checkDIDOnSideChain(server.did, isOnSideChain => {
         this.isShowQrcode = isOnSideChain;
@@ -144,44 +146,44 @@ export class FeedspreferencesPage implements OnInit {
       this.isLoading = false;
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder,(channelCollections: FeedsData.ChannelCollections)=>{
-      this.zone.run(()=>{
+    this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder, (channelCollections: FeedsData.ChannelCollections) => {
+      this.zone.run(() => {
         this.curFeedPublicStatus = false;
         this.isShowMint = false;
         let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
-        if(publishedActivePanelList.length === 0){
-           return;
+        if (publishedActivePanelList.length === 0) {
+          return;
         }
         let tokenId = channelCollections.tokenId;
-        let itemIndex = _.findIndex(publishedActivePanelList,(item:any)=>{
+        let itemIndex = _.findIndex(publishedActivePanelList, (item: any) => {
           return item.tokenId === tokenId;
         });
         this.channelCollections = null;
-        publishedActivePanelList.splice(itemIndex,1);
+        publishedActivePanelList.splice(itemIndex, 1);
         this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
       });
     });
 
-  this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
-    let type = obj["type"] || "";
-    if(type === "burn"){
-      this.zone.run(()=>{
-        this.curFeedPublicStatus = false;
+    this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
+      let type = obj["type"] || "";
+      if (type === "burn") {
+        this.zone.run(() => {
+          this.curFeedPublicStatus = false;
+          this.isShowMint = false;
+        });
+        return;
+      }
+      this.zone.run(() => {
+        this.curFeedPublicStatus = true;
         this.isShowMint = false;
+        let newItem = _.cloneDeep(obj["assItem"]);
+        newItem["panelId"] = obj["panelId"];
+        this.channelCollections = newItem;
+        let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
+        publishedActivePanelList.push(newItem);
+        this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
       });
-      return;
-    }
-    this.zone.run(()=>{
-      this.curFeedPublicStatus = true;
-      this.isShowMint = false;
-      let newItem  =  _.cloneDeep(obj["assItem"]);
-          newItem["panelId"]  = obj["panelId"];
-          this.channelCollections = newItem;
-      let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList() || [];
-          publishedActivePanelList.push(newItem);
-          this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
     });
-  });
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
@@ -194,7 +196,7 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   unPublicFeeds() {
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
     if (server === null) {
       return;
     }
@@ -220,7 +222,7 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   publicFeeds(buttonType: string) {
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
     if (server === null) {
       return;
     }
@@ -288,16 +290,16 @@ export class FeedspreferencesPage implements OnInit {
     that.publicFeeds('confirm');
   }
 
- async getPublicStatus() {
+  async getPublicStatus() {
 
     this.channelCollections = await this.getChannelCollectionsStatus() || null;
-    if(this.channelCollections != null){
+    if (this.channelCollections != null) {
       this.zone.run(() => {
         this.curFeedPublicStatus = true;
       });
       return;
     }
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
     if (server === null) {
       return;
     }
@@ -373,57 +375,57 @@ export class FeedspreferencesPage implements OnInit {
     }
   }
 
-  async newToggle(){
+  async newToggle() {
     await this.native.showLoading("common.waitMoment");
     let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
-    if(channelCollections != null && this.curFeedPublicStatus ){
-        let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
-        if(accountAddress === '') {
+    if (channelCollections != null && this.curFeedPublicStatus) {
+      let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
+      if (accountAddress === '') {
         this.native.hideLoading();
         this.native.toastWarn('common.connectWallet');
         return;
-        }
-        this.native.hideLoading();
-        this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
-        return;
-    }else{
-    let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      }
+      this.native.hideLoading();
+      this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
+      return;
+    } else {
+      let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
       if (server === null) {
         this.native.hideLoading();
-      return;
+        return;
       }
       let feedsUrl = server.feedsUrl + '/' + this.feedId;
       let tokenInfo = await this.isExitStrick(feedsUrl);
-      if(tokenInfo != null){
+      if (tokenInfo != null) {
         let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
-        if(accountAddress === '') {
-        this.native.toastWarn('common.connectWallet');
-        this.native.hideLoading();
-        return;
+        if (accountAddress === '') {
+          this.native.toastWarn('common.connectWallet');
+          this.native.hideLoading();
+          return;
         }
-        let channelItem: FeedsData.ChannelCollections = await this.getChannelCollections(tokenInfo,accountAddress);
+        let channelItem: FeedsData.ChannelCollections = await this.getChannelCollections(tokenInfo, accountAddress);
         this.native.hideLoading();
         this.menuService.showChannelCollectionsMenu(channelItem);
-      }else{
+      } else {
         this.toggle();
       }
     }
   }
 
- async getChannelCollections(tokenInfo :any,accountAddress: string){
-      let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections()
-      channelCollections.status = "0";
-      channelCollections.userAddr = accountAddress;
-      channelCollections.panelId = "";
-      channelCollections.tokenId = tokenInfo[0];
-      channelCollections.type = "feeds-channel";
-      const signinData = this.feedService.getSignInData();
-      channelCollections.ownerDid = signinData.did;
+  async getChannelCollections(tokenInfo: any, accountAddress: string) {
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections()
+    channelCollections.status = "0";
+    channelCollections.userAddr = accountAddress;
+    channelCollections.panelId = "";
+    channelCollections.tokenId = tokenInfo[0];
+    channelCollections.type = "feeds-channel";
+    const signinData = this.feedService.getSignInData();
+    channelCollections.ownerDid = signinData.did;
 
     let tokenUri = tokenInfo[3]; //tokenUri
     tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
     const tokenJson = await this.ipfsService
-    .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
+      .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
     channelCollections.name = tokenJson["name"];
     channelCollections.description = tokenJson["description"];
     let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
@@ -431,10 +433,10 @@ export class FeedspreferencesPage implements OnInit {
     channelCollections.entry = tokenJson["entry"];
     channelCollections.ownerName = "";
     let url: string = tokenJson["entry"]["url"];
-    let urlArr = url.replace("feeds://","").split("/");
+    let urlArr = url.replace("feeds://", "").split("/");
     channelCollections.did = urlArr[0];
     let carrierAddress = urlArr[1];
-    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
+    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
     channelCollections.nodeId = nodeId;
     return channelCollections;
   }
@@ -452,84 +454,84 @@ export class FeedspreferencesPage implements OnInit {
     });
   }
 
-  mintChannel(){
-    this.native.navigateForward(['/galleriachannel'],{ queryParams:{"nodeId": this.nodeId,"channelId": this.feedId }});
+  mintChannel() {
+    this.native.navigateForward(['/galleriachannel'], { queryParams: { "nodeId": this.nodeId, "channelId": this.feedId } });
   }
 
-  async getChannelCollectionsStatus(){
+  async getChannelCollectionsStatus() {
     try {
-      let server = this.feedService.getServerbyNodeId(this.nodeId) || null;
+      let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
       if (server === null) {
-      return;
+        return;
       }
       let feedsUrl = server.feedsUrl + '/' + this.feedId;
       let feedsUrlHash = UtilService.SHA256(feedsUrl);
-      let tokenId: string ="0x" + feedsUrlHash;
-      tokenId =  UtilService.hex2dec(tokenId);
+      let tokenId: string = "0x" + feedsUrlHash;
+      tokenId = UtilService.hex2dec(tokenId);
       let list = this.dataHelper.getPublishedActivePanelList() || [];
-      let fitleItem = _.find(list,(item)=>{
-          return item.tokenId === tokenId;
+      let fitleItem = _.find(list, (item) => {
+        return item.tokenId === tokenId;
       }) || null;
-      if(fitleItem != null){
-         return fitleItem;
+      if (fitleItem != null) {
+        return fitleItem;
       }
       let result = await this.pasarAssistService.getPanel(tokenId);
-      if(result != null){
-       let tokenInfo = result["data"] || "";
-       if(tokenInfo === ""){
-           return null;
-       }
-       tokenInfo =  await this.handlePanels(result["data"]);
-       let panelList=this.dataHelper.getPublishedActivePanelList() || [];
-       panelList.push(tokenInfo);
-       this.dataHelper.setPublishedActivePanelList(panelList);
-       return tokenInfo;
-       }
+      if (result != null) {
+        let tokenInfo = result["data"] || "";
+        if (tokenInfo === "") {
+          return null;
+        }
+        tokenInfo = await this.handlePanels(result["data"]);
+        let panelList = this.dataHelper.getPublishedActivePanelList() || [];
+        panelList.push(tokenInfo);
+        this.dataHelper.setPublishedActivePanelList(panelList);
+        return tokenInfo;
+      }
       return null;
-     } catch (error) {
+    } catch (error) {
       return null;
-     }
-   }
-
-   async handlePanels(item :any){
-     let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-      channelCollections.version = item.version;
-      channelCollections.panelId = item.panelId;
-      channelCollections.userAddr = item.user;
-      //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
-      channelCollections.diaBalance = "0";
-      channelCollections.type = item.type;
-      channelCollections.tokenId = item.tokenId;
-      channelCollections.name = item.name;
-      channelCollections.description = item.description;
-      channelCollections.avatar = item.avatar;
-      channelCollections.entry = item.entry;
-      channelCollections.ownerDid = item.tokenDid.did;
-      let didJsON = this.feedService.getSignInData() || {};
-      channelCollections.ownerName = didJsON["name"];
-      let url: string = channelCollections.entry.url;
-      let urlArr = url.replace("feeds://","").split("/");
-      channelCollections.did = urlArr[0];
-      let carrierAddress = urlArr[1];
-      let nodeId = await this.carrierService.getIdFromAddress(carrierAddress,()=>{});
-      channelCollections.nodeId = nodeId;
-      return channelCollections;
+    }
   }
 
- async isExitStrick(feedsUrl: string) {
+  async handlePanels(item: any) {
+    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
+    channelCollections.version = item.version;
+    channelCollections.panelId = item.panelId;
+    channelCollections.userAddr = item.user;
+    //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
+    channelCollections.diaBalance = "0";
+    channelCollections.type = item.type;
+    channelCollections.tokenId = item.tokenId;
+    channelCollections.name = item.name;
+    channelCollections.description = item.description;
+    channelCollections.avatar = item.avatar;
+    channelCollections.entry = item.entry;
+    channelCollections.ownerDid = item.tokenDid.did;
+    let didJsON = this.feedService.getSignInData() || {};
+    channelCollections.ownerName = didJsON["name"];
+    let url: string = channelCollections.entry.url;
+    let urlArr = url.replace("feeds://", "").split("/");
+    channelCollections.did = urlArr[0];
+    let carrierAddress = urlArr[1];
+    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
+    channelCollections.nodeId = nodeId;
+    return channelCollections;
+  }
 
-   try {
-    let tokenId: string ="0x" + UtilService.SHA256(feedsUrl);
-    tokenId =  UtilService.hex2dec(tokenId);
-    //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
-    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
-    if(tokenInfo[0]!='0' && tokenInfo[2]!='0'){
-         return tokenInfo;
+  async isExitStrick(feedsUrl: string) {
+
+    try {
+      let tokenId: string = "0x" + UtilService.SHA256(feedsUrl);
+      tokenId = UtilService.hex2dec(tokenId);
+      //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
+      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
+      if (tokenInfo[0] != '0' && tokenInfo[2] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
     }
-    return null;
-   } catch (error) {
-    return null;
-   }
 
   }
 

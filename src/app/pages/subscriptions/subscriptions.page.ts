@@ -6,6 +6,8 @@ import { Events } from 'src/app/services/events.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+
 @Component({
   selector: 'app-subscriptions',
   templateUrl: './subscriptions.page.html',
@@ -34,9 +36,10 @@ export class SubscriptionsPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private intentService: IntentService,
-  ) {}
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.initTitle();
@@ -159,7 +162,7 @@ export class SubscriptionsPage implements OnInit {
   getQrCodeString(feed: any) {
     let nodeId = feed['nodeId'];
     this.shareNodeId = nodeId;
-    let serverInfo = this.feedService.getServerbyNodeId(nodeId);
+    let serverInfo = this.feedsServiceApi.getServerbyNodeId(nodeId);
     let feedsUrl = serverInfo['feedsUrl'] || null;
     let feedId = feed['channelId'] || '';
     this.shareFeedId = feedId;
@@ -183,7 +186,7 @@ export class SubscriptionsPage implements OnInit {
           return;
         }
 
-        this.feedService.unsubscribeChannel(nodeId, feedId);
+        this.feedsServiceApi.unsubscribeChannel(nodeId, feedId);
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
         break;
@@ -191,10 +194,10 @@ export class SubscriptionsPage implements OnInit {
         let content = this.getQrCodeString(this.curItem);
         this.hideSharMenuComponent = false;
         //share channel
-       await this.native.showLoading("common.generateSharingLink");
+        await this.native.showLoading("common.generateSharingLink");
         try {
           const sharedLink = await this.intentService.createShareLink(nodeId, feedId, 0);
-          this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId),sharedLink);
+          this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId), sharedLink);
         } catch (error) {
         }
         this.native.hideLoading();
@@ -231,7 +234,7 @@ export class SubscriptionsPage implements OnInit {
     let feedSubscribes = feed.subscribers;
     let feedAvatar = this.feedService.parseChannelAvatar(feed.avatar);
     if (feedAvatar.indexOf('data:image') > -1 ||
-        feedAvatar.startsWith("https:")) {
+      feedAvatar.startsWith("https:")) {
       this.feedService.setSelsectIndex(0);
       this.feedService.setProfileIamge(feedAvatar);
     } else if (feedAvatar.indexOf('assets/images') > -1) {

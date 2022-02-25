@@ -12,9 +12,10 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-import { PopoverController} from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { IntentService } from 'src/app/services/IntentService';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 type ProfileDetail = {
   type: string;
@@ -72,10 +73,11 @@ export class ProfiledetailPage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private popoverController: PopoverController,
     private intentService: IntentService,
-    private ipfsService: IPFSService
-  ) {}
+    private ipfsService: IPFSService,
+    private feedsServiceApi: FeedsServiceApi
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   collectData() {
     this.profileDetails = [];
@@ -150,13 +152,13 @@ export class ProfiledetailPage implements OnInit {
 
     this.initData();
 
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog,(dialogData:any)=>{
-         let pageName = dialogData.pageName;
-         let dialogName = dialogData.dialogName;
-         let dialogbutton = dialogData.clickButton;
-         if(pageName === "profiledetail"){
-          this.handleDialog(dialogName,dialogbutton,pageName);
-         }
+    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
+      let pageName = dialogData.pageName;
+      let dialogName = dialogData.dialogName;
+      let dialogbutton = dialogData.clickButton;
+      if (pageName === "profiledetail") {
+        this.handleDialog(dialogName, dialogbutton, pageName);
+      }
     });
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
@@ -169,7 +171,7 @@ export class ProfiledetailPage implements OnInit {
       FeedsEvent.PublishType.serverConnectionChanged,
       () => {
         this.zone.run(() => {
-          if(this.nodeId!=""){
+          if (this.nodeId != "") {
             this.serverStatus = this.feedService.getServerStatusFromId(
               this.nodeId,
             );
@@ -183,7 +185,7 @@ export class ProfiledetailPage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -194,7 +196,7 @@ export class ProfiledetailPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  ionViewWillUnload() {}
+  ionViewWillUnload() { }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
@@ -210,14 +212,14 @@ export class ProfiledetailPage implements OnInit {
     if (this.avatar.indexOf('feeds:imgage:') > -1) {
       imgUri = this.avatar.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('feeds:image:') > -1){
+    } else if (this.avatar.indexOf('feeds:image:') > -1) {
       imgUri = this.avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('pasar:image:') > -1){
+    } else if (this.avatar.indexOf('pasar:image:') > -1) {
       imgUri = this.avatar.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
-    else{
+    else {
       imgUri = this.avatar;
     }
     return imgUri;
@@ -231,7 +233,7 @@ export class ProfiledetailPage implements OnInit {
         .then(() => {
           this.native.toast_trans('common.textcopied');
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }
 
@@ -250,7 +252,7 @@ export class ProfiledetailPage implements OnInit {
 
     this.isShowQrcode = false;
 
-    if(did!=""){
+    if (did != "") {
       this.feedService.checkDIDOnSideChain(did, isOnSideChain => {
         this.zone.run(() => {
           this.isShowQrcode = isOnSideChain;
@@ -261,10 +263,10 @@ export class ProfiledetailPage implements OnInit {
       });
     }
 
-    if(nodeId!=""){
+    if (nodeId != "") {
       this.serverStatus = this.feedService.getServerStatusFromId(nodeId);
       this.clientNumber = this.feedService.getServerStatisticsNumber(nodeId);
-      let server = this.feedService.getServerbyNodeId(nodeId) || null;
+      let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || null;
       this.didString = server.did;
       this.serverName =
         server.name ||
@@ -378,7 +380,7 @@ export class ProfiledetailPage implements OnInit {
           icon: 'trash',
           handler: () => {
             this.native
-              .showLoading('common.waitMoment', isDismiss => {})
+              .showLoading('common.waitMoment', isDismiss => { })
               .then(() => {
                 this.feedService.deleteFeedSource(this.nodeId).then(() => {
                   this.native.toast('ServerInfoPage.removeserver');
@@ -399,7 +401,7 @@ export class ProfiledetailPage implements OnInit {
           text: this.translate.instant('ServerInfoPage.cancel'),
           role: 'cancel',
           icon: 'close-circle',
-          handler: () => {},
+          handler: () => { },
         },
       ],
     });
@@ -450,48 +452,48 @@ export class ProfiledetailPage implements OnInit {
     this.native.navigateForward(['editprofileimage'], {});
   }
 
-  upgradeToPublisherAccount(){
+  upgradeToPublisherAccount() {
     this.viewHelper.showPublisherDialog("profiledetail")
   }
 
-  handleDialog(dialogName: string,dialogbutton: string,pageName:string) {
-      switch(dialogName){
-        case "publisherAccount":
-            this.publisherAccount(dialogbutton,pageName)
+  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
+    switch (dialogName) {
+      case "publisherAccount":
+        this.publisherAccount(dialogbutton, pageName)
         break;
-        case "guide":
-          this.guide(dialogbutton);
+      case "guide":
+        this.guide(dialogbutton);
         break;
-      }
-  }
-
- async publisherAccount(dialogbutton: string,pageName: string) {
-    switch(dialogbutton){
-      case "createNewPublisherAccount":
-        this.feedService.setBindPublisherAccountType('new');
-       break;
-      case "bindExistingPublisherAccount":
-        this.feedService.setBindPublisherAccountType('exit');
-        await this.native.navigateForward(['bindservice/scanqrcode'],"");
-        await this.popoverController.dismiss();
-      break;
     }
   }
 
-async guide(dialogbutton: string){
-    switch(dialogbutton){
+  async publisherAccount(dialogbutton: string, pageName: string) {
+    switch (dialogbutton) {
+      case "createNewPublisherAccount":
+        this.feedService.setBindPublisherAccountType('new');
+        break;
+      case "bindExistingPublisherAccount":
+        this.feedService.setBindPublisherAccountType('exit');
+        await this.native.navigateForward(['bindservice/scanqrcode'], "");
+        await this.popoverController.dismiss();
+        break;
+    }
+  }
+
+  async guide(dialogbutton: string) {
+    switch (dialogbutton) {
       case "guidemac":
-        await this.native.navigateForward(["guidemac"],"");
+        await this.native.navigateForward(["guidemac"], "");
         await this.popoverController.dismiss();
-       break;
+        break;
       case "guideubuntu":
-        await this.native.navigateForward(["guideubuntu"],"");
+        await this.native.navigateForward(["guideubuntu"], "");
         await this.popoverController.dismiss();
-      break;
+        break;
       case "skip":
-        await this.native.navigateForward(['bindservice/scanqrcode'],"");
+        await this.native.navigateForward(['bindservice/scanqrcode'], "");
         await this.popoverController.dismiss();
-      break;
+        break;
     }
   }
 }
