@@ -41,8 +41,11 @@ export class PostHelperService {
   preparePublishPost(nodeId: string, channelId: number, postText: string, imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log("preparePublishPost imagesBase64 ====== ", imagesBase64)
+        console.log("preparePublishPost videoData ====== ", videoData)
         const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
         const content = this.createContent(postText, mediaDatas);
+        console.log("preparePublishPost content ====== ", content)
         resolve(JSON.stringify(content));
       } catch (error) {
         const errorMsg = 'Prepare publish post error';

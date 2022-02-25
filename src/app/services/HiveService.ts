@@ -176,16 +176,17 @@ export class HiveService {
     return channel_id.toString()
   }
 
-  async postChannleContent(channelName: string, channel_id: number, content: any, status: string): Promise<InsertResult> {
-    const post_id = ""
+  async postChannleContent(channel_id: number, content: any, status: string): Promise<InsertResult> {
+    const post_id = this.dataHelper.generateLastTempIdData()
     const created_at = this.getCurrentTimeNum()
     const update_at = this.getCurrentTimeNum()
     const memo = ""
     const type = ""
     const tag = ""
+    const channle = this.dataHelper.getChannel(channel_id.toString())
     // content 中可能包含文字和图片
     const doc = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
-    return (await this.getVault()).getDatabaseService().insertOne(channelName, doc, new InsertOptions(false, true))
+    return (await this.getVault()).getDatabaseService().insertOne(channle.name, doc, new InsertOptions(false, true))
   }
 
   async updatePost(channelName: string, channel_id: number, origin: any, content: any, status: string): Promise<UpdateResult> {

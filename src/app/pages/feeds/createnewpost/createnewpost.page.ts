@@ -20,6 +20,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveService } from 'src/app/services/HiveService';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -90,7 +91,8 @@ export class CreatenewpostPage implements OnInit {
     private fileHelperService: FileHelperService,
     private ipfsService: IPFSService,
     private postHelperService: PostHelperService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveService: HiveService
   ) { }
 
   ngOnInit() {
@@ -254,24 +256,31 @@ export class CreatenewpostPage implements OnInit {
     this.zone.run(async () => {
       let newPost = this.native.iGetInnerText(this.newPost);
 
-      if (this.feedService.getConnectionStatus() != 0) {
-        this.native.toastWarn('common.connectionError');
-        return;
-      }
+      console.log("newPost ===== ", newPost)
+      // if (this.feedService.getConnectionStatus() != 0) {
+      //   this.native.toastWarn('common.connectionError');
+      //   return;
+      // }
 
-      if (this.checkServerStatus(this.nodeId) != 0) {
-        this.native.toastWarn('common.connectionError1');
-        return;
-      }
+      // if (this.checkServerStatus(this.nodeId) != 0) {
+      //   this.native.toastWarn('common.connectionError1');
+      //   return;
+      // }
+
+      console.log("this.imgUrl ===== ", this.imgUrl)
+      console.log("this.flieUri ===== ", this.flieUri)
 
       if (newPost === '' && this.imgUrl === '' && this.flieUri === '') {
         this.native.toast_trans('CreatenewpostPage.tipMsg');
         return false;
       }
+      console.log("this.posterImg ===== ", this.posterImg)
+      console.log("this.flieUri ===== ", this.flieUri)
       if (this.posterImg != '' && this.flieUri === '') {
         this.native.toast_trans('CreatenewpostPage.tipMsg2');
         return false;
       }
+      console.log("this.isPublishing ===== ", this.isPublishing)
       if (!this.isPublishing) {
         this.isPublishing = true;
         //show dialog
@@ -296,7 +305,7 @@ export class CreatenewpostPage implements OnInit {
     const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
     let tempPostId = this.feedService.generateTempPostId();
     //TODO
-    this.feedService.publishPost(
+    this.feedsServiceApi.publishPost(
       this.nodeId,
       this.channelId,
       content,
