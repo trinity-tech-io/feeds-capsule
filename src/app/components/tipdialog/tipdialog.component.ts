@@ -40,6 +40,6 @@ export class TipdialogComponent implements OnInit {
       name: this.feedName,
       desc: this.feedDesc,
     };
-    // this.events.publish(FeedsEvent.PublishType.tipdialogConfirm, tipDialogData);
+    this.events.publish(FeedsEvent.PublishType.tipdialogConfirm, tipDialogData);
   }
 }

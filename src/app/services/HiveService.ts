@@ -11,11 +11,17 @@ import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restcli
 import { isEqual, isNil, reject } from 'lodash';
 import { on } from 'process';
 import { VideoService } from './video.service';
+import { stringify } from 'querystring';
+import { Events } from 'src/app/services/events.service';
 
 let TAG: string = 'Feeds-HiveService';
 
+let eventBus: Events = null;
+
 @Injectable()
 export class HiveService {
+  public static readonly channlesTable = "ChannlesTable"
+  public static readonly channlesId = "channlesId"
   private static readonly RESOLVE_CACHE = "data/didCache"
   private static collectName = "feeds_subscription"//标识是否备份到hive
   private static isSync = "feeds_subscription_synchronize" // 标识是否同步数据到本地
@@ -34,7 +40,10 @@ export class HiveService {
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
     private dataHelper: DataHelper,
+    private events: Events,
   ) {
+    console.log("++++++ event = " + events);
+    eventBus = events;
   }
 
   public async creat(appInstanceDocumentString: string, userDidString: string, resolverUrl: string): Promise<AppContext> {
@@ -144,24 +153,33 @@ export class HiveService {
   }
 
   async createChannel(channelName: string): Promise<void> {
-    // 创建channle表
-    return (await this.getVault()).getDatabaseService().createCollection(channelName)
+    return await (await this.getVault()).getDatabaseService().createCollection(channelName)
   }
 
-  async postChannleInfo(channelName: string, intro: string, avatar: any): Promise<InsertResult> {
-    const channel_id = 0
-    const created_at = 0
-    const updated_at = 0
+  async postChannleInfo(channelName: string, intro: string, avatar: any) {
+
+    let userDid = (await this.dataHelper.getSigninData()).did
+    const channlesId = localStorage.getItem(userDid + HiveService.channlesId) || ''
+    console.log("channlesId ==== ", channlesId)
+
+    const channel_id = channlesId != '' ? Number(channlesId) + 1 : 0
+    console.log("channel_id ==== ", channel_id)
+    const created_at = this.getCurrentTimeNum()
+    const updated_at = this.getCurrentTimeNum()
     const memo = ""
-    const doc = { "channel_id": channel_id, "intro": intro, "avatar": avatar, "created_at": created_at, "updated_at": updated_at, "memo": memo, }
-    return (await this.getVault()).getDatabaseService().insertOne(channelName, doc, new InsertOptions(false, true))
+    const doc = { "channel_id": channel_id, "name": channelName, "intro": intro, "avatar": avatar, "created_at": created_at, "updated_at": updated_at, "memo": memo, }
+    let result = (await this.getVault()).getDatabaseService().insertOne(HiveService.channlesTable, doc, new InsertOptions(false, true))
+    this.handleResult(
+      "create_channel", channel_id, userDid, channelName, "", doc
+    );
+
+    return channel_id.toString()
   }
 
-  async postChannleContent(channelName: string, content: any, status: string): Promise<InsertResult> {
-    const channel_id = 0
-    const post_id = 0
-    const created_at = 0
-    const update_at = 0
+  async postChannleContent(channelName: string, channel_id: number, content: any, status: string): Promise<InsertResult> {
+    const post_id = ""
+    const created_at = this.getCurrentTimeNum()
+    const update_at = this.getCurrentTimeNum()
     const memo = ""
     const type = ""
     const tag = ""
@@ -170,11 +188,10 @@ export class HiveService {
     return (await this.getVault()).getDatabaseService().insertOne(channelName, doc, new InsertOptions(false, true))
   }
 
-  async updatePost(channelName: string, origin: any, content: any, status: string): Promise<UpdateResult> {
-    const channel_id = 0
+  async updatePost(channelName: string, channel_id: number, origin: any, content: any, status: string): Promise<UpdateResult> {
     const post_id = 0
-    const created_at = 0
-    const update_at = 0
+    const created_at = this.getCurrentTimeNum()
+    const update_at = this.getCurrentTimeNum()
     const memo = ""
     const type = ""
     const tag = ""
@@ -192,6 +209,97 @@ export class HiveService {
   async getMyChannelList() {
     let userDid = (await this.dataHelper.getSigninData()).did
     this.dataHelper.getMyChannelListWithHive(userDid)
+  }
+
+  handleResult(
+    method: string,
+    channel_id: number,
+    userDid: string,
+    channleName: string,
+    post_id: any,
+    request: any,
+  ) {
+    let requestParams = request.requestParams;
+    switch (method) {
+      // 在这里存到了本地
+      case FeedsData.MethodType.create_channel:
+        this.handleCreateChannelResult(channel_id, userDid, channleName, request);
+        break;
+    }
+  }
+
+  handleCreateChannelResult(
+    channel_id: number,
+    userDid: string,
+    channleName: string,
+    request: any
+  ) {
+    // let channel_id = result.channel_id;
+    let created_at = request.created_at;
+    let updated_at = request.updated_at;
+    let name = request.name;
+    let introduction = request.intro;
+    let avatar = request.avatar;
+    let memo = request.memo;
+    let type = request.type;
+
+    let channelId = channel_id
+    // let channelName = channleName
+    let channelIntro = request.intro
+    console.log("created_at ==== ", created_at)
+    console.log("updated_at ==== ", updated_at)
+    console.log("channelId ===== ", request)
+    // let owner_name = this.getSignInData().name;
+    // let owner_did = this.getSignInData().did;
+    let avatarBin = request.avatar;
+    // let avatar = this.serializeDataService.decodeData(avatarBin);
+    let nodeChannelId = userDid + HiveService.channlesTable
+
+    console.log("nodeChannelId ===== ", nodeChannelId)
+    console.log("channel_id ===== ", channel_id)
+    console.log("name ===== ", name)
+
+    let channel: FeedsData.Channels = {
+      channel_id: channel_id,
+      created_at: created_at,
+      updated_at: updated_at,
+      name: name,
+      introduction: introduction,
+      avatar: avatar,
+      memo: memo,
+      type: type,
+
+      nodeId: nodeChannelId,
+      id: 0,
+      // name: channelName,
+      // introduction: channelIntro,
+      owner_name: "123",
+      owner_did: "321",
+      subscribers: 0,
+      last_update: this.getCurrentTimeNum(),
+      last_post: '',
+      // avatar: avatar,
+      isSubscribed: false,
+    };
+    this.dataHelper.updateChannel(channel_id.toString(), channel)
+    localStorage.setItem(userDid + HiveService.channlesId, channel_id.toString())
+
+    // this.hiveService.insertOne(channel)
+    // this.subscribeChannel(nodeId, channelId);
+    console.log("++++++ event = " + eventBus);
+    let createTopicSuccessData: FeedsEvent.CreateTopicSuccessData = {
+      nodeId: userDid,
+      channelId: channelId,
+    };
+    eventBus.publish(
+      FeedsEvent.PublishType.createTopicSuccess,
+      createTopicSuccessData,
+    );
+    eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
+  }
+
+  getCurrentTimeNum(): number {
+    return new Date().getTime();
   }
 
   async downloadEssAvatar() {
@@ -293,19 +401,37 @@ export class HiveService {
           const isSubscribed = Boolean(obj["isSubscribed"])
           const nodeChannelId = this.dataHelper.getKey(nodeId, channelId, 0, 0)
 
+          let channel_id = 0
+          let created_at = 0
+          let updated_at = 0
+          // let name = 
+          let introduction = desc
+          // let avatar = ""
+          let memo = ""
+          let type = ""
+
           array.push(nodeChannelId)
           i = i + 1
           let channel: FeedsData.Channels = {
+            channel_id: channel_id,
+            created_at: created_at,
+            updated_at: updated_at,
+            name: name,
+            introduction: introduction,
+            avatar: avatar,
+            memo: memo,
+            type: type,
+
             nodeId: nodeId,
             id: channelId,
-            name: name,
-            introduction: desc,
+            // name: name,
+            // introduction: desc,
             owner_name: owner_name,
             owner_did: owner_did,
             subscribers: subscribers,
             last_update: last_update,
             last_post: last_post,
-            avatar: avatar,
+            // avatar: avatar,
             isSubscribed: isSubscribed,
           }
 

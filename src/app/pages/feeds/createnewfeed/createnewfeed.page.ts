@@ -16,6 +16,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService'
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -52,7 +53,9 @@ export class CreatenewfeedPage implements OnInit {
     private popup: PopupProvider,
     private languageService: LanguageService,
     private ipfsService: IPFSService,
-    private hiveService: HiveService
+    private hiveService: HiveService,
+    private dataHelper: DataHelper
+
   ) {}
 
   ngOnInit() {
@@ -63,7 +66,7 @@ export class CreatenewfeedPage implements OnInit {
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
     this.developerMode = this.feedService.getDeveloperMode();
-    // this.selectedServer = this.feedService.getBindingServer();
+    this.selectedServer = this.feedService.getBindingServer();
     this.selectedChannelSource = this.selectedServer.did;
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
@@ -99,12 +102,14 @@ export class CreatenewfeedPage implements OnInit {
           })
           .then(() => {
             console.log("1 ====================")
-            this.feedService.createTopic(
-              this.selectedServer.nodeId,
-              name,
-              desc,
-              this.channelAvatar,
-            );
+            this.uploadChannle(name, desc)
+            // carrirer 发送创建频道
+            // this.feedService.createTopic(
+            //   this.selectedServer.nodeId,
+            //   name,
+            //   desc,
+            //   this.channelAvatar,
+            // );
           })
           .catch(() => {
             this.native.hideLoading();
@@ -204,22 +209,9 @@ export class CreatenewfeedPage implements OnInit {
     //   },
     // );
     this.processCreateChannel(name, desc);
-    try {
-      await this.native.showLoading('common.waitMoment');
-      await this.hiveService.createChannel(name.value)
-      console.log("create channel success =========")
-      await this.hiveService.postChannleInfo(name.value, desc.value, this.avatar)
-      console.log("post Channle Info success =========")
-      this.native.hideLoading()
-      this.native.pop()
-    } catch (error) {
-      this.native.hideLoading()
-      console.log("create channel error =========", JSON.stringify(error))
-      this.native.toast('common.saveFailed'); // 需要更改错误提示
-    }
   }
 
-  processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement) {
+  async processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement) {
     let nameValue = name.value || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue == '') {
@@ -246,10 +238,10 @@ export class CreatenewfeedPage implements OnInit {
 
     this.channelAvatar = this.feedService.getProfileIamge() || '';
 
-    if (this.channelAvatar == '') {
-      this.native.toast_trans('CreatenewfeedPage.tipMsg');
-      return;
-    }
+    // if (this.channelAvatar == '') {
+    //   this.native.toast_trans('CreatenewfeedPage.tipMsg');
+    //   return;
+    // }
 
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
@@ -265,6 +257,55 @@ export class CreatenewfeedPage implements OnInit {
     }
 
     // this.createDialog(name.value, desc.value);
+    console.log(" name.value ====== ", name.value)
+    await this.uploadChannle(name.value, desc.value)
+  }
+
+  async uploadChannle(name: string, desc: string) {
+    try {
+      await this.native.showLoading('common.waitMoment');
+      // 创建channles（用来存储userid下的所有创建的频道info）
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const isChannlesTable = localStorage.getItem(userDid + HiveService.channlesTable) || ''
+      console.log("isChannlesTable ===== ", isChannlesTable)
+      if (isChannlesTable === '') {
+        try {
+          await this.hiveService.createChannel(HiveService.channlesTable)
+          localStorage.setItem(userDid + HiveService.channlesTable, "true")
+        } catch (error) {
+          console.error("err code ==== ", error.code)
+          console.error("errstr ==== ", JSON.stringify(error))
+          if (error.code === 455) {
+            localStorage.setItem(userDid + HiveService.channlesTable, "true")
+            await this.hiveService.createChannel(name)
+            let channleId = await this.hiveService.postChannleInfo(name, desc, this.avatar)
+            this.native.hideLoading()
+            this.native.pop()
+          }
+          else {
+            throw error
+          }
+        }
+      } else {
+        // 创建channle表（用来存储此channle下的所有post）
+        await this.hiveService.createChannel(name)
+        console.log("create channel success =========")
+        let result = await this.hiveService.postChannleInfo(name, desc, this.avatar)
+        console.log("post Channle Info success =========", result)
+        this.native.hideLoading()
+        this.native.pop()
+      }
+    } catch (error) {
+      this.native.hideLoading()
+      console.log("create channel error =========", JSON.stringify(error))
+      // const err = JSON.parse(error) // 此方法不可用 
+      if (error.code === 455) {
+        this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
+      }
+      else {
+        this.native.toast('common.saveFailed'); // 需要更改错误提示
+      }
+    }
   }
 
   profileimage() {
@@ -285,7 +326,7 @@ export class CreatenewfeedPage implements OnInit {
       cssClass: 'genericPopup',
       component: TipdialogComponent,
       componentProps: {
-        did: this.selectedServer.did,
+        // did: this.selectedServer.did,
         name: name,
         des: des,
         feedPublicStatus: this.curFeedPublicStatus,

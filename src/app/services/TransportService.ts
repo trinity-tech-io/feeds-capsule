@@ -20,11 +20,13 @@ export class TransportService {
     this.events.subscribe(
       FeedsEvent.PublishType.carrierFriendMessage,
       event => {
+        console.log("FeedsEvent.PublishType.transportReceiveMessage + carrierFriendMessage");
         if (this.check(event.from))
           eventBus.publish(
             FeedsEvent.PublishType.transportReceiveMessage,
             event,
           );
+
         else
           eventBus.publish(
             FeedsEvent.PublishType.transportReceiveJWTMessage,
@@ -36,6 +38,7 @@ export class TransportService {
     this.events.subscribe(
       FeedsEvent.PublishType.carrierFriendBinaryMessage,
       event => {
+        console.log("FeedsEvent.PublishType.transportReceiveMessage + carrierFriendBinaryMessage");
         eventBus.publish(FeedsEvent.PublishType.transportReceiveMessage, event);
       },
     );

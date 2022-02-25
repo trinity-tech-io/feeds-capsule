@@ -99,6 +99,7 @@ export class EditPostPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    console.log("EditPostPage ======= ")
     this.initTitle();
     this.initData();
 

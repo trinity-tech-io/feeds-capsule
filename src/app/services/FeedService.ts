@@ -352,7 +352,10 @@ export class FeedService {
     if (bindingServer == null || bindingServer == undefined) return [];
     return this.dataHelper.getMyChannelList(bindingServer.nodeId);
   }
-
+  async getHiveMyChannelList() {
+    let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.channlesTable
+    return this.dataHelper.getMyChannelList(channlesKey);
+  }
   getUnreadNumber(nodeChannelId: string): number {
     return this.dataHelper.getUnreadNumber(nodeChannelId);
   }
@@ -574,6 +577,7 @@ export class FeedService {
   ) {
     let requestParams = request.requestParams;
     switch (method) {
+      // 在这里存到了本地
       case FeedsData.MethodType.create_channel:
         this.handleCreateChannelResult(nodeId, result, requestParams, error);
         break;
@@ -754,6 +758,7 @@ export class FeedService {
 
   friendMessageCallback() {
     this.events.subscribe(FeedsEvent.PublishType.jrpcReceiveMessage, result => {
+      console.log("FeedsEvent.PublishType.jrpcReceiveMessage")
       switch (result.type) {
         case -1:
           alert(result.error.code + ':' + result.error.message);
@@ -1716,18 +1721,36 @@ export class FeedService {
     let status: number = params.status || 0;
     Logger.log(TAG, 'Receive result from feedinfo_update, status is ', status);
 
+    let channel_id = 0
+    let created_at = 0
+    let updated_at = 0
+    // let name = ""
+    let introduction = desc
+    // let avatar = ""
+    let memo = ""
+    let type = ""
+
     if (originChannel == null) {
       let channel: FeedsData.Channels = {
+        channel_id: channel_id,
+        created_at: created_at,
+        updated_at: updated_at,
+        name: name,
+        introduction: introduction,
+        avatar: avatar,
+        memo: memo,
+        type: type,
+
         nodeId: nodeId,
         id: channelId,
-        name: name,
-        introduction: desc,
+        // name: name,
+        // introduction: desc,
         owner_name: '',
         owner_did: '',
         subscribers: 0,
         last_update: last_update,
         last_post: '',
-        avatar: '',
+        // avatar: '',
         isSubscribed: true,
 
         // status      :   0,  //Added 2.0
@@ -1735,6 +1758,8 @@ export class FeedService {
         // tip_methods :   "", //Added 2.0
         // memo        :   "", //Added 2.0
       };
+      console.log("handleNewFeedInfoUpdateNotification");
+
       this.dataHelper.updateChannel(nodeChannelId, channel);
       // this.hiveService.insertOne(channel)
       eventBus.publish(
@@ -1750,6 +1775,7 @@ export class FeedService {
     if (avatarBin != '') originChannel.avatar = avatar;
     if (last_update != '') originChannel.last_update = last_update;
     if (subscribers != 0) originChannel.subscribers = subscribers;
+    console.log("handleNewFeedInfoUpdateNotification11111");
 
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
@@ -1901,6 +1927,15 @@ export class FeedService {
     request: any,
     error: any,
   ) {
+    let channel_id = result.channel_id;
+    let created_at = request.created_at;
+    let updated_at = request.updated_at;
+    let name = request.name;
+    let introduction = request.introduction;
+    let avatar = request.avatar;
+    let memo = request.memo;
+    let type = request.type;
+
     let channelId = result.id;
     let channelName = request.name;
     let channelIntro = request.introduction;
@@ -1921,23 +1956,33 @@ export class FeedService {
       return;
     }
 
-    let avatar = this.serializeDataService.decodeData(avatarBin);
+    // let avatar = this.serializeDataService.decodeData(avatarBin);
 
     let channel: FeedsData.Channels = {
+      channel_id: channel_id,
+      created_at: created_at,
+      updated_at: updated_at,
+      name: name,
+      introduction: introduction,
+      avatar: avatar,
+      memo: memo,
+      type: type,
+
       nodeId: nodeId,
       id: channelId,
-      name: channelName,
-      introduction: channelIntro,
+      // name: channelName,
+      // introduction: channelIntro,
       owner_name: owner_name,
       owner_did: owner_did,
       subscribers: 0,
       last_update: UtilService.getCurrentTimeNum(),
       last_post: '',
-      avatar: avatar,
+      // avatar: avatar,
       isSubscribed: false,
     };
 
     let nodeChannelId = this.getChannelId(nodeId, channelId);
+    console.log("handleCreateChannelResult");
 
     this.dataHelper.updateChannel(nodeChannelId, channel);
     // this.hiveService.insertOne(channel)
@@ -2196,6 +2241,7 @@ export class FeedService {
     this.dataHelper.updatePost(key, originPost);
   }
 
+  // 处理我自己的频道结果
   handleGetMyChannelsResult(nodeId: string, responseResult: any, error: any) {
     if (error != null && error != undefined && error.code != undefined) {
       this.handleError(nodeId, error);
@@ -2214,22 +2260,40 @@ export class FeedService {
 
       let nodeChannelId = this.getChannelId(nodeId, id);
 
+      let channel_id = 0
+      let created_at = 0
+      let updated_at = 0
+      // let name = ""
+      // let introduction = ""
+      // let avatar = ""
+      let memo = ""
+      let type = ""
+
       let originChannel = this.dataHelper.getChannel(nodeChannelId);
       if (originChannel == null) {
         let channel = {
-          nodeId: nodeId,
-          id: id,
+          channel_id: channel_id,
+          created_at: created_at,
+          updated_at: updated_at,
           name: name,
           introduction: introduction,
+          avatar: avatar,
+          memo: memo,
+          type: type,
+
+          nodeId: nodeId,
+          id: id,
+          // name: name,
+          // introduction: introduction,
           owner_name: this.getSignInData().name,
           owner_did: this.getSignInData().did,
           subscribers: subscribers,
           last_update: UtilService.getCurrentTimeNum(),
           last_post: '',
-          avatar: avatar,
+          // avatar: avatar,
           isSubscribed: false,
         };
-
+        console.log("+++++++ handleGetMyChannelsResult");
         this.dataHelper.updateChannel(nodeChannelId, channel);
         // this.hiveService.insertOne(channel)
       }
@@ -2275,19 +2339,37 @@ export class FeedService {
       let status = result[index].status;
       Logger.log(TAG, 'Receive result from get_channels RPC,status is ', status);
 
+      let channel_id = 0
+      let created_at = 0
+      let updated_at = 0
+      let name = result[index].name
+      let introduction = result[index].introduction
+      // let avatar = avatar
+      let memo = ""
+      let type = ""
+
       let originChannelForHive = originChannel
       if (originChannel == null) {
         originChannel = {
+          channel_id: channel_id,
+          created_at: created_at,
+          updated_at: updated_at,
+          name: name,
+          introduction: introduction,
+          avatar: avatar,
+          memo: memo,
+          type: type,
+
           nodeId: nodeId,
           id: id,
-          name: result[index].name,
-          introduction: result[index].introduction,
+          // name: result[index].name,
+          // introduction: result[index].introduction,
           owner_name: result[index].owner_name,
           owner_did: result[index].owner_did,
           subscribers: result[index].subscribers,
           last_update: update * 1000,
           last_post: '',
-          avatar: avatar,
+          // avatar: avatar,
           isSubscribed: false,
         };
         originChannelForHive = originChannel
@@ -2301,6 +2383,7 @@ export class FeedService {
         originChannel.subscribers = result[index].subscribers;
         originChannel.last_update = result[index].last_update * 1000;
       }
+      console.log("+++++++ handleGetChannelsResult");
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
       // this.hiveService.updateOne(originChannelForHive, originChannel)
     }
@@ -2333,7 +2416,7 @@ export class FeedService {
     originChannel.owner_name = owner_name;
     originChannel.owner_did = owner_did;
     originChannel.subscribers = subscribers;
-
+    console.log("+++++++ handleGetChannelDetailResult");
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
   }
@@ -2381,25 +2464,42 @@ export class FeedService {
       let nodeChannelId = this.getChannelId(nodeId, channelId);
       let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
+      let channel_id = 0
+      let created_at = 0
+      let updated_at = 0
+      // let introduction = ""
+      // let   avatar: avatar,
+      let memo = ""
+      let type = ""
       let originChannelForHive = originChannel
       if (originChannel == null) {
         originChannel = {
-          nodeId: nodeId,
-          id: channelId,
+          channel_id: channel_id,
+          created_at: created_at,
+          updated_at: updated_at,
           name: name,
           introduction: introduction,
+          avatar: avatar,
+          memo: memo,
+          type: type,
+
+          nodeId: nodeId,
+          id: channelId,
+          // name: name,
+          // introduction: introduction,
           owner_name: owner_name,
           owner_did: owner_did,
           subscribers: subscribers,
           last_update: last_update * 1000,
           last_post: '',
-          avatar: avatar,
+          // avatar: avatar,
           isSubscribed: true,
         };
         originChannelForHive = originChannel
       } else {
         originChannel.isSubscribed = true;
       }
+      console.log("+++++++ handleGetSubscribedChannelsResult");
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
       // this.hiveService.updateOne(originChannelForHive, originChannel)
 
@@ -2748,6 +2848,7 @@ export class FeedService {
     if (error != null && error != undefined && error.code == -4) {
       if (nodeChannelId != null) {
         originChannel.isSubscribed = false;
+        console.log("+++++++ handleUnsubscribeChannelResult");
         this.dataHelper.updateChannel(nodeChannelId, originChannel);
         // this.hiveService.updateOne(originChannelForHive, originChannel)
       }
@@ -2771,6 +2872,7 @@ export class FeedService {
 
     if (nodeChannelId != null) {
       originChannel.isSubscribed = false;
+      console.log("+++++++ handleUnsubscribeChannelResult");
       this.dataHelper.updateChannel(nodeChannelId, originChannel);
       // this.hiveService.updateOne(originChannelForHive, originChannel)
     }
@@ -2803,6 +2905,7 @@ export class FeedService {
     if (name != '') originChannel.name = name;
     if (desc != '') originChannel.introduction = desc;
     if (avatarBin != '') originChannel.avatar = avatar;
+    console.log("+++++++ handleEditFeedInfo");
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
     eventBus.publish(FeedsEvent.PublishType.editFeedInfoFinish, nodeChannelId);
@@ -2826,6 +2929,7 @@ export class FeedService {
 
     let subscribeNum = originChannel.subscribers;
     if (subscribeNum > 0) originChannel.subscribers = subscribeNum - 1;
+    console.log("+++++++ doSubscribeChannelError");
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
     let subscribeFinishData: FeedsEvent.SubscribeFinishData = {
@@ -2838,8 +2942,6 @@ export class FeedService {
     );
   }
 
-
-
   doUnsubscribeChannelError(nodeId: string, channelId: number) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
@@ -2848,7 +2950,7 @@ export class FeedService {
     originChannel.isSubscribed = true;
     let subscribeNum = originChannel.subscribers;
     originChannel.subscribers = subscribeNum + 1;
-
+    console.log("+++++++ doUnsubscribeChannelError");
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
     let unsubscribeData: FeedsEvent.unsubscribeData = {
@@ -3034,7 +3136,8 @@ export class FeedService {
 
   getChannelFromId(nodeId: string, id: number): FeedsData.Channels {
     let nodeChannelId = this.getChannelId(nodeId, id);
-    return this.dataHelper.getChannel(nodeChannelId);
+    console.log("getChannelFromId " + nodeChannelId);
+    return this.dataHelper.getChannel(id.toString());
   }
 
   getPostFromId(
@@ -3748,6 +3851,7 @@ export class FeedService {
     if (error != null && error != undefined && error.code != undefined) {
       return;
     }
+    console.log("handleGetMultiSubscribesCount")
 
     let result = responseResult.channels;
     for (let index = 0; index < result.length; index++) {
@@ -3757,6 +3861,7 @@ export class FeedService {
     }
   }
 
+  // 更新每个频道的订阅人数
   updateLocalSubscribesCount(
     nodeId: string,
     channelId: number,
@@ -3768,6 +3873,7 @@ export class FeedService {
     if (originChannel == null) return;
 
     originChannel.subscribers = subscribesCount;
+    console.log("+++++++ updateLocalSubscribesCount =====" + nodeChannelId + " id = " + originChannel.id + " name  =" + originChannel.name);
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
   }
@@ -4109,7 +4215,9 @@ export class FeedService {
     }
   }
 
+  // 更新profile 频道数目
   async updateData(friendId: string) {
+    console.log("+++++++updateData");
     let toBeAddedFeeds: FeedsData.ToBeAddedFeed[] = this.addFeedService.getToBeAddedFeedsInfoByNodeId(
       friendId,
     );
@@ -6317,10 +6425,13 @@ export class FeedService {
   }
 
   getCurrentFeed() {
+    console.log("getCurrentFeed" + this.currentFeed)
+
     return this.currentFeed;
   }
 
   setCurrentFeed(currentFeed: any) {
+    console.log("setCurrentFeed" + currentFeed)
     this.currentFeed = currentFeed;
   }
 

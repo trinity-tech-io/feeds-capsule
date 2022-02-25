@@ -270,6 +270,11 @@ export class ChannelsPage implements OnInit {
       this.nodeId,
       this.channelId,
     );
+    console.log("this.nodeId " + this.nodeId);
+    console.log("this.channelId " + this.channelId);
+
+    console.log("channel.avatar ==== 1" + channel);
+
     this.checkFollowStatus(this.nodeId, this.channelId);
     if (channel == null || channel == undefined) return;
 
@@ -278,9 +283,12 @@ export class ChannelsPage implements OnInit {
     this.channelOwner = channel.owner_name;
     this.channelDesc = channel.introduction;
     this.channelSubscribes = channel.subscribers;
+    console.log("channel.avatar ====" + channel.avatar);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
   }
   ionViewWillEnter() {
+    console.log("ionViewWillEnter 11111");
+
     this.isMine = this.checkChannelIsMine();
     if (this.platform.is('ios')) {
       this.isAndroid = false;

@@ -1117,6 +1117,7 @@ export class ConnectionService {
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
+    console.log("Communication.get_multi_subscribers_count_request getMultiSubscribers");
     let request: Communication.get_multi_subscribers_count_request = {
       version: '1.0',
       method: 'get_multi_subscribers_count',
