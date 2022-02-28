@@ -23,9 +23,14 @@
     <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()"/>
   </div>
 
-  <div *ngIf="flieUri" style="width:295px;height: 200px;margin:0 auto;margin-left: 15px;">
-    <div style="position: relative;">
-    <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="removeVideo()"/>
+  <div *ngIf="flieUri" style="width:295px;height: 200px;margin:0 auto;margin-left: 15px;position: relative;">
+    <div style="width: 50px;
+    height: 50px;
+    position: absolute;
+    z-index: 999;
+    right: 0px;
+    top: -10px;" (click)="removeVideo()">
+    <img style="position:absolute;z-index: 10;right: -3px;top: 1px;width: 20px;height: 20px;" src="/assets/icons/remove.svg"/>
     </div>
   <vg-player  *ngIf="flieUri">
     <vg-overlay-play id="vgoverlayplaycreatepost"></vg-overlay-play>
