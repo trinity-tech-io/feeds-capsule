@@ -616,9 +616,9 @@ export const en = {
     'elastos-api-provider': 'Elastos API Provider',
     'elastos-api-provider-des': 'Select your preferred provider for all Elastos related services',
     'elastos-io-des':
-      "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Elastos Fusion sub-team, also known as the product team.",
+      "Set of Elastos APIs deployed and maintained by the Gelaxy team, also known as the Elastos blockchain team.",
     'trinity-tech-cn-des':
-      "Set of Elastos APIs deployed and maintained by the Elastos Foundation's Trinity Tech team, responsible for Elastos SDKs development.",
+      "Set of Elastos APIs deployed and maintained by the Trinity Tech team, responsible for Elastos SDKs and Essentials developments.",
     'ipfs-provider': 'IPFS API Provider',
     'ipfs0-provider-des': 'The primary IPFS gateway node to store the collectibles data',
     'ipfs1-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
