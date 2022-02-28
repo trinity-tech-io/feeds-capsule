@@ -616,9 +616,9 @@ export const zh = {
     'elastos-api-provider': 'Elastos API 提供商',
     'elastos-api-provider-des': '为所有Elastos相关服务选择您的首选提供商',
     'elastos-io-des':
-      '亦来云基金会的亦来云联合子团队（也称为产品团队）部署和维护的 Elastos API 集。',
+      '该组 Elastos API 服务节点由 Gelaxy 团队部署和维护，Gelaxy 团队也被称为 Elastos 区块链团队。',
     'trinity-tech-cn-des':
-      '亦来云基金会的 Trinity Tech 团队部署和维护的一组 Elastos API，负责亦来云 SDK 的开发。',
+      '该组 Elastos API 服务节点由 Trinity Tech 团队负责和维护，Trinity Tech 团队同时负责 Elastos SDK 和 Essentials 钱包开发。',
     'ipfs-provider': 'IPFS API 提供商',
     'ipfs0-provider-des': '用于存储数据的主要 IPFS 节点',
     'ipfs1-provider-des': '用于存储数据的辅助 IPFS 节点',
