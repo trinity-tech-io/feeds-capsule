@@ -230,11 +230,7 @@ const routes: Routes = [
   {
     path: 'galleriachannel',
     loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then( m => m.GalleriachannelPageModule)
-  },
-  {
-    path: 'channelcollections',
-    loadChildren: () => import('./pages/channelcollections/channelcollections.module').then( m => m.ChannelcollectionsPageModule)
-  },
+  }
 ];
 
 @NgModule({
