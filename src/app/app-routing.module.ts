@@ -224,10 +224,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/whitelist/whitelist.module').then( m => m.WhitelistPageModule)
   },
   {
-    path: 'assistpasar',
-    loadChildren: () => import('./pages/assistpasar/assistpasar.module').then( m => m.AssistpasarPageModule)
-  },
-  {
     path: 'datastorage',
     loadChildren: () => import('./pages/settings/datastorage/datastorage.module').then(m => m.DatastoragePageModule)
   },
