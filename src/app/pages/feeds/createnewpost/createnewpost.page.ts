@@ -271,10 +271,15 @@ export class CreatenewpostPage implements OnInit {
         this.isPublishing = true;
         //show dialog
         this.isLoading = true;
-        await this.sendPost();
-        this.isLoading = false;
-        //dismiss dialog
-        this.backHome();
+        try {
+          await this.sendPost();
+          this.isLoading = false;
+          //dismiss dialog
+          this.backHome();
+        } catch (error) {
+          this.isLoading = false;
+        }
+
       }
     });
   }
@@ -282,17 +287,16 @@ export class CreatenewpostPage implements OnInit {
   prepareTempPost() {}
 
   async sendPost() {
-    const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
-    let tempPostId = this.feedService.generateTempPostId();
 
-    //TODO
-    this.feedService.publishPost(
-      this.nodeId,
-      this.channelId,
-      content,
-      tempPostId,
-    );
-
+      const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
+      let tempPostId = this.feedService.generateTempPostId();
+      //TODO
+      this.feedService.publishPost(
+        this.nodeId,
+        this.channelId,
+        content,
+        tempPostId,
+      );
     // //Only text content
     // if (this.imgUrl == '' && this.flieUri == '') {
     //   let content = this.feedService.createContent(this.newPost, null, null);
