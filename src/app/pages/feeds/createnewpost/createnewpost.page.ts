@@ -278,6 +278,7 @@ export class CreatenewpostPage implements OnInit {
           this.backHome();
         } catch (error) {
           this.isLoading = false;
+          this.isPublishing = false;
         }
 
       }
