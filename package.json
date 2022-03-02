@@ -23,7 +23,7 @@
     "@dchagastelles/elastos-hive-js-sdk": "2.3.57",
     "@elastosfoundation/did-js-sdk": "^2.2.2",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "2.0.2",
-    "@elastosfoundation/elastos-connector-localidentity-cordova": "2.0.0",
+    "@elastosfoundation/elastos-connector-localidentity-cordova": "2.0.1",
     "@elastosfoundation/essentials-connector-cordova": "1.0.16",
     "@ionic-native/barcode-scanner": "^5.32.1",
     "@ionic-native/clipboard": "^5.18.0",
