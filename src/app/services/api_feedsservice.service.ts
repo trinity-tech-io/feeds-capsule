@@ -238,6 +238,7 @@ export class FeedsServiceApi {
     upper_bound: number,
     lower_bound: number,
     max_counts: number,
+    memo: any = ''
   ) {
     if (!this.hasAccessToken(nodeId)) return;
     let accessToken: FeedsData.AccessToken =
@@ -250,6 +251,7 @@ export class FeedsServiceApi {
       lower_bound,
       max_counts,
       accessToken,
+      memo,
     );
   }
 

@@ -7,6 +7,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { ThemeService } from 'src/app/services/theme.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { MigrateDataService } from 'src/app/services/migratedata.service';
 
 @Component({
   selector: 'app-migrationdata',
@@ -23,7 +24,8 @@ export class MigrationdataPage implements OnInit {
     private feedService: FeedService,
     private titleBarService: TitleBarService,
     public theme: ThemeService,
-    private dataHelper: DataHelper) { }
+    private dataHelper: DataHelper,
+    private migrateDataService: MigrateDataService) { }
 
   ngOnInit() {
   }
@@ -63,6 +65,8 @@ export class MigrationdataPage implements OnInit {
       this.popover.dismiss();
       this.popover = null;
     }
+
+    that.migrateDataService.syncChannelData();
   }
 
   cancel(that: any) {

@@ -767,13 +767,19 @@ export class FeedService {
           this.handleNotification(result.nodeId, result.method, result.params); //TODO
           break;
         case 0:
-          this.handleResult(
-            result.method,
-            result.nodeId,
-            result.result,
-            result.request,
-            result.error,
-          );
+          console.log('result==============', result);
+          if (result.request.memo.callbackMethod == FeedsData.CallbackMethod.SyncFeedsServiceData) {
+            console.log('Callback ==============', result);
+            eventBus.publish(FeedsEvent.PublishType.migrateDataToHive, result);
+          } else {
+            this.handleResult(
+              result.method,
+              result.nodeId,
+              result.result,
+              result.request,
+              result.error,
+            );
+          }
           break;
       }
     });
