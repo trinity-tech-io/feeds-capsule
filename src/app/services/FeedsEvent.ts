@@ -177,7 +177,8 @@ declare namespace FeedsEvent {
     hideAdult = "feeds:hideAdult",
     nftCancelChannelOrder = "feeds:nftCancelChannelOrder",
     nftLoadingUpdateText = "feeds:nftLoadingUpdateText",
-    openPayPrompt = "feeds:openPayPrompt"
+    openPayPrompt = "feeds:openPayPrompt",
+    migrateDataToHive = 'feeds:migrateDataToHive'
   }
 
   type TipDialogData = {

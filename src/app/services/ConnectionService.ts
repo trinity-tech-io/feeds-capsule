@@ -17,9 +17,9 @@ export class ConnectionService {
     private jsonRPCService: JsonRPCService,
     private serializeDataService: SerializeDataService,
     private formatInfoService: FormatInfoService,
-  ) {}
+  ) { }
 
-  request() {}
+  request() { }
 
   createChannel(
     serverName: string,
@@ -32,7 +32,6 @@ export class ConnectionService {
     proof: string,
   ) {
     if (accessToken == null || accessToken == undefined) return;
-
     let avatarBin = this.serializeDataService.encodeData(avatar);
 
     let request: Communication.create_channel_request = {
@@ -338,6 +337,7 @@ export class ConnectionService {
     lower_bound: number,
     max_counts: number,
     accessToken: FeedsData.AccessToken,
+    memo: any = ''
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
@@ -358,7 +358,7 @@ export class ConnectionService {
       nodeId,
       request.method,
       request.params,
-      '',
+      memo,
       request.version,
       false,
     );
@@ -369,6 +369,7 @@ export class ConnectionService {
     nodeId: string,
     id: number,
     accessToken: FeedsData.AccessToken,
+    memo: any = ''
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
@@ -386,7 +387,7 @@ export class ConnectionService {
       nodeId,
       request.method,
       request.params,
-      '',
+      memo,
       request.version,
       false,
     );
@@ -1196,14 +1197,14 @@ export class ConnectionService {
       params,
       memo,
       version,
-      () => {},
+      () => { },
       error => {
         this.events.publish(FeedsEvent.PublishType.rpcRequestError);
       },
     );
   }
 
-  response() {}
+  response() { }
 
   checkServerConnection(nodeId: string): boolean {
     if (

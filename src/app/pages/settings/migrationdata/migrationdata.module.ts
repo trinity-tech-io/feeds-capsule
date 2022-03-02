@@ -8,12 +8,15 @@ import { MigrationdataPageRoutingModule } from './migrationdata-routing.module';
 
 import { MigrationdataPage } from './migrationdata.page';
 import { TranslateModule } from '@ngx-translate/core';
+import { ComponentsModule } from 'src/app/components/components.module';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     TranslateModule,
+    ComponentsModule,
     MigrationdataPageRoutingModule
   ],
   declarations: [MigrationdataPage]

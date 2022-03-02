@@ -1,4 +1,8 @@
 declare namespace FeedsData {
+  const enum CallbackMethod {
+    SyncFeedsServiceData = 'SyncFeedsServiceData'
+  }
+
   const enum TitleBarForegroundMode {
     /** Title bar title and icons use a light (white) color. Use this on a dark background color. */
     LIGHT = 0,
@@ -929,4 +933,6 @@ declare namespace FeedsData {
     location: string,
     version: string
   }
+
+
 }
