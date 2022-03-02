@@ -49,7 +49,6 @@ export class PostHelperService {
         Logger.error(TAG, errorMsg, error);
         reject(error);
       }
-
     });
   }
 
@@ -387,40 +386,40 @@ export class PostHelperService {
     });
   }
 
-      //   .then((flieUri: string) => {
-      //   path = flieUri.startsWith('file://')
-      //     ? flieUri
-      //     : `file://${flieUri}`;
-      //   return this.postHelperService.getVideoDuration(path);
-      // })
-      //   .then((duration: number) => {
-      //     const isValid = this.postHelperService.checkVideoDurationValid(duration);
-      //     if (!isValid) {
-      //       this.flieUri = '';
-      //       this.posterImg = '';
-      //       this.imgUrl = '';
-      //       this.transcode = 0;
-      //       this.uploadProgress = 0;
-      //       this.totalProgress = 0;
-      //       this.native.toast(this.translate.instant('common.filevideodes'));
-      //       return;
-      //     }
+  //   .then((flieUri: string) => {
+  //   path = flieUri.startsWith('file://')
+  //     ? flieUri
+  //     : `file://${flieUri}`;
+  //   return this.postHelperService.getVideoDuration(path);
+  // })
+  //   .then((duration: number) => {
+  //     const isValid = this.postHelperService.checkVideoDurationValid(duration);
+  //     if (!isValid) {
+  //       this.flieUri = '';
+  //       this.posterImg = '';
+  //       this.imgUrl = '';
+  //       this.transcode = 0;
+  //       this.uploadProgress = 0;
+  //       this.totalProgress = 0;
+  //       this.native.toast(this.translate.instant('common.filevideodes'));
+  //       return;
+  //     }
 
-      //     this.duration = duration;
-      //     return this.postHelperService.createVideoThumbnail(path, duration);
-      //   }).then((videoThumbnail) => {
-      //     //TODO
+  //     this.duration = duration;
+  //     return this.postHelperService.createVideoThumbnail(path, duration);
+  //   }).then((videoThumbnail) => {
+  //     //TODO
 
-        //   }).then(() => {
-        //TODO
-        // const videoBase64 = await this.postHelperService.transcodeVideo(path, (info) => {
-        //   this.zone.run(() => {
-        //     if (info > 0 && info < 1) {
-        //       this.transcode = parseInt((info * 100) / 2 + '');
-        //       this.totalProgress = this.transcode;
-        //     }
-        //   });
-    // })
+  //   }).then(() => {
+  //TODO
+  // const videoBase64 = await this.postHelperService.transcodeVideo(path, (info) => {
+  //   this.zone.run(() => {
+  //     if (info > 0 && info < 1) {
+  //       this.transcode = parseInt((info * 100) / 2 + '');
+  //       this.totalProgress = this.transcode;
+  //     }
+  //   });
+  // })
   // })
   //     .catch(err => {
   //   const errorMsg = "Excute 'selectvideo' in createpost page is error , getVideo error";

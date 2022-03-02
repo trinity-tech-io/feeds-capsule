@@ -19,6 +19,7 @@ import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.se
 import { connectivity, logger } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { UserDIDService } from 'src/app/services/userdid.service';
+import { PostHelperService } from 'src/app/services/post_helper.service';
 
 import _ from 'lodash';
 import { DataHelper } from './DataHelper';
@@ -44,7 +45,7 @@ export class DidData {
     public did: string,
     public carrierAddress: string,
     public serviceId: string,
-  ) {}
+  ) { }
 }
 
 export class SignInData {
@@ -58,7 +59,7 @@ export class SignInData {
     public nickname: string,
     public description: string,
     public expiresTS: number,
-  ) {}
+  ) { }
 }
 
 export class Avatar {
@@ -72,10 +73,10 @@ let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
-  private whiteListData:  FeedsData.WhiteItem[] = [];
+  private whiteListData: FeedsData.WhiteItem[] = [];
   private nftFirstdisclaimer: string = "";
-  public  elaUsdPrice: string = "";
-  public  selsectNftImage: string = "";
+  public elaUsdPrice: string = "";
+  public selsectNftImage: string = "";
   private pasarListGrid: boolean = false;
   private collectibleStatus: any = {};
   public bindPublisherAccountType: string = '';
@@ -134,6 +135,7 @@ export class FeedService {
     private pasarAssistService: PasarAssistService,
     private userDIDService: UserDIDService,
     private hiveService: HiveService,
+    private postHelperService: PostHelperService
   ) {
     eventBus = events;
     this.init();
@@ -391,8 +393,8 @@ export class FeedService {
     this.jwtMessageService.request(
       nodeId,
       properties,
-      () => {},
-      () => {},
+      () => { },
+      () => { },
     );
   }
 
@@ -426,8 +428,8 @@ export class FeedService {
           this.carrierService.addFriend(
             carrierAddress,
             'hi',
-            () => {},
-            err => {},
+            () => { },
+            err => { },
           );
         }
       }
@@ -780,7 +782,7 @@ export class FeedService {
     return new Date().getTime();
   }
 
-  checkDIDValidity() {}
+  checkDIDValidity() { }
 
   parseDid(feedUrl: string): DidData {
     let startIndex = feedUrl.indexOf('did:elastos:');
@@ -950,7 +952,7 @@ export class FeedService {
           isValid => {
             onSuccess(isValid);
           },
-          err => {},
+          err => { },
         );
       },
     );
@@ -1002,8 +1004,8 @@ export class FeedService {
         this.jwtMessageService.request(
           nodeId,
           payload,
-          () => {},
-          () => {},
+          () => { },
+          () => { },
         );
       },
     );
@@ -1015,7 +1017,7 @@ export class FeedService {
 
   generateUUID(): string {
     var d = new Date().getTime();
-    var uuid = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function(c) {
+    var uuid = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function (c) {
       var r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
       return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
@@ -1268,15 +1270,15 @@ export class FeedService {
   }
 
   //// get data from persistence
-  getLocalSubscribedChannels() {}
+  getLocalSubscribedChannels() { }
 
-  getLocalChannelsMap() {}
+  getLocalChannelsMap() { }
 
-  getLocalMyChannelsMap() {}
+  getLocalMyChannelsMap() { }
 
-  getLocalUnreadMap() {}
+  getLocalUnreadMap() { }
 
-  getPostMap() {}
+  getPostMap() { }
 
   sortChannels(
     start: number,
@@ -1335,7 +1337,8 @@ export class FeedService {
     this.prepareTempPost(nodeId, channelId, tempId, content);
     let accessToken: FeedsData.AccessToken =
       this.dataHelper.getAccessToken(nodeId) || null;
-    let contentHash = UtilService.SHA256(content);
+    // let contentHash = UtilService.SHA256(content);
+    console.log('Final content ====', content);
     this.connectionService.publishPost(
       this.getServerNameByNodeId(nodeId),
       nodeId,
@@ -2144,7 +2147,7 @@ export class FeedService {
       }
       try {
         originPost.likes = totalCount;
-      } catch (error) {}
+      } catch (error) { }
       this.dataHelper.updatePost(key, originPost);
 
       eventBus.publish(
@@ -4063,8 +4066,8 @@ export class FeedService {
       jws,
       credential,
       requiredCredential,
-      () => {},
-      () => {},
+      () => { },
+      () => { },
     );
   }
 
@@ -4207,8 +4210,8 @@ export class FeedService {
         did,
         nodeId,
         payload,
-        () => {},
-        () => {},
+        () => { },
+        () => { },
       );
     }
     // this.isDeclareFinish = true;
@@ -4243,8 +4246,8 @@ export class FeedService {
       did,
       nodeId,
       transaction_payload,
-      () => {},
-      () => {},
+      () => { },
+      () => { },
     );
   }
 
@@ -4544,7 +4547,7 @@ export class FeedService {
       credential => {
         this.issueCredentialRequest(nodeId, credential);
       },
-      () => {},
+      () => { },
     );
   }
 
@@ -4572,7 +4575,7 @@ export class FeedService {
         this.dataHelper.updateCachedUpdateServer(nodeId, cachedServer);
         this.updateCredential(nodeId, credential);
       },
-      () => {},
+      () => { },
     );
   }
 
@@ -4595,8 +4598,8 @@ export class FeedService {
         did,
         nodeId,
         '',
-        () => {},
-        () => {},
+        () => { },
+        () => { },
       );
 
     try {
@@ -4735,8 +4738,8 @@ export class FeedService {
       bindingServer.introduction,
       bindingServer.did,
       bindingServer.feedsUrl,
-      () => {},
-      error => {},
+      () => { },
+      error => { },
     );
     eventBus.publish(FeedsEvent.PublishType.issue_credential);
     eventBus.publish(FeedsEvent.PublishType.bindServerFinish, bindingServer);
@@ -5017,16 +5020,16 @@ export class FeedService {
     if (avatar.startsWith('img://')) {
       let newAvatar = avatar.replace('img://', '');
       return newAvatar;
-    }else if(avatar.startsWith('feeds:image:')){
+    } else if (avatar.startsWith('feeds:image:')) {
       let newAvatar = avatar.replace('feeds:image:', '');
       newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
       return newAvatar;
     }
-    else if(avatar.startsWith('feeds:imgage:')){
+    else if (avatar.startsWith('feeds:imgage:')) {
       let newAvatar = avatar.replace('feeds:imgage:', '');
       newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
       return newAvatar;
-    }else if(avatar.startsWith('pasar:image:')){
+    } else if (avatar.startsWith('pasar:image:')) {
       let newAvatar = avatar.replace('pasar:image:', '');
       newAvatar = this.ipfsService.getNFTGetUrl() + newAvatar;
       return newAvatar;
@@ -5160,7 +5163,7 @@ export class FeedService {
       const server = list[index];
       this.carrierService.removeFriend(
         server.nodeId,
-        () => {},
+        () => { },
         err => {
           Logger.error(TAG, 'Remove Friend error, error msg is', err);
         },
@@ -5168,7 +5171,7 @@ export class FeedService {
     }
   }
 
-  removeBindServer() {}
+  removeBindServer() { }
 
   removeAccessTokenById(nodeId: string) {
     this.dataHelper.deleteAccessToken(nodeId);
@@ -5377,9 +5380,9 @@ export class FeedService {
         // errorMessage = this.translate.instant("ErrorInfo.unsupportedRequests");
         this.native.toastWarn(
           this.translate.instant('common.theFeedSource') +
-            ' #' +
-            this.getServerNameByNodeId(nodeId) +
-            this.translate.instant('ErrorInfo.needUpdateServerVersion'),
+          ' #' +
+          this.getServerNameByNodeId(nodeId) +
+          this.translate.instant('ErrorInfo.needUpdateServerVersion'),
         );
         return;
       case -12:
@@ -5663,7 +5666,7 @@ export class FeedService {
         this.sessionService.createSession(
           nodeId,
           memo,
-          (session, stream) => {},
+          (session, stream) => { },
         );
         return false;
     }
@@ -6446,11 +6449,11 @@ export class FeedService {
     }
   }
 
-  updateSubscribedChannelsKey() {}
+  updateSubscribedChannelsKey() { }
 
-  updateChannelsKey() {}
+  updateChannelsKey() { }
 
-  updateMyChannelsKey() {}
+  updateMyChannelsKey() { }
 
   updateLikeCommentKey() {
     // let keys: string[] = Object.keys(likeCommentMap) || [];
@@ -7670,6 +7673,10 @@ export class FeedService {
 
   republishPost(nodeId: string) {
     let list: FeedsData.TempData[] = this.dataHelper.listTempData(nodeId);
+
+
+    console.log('republishPost==================', list);
+
     for (let index = 0; index < list.length; index++) {
       const tempData = list[index];
       this.processRepublishPost(tempData);
@@ -7678,13 +7685,14 @@ export class FeedService {
 
   processRepublishPost(tempData: FeedsData.TempData) {
     if (tempData == null || tempData == undefined) return;
-
     switch (tempData.status) {
       case FeedsData.SendingStatus.normal:
+        const tempContent = tempData.content;
+        const content = this.postHelperService.createContent(tempContent.text, tempContent.mediaDatas);
         this.publishPost(
           tempData.nodeId,
           tempData.feedId,
-          tempData.content,
+          content,
           tempData.tempPostId,
         );
         return;
@@ -7831,7 +7839,7 @@ export class FeedService {
     });
   }
 
-  setPasarListGrid(pasarListGrid:boolean) {
+  setPasarListGrid(pasarListGrid: boolean) {
     this.pasarListGrid = pasarListGrid;
   }
 
@@ -7839,27 +7847,27 @@ export class FeedService {
     return this.pasarListGrid;
   }
 
-  setSelsectNftImage(selsectNftImage:any){
-      this.selsectNftImage = selsectNftImage;
+  setSelsectNftImage(selsectNftImage: any) {
+    this.selsectNftImage = selsectNftImage;
   }
 
-  getSelsectNftImage(){
+  getSelsectNftImage() {
     return this.selsectNftImage;
   }
 
-  setElaUsdPrice(elaUsdPrice:string){
+  setElaUsdPrice(elaUsdPrice: string) {
     this.elaUsdPrice = elaUsdPrice;
   }
 
-  getElaUsdPrice(){
+  getElaUsdPrice() {
     return this.elaUsdPrice;
   }
 
-  setNftFirstdisclaimer(nftFirstdisclaimer:string){
-     this.nftFirstdisclaimer = nftFirstdisclaimer;
+  setNftFirstdisclaimer(nftFirstdisclaimer: string) {
+    this.nftFirstdisclaimer = nftFirstdisclaimer;
   }
 
-  getNftFirstdisclaimer(){
+  getNftFirstdisclaimer() {
     return this.nftFirstdisclaimer;
   }
 
@@ -7868,12 +7876,12 @@ export class FeedService {
   //   });
   // }
 
-  getWhiteListData(){
+  getWhiteListData() {
     return this.whiteListData;
   }
 
-  setWhiteListData(whiteListData: FeedsData.WhiteItem[]){
-     this.whiteListData = whiteListData;
+  setWhiteListData(whiteListData: FeedsData.WhiteItem[]) {
+    this.whiteListData = whiteListData;
   }
 
   async getDidUri() {
