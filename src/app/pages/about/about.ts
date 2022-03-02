@@ -16,7 +16,7 @@ import { LanguageService } from 'src/app/services/language.service';
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public version = '2.1.1';
+  public version = '2.1.2';
   public currentLanguage = '';
 
   constructor(
@@ -28,9 +28,9 @@ export class AboutPage implements OnInit {
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private languageService: LanguageService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.initTitle();
@@ -43,7 +43,7 @@ export class AboutPage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.currentLanguage = this.languageService.getCurLang();
@@ -85,7 +85,7 @@ export class AboutPage implements OnInit {
       .then(() => {
         this.native.toast_trans('common.copysucceeded');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   ionViewWillLeave() {
@@ -93,7 +93,7 @@ export class AboutPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
   }
 
-  showNftDisclaimer(){
+  showNftDisclaimer() {
     this.native.openUrl('https://trinity-feeds.app/disclaimer-nft');
   }
 }
