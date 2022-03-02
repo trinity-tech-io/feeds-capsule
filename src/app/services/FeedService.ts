@@ -1338,7 +1338,6 @@ export class FeedService {
     let accessToken: FeedsData.AccessToken =
       this.dataHelper.getAccessToken(nodeId) || null;
     // let contentHash = UtilService.SHA256(content);
-    console.log('Final content ====', content);
     this.connectionService.publishPost(
       this.getServerNameByNodeId(nodeId),
       nodeId,
@@ -7673,9 +7672,6 @@ export class FeedService {
 
   republishPost(nodeId: string) {
     let list: FeedsData.TempData[] = this.dataHelper.listTempData(nodeId);
-
-
-    console.log('republishPost==================', list);
 
     for (let index = 0; index < list.length; index++) {
       const tempData = list[index];
