@@ -70,17 +70,27 @@ export class WalletConnectControllerService {
       Logger.log(TAG, 'chainChanged', chainId);
     });
 
-    // Subscribe to session disconnection
-    // this.walletConnectProvider.on(
-    //   'disconnect',
-    //   (code: number, reason: string) => {
-    //     Logger.log(TAG, 'disconnect', code, reason);
-    //   },
-    // );
+
+    this.walletConnectProvider.on('error', (errors) => {
+      Logger.error(TAG, "wallet connect error", errors);
+    });
 
     // Subscribe to session disconnection
-    this.walletConnectProvider.on('error', (code: number, reason: string) => {
-      Logger.error(TAG, "wallet connect error", code, reason);
+    this.walletConnectProvider.on('disconnect', async (code, reason) => {
+      if (this.accountAddress && this.accountAddress != '') {
+        this.accountAddress = '';
+        this.publishAccount(this.accountAddress);
+
+        try {
+          await this.disconnect();
+        } catch (error) {
+        }
+
+        try {
+          await this.destroyWalletConnect();
+        } catch (error) {
+        }
+      }
     });
 
     Logger.log(TAG, 'Current account address is', this.accountAddress);
@@ -93,7 +103,7 @@ export class WalletConnectControllerService {
     //   this.walletConnectProvider == null ||
     //   this.walletConnectProvider == undefined
     // ) {
-      await this.initWalletConnectProvider();
+    await this.initWalletConnectProvider();
     // }
 
     //  Enable session (triggers QR Code modal)
