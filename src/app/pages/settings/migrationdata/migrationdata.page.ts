@@ -66,7 +66,7 @@ export class MigrationdataPage implements OnInit {
       this.popover = null;
     }
 
-    that.migrateDataService.syncChannelData();
+    that.migrateDataService.syncData();
   }
 
   cancel(that: any) {
