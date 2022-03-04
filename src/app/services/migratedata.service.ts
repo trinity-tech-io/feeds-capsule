@@ -167,7 +167,7 @@ export class MigrateDataService {
   */
   private saveChannelDataToHive(channels): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      await this.hiveService.createChannel('channel');
+      await this.hiveService.createCollection('channel');
       for (let index = 0; index < channels.length; index++) {
         const channel = channels[index];
         //发送数据到Hive
