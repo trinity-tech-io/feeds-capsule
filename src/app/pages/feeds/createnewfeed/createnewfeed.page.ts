@@ -266,17 +266,20 @@ export class CreatenewfeedPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       // 创建channles（用来存储userid下的所有创建的频道info）
       let userDid = (await this.dataHelper.getSigninData()).did
-      const isChannles = localStorage.getItem(userDid + HiveService.CHANNEL) || ''
-      const isPost = localStorage.getItem(userDid + HiveService.POST) || ''
-      const isSubscription = localStorage.getItem(userDid + HiveService.SUBSCRIPTION) || ''
+      let isChannles = localStorage.getItem(userDid + HiveService.CHANNEL) || ''
+      let isPost = localStorage.getItem(userDid + HiveService.POST) || ''
+      let isSubscription = localStorage.getItem(userDid + HiveService.SUBSCRIPTION) || ''
       console.log("isChannles ===== ", isChannles)
       console.log("isPost ===== ", isPost)
       if (isSubscription === '') {
         try {
           await this.hiveService.createCollection(HiveService.SUBSCRIPTION)
+          localStorage.setItem(userDid + HiveService.SUBSCRIPTION, "true")
+          isSubscription = "true"
         } catch (error) {
           if (error.code === 455) {
             localStorage.setItem(userDid + HiveService.SUBSCRIPTION, "true")
+            isSubscription = "true"
           }
           else {
             this.native.hideLoading()
@@ -287,9 +290,12 @@ export class CreatenewfeedPage implements OnInit {
       if (isChannles === '') {
         try {
           await this.hiveService.createCollection(HiveService.CHANNEL)
+          localStorage.setItem(userDid + HiveService.CHANNEL, "true")
+          isChannles = "true"
         } catch (error) {
           if (error.code === 455) {
             localStorage.setItem(userDid + HiveService.CHANNEL, "true")
+            isChannles = "true"
           }
           else {
             this.native.hideLoading()
@@ -301,9 +307,12 @@ export class CreatenewfeedPage implements OnInit {
       if (isPost === '') {
         try {
           await this.hiveService.createCollection(HiveService.POST)
+          localStorage.setItem(userDid + HiveService.POST, "true")
+          isPost = "true"
         } catch (error) {
           if (error.code === 455) {
             localStorage.setItem(userDid + HiveService.POST, "true")
+            isPost = "true"
           }
           else {
             this.native.hideLoading()

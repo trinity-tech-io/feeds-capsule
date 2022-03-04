@@ -196,24 +196,25 @@ export class HiveService {
     return post_id
   }
   // 查询channel信息
-  async registerChannel(channleName: string, channel_id: string) {
-    let executablefilter = { "channel_id": channel_id }
+  async registerChannel() {
+    let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter = { "channel_id": channel_id, "user_did": userDid }
+    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     let scriptingService = (await this.getVault()).getScriptingService()
     console.log("registerChannel ====== ")
-    await scriptingService.registerScript(channleName,
+    const timeStamp = new Date().getTime().toString()
+    await scriptingService.registerScript(timeStamp,
       new FindExecutable("find_message", HiveService.CHANNEL, executablefilter, options).setOutput(true),
       new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null), false);
   }        
   //  查询指定post内容
-  async registerPost(post_id: string, channel_id: string): Promise<string> {
-    let executablefilter = { "channel_id": channel_id, "post_id": post_id }
+  async registerPost(): Promise<string> {
+    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter1 = { "channel_id": channel_id, "user_did": userDid }
-    let conditionfilter2 = { "channel_id": channel_id, "post_id": post_id, "type": "public" }
+    let conditionfilter1 = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+    let conditionfilter2 = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": "public" }
     let scriptingService = (await this.getVault()).getScriptingService()
     console.log("registerPost ====== ")
     let timeStamp = new Date().getTime().toString()
@@ -228,10 +229,10 @@ export class HiveService {
   }
   // 查询channel下所有post
   async registerAllPost(channel_id: string): Promise<string> {
-    let executablefilter = { "channel_id": channel_id }
+    let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter = { "channel_id": channel_id, "user_did": userDid }
+    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     let scriptingService = (await this.getVault()).getScriptingService()
     console.log("registerPost ====== ")
     let timeStamp = new Date().getTime().toString()
@@ -245,10 +246,10 @@ export class HiveService {
 
   // 查询时间段的内容
   async registerSomeTimePost(channel_id: string, post_id: string) {
-    let executablefilter = { "channel_id": channel_id, "post_id": post_id, "update_at": "" }
+    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { "$gt": "$params.start", "$lt": "$params.end" } }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter = { "channel_id": channel_id, "user_did": userDid }
+    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     let scriptingService = (await this.getVault()).getScriptingService()
     console.log("registerPost ====== ")
     let timeStamp = new Date().getTime().toString()
@@ -286,13 +287,10 @@ export class HiveService {
   }
 
   // 订阅
-  async subscriptions(channel_id: string) {
-    let userDid = (await this.dataHelper.getSigninData()).did
-
-    const channel = this.dataHelper.getChannel(channel_id.toString())
-    let document = { "channel_id": channel_id, "user_did": userDid, "created_at": channel.created_at, "display_name": channel.name }
+  async registerSubscriptions() {
+    let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "created_at": "$params.created_at", "display_name": "$params.display_name" }
     let options = { "projection": { "_id": false } }
-    let conditionfilter = { "channel_id": channel_id, "type": "public" }
+    let conditionfilter = { "channel_id": "$params.channel_id", "type": "public" }
     let scriptingService = (await this.getVault()).getScriptingService()
     console.log("registerPost ====== ")
     let timeStamp = new Date().getTime().toString()
