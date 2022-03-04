@@ -195,7 +195,7 @@ export class HiveService {
 
     return post_id
   }
-
+  // 查询channel信息
   async registerChannel(channleName: string, channel_id: string) {
     let executablefilter = { "channel_id": channel_id }
     let options = { "projection": { "_id": false }, "limit": 100 }
@@ -227,7 +227,7 @@ export class HiveService {
     return timeStamp
   }
   // 查询channel下所有post
-  async registerAllPost(post_id: string, channel_id: string): Promise<string> {
+  async registerAllPost(channel_id: string): Promise<string> {
     let executablefilter = { "channel_id": channel_id }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let userDid = (await this.dataHelper.getSigninData()).did
@@ -242,6 +242,24 @@ export class HiveService {
 
     return timeStamp
   }
+
+  // 查询时间段的内容
+  async registerSomeTimePost(channel_id: string, post_id: string) {
+    let executablefilter = { "channel_id": channel_id, "post_id": post_id, "update_at": "" }
+    let options = { "projection": { "_id": false }, "limit": 100 }
+    let userDid = (await this.dataHelper.getSigninData()).did
+    let conditionfilter = { "channel_id": channel_id, "user_did": userDid }
+    let scriptingService = (await this.getVault()).getScriptingService()
+    console.log("registerPost ====== ")
+    let timeStamp = new Date().getTime().toString()
+    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
+    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+
+    await scriptingService.registerScript(timeStamp, findExe, queryCondition, false, false)
+
+    return timeStamp
+  }
+
   // 
   async callChannel(scriptName: string, channel_id: string) {
     let scriptingService = (await this.getVault()).getScriptingService()
@@ -253,6 +271,8 @@ export class HiveService {
     let result = await scriptingService.callScript<any>(scriptName, { "channel_id": channel_id }, userDid, appid)
     console.log("callChannel result ======= ", result)
   }
+
+
   // 查询指定的post
   async callPost(scriptName: string, channel_id: string) {
     let scriptingService = (await this.getVault()).getScriptingService()
@@ -543,7 +563,7 @@ export class HiveService {
         localStorage.setItem(userDid + HiveService.collectName, "true")
       }
       else if (feeds_logo_createCollection === '' && list.length > 0) {
-        const status = await this.createCollection(userDid, list);
+        // const status = await this.createCollection(userDid, list);
       }
     }
     catch (error) {

@@ -273,7 +273,7 @@ export class CreatenewfeedPage implements OnInit {
       console.log("isPost ===== ", isPost)
       if (isSubscription === '') {
         try {
-          await this.hiveService.createChannel(HiveService.SUBSCRIPTION)
+          await this.hiveService.createCollection(HiveService.SUBSCRIPTION)
         } catch (error) {
           if (error.code === 455) {
             localStorage.setItem(userDid + HiveService.SUBSCRIPTION, "true")
@@ -286,7 +286,7 @@ export class CreatenewfeedPage implements OnInit {
       }
       if (isChannles === '') {
         try {
-          await this.hiveService.createChannel(HiveService.CHANNEL)
+          await this.hiveService.createCollection(HiveService.CHANNEL)
         } catch (error) {
           if (error.code === 455) {
             localStorage.setItem(userDid + HiveService.CHANNEL, "true")
@@ -300,7 +300,7 @@ export class CreatenewfeedPage implements OnInit {
 
       if (isPost === '') {
         try {
-          await this.hiveService.createChannel(HiveService.POST)
+          await this.hiveService.createCollection(HiveService.POST)
         } catch (error) {
           if (error.code === 455) {
             localStorage.setItem(userDid + HiveService.POST, "true")
@@ -312,12 +312,12 @@ export class CreatenewfeedPage implements OnInit {
         }
       }
       let channleId = await this.hiveService.sendChannle(name, desc, this.avatar)
-      let registr = await this.hiveService.registerChannel(name, channleId)
+      // let registr = await this.hiveService.registerChannel(name, channleId)
       // await this.hiveService.callChannel(name, channleId)
-      // 订阅自己
-      console.log("订阅自己开始 =========== ")
-      await this.hiveService.subscriptions(channleId)
-      console.log("订阅自己结束 =========== ")
+      // // 订阅自己
+      // console.log("订阅自己开始 =========== ")
+      // await this.hiveService.subscriptions(channleId)
+      // console.log("订阅自己结束 =========== ")
       this.native.hideLoading()
       this.native.pop()
     } catch (error) {
