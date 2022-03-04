@@ -353,7 +353,7 @@ export class FeedService {
     return this.dataHelper.getMyChannelList(bindingServer.nodeId);
   }
   async getHiveMyChannelList() {
-    let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.channlesTable
+    let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.CHANNEL
     return this.dataHelper.getMyChannelList(channlesKey);
   }
   getUnreadNumber(nodeChannelId: string): number {

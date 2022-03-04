@@ -68,6 +68,7 @@ export class CreatenewpostPage implements OnInit {
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
   public pictureMenu: any = null;
+  // 视频data
   private videoData: FeedsData.videoData = null;
   constructor(
     private platform: Platform,
@@ -123,10 +124,10 @@ export class CreatenewpostPage implements OnInit {
     this.channelAvatar = this.feedService.parseChannelAvatar(myFeed['avatar']);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.imgUrl = this.feedService.getSelsectNftImage();
     this.feedService.setSelsectNftImage(this.imgUrl);
-    this.feedList = this.feedService.getMyChannelList() || [];
+    this.feedList = await this.feedService.getHiveMyChannelList() || [];
     this.initTitle();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -213,6 +214,7 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave() {
     this.isLoading = false;
+    console.log("hideSwitchFeed 1");
     this.hideSwitchFeed = false;
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
@@ -288,13 +290,12 @@ export class CreatenewpostPage implements OnInit {
         try {
           await this.sendPost();
           this.isLoading = false;
-          //dismiss dialog
-          this.backHome();
         } catch (error) {
           this.isLoading = false;
-          this.isPublishing = false;
+          this.native.toast('common.sendFail'); // 需要更改错误提示
         }
-
+        //dismiss dialog
+        this.backHome();
       }
     });
   }
@@ -303,9 +304,17 @@ export class CreatenewpostPage implements OnInit {
 
   async sendPost() {
     const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
-    let tempPostId = this.feedService.generateTempPostId();
-    console.log("sendPost content ====== ", content)
-    this.hiveService.postChannleContent(this.channelId, content, "0")
+    const post_id = this.hiveService.sendPost(this.channelId, content, "0")
+    console.log("send post  channle id ====== ", this.channelId)
+    console.log("send post  post_id  ====== ", post_id)
+    // const timeStamp = await this.hiveService.registerPost((await post_id).toString(), this.channelId.toString())
+    const timeStamp = await this.hiveService.registerAllPost((await post_id).toString(), this.channelId.toString())
+    console.log("callPost 开始===== ")
+    await this.hiveService.callPost(timeStamp, this.channelId.toString())
+    console.log("callPost 结束===== ")
+    // await this.hiveService.callPost(timeStamp, this.channelId.toString())
+    // const channle = this.dataHelper.getChannel(channel_id.toString())
+    // this.hiveService.register()
     //TODO
     // this.feedService.publishPost(
     //   this.nodeId,
@@ -333,6 +342,7 @@ export class CreatenewpostPage implements OnInit {
     let videoSize = this.flieUri.length;
     let imgSize = this.imgUrl.length;
 
+    // 大数据走session
     if (
       videoSize > this.throwMsgTransDataLimit ||
       imgSize > this.throwMsgTransDataLimit
@@ -614,14 +624,16 @@ export class CreatenewpostPage implements OnInit {
 
   hideComponent(feed: any) {
     if (feed === null) {
+      console.log("hideSwitchFeed 2");
       this.hideSwitchFeed = false;
       return;
     }
     this.nodeId = feed.nodeId;
-    this.channelId = feed.id;
+    this.channelId = feed.channel_id;
     let currentFeed = {
       nodeId: this.nodeId,
       feedId: this.channelId,
+      channel_id: this.channelId
     };
     this.feedService.setCurrentFeed(currentFeed);
     this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
