@@ -159,7 +159,16 @@ export class HiveService {
   }
 
   async createCollection(channelName: string): Promise<void> {
-    return await (await this.getVault()).getDatabaseService().createCollection(channelName)
+    return new Promise(async (resolve, reject) => {
+      try {
+        const vault = await this.getVault();
+        const result = await vault.getDatabaseService().createCollection(channelName);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'createCollection error', error);
+        reject(error);
+      }
+    })
   }
 
   async sendChannle(channelName: string, intro: string, avatar: any): Promise<string> {
@@ -207,7 +216,7 @@ export class HiveService {
     await scriptingService.registerScript(timeStamp,
       new FindExecutable("find_message", HiveService.CHANNEL, executablefilter, options).setOutput(true),
       new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null), false);
-  }        
+  }
   //  查询指定post内容
   async registerPost(): Promise<string> {
     let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id" }
@@ -625,37 +634,55 @@ export class HiveService {
       Logger.error(TAG, 'Update error', error);
     }
   }
-/*
-  createCollection(userDid: string, list: FeedsData.Channels[]): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      let vault = await this.getVault()
-      // localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
-      let createCollectionFlag = localStorage.getItem(userDid + HiveService.createCollection) || ""
-
-      if (!createCollectionFlag) {
+  /*
+    createCollection(userDid: string, list: FeedsData.Channels[]): Promise<string> {
+      return new Promise(async (resolve, reject) => {
+        let vault = await this.getVault()
+        // localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
+        let createCollectionFlag = localStorage.getItem(userDid + HiveService.createCollection) || ""
+  
+        if (!createCollectionFlag) {
+          try {
+            await vault.getDatabaseService().createCollection(HiveService.collectName)
+            createCollectionFlag = "true";
+            localStorage.setItem(userDid + HiveService.createCollection, createCollectionFlag)
+          } catch (error) {
+          }
+        }
+  
+        if (!createCollectionFlag) {
+          resolve('NotFinish');
+          return;
+        }
+  
         try {
-          await vault.getDatabaseService().createCollection(HiveService.collectName)
-          createCollectionFlag = "true";
-          localStorage.setItem(userDid + HiveService.createCollection, createCollectionFlag)
+          await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
+          localStorage.setItem(userDid + HiveService.collectName, "true")
+          resolve('Finish');
         } catch (error) {
         }
-      }
+      })
+  
+    }
+    */
 
-      if (!createCollectionFlag) {
-        resolve('NotFinish');
-        return;
-      }
-
+  insertDBData(collectName: string, doc: any): Promise<InsertResult> {
+    return new Promise(async (resolve, reject) => {
       try {
-        await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        localStorage.setItem(userDid + HiveService.collectName, "true")
-        resolve('Finish');
+        const vaultService = await this.getVault();
+        const dbService = vaultService.getDatabaseService();
+        const insertResult = await dbService.insertOne(collectName, doc, new InsertOptions(false, true));
+        resolve(insertResult);
       } catch (error) {
+        Logger.error(TAG, 'Insert error:', error);
+        reject(error);
       }
-    })
-
+    });
   }
-  */
+
+  newInsertOptions() {
+    return new InsertOptions(false, true);
+  }
 }
 
 interface Mime {
