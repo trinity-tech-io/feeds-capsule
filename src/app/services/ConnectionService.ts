@@ -106,6 +106,7 @@ export class ConnectionService {
   }
 
   //added v1.3.0 server
+  // 向服务器发送post
   declarePost(
     serverName: string,
     nodeId: string,

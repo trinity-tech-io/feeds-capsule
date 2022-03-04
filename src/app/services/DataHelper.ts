@@ -256,10 +256,6 @@ export class DataHelper {
     for (const index in keys) {
       let feed = this.getChannel(keys[index]);
       if (feed == null) continue;
-      console.log("feed.nodeId  ===== ", feed.nodeId)
-      console.log("nodeId  ===== ", nodeId)
-      console.log("-====== feed.name  ===== " + feed.name)
-
       if (feed.nodeId == nodeId) list.push(feed);
     }
     return list;

@@ -266,45 +266,64 @@ export class CreatenewfeedPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       // 创建channles（用来存储userid下的所有创建的频道info）
       let userDid = (await this.dataHelper.getSigninData()).did
-      const isChannlesTable = localStorage.getItem(userDid + HiveService.channlesTable) || ''
-      console.log("isChannlesTable ===== ", isChannlesTable)
-      if (isChannlesTable === '') {
+      const isChannles = localStorage.getItem(userDid + HiveService.CHANNEL) || ''
+      const isPost = localStorage.getItem(userDid + HiveService.POST) || ''
+      const isSubscription = localStorage.getItem(userDid + HiveService.SUBSCRIPTION) || ''
+      console.log("isChannles ===== ", isChannles)
+      console.log("isPost ===== ", isPost)
+      if (isSubscription === '') {
         try {
-          await this.hiveService.createChannel(HiveService.channlesTable)
-          localStorage.setItem(userDid + HiveService.channlesTable, "true")
+          await this.hiveService.createChannel(HiveService.SUBSCRIPTION)
         } catch (error) {
-          console.error("err code ==== ", error.code)
-          console.error("errstr ==== ", JSON.stringify(error))
           if (error.code === 455) {
-            localStorage.setItem(userDid + HiveService.channlesTable, "true")
-            await this.hiveService.createChannel(name)
-            let channleId = await this.hiveService.postChannleInfo(name, desc, this.avatar)
-            this.native.hideLoading()
-            this.native.pop()
+            localStorage.setItem(userDid + HiveService.SUBSCRIPTION, "true")
           }
           else {
+            this.native.hideLoading()
             throw error
           }
         }
-      } else {
-        // 创建channle表（用来存储此channle下的所有post）
-        await this.hiveService.createChannel(name)
-        console.log("create channel success =========")
-        let result = await this.hiveService.postChannleInfo(name, desc, this.avatar)
-        console.log("post Channle Info success =========", result)
-        this.native.hideLoading()
-        this.native.pop()
       }
+      if (isChannles === '') {
+        try {
+          await this.hiveService.createChannel(HiveService.CHANNEL)
+        } catch (error) {
+          if (error.code === 455) {
+            localStorage.setItem(userDid + HiveService.CHANNEL, "true")
+          }
+          else {
+            this.native.hideLoading()
+            throw error
+          }
+        }
+      }
+
+      if (isPost === '') {
+        try {
+          await this.hiveService.createChannel(HiveService.POST)
+        } catch (error) {
+          if (error.code === 455) {
+            localStorage.setItem(userDid + HiveService.POST, "true")
+          }
+          else {
+            this.native.hideLoading()
+            throw error
+          }
+        }
+      }
+      let channleId = await this.hiveService.sendChannle(name, desc, this.avatar)
+      let registr = await this.hiveService.registerChannel(name, channleId)
+      // await this.hiveService.callChannel(name, channleId)
+      // 订阅自己
+      console.log("订阅自己开始 =========== ")
+      await this.hiveService.subscriptions(channleId)
+      console.log("订阅自己结束 =========== ")
+      this.native.hideLoading()
+      this.native.pop()
     } catch (error) {
       this.native.hideLoading()
       console.log("create channel error =========", JSON.stringify(error))
-      // const err = JSON.parse(error) // 此方法不可用 
-      if (error.code === 455) {
-        this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
-      }
-      else {
-        this.native.toast('common.saveFailed'); // 需要更改错误提示
-      }
+      this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
     }
   }
 

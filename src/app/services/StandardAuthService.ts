@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = 'StandardAuthService';
@@ -17,6 +18,7 @@ export class StandardAuthService {
   }
   constructor(
     private storeService: StorageService,
+    private dataHelper: DataHelper,
   ) {}
 
   getCredentials(): Promise<any> {
@@ -111,7 +113,6 @@ export class StandardAuthService {
       ) {
         reject('Params error');
       }
-
       // Parse, but verify on chain that this JWT is valid first
       let parseResult: DIDPlugin.ParseJWTResult = null;
       try {
@@ -301,12 +302,14 @@ export class StandardAuthService {
     return new Promise(async (resolve, reject) => {
       if (appIdCredential != null && appIdCredential != undefined) {
         Logger.log(TAG, 'Get credential from memory , credential is ', appIdCredential);
+
         resolve(appIdCredential);
         return;
       }
 
       let mAppIdCredential = await this.storeService.get('appIdCredential');
       Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
+
       resolve(mAppIdCredential);
     });
   }
@@ -315,7 +318,9 @@ export class StandardAuthService {
     appIdCredential: DIDPlugin.VerifiableCredential,
   ): Promise<DIDPlugin.VerifiableCredential> {
     return new Promise(async (resolve, reject) => {
+
       if (this.checkCredentialValid(appIdCredential)) {
+
         Logger.log(TAG, 'Credential valid , credential is ', appIdCredential);
         resolve(appIdCredential);
         return;
@@ -323,16 +328,20 @@ export class StandardAuthService {
 
       Logger.warn(TAG, 'Credential invalid, Getting app identity credential');
       let didAccess = new DID.DIDAccess();
+
       try {
         let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
         if (mAppIdCredential) {
+
           Logger.log(TAG, 'Get app identity credential', mAppIdCredential);
           resolve(mAppIdCredential);
           return;
         }
 
         mAppIdCredential = await didAccess.generateAppIdCredential();
+
         if (mAppIdCredential) {
+
           Logger.log(TAG, 'Generate app identity credential, credential is ', mAppIdCredential);
           resolve(mAppIdCredential);
           return;
@@ -365,9 +374,17 @@ export class StandardAuthService {
     return true;
   }
 
+  async getAppId(): Promise<string> {
+    let userDid = (await this.dataHelper.getSigninData()).did
+    let appid = await this.storeService.get(userDid + 'appDid');
+    console.log("appid ================== ", appid)
+
+    return appid
+  }
   generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
     let self = this ; 
     return new Promise(async (resolver, reject) => {
+
       Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', challeng)
       if (
         challeng == null ||
@@ -418,7 +435,6 @@ export class StandardAuthService {
       let didAccess = new DID.DIDAccess();
       this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
       this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
-
       this.appIdCredential = await this.getAppIdCredentialFromStorage(
         this.appIdCredential,
       );
@@ -426,13 +442,15 @@ export class StandardAuthService {
       this.appIdCredential = await this.checkAppIdCredentialStatus(
         this.appIdCredential,
       );
-
       Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
       if (!this.appIdCredential) {
         Logger.warn(TAG, 'Empty app id credential')
         resolver(null)
         return
       }
+
+      let userDid = (await this.dataHelper.getSigninData()).did
+      await this.storeService.set(userDid + 'appDid', this.appIdCredential.getSubject()["appDid"]);
 
       this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword,async presentation => {
 

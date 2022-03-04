@@ -68,6 +68,7 @@ export class CreatenewpostPage implements OnInit {
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
   public pictureMenu: any = null;
+  // 视频data
   private videoData: FeedsData.videoData = null;
   constructor(
     private platform: Platform,
@@ -123,10 +124,10 @@ export class CreatenewpostPage implements OnInit {
     this.channelAvatar = this.feedService.parseChannelAvatar(myFeed['avatar']);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.imgUrl = this.feedService.getSelsectNftImage();
     this.feedService.setSelsectNftImage(this.imgUrl);
-    this.feedList = this.feedService.getMyChannelList() || [];
+    this.feedList = await this.feedService.getHiveMyChannelList() || [];
     this.initTitle();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -213,6 +214,7 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave() {
     this.isLoading = false;
+    console.log("hideSwitchFeed 1");
     this.hideSwitchFeed = false;
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
@@ -330,6 +332,7 @@ export class CreatenewpostPage implements OnInit {
     let videoSize = this.flieUri.length;
     let imgSize = this.imgUrl.length;
 
+    // 大数据走session
     if (
       videoSize > this.throwMsgTransDataLimit ||
       imgSize > this.throwMsgTransDataLimit
@@ -611,14 +614,16 @@ export class CreatenewpostPage implements OnInit {
 
   hideComponent(feed: any) {
     if (feed === null) {
+      console.log("hideSwitchFeed 2");
       this.hideSwitchFeed = false;
       return;
     }
     this.nodeId = feed.nodeId;
-    this.channelId = feed.id;
+    this.channelId = feed.channel_id;
     let currentFeed = {
       nodeId: this.nodeId,
       feedId: this.channelId,
+      channel_id: this.channelId
     };
     this.feedService.setCurrentFeed(currentFeed);
     this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
