@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HiveService } from 'src/app/services/HiveService';
+import { UtilService } from './utilService';
 
 const TAG = 'API-HiveVault';
 
@@ -10,10 +11,15 @@ export class HiveVaultApi {
   ) {
   }
 
+  registeScripting() {
+    this.registerGetCommentScripting();
+    this.registerGetPostScripting();
+  }
+
   //API
   //channel/post/comment/
   createCollection(collectName: string) {
-    this.hiveService.createChannel(collectName);
+    this.hiveService.createCollection(collectName);
   }
 
   //API
@@ -26,6 +32,7 @@ export class HiveVaultApi {
   //Channel
   //Update
   updateDataToChannelDB() {
+
   }
 
   //API
@@ -67,7 +74,7 @@ export class HiveVaultApi {
   }
 
 
-  registerGetCommentScripting() {
+  private registerGetCommentScripting() {
   }
 
   callGetCommentScripting() {
