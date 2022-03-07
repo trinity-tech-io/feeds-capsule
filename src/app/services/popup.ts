@@ -3,7 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
 import { ConfirmdialogComponent } from '../components/confirmdialog/confirmdialog.component';
 import { AlertdialogComponent } from '../components/alertdialog/alertdialog.component';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, ModalController} from '@ionic/angular';
+import { ScanPage } from '../pages/scan/scan.page';
 @Injectable()
 export class PopupProvider {
   public popover: any = null;
@@ -12,6 +13,7 @@ export class PopupProvider {
     private alertCtrl: AlertController,
     private translate: TranslateService,
     private popoverController: PopoverController,
+    private modalController: ModalController,
   ) {}
 
   public ionicAlert1(
@@ -175,5 +177,23 @@ export class PopupProvider {
 
   timeOutconfirm(that: any) {
     that.popoverController.dismiss();
+  }
+
+  async scan(): Promise<any> {
+    return new Promise<any>(async (resolve, reject) => {
+      const modal = await this.modalController.create({
+        mode: 'ios',
+        component:ScanPage,
+        cssClass:"transparentBody",
+        showBackdrop:false,
+      });
+      modal.onWillDismiss().then((scanText)=>{
+        console.log("=====scanText=====",scanText);
+            resolve(scanText);
+      }).catch(()=>{
+        reject("");
+      });
+      return await modal.present();
+    });
   }
 }

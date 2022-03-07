@@ -3,7 +3,7 @@ import { PopoverController, NavParams } from '@ionic/angular';
 import { ThemeService } from '../../services/theme.service';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
-import { IntentService } from '../../services/IntentService';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-serverprompt',
@@ -21,7 +21,7 @@ export class ServerpromptComponent implements OnInit {
     private feedService: FeedService,
     private navParams: NavParams,
     private popover: PopoverController,
-    private intentService: IntentService,
+    private popupProvider: PopupProvider,
     public theme: ThemeService,
     public zone: NgZone,
   ) {}
@@ -38,7 +38,9 @@ export class ServerpromptComponent implements OnInit {
   }
 
   async clickScan() {
-    let scannedContent = (await this.intentService.scanQRCode()) || '';
+    let scanObj =  await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+    let scannedContent = scanData["scannedText"] || "";
     if (scannedContent != '' && scannedContent.indexOf('elastos:') > -1) {
       this.elaAddress = scannedContent.replace('elastos:', '');
     } else {

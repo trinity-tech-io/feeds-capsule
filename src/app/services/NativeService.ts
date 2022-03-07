@@ -142,7 +142,7 @@ export class NativeService {
 
   public hideLoading(): void {
     if (this.loading != null) {
-      this.loading.dismiss();
+        this.loading.dismiss();
     }
   }
 

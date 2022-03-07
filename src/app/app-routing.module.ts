@@ -230,6 +230,10 @@ const routes: Routes = [
   {
     path: 'galleriachannel',
     loadChildren: () => import('./pages/galleriachannel/galleriachannel.module').then( m => m.GalleriachannelPageModule)
+  },
+  {
+    path: 'scan',
+    loadChildren: () => import('./pages/scan/scan.module').then( m => m.ScanPageModule)
   }
 ];
 

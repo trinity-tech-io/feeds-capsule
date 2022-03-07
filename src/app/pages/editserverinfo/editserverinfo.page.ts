@@ -5,11 +5,11 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
-import { IntentService } from 'src/app/services/IntentService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 
 import * as _ from 'lodash';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-editserverinfo',
@@ -34,8 +34,8 @@ export class EditserverinfoPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private zone: NgZone,
-    private intentService: IntentService,
     private titleBarService: TitleBarService,
+    private popupProvider: PopupProvider
   ) {}
 
   ngOnInit() {
@@ -91,7 +91,9 @@ export class EditserverinfoPage implements OnInit {
   }
 
   async clickScan() {
-    let scannedContent = (await this.intentService.scanQRCode()) || '';
+    let scanObj =  await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+    let scannedContent  = scanData["scannedText"] || "";
     if (scannedContent != '' && scannedContent.indexOf('elastos:') > -1) {
       this.elaAddress = scannedContent.replace('elastos:', '');
     } else {

@@ -59,7 +59,8 @@ export class GuideubuntuPage implements OnInit {
     this.checkDid('scanService');
   }
 
-  checkDid(clickType: string) {
+ async checkDid(clickType: string) {
+    await this.native.showLoading('common.waitMoment');
     let signInData = this.feedService.getSignInData() || {};
     let did = signInData['did'];
     this.feedService.checkDIDDocument(did).then(isOnSideChain => {
@@ -67,6 +68,7 @@ export class GuideubuntuPage implements OnInit {
         //show one button dialog
         //if click this button
         //call feedService.promptpublishdid() function
+        this.native.hideLoading();
         this.openAlert();
         return;
       }
@@ -100,7 +102,10 @@ export class GuideubuntuPage implements OnInit {
 
   async scanAddress() {
     try {
-      let res = await this.intentService.scanQRCode();
+      this.native.hideLoading();
+      let scanObj =  await this.popupProvider.scan() || {};
+      let scanData = scanObj["data"] || {};
+      let res  = scanData["scannedText"] || "";
       this.handleAddress(res);
     } catch (error) {}
   }

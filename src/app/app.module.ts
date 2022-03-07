@@ -15,13 +15,14 @@ import { Network } from '@ionic-native/network/ngx';
 
 import { MyApp } from './app.component';
 import { ComponentsModule } from './components/components.module';
+import { QRScanner } from '@ionic-native/qr-scanner/ngx';
+
 
 import {
   TranslateLoader,
   TranslateModule,
   TranslateService,
 } from '@ngx-translate/core';
-import { ScanService } from 'src/app/services/scan.service';
 
 import { Observable } from 'rxjs';
 import { zh } from './../assets/i18n/zh';
@@ -61,7 +62,6 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { RewriteFrames } from '@sentry/integrations';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { LanguageService } from 'src/app/services/language.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { NFTContractParsarService } from 'src/app/services/nftcontract_parsar.service';
@@ -166,6 +166,7 @@ export function TranslateLoaderFactory() {
   bootstrap: [MyApp],
   entryComponents: [MyApp],
   providers: [
+    QRScanner,
     Keyboard,
     File,
     VideoEditor,
@@ -201,9 +202,7 @@ export function TranslateLoaderFactory() {
     DataHelper,
     ViewHelper,
     TitleBarService,
-    ScanService,
     LanguageService,
-    BarcodeScanner,
     NFTContractParsarService,
     NFTContractStickerService,
     NFTContractDiamondService,
