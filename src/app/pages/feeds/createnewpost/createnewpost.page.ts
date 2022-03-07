@@ -20,7 +20,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveService } from 'src/app/services/HiveService';
+import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
 
 let TAG: string = 'Feeds-createpost';
 
@@ -93,7 +93,9 @@ export class CreatenewpostPage implements OnInit {
     private ipfsService: IPFSService,
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveService: HiveService
+    // private hiveService: HiveService,
+    private hiveVaultApi: HiveVaultApi
+
   ) { }
 
   ngOnInit() {

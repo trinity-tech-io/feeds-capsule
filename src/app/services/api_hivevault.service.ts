@@ -5,8 +5,10 @@ import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
 import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable } from "@dchagastelles/elastos-hive-js-sdk";
 import { VideoService } from './video.service';
+import { Events } from 'src/app/services/events.service';
 
 const TAG = 'API-HiveVault';
+let eventBus: Events = null;
 
 @Injectable()
 export class HiveVaultApi {
@@ -16,20 +18,25 @@ export class HiveVaultApi {
   public static readonly TABLE_COMMENTS = "comments";
   public static readonly TABLE_LIKES = "likes";
 
+  public static readonly SCRIPT_ALLPOST = "script_allpost_name";
+  public static readonly SCRIPT_CHANNEL = "script_channel_name";
+  public static readonly SCRIPT_COMMENT = "script_comment_name";
+  public static readonly SCRIPT_SUBSCRIPTION = "script_subscriptions_name";
+
   constructor(
     private hiveService: HiveService,
-    private dataHelper: DataHelper
-  ) {
+    private dataHelper: DataHelper,
+    private events: Events,
+  ) {    
+    eventBus = events;
   }
 
   registeScripting() {
-    this.registerGetCommentScripting()
-    this.registerGetPostScripting()
     this.registerGetAllPostScripting()
     this.registerGetChannelScripting()
     this.registerGetCommentScripting()
-    this.registerGetPostScripting()
-    this.registerGetSomeTimePostScripting()
+    // this.registerGetPostScripting()
+    // this.registerGetSomeTimePostScripting()
   }
 
   //API
@@ -73,16 +80,101 @@ export class HiveVaultApi {
 
         const createdAt = UtilService.getCurrentTimeNum();
         const updatedAt = UtilService.getCurrentTimeNum();
-        const channelId = UtilService.SHA256(signinDid + createdAt + 'channel');
-        const memo = '';
+        const cId = localStorage.getItem(signinDid + HiveService.postId) || ''
+        console.log("cId ====== ", cId)
+        const channelId = cId !== '' ? Number(cId) + 1 : 0
 
-        await this.insertDataToChannelDB(channelId, channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
-        resolve(channelId);
+        // const channelId = UtilService.SHA256(signinDid + createdAt + 'channel');
+        const memo = '';
+        console.log("Number(channelId)  ====== ", channelId)
+        const doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
+        localStorage.setItem(signinDid + HiveService.postId, channelId.toString())
+        this.handleResult(
+          "create_channel", channelId, signinDid, channelName, 0, doc
+        );
+        resolve(channelId.toString());
       } catch (error) {
         Logger.error(error);
         reject()
       }
     });
+  }
+
+  handleResult(
+    method: string,
+    channel_id: number,
+    userDid: string,
+    channleName: string,
+    post_id: any,
+    request: any,
+  ) {
+    switch (method) {
+      // 在这里存到了本地
+      case FeedsData.MethodType.create_channel:
+        this.handleCreateChannelResult(channel_id, userDid, post_id, channleName, request);
+        break;
+    }
+  }
+  handleCreateChannelResult(
+    channel_id: number,
+    userDid: string,
+    post_id: any,
+    channleName: string,
+    request: any
+  ) {
+    // let channel_id = result.channel_id;
+    let created_at = request.created_at;
+    let updated_at = request.updated_at;
+    let name = request.name;
+    let introduction = request.intro;
+    let avatar = request.avatar;
+    let memo = request.memo;
+    let type = request.type;
+
+    let channelId = channel_id
+    // let channelName = channleName
+    let channelIntro = request.intro
+    console.log("channelId ===== ", channelId)
+    // let avatar = this.serializeDataService.decodeData(avatarBin);
+    let nodeChannelId = userDid + HiveService.CHANNEL
+
+    let channel: FeedsData.Channels = {
+      channel_id: channel_id,
+      created_at: created_at,
+      updated_at: updated_at,
+      name: name,
+      introduction: introduction,
+      avatar: avatar,
+      memo: memo,
+      type: type,
+
+      nodeId: nodeChannelId,
+      id: 0,
+      // name: channelName,
+      // introduction: channelIntro,
+      owner_name: "",
+      owner_did: "",
+      subscribers: 0,
+      last_update: new Date().getTime(),
+      last_post: '', 
+      // avatar: avatar,
+      isSubscribed: false,
+    };
+    this.dataHelper.updateChannel(channelId.toString(), channel)
+    console.log("userDid + HiveService.postId" + userDid + HiveService.postId + channelId.toString());
+    localStorage.setItem(userDid + HiveService.postId, channelId.toString())
+
+    let createTopicSuccessData: FeedsEvent.CreateTopicSuccessData = {
+      nodeId: userDid,
+      channelId: channelId,
+    };
+
+    eventBus.publish(
+      FeedsEvent.PublishType.createTopicSuccess,
+      createTopicSuccessData,
+    );
+
+    eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
   }
 
   publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available) {
@@ -127,7 +219,7 @@ export class HiveVaultApi {
   //Channel
   //Insert
   insertDataToChannelDB(channelId: string, name: string, intro: string, avatar: string, memo: string,
-    createdAt: number, updatedAt: number, type: string, tippingAddress: string, nft: string): Promise<string> {
+    createdAt: number, updatedAt: number, type: string, tippingAddress: string, nft: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const doc = {
         "channel_id": channelId,
@@ -143,10 +235,10 @@ export class HiveVaultApi {
       }
 
       try {
-        const insertResult = this.hiveService.insertDBData(TAG, doc);
+        const insertResult = this.hiveService.insertDBData(HiveVaultApi.TABLE_CHANNELS, doc);
         Logger.log(TAG, 'Insert channel db result', insertResult);
         //TODO resolve result
-        resolve('SUCCESS');
+        resolve(doc);
       } catch (error) {
         Logger.error(TAG, 'Insert channel db error', error);
         reject(error)
@@ -207,13 +299,12 @@ export class HiveVaultApi {
   registerGetChannelScripting(): Promise<void> {
     let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
-    let userDid = (await this.dataHelper.getSigninData()).did
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     const timeStamp = new Date().getTime().toString()
     const executable = new FindExecutable("find_message", HiveService.CHANNEL, executablefilter, options).setOutput(true)
     const condition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
     console.log("registerGetChannelScripting ====== ")
-    return this.hiveService.registerChannel(timeStamp, executable, condition, false)
+    return this.hiveService.registerChannel(HiveVaultApi.SCRIPT_CHANNEL, executable, condition, false)
   }
   //  查询指定post内容
   //API
@@ -241,11 +332,10 @@ export class HiveVaultApi {
     let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-    let timeStamp = new Date().getTime().toString()
     let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
     let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
     console.log("registerGetAllPostScripting ====== ")
-    return this.hiveService.registerAllPost(timeStamp, findExe, queryCondition, false, false)
+    return this.hiveService.registerAllPost(HiveVaultApi.SCRIPT_ALLPOST, findExe, queryCondition, false, false)
   }
 
   // 查询时间段的内容
@@ -269,16 +359,15 @@ export class HiveVaultApi {
     let options = { "projection": { "_id": false } }
     let conditionfilter = { "channel_id": "$params.channel_id", "type": "public" }
     console.log("registerSubscriptions ====== ")
-    let timeStamp = new Date().getTime().toString()
-    // 此nama与订阅频道无关，可随意取，保持在vault中唯一即可，此处为确定唯一使用时间戳
-    return this.hiveService.registerSubscriptions(timeStamp, new InsertExecutable("database_insert", HiveService.SUBSCRIPTION, document, options), new QueryHasResultCondition("verify_user_permission", HiveService.CHANNEL, conditionfilter, null))
+    // 此nama与订阅频道无关，可随意取，保持在vault中唯一即可
+    return this.hiveService.registerSubscriptions(HiveVaultApi.SCRIPT_SUBSCRIPTION, new InsertExecutable("database_insert", HiveService.SUBSCRIPTION, document, options), new QueryHasResultCondition("verify_user_permission", HiveService.CHANNEL, conditionfilter, null))
   }
 
   //API
   //Post
   //Call Get
-  callGetPostScripting() {
-
+  callGetPostScripting(channelId: string): Promise<void> {
+    return this.hiveService.callPost(HiveVaultApi.SCRIPT_ALLPOST, channelId)
   }
 
   //API

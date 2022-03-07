@@ -197,6 +197,7 @@ export class HomePage implements OnInit {
   initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
+    // TODO 首页订阅频道请求
     this.totalData = this.sortPostList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -1037,6 +1038,8 @@ export class HomePage implements OnInit {
     this.refreshEvent = event;
     switch (this.tabType) {
       case 'feeds':
+        // 首页刷新
+        console.log("homepage.doRefresh.feeds");
         let sId = setTimeout(() => {
           this.initPostListData(true);
           if (event != null) event.target.complete();
@@ -1045,6 +1048,7 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
+        console.log("homepage.doRefresh.pasar");
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.zone.run(async () => {
           await this.refreshPasarList();

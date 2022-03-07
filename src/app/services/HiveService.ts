@@ -255,6 +255,7 @@ export class HiveService {
         let scriptingService = (await this.getVault()).getScriptingService()
     
         await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
+        resolve()
       } catch (error) {
         Logger.error(TAG, 'register Some Time Post error:', error)
         reject(error)
@@ -276,16 +277,23 @@ export class HiveService {
 
 
   // 查询指定的post
-  async callPost(scriptName: string, channel_id: string) {
-    let scriptingService = (await this.getVault()).getScriptingService()
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let appinstanceDid = (await this.standardAuthService.getInstanceDID()).getDIDString()
-    let appid = await this.standardAuthService.getAppId()
-    console.log("appid ===== ", appid)
-    console.log("userDid ===== ", userDid)
-    let result = await scriptingService.callScript<any>(scriptName, { "channel_id": channel_id }, userDid, appid)
-    console.log("callChannel result ======= ", result)
-  }
+  callPost(scriptName: string, channelId: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let scriptingService = (await this.getVault()).getScriptingService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        let appid = await this.standardAuthService.getAppId()
+        console.log("appid ===== ", appid)
+        console.log("userDid ===== ", userDid)
+        let result = await scriptingService.callScript<any>(scriptName, { "channel_id": channelId }, userDid, appid)
+        console.log("callChannel result ======= ", result)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'call Post error:', error)
+        reject(error)
+      }
+    })
+ }
 
   // 订阅
   async registerSubscriptions(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean) {
@@ -393,9 +401,6 @@ export class HiveService {
     this.dataHelper.updateChannel(channelId.toString(), channel)
     localStorage.setItem(userDid + HiveService.postId, channelId.toString())
 
-    // this.hiveService.insertOne(channel)
-    // this.subscribeChannel(nodeId, channelId);
-    console.log("++++++ event = " + eventBus);
     let createTopicSuccessData: FeedsEvent.CreateTopicSuccessData = {
       nodeId: userDid,
       channelId: channelId,
