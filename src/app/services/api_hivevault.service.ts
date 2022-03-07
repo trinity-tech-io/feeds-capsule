@@ -3,6 +3,8 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
+import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable } from "@dchagastelles/elastos-hive-js-sdk";
+import { VideoService } from './video.service';
 
 const TAG = 'API-HiveVault';
 
@@ -21,8 +23,13 @@ export class HiveVaultApi {
   }
 
   registeScripting() {
-    this.registerGetCommentScripting();
-    this.registerGetPostScripting();
+    this.registerGetCommentScripting()
+    this.registerGetPostScripting()
+    this.registerGetAllPostScripting()
+    this.registerGetChannelScripting()
+    this.registerGetCommentScripting()
+    this.registerGetPostScripting()
+    this.registerGetSomeTimePostScripting()
   }
 
   //API
@@ -38,6 +45,7 @@ export class HiveVaultApi {
         await this.createCollection(HiveVaultApi.TABLE_SUBSCRIPTIONS);
         await this.createCollection(HiveVaultApi.TABLE_COMMENTS);
         await this.createCollection(HiveVaultApi.TABLE_LIKES);
+        resolve("true")
       } catch (error) {
         Logger.error(TAG, 'create Collections error', error);
         reject(error)
@@ -195,11 +203,75 @@ export class HiveVaultApi {
   deleteDataFromPostDB() {
   }
 
+  // 查询channel信息
+  registerGetChannelScripting(): Promise<void> {
+    let executablefilter = { "channel_id": "$params.channel_id" }
+    let options = { "projection": { "_id": false }, "limit": 100 }
+    let userDid = (await this.dataHelper.getSigninData()).did
+    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+    const timeStamp = new Date().getTime().toString()
+    const executable = new FindExecutable("find_message", HiveService.CHANNEL, executablefilter, options).setOutput(true)
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
+    console.log("registerGetChannelScripting ====== ")
+    return this.hiveService.registerChannel(timeStamp, executable, condition, false)
+  }
+  //  查询指定post内容
   //API
   //Post
   //Register Get
-  registerGetPostScripting() {
+  registerGetPostScripting(): Promise<void> {
+    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id" }
+    let options = { "projection": { "_id": false }, "limit": 100 }
+    let conditionfilter1 = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+    let conditionfilter2 = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": "public" }
+    let timeStamp = new Date().getTime().toString()
+    let queryCondition1 = new QueryHasResultCondition("subscription_permission", HiveService.SUBSCRIPTION, conditionfilter1, null)
+    let queryCondition2 = new QueryHasResultCondition("post_permission", HiveService.POST, conditionfilter2, null)
+    let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
+    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+    console.log("registerGetPostScripting ====== ")
+    return this.hiveService.registerPost(timeStamp, findExe, andCondition, false, false)
+  }
 
+  // 查询channel下所有post
+  //API
+  //Post
+  //Register Get
+  registerGetAllPostScripting(): Promise<void> {
+    let executablefilter = { "channel_id": "$params.channel_id" }
+    let options = { "projection": { "_id": false }, "limit": 100 }
+    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+    let timeStamp = new Date().getTime().toString()
+    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
+    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+    console.log("registerGetAllPostScripting ====== ")
+    return this.hiveService.registerAllPost(timeStamp, findExe, queryCondition, false, false)
+  }
+
+  // 查询时间段的内容
+  //API
+  //Post
+  //Register Get
+  registerGetSomeTimePostScripting() {
+    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { "$gt": "$params.start", "$lt": "$params.end" } }
+    let options = { "projection": { "_id": false }, "limit": 100 }
+    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+    let timeStamp = new Date().getTime().toString()
+    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
+    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+    console.log("registerGetSomeTimePostScripting ====== ")
+    return this.hiveService.registerSomeTimePost(timeStamp, findExe, queryCondition, false, false)
+  }
+
+  // 注册订阅
+  registerSubscriptions(): Promise<void> {
+    let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "created_at": "$params.created_at", "display_name": "$params.display_name" }
+    let options = { "projection": { "_id": false } }
+    let conditionfilter = { "channel_id": "$params.channel_id", "type": "public" }
+    console.log("registerSubscriptions ====== ")
+    let timeStamp = new Date().getTime().toString()
+    // 此nama与订阅频道无关，可随意取，保持在vault中唯一即可，此处为确定唯一使用时间戳
+    return this.hiveService.registerSubscriptions(timeStamp, new InsertExecutable("database_insert", HiveService.SUBSCRIPTION, document, options), new QueryHasResultCondition("verify_user_permission", HiveService.CHANNEL, conditionfilter, null))
   }
 
   //API

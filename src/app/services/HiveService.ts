@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, FindExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions, HttpClient, AndCondition, FindOptions } from "@dchagastelles/elastos-hive-js-sdk";
+import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, FindExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions, HttpClient, AndCondition, FindOptions, Condition } from "@dchagastelles/elastos-hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -20,6 +20,7 @@ let eventBus: Events = null;
 
 @Injectable()
 export class HiveService {
+  public static CREATEALLCollECTION = "feeds_createALLCollection" // 本地标识是否创建了Collection
   public static readonly CHANNEL = "channel"
   public static readonly POST = "post"
   public static readonly SUBSCRIPTION = "subscription"
@@ -205,69 +206,60 @@ export class HiveService {
     return post_id
   }
   // 查询channel信息
-  async registerChannel() {
-    let executablefilter = { "channel_id": "$params.channel_id" }
-    let options = { "projection": { "_id": false }, "limit": 100 }
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-    let scriptingService = (await this.getVault()).getScriptingService()
-    console.log("registerChannel ====== ")
-    const timeStamp = new Date().getTime().toString()
-    await scriptingService.registerScript(timeStamp,
-      new FindExecutable("find_message", HiveService.CHANNEL, executablefilter, options).setOutput(true),
-      new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null), false);
+  registerChannel(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let scriptingService = (await this.getVault()).getScriptingService()
+        await scriptingService.registerScript(scriptName, executable,
+          condition, allowAnonymousUser, allowAnonymousApp)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'register Channel error:', error)
+        reject(error)
+      }
+    })
   }
+
   //  查询指定post内容
-  async registerPost(): Promise<string> {
-    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id" }
-    let options = { "projection": { "_id": false }, "limit": 100 }
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter1 = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-    let conditionfilter2 = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": "public" }
-    let scriptingService = (await this.getVault()).getScriptingService()
-    console.log("registerPost ====== ")
-    let timeStamp = new Date().getTime().toString()
-    let queryCondition1 = new QueryHasResultCondition("subscription_permission", HiveService.SUBSCRIPTION, conditionfilter1, null)
-    let queryCondition2 = new QueryHasResultCondition("post_permission", HiveService.POST, conditionfilter2, null)
-    let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
-    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
-
-    await scriptingService.registerScript(timeStamp, findExe, andCondition, false, false)
-
-    return timeStamp
+  registerPost(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let scriptingService = (await this.getVault()).getScriptingService()
+        await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'register Post error:', error)
+        reject(error)
+      }
+    })
   }
+
   // 查询channel下所有post
-  async registerAllPost(channel_id: string): Promise<string> {
-    let executablefilter = { "channel_id": "$params.channel_id" }
-    let options = { "projection": { "_id": false }, "limit": 100 }
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-    let scriptingService = (await this.getVault()).getScriptingService()
-    console.log("registerPost ====== ")
-    let timeStamp = new Date().getTime().toString()
-    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
-    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
-
-    await scriptingService.registerScript(timeStamp, findExe, queryCondition, false, false)
-
-    return timeStamp
+  async registerAllPost(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let scriptingService = (await this.getVault()).getScriptingService()
+        await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'register All Post error:', error)
+        reject(error)
+      }
+    })
   }
 
   // 查询时间段的内容
-  async registerSomeTimePost(channel_id: string, post_id: string) {
-    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { "$gt": "$params.start", "$lt": "$params.end" } }
-    let options = { "projection": { "_id": false }, "limit": 100 }
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-    let scriptingService = (await this.getVault()).getScriptingService()
-    console.log("registerPost ====== ")
-    let timeStamp = new Date().getTime().toString()
-    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
-    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
-
-    await scriptingService.registerScript(timeStamp, findExe, queryCondition, false, false)
-
-    return timeStamp
+  async registerSomeTimePost(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let scriptingService = (await this.getVault()).getScriptingService()
+    
+        await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
+      } catch (error) {
+        Logger.error(TAG, 'register Some Time Post error:', error)
+        reject(error)
+      }
+    })
   }
 
   // 
@@ -296,15 +288,11 @@ export class HiveService {
   }
 
   // 订阅
-  async registerSubscriptions() {
-    let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "created_at": "$params.created_at", "display_name": "$params.display_name" }
-    let options = { "projection": { "_id": false } }
-    let conditionfilter = { "channel_id": "$params.channel_id", "type": "public" }
+  async registerSubscriptions(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean) {
     let scriptingService = (await this.getVault()).getScriptingService()
-    console.log("registerPost ====== ")
     let timeStamp = new Date().getTime().toString()
     // 此nama与订阅频道无关，可随意取，保持在vault中唯一即可，此处为确定唯一使用时间戳
-    await scriptingService.registerScript(timeStamp, new InsertExecutable("database_insert", HiveService.SUBSCRIPTION, document, options), new QueryHasResultCondition("verify_user_permission", HiveService.CHANNEL, conditionfilter, null))
+    await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
   }
 
   async updatePost(channelName: string, channel_id: number, origin: any, content: any, status: string): Promise<UpdateResult> {
