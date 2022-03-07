@@ -127,6 +127,7 @@ export class CreatenewfeedPage implements OnInit {
       FeedsEvent.PublishType.createTopicSuccess,
       (createTopicSuccessData: FeedsEvent.CreateTopicSuccessData) => {
         this.zone.run(() => {
+          console.log("FeedsEvent.PublishType.createTopicSuccess112");
           let nodeId = createTopicSuccessData.nodeId;
           let channelId = createTopicSuccessData.channelId;
           this.native.hideLoading();
@@ -268,9 +269,12 @@ export class CreatenewfeedPage implements OnInit {
       let userDid = (await this.dataHelper.getSigninData()).did
       let isCreateAllCollections = localStorage.getItem(userDid + HiveService.CREATEALLCollECTION) || ''
       if (isCreateAllCollections === '') {
-        this.hiveVaultApi.createAllCollections()
+        await this.hiveVaultApi.createAllCollections()
+        await this.hiveVaultApi.registeScripting()
+        localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
       }
-      this.hiveVaultApi.createChannel(name, desc, this.avatar)
+      await this.hiveVaultApi.createChannel(name, desc, this.avatar)
+      this.hiveVaultApi.registerSubscriptions() // 订阅自己
 
       this.native.hideLoading()
       this.native.pop()

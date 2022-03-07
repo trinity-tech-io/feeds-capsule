@@ -20,7 +20,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveService } from 'src/app/services/HiveService';
+import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
 
 let TAG: string = 'Feeds-createpost';
 
@@ -93,7 +93,9 @@ export class CreatenewpostPage implements OnInit {
     private ipfsService: IPFSService,
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveService: HiveService
+    // private hiveService: HiveService,
+    private hiveVaultApi: HiveVaultApi
+
   ) { }
 
   ngOnInit() {
@@ -304,9 +306,7 @@ export class CreatenewpostPage implements OnInit {
 
   async sendPost() {
     const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
-    const post_id = this.hiveService.sendPost(this.channelId, content, "0")
-    console.log("send post  channle id ====== ", this.channelId)
-    console.log("send post  post_id  ====== ", post_id)
+    await this.hiveVaultApi.publishPost(this.channelId.toString(), TAG, content, "0")
     // const timeStamp = await this.hiveService.registerPost((await post_id).toString(), this.channelId.toString())
     // const timeStamp = await this.hiveService.registerAllPost(this.channelId.toString())
     // console.log("callPost 开始===== ")

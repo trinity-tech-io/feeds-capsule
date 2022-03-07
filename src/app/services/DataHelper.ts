@@ -196,10 +196,8 @@ export class DataHelper {
   }
 
   updateChannel(key: string, channel: FeedsData.Channels) {
+    console.log("updateChannel key = " + key);
     this.channelsMap[key] = channel;
-    console.log("FeedsData.PersistenceKey.channelsMap" + "updateChannel");
-
-    console.log("save FeedsData.Channels Test")
 
     let channel_id = channel.channel_id
     let created_at = channel.created_at
