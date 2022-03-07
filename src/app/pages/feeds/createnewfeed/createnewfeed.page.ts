@@ -17,7 +17,7 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService'
 import { DataHelper } from 'src/app/services/DataHelper';
-
+import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
 @Component({
   selector: 'app-createnewfeed',
   templateUrl: './createnewfeed.page.html',
@@ -54,8 +54,8 @@ export class CreatenewfeedPage implements OnInit {
     private languageService: LanguageService,
     private ipfsService: IPFSService,
     private hiveService: HiveService,
-    private dataHelper: DataHelper
-
+    private dataHelper: DataHelper,
+    private hiveVaultApi: HiveVaultApi
   ) {}
 
   ngOnInit() {
@@ -266,67 +266,12 @@ export class CreatenewfeedPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       // 创建channles（用来存储userid下的所有创建的频道info）
       let userDid = (await this.dataHelper.getSigninData()).did
-      let isChannles = localStorage.getItem(userDid + HiveService.CHANNEL) || ''
-      let isPost = localStorage.getItem(userDid + HiveService.POST) || ''
-      let isSubscription = localStorage.getItem(userDid + HiveService.SUBSCRIPTION) || ''
-      console.log("isChannles ===== ", isChannles)
-      console.log("isPost ===== ", isPost)
-      if (isSubscription === '') {
-        try {
-          await this.hiveService.createCollection(HiveService.SUBSCRIPTION)
-          localStorage.setItem(userDid + HiveService.SUBSCRIPTION, "true")
-          isSubscription = "true"
-        } catch (error) {
-          if (error.code === 455) {
-            localStorage.setItem(userDid + HiveService.SUBSCRIPTION, "true")
-            isSubscription = "true"
-          }
-          else {
-            this.native.hideLoading()
-            throw error
-          }
-        }
+      let isCreateAllCollections = localStorage.getItem(userDid + HiveService.CREATEALLCollECTION) || ''
+      if (isCreateAllCollections === '') {
+        this.hiveVaultApi.createAllCollections()
       }
-      if (isChannles === '') {
-        try {
-          await this.hiveService.createCollection(HiveService.CHANNEL)
-          localStorage.setItem(userDid + HiveService.CHANNEL, "true")
-          isChannles = "true"
-        } catch (error) {
-          if (error.code === 455) {
-            localStorage.setItem(userDid + HiveService.CHANNEL, "true")
-            isChannles = "true"
-          }
-          else {
-            this.native.hideLoading()
-            throw error
-          }
-        }
-      }
+      this.hiveVaultApi.createChannel(name, desc, this.avatar)
 
-      if (isPost === '') {
-        try {
-          await this.hiveService.createCollection(HiveService.POST)
-          localStorage.setItem(userDid + HiveService.POST, "true")
-          isPost = "true"
-        } catch (error) {
-          if (error.code === 455) {
-            localStorage.setItem(userDid + HiveService.POST, "true")
-            isPost = "true"
-          }
-          else {
-            this.native.hideLoading()
-            throw error
-          }
-        }
-      }
-      let channleId = await this.hiveService.sendChannle(name, desc, this.avatar)
-      // let registr = await this.hiveService.registerChannel(name, channleId)
-      // await this.hiveService.callChannel(name, channleId)
-      // // 订阅自己
-      // console.log("订阅自己开始 =========== ")
-      // await this.hiveService.subscriptions(channleId)
-      // console.log("订阅自己结束 =========== ")
       this.native.hideLoading()
       this.native.pop()
     } catch (error) {
