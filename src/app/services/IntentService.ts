@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ScanService } from 'src/app/services/scan.service';
 import { Logger } from './logger';
 import { NgZone } from '@angular/core';
 import { NativeService } from '../services/NativeService';
@@ -15,13 +14,12 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 
-
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
-  constructor(private scanService: ScanService,
+  constructor(
     private zone: NgZone,
     private native: NativeService,
     private languageService: LanguageService,
@@ -32,12 +30,13 @@ export class IntentService {
     private translate: TranslateService,
     private httpService: HttpService,
     private nftContractControllerService: NFTContractControllerService,
-    private nftContractHelperService: NFTContractHelperService,
-    private ipfsService: IPFSService) { }
+    private nftContractHelperService: NFTContractHelperService,) { }
 
-  scanQRCode(): Promise<string> {
-    return this.scanService.scanBarcode();
-  }
+  // scanQRCode(): Promise<string> {
+  //   return this.scanService.scanBarcode();
+  // }
+
+
 
   share(title: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {

@@ -577,3 +577,11 @@ audio::-webkit-media-controls {
   overflow: hidden !important
 }
 
+.transparentBody {
+  --background: none transparent !important;
+}
+
+.scanHide{
+  display: none;
+}
+

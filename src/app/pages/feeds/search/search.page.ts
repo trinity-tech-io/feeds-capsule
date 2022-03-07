@@ -457,8 +457,9 @@ export class SearchPage implements OnInit {
 
   async handleJump(clickType: string) {
     if (clickType === 'scanService') {
-      this.dataHelper.setOpenBarcodeScanner(true);
-      let scannedContent = (await this.intentService.scanQRCode()) || '';
+      let scanObj =  await this.popupProvider.scan() || {};
+      let scanData = scanObj["data"] || {};
+      let scannedContent  = scanData["scannedText"] || "";
       this.checkValid(scannedContent);
       return;
     }
@@ -474,20 +475,17 @@ export class SearchPage implements OnInit {
       !result.indexOf('did:elastos:')
     ) {
       this.native.toastWarn('AddServerPage.tipMsg');
-      this.dataHelper.setOpenBarcodeScanner(false);
       return;
     }
 
     let splitStr = result.split('/');
     if (splitStr.length != 5 || splitStr[4] == '') {
       this.native.toastWarn('AddServerPage.tipMsg');
-      this.dataHelper.setOpenBarcodeScanner(false);
       return;
     }
     this.feedService.addFeed(result, '', 0, '', '', '').then(isSuccess => {
       if (isSuccess) {
         this.native.pop();
-        this.dataHelper.setOpenBarcodeScanner(false);
         return;
       }
     });

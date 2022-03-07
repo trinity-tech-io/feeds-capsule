@@ -25,7 +25,6 @@
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "2.0.2",
     "@elastosfoundation/elastos-connector-localidentity-cordova": "2.0.1",
     "@elastosfoundation/essentials-connector-cordova": "1.0.16",
-    "@ionic-native/barcode-scanner": "^5.32.1",
     "@ionic-native/clipboard": "^5.18.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/file": "^5.33.0",
@@ -34,7 +33,7 @@
     "@ionic-native/in-app-browser": "^5.10.0",
     "@ionic-native/keyboard": "^5.36.0",
     "@ionic-native/network": "^5.33.0",
-    "@ionic-native/qr-scanner": "^5.18.0",
+    "@ionic-native/qr-scanner": "^5.36.0",
     "@ionic-native/splash-screen": "^5.0.0",
     "@ionic-native/status-bar": "^5.32.1",
     "@ionic-native/theme-detection": "^5.33.0",
@@ -105,6 +104,7 @@
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-media-capture": "^3.0.3",
     "cordova-plugin-network-information": "^2.0.2",
+    "cordova-plugin-qrscanner": "^3.0.1",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-splashscreen": "6.0.0",
     "cordova-plugin-statusbar": "^2.4.2",
@@ -121,9 +121,9 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
-    "phonegap-plugin-barcodescanner": "^8.1.0",
     "prettier": "1.19.1",
     "protractor": "~5.4.0",
+    "qr-scanner": "1.2.0",
     "stream-browserify": "^3.0.0",
     "svelte": "^3.37.0",
     "ts-node": "^9.1.1",
@@ -153,9 +153,6 @@
       "@elastosfoundation/elastos-cordova-plugin-hive": {},
       "cordova-plugin-file": {},
       "cordova-plugin-network-information": {},
-      "phonegap-plugin-barcodescanner": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
       "cordova-plugin-camera": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
@@ -191,7 +188,8 @@
         "ANDROID_FIREBASE_PERF_GRADLE_PLUGIN_VERSION": "1.4.0"
       },
       "cordova-plugin-androidx": {},
-      "cordova-plugin-androidx-adapter": {}
+      "cordova-plugin-androidx-adapter": {},
+      "cordova-plugin-qrscanner": {}
     },
     "platforms": [
       "android",

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { PopoverController, NavParams, ModalController} from '@ionic/angular';
 import _ from 'lodash';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -37,6 +37,7 @@ export class NfttransferdialogComponent implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private popupProvider: PopupProvider,
     private dataHelper: DataHelper,
+    private modalController: ModalController,
     public theme:ThemeService,
   ) { }
 
@@ -96,9 +97,9 @@ export class NfttransferdialogComponent implements OnInit {
    this.imgUri = imgUri;
   }
 
-  cancel() {
+  async cancel() {
     if (this.popover != null) {
-      this.popover.dismiss();
+       await this.popover.dismiss();
     }
   }
 
@@ -134,18 +135,17 @@ export class NfttransferdialogComponent implements OnInit {
   }
 
  async scanWalletAddress(){
-     this.dataHelper.setOpenBarcodeScanner(true);
-    let scannedContent = (await this.intentService.scanQRCode()) || '';
+   let scanObj =  await this.popupProvider.scan() || {};
+   let scanData = scanObj["data"] || {};
+    let scannedContent = scanData["scannedText"] || "";
     if(scannedContent === ''){
       this.walletAddress = "";
       return;
     }
     if (scannedContent.indexOf('ethereum:') > -1) {
       this.walletAddress  = scannedContent.replace('ethereum:', '');
-      this.dataHelper.setOpenBarcodeScanner(false);
     }else if (scannedContent.indexOf('elastos:') > -1) {
       this.walletAddress  = scannedContent.replace('elastos:', '');
-      this.dataHelper.setOpenBarcodeScanner(false);
     }else{
       this.walletAddress  = scannedContent;
     }

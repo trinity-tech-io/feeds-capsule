@@ -929,5 +929,8 @@ export const en = {
      mintSuccess: 'Channel NFT Collectible created',
      mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
      mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
+  },
+  ScanPage: {
+    title: "Scanner"
   }
 };

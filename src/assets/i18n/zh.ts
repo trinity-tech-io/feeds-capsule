@@ -933,5 +933,8 @@ export const zh = {
     mintSuccess: '创建频道收藏品成功',
     mintSuccessDesc: '恭喜您，创建频道收藏品成功',
     mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
+ },
+ ScanPage: {
+   title: "扫描器"
  }
 };
