@@ -187,7 +187,8 @@ export const en = {
     cleanPasarDataTip: 'Need to restart app after clearing Pasar data',
     unpublished: "Unpublished",
     published: "Published",
-    queryTransactionResult: 'A transaction has been initiated and the result is being queried'
+    queryTransactionResult: 'A transaction has been initiated and the result is being queried',
+    sorry: "Sorry"
   },
   app: {
     profileDetails: 'Profile Details',
@@ -931,6 +932,9 @@ export const en = {
      mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
   },
   ScanPage: {
-    title: "Scanner"
+    title: "Scanner",
+    noQrErr: 'No QR code was detected in the selected picture. Please try again.',
+    scanErr: 'Something went wrong while scanning your selected picture. Please try again.',
+    galleryErr: 'Something went wrong while accessing your photo library. Please try again.',
   }
 };

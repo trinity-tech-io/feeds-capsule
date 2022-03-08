@@ -187,7 +187,8 @@ export const zh = {
     cleanPasarDataTip: '清除Pasar缓存数据后，需要重启应用',
     unpublished: "未公开",
     published: "已公开",
-    queryTransactionResult: '已发起交易，正在查询结果'
+    queryTransactionResult: '已发起交易，正在查询结果',
+    sorry: "抱歉",
   },
   app: {
     profileDetails: '档案详情',
@@ -935,6 +936,9 @@ export const zh = {
     mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
  },
  ScanPage: {
-   title: "扫描器"
+   title: "扫描器",
+   noQrErr: '在所选图片中未检测到二维码。 请再试一次。',
+   scanErr: '扫描您选择的照片时出了点问题。 请再试一次。',
+   galleryErr: '访问图库时出了点问题。 请再试一次。',
  }
 };

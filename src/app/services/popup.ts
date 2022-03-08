@@ -185,10 +185,10 @@ export class PopupProvider {
         mode: 'ios',
         component:ScanPage,
         cssClass:"transparentBody",
+        animated: false,
         showBackdrop:false,
       });
       modal.onWillDismiss().then((scanText)=>{
-        console.log("=====scanText=====",scanText);
             resolve(scanText);
       }).catch(()=>{
         reject("");
