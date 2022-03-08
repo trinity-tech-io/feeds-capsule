@@ -114,7 +114,8 @@ visibility: hidden;
 }
 
 .transparentBody {
-   --background: none transparent;
+   --background: none transparent !important;
+   --backdrop-opacity:0;
 }
 
 ion-fab-button {
