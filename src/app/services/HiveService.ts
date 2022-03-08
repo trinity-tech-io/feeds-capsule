@@ -20,10 +20,10 @@ let eventBus: Events = null;
 
 @Injectable()
 export class HiveService {
-  public static CREATEALLCollECTION = "feeds_createALLCollection" // 本地标识是否创建了Collection
-  public static readonly CHANNEL = "channel"
-  public static readonly POST = "post"
-  public static readonly SUBSCRIPTION = "subscription"
+  public static CREATEALLCollECTION = "feeds_createALLCollections" // 本地标识是否创建了Collection
+  public static readonly CHANNEL = "channels"
+  private static readonly POST = "posts"
+  private static readonly SUBSCRIPTION = "subscriptions"
   public static readonly TARGETDID = "targetDid"
   public static readonly postId = "channelId"
   private static readonly RESOLVE_CACHE = "data/didCache"
@@ -263,6 +263,20 @@ export class HiveService {
     })
   }
 
+  listPostDB(collectionName: string, filter: any): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let dbService = (await this.getVault()).getDatabaseService()
+        let result = dbService.findMany(collectionName, filter)
+        console.log("listPostDB ======  ", result)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'listPostDB error:', error)
+        reject(error)
+      }
+    })
+  }
+
   // 
   async callChannel(scriptName: string, channel_id: string) {
     let scriptingService = (await this.getVault()).getScriptingService()
@@ -275,6 +289,18 @@ export class HiveService {
     console.log("callChannel result ======= ", result)
   }
 
+  async callSubscription(scriptName: string, channelId: string, channelName: string) {
+    let scriptingService = (await this.getVault()).getScriptingService()
+    let userDid = (await this.dataHelper.getSigninData()).did
+    let appid = await this.standardAuthService.getAppId()
+    console.log("appid ===== ", appid)
+    console.log("userDid ===== ", userDid)
+    const timeStamp = new Date().getTime().toString()
+    const doc = { "channel_id": channelId, "display_name": channelName, "created_at": timeStamp, "user_did": userDid }
+
+    let result = await scriptingService.callScript<any>(scriptName, doc, userDid, appid)
+    console.log("callSubscription result ======= ", result)
+  }
 
   // 查询指定的post
   callPost(scriptName: string, channelId: string): Promise<void> {
