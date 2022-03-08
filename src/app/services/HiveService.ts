@@ -172,41 +172,7 @@ export class HiveService {
     })
   }
 
-  async sendChannle(channelName: string, intro: string, avatar: any): Promise<string> {
-
-    let userDid = (await this.dataHelper.getSigninData()).did
-    const postId = localStorage.getItem(userDid + HiveService.postId) || ''
-    let channel_id = Number(new Date().getTime().toString())
-    // const channel_id = 0
-    console.log("channel_id ==== ", channel_id)
-    const created_at = this.getCurrentTimeNum()
-    const updated_at = this.getCurrentTimeNum()
-    const memo = ""
-    const doc = { "channel_id": channel_id, "name": channelName, "intro": intro, "avatar": avatar, "created_at": created_at, "updated_at": updated_at, "memo": memo, }
-    let result = (await this.getVault()).getDatabaseService().insertOne(HiveService.CHANNEL, doc, new InsertOptions(false, true))
-    this.handleResult(
-      "create_channel", channel_id, userDid, channelName, channel_id, doc
-    );
-
-    return channel_id.toString()
-  }
-
-  async sendPost(channel_id: number, content: any, status: string): Promise<number> {
-    const post_id = this.dataHelper.generateLastTempIdData()
-    const created_at = this.getCurrentTimeNum()
-    const update_at = this.getCurrentTimeNum()
-    const memo = ""
-    const type = ""
-    const tag = ""
-    const channle = this.dataHelper.getChannel(channel_id.toString())
-    // content 中可能包含文字和图片
-    const doc = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
-    let result = (await this.getVault()).getDatabaseService().insertOne(HiveService.POST, doc, new InsertOptions(false, true))
-
-    return post_id
-  }
-  // 查询channel信息
-  registerChannel(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+  registerScript(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
         let scriptingService = (await this.getVault()).getScriptingService()
@@ -214,61 +180,18 @@ export class HiveService {
           condition, allowAnonymousUser, allowAnonymousApp)
         resolve()
       } catch (error) {
-        Logger.error(TAG, 'register Channel error:', error)
+        Logger.error(TAG, 'register error:', error)
         reject(error)
       }
     })
   }
 
-  //  查询指定post内容
-  registerPost(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let scriptingService = (await this.getVault()).getScriptingService()
-        await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
-        resolve()
-      } catch (error) {
-        Logger.error(TAG, 'register Post error:', error)
-        reject(error)
-      }
-    })
-  }
-
-  // 查询channel下所有post
-  async registerAllPost(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let scriptingService = (await this.getVault()).getScriptingService()
-        await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
-        resolve()
-      } catch (error) {
-        Logger.error(TAG, 'register All Post error:', error)
-        reject(error)
-      }
-    })
-  }
-
-  // 查询时间段的内容
-  async registerSomeTimePost(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let scriptingService = (await this.getVault()).getScriptingService()
-    
-        await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
-        resolve()
-      } catch (error) {
-        Logger.error(TAG, 'register Some Time Post error:', error)
-        reject(error)
-      }
-    })
-  }
-
-  listPostDB(collectionName: string, filter: any): Promise<void> {
+  findPostDB(collectionName: string, filter: any): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
         let dbService = (await this.getVault()).getDatabaseService()
         let result = dbService.findMany(collectionName, filter)
-        console.log("listPostDB ======  ", result)
+        console.log("findPostDB ======  ", result)
         resolve()
       } catch (error) {
         Logger.error(TAG, 'listPostDB error:', error)
@@ -276,57 +199,11 @@ export class HiveService {
       }
     })
   }
-
-  // 
-  async callChannel(scriptName: string, channel_id: string) {
+  async callScript(scriptName: string, document: any, userDid: string, appid: string): Promise<any> {
     let scriptingService = (await this.getVault()).getScriptingService()
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let appinstanceDid = (await this.standardAuthService.getInstanceDID()).getDIDString()
-    let appid = await this.standardAuthService.getAppId()
-    console.log("appid ===== ", appid)
-    console.log("userDid ===== ", userDid)
-    let result = await scriptingService.callScript<any>(scriptName, { "channel_id": channel_id }, userDid, appid)
+    let result = await scriptingService.callScript<any>(scriptName, document, userDid, appid)
     console.log("callChannel result ======= ", result)
-  }
-
-  async callSubscription(scriptName: string, channelId: string, channelName: string) {
-    let scriptingService = (await this.getVault()).getScriptingService()
-    let userDid = (await this.dataHelper.getSigninData()).did
-    let appid = await this.standardAuthService.getAppId()
-    console.log("appid ===== ", appid)
-    console.log("userDid ===== ", userDid)
-    const timeStamp = new Date().getTime().toString()
-    const doc = { "channel_id": channelId, "display_name": channelName, "created_at": timeStamp, "user_did": userDid }
-
-    let result = await scriptingService.callScript<any>(scriptName, doc, userDid, appid)
-    console.log("callSubscription result ======= ", result)
-  }
-
-  // 查询指定的post
-  callPost(scriptName: string, channelId: string): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let scriptingService = (await this.getVault()).getScriptingService()
-        let userDid = (await this.dataHelper.getSigninData()).did
-        let appid = await this.standardAuthService.getAppId()
-        console.log("appid ===== ", appid)
-        console.log("userDid ===== ", userDid)
-        let result = await scriptingService.callScript<any>(scriptName, { "channel_id": channelId }, userDid, appid)
-        console.log("callChannel result ======= ", result)
-        resolve()
-      } catch (error) {
-        Logger.error(TAG, 'call Post error:', error)
-        reject(error)
-      }
-    })
- }
-
-  // 订阅
-  async registerSubscriptions(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean) {
-    let scriptingService = (await this.getVault()).getScriptingService()
-    let timeStamp = new Date().getTime().toString()
-    // 此nama与订阅频道无关，可随意取，保持在vault中唯一即可，此处为确定唯一使用时间戳
-    await scriptingService.registerScript(scriptName, executable, condition, allowAnonymousUser, allowAnonymousApp)
+    return result
   }
 
   async updatePost(channelName: string, channel_id: number, origin: any, content: any, status: string): Promise<UpdateResult> {
@@ -351,91 +228,6 @@ export class HiveService {
   async getMyChannelList() {
     let userDid = (await this.dataHelper.getSigninData()).did
     this.dataHelper.getMyChannelListWithHive(userDid)
-  }
-
-  handleResult(
-    method: string,
-    channel_id: number,
-    userDid: string,
-    channleName: string,
-    post_id: any,
-    request: any,
-  ) {
-    let requestParams = request.requestParams;
-    switch (method) {
-      // 在这里存到了本地
-      case FeedsData.MethodType.create_channel:
-        this.handleCreateChannelResult(channel_id, userDid, post_id, channleName, request);
-        break;
-    }
-  }
-
-  handleCreateChannelResult(
-    channel_id: number,
-    userDid: string,
-    post_id: any,
-    channleName: string,
-    request: any
-  ) {
-    // let channel_id = result.channel_id;
-    let created_at = request.created_at;
-    let updated_at = request.updated_at;
-    let name = request.name;
-    let introduction = request.intro;
-    let avatar = request.avatar;
-    let memo = request.memo;
-    let type = request.type;
-
-    let channelId = channel_id
-    // let channelName = channleName
-    let channelIntro = request.intro
-    console.log("created_at ==== ", created_at)
-    console.log("updated_at ==== ", updated_at)
-    console.log("channelId ===== ", request)
-    // let owner_name = this.getSignInData().name;
-    // let owner_did = this.getSignInData().did;
-    let avatarBin = request.avatar;
-    // let avatar = this.serializeDataService.decodeData(avatarBin);
-    let nodeChannelId = userDid + HiveService.CHANNEL
-
-    console.log("nodeChannelId ===== ", nodeChannelId)
-    console.log("channel_id ===== ", channel_id)
-    console.log("name ===== ", name)
-
-    let channel: FeedsData.Channels = {
-      channel_id: channel_id,
-      created_at: created_at,
-      updated_at: updated_at,
-      name: name,
-      introduction: introduction,
-      avatar: avatar,
-      memo: memo,
-      type: type,
-
-      nodeId: nodeChannelId,
-      id: 0,
-      // name: channelName,
-      // introduction: channelIntro,
-      owner_name: "123",
-      owner_did: "321",
-      subscribers: 0,
-      last_update: this.getCurrentTimeNum(),
-      last_post: '',
-      // avatar: avatar,
-      isSubscribed: false,
-    };
-    this.dataHelper.updateChannel(channelId.toString(), channel)
-    localStorage.setItem(userDid + HiveService.postId, channelId.toString())
-
-    let createTopicSuccessData: FeedsEvent.CreateTopicSuccessData = {
-      nodeId: userDid,
-      channelId: channelId,
-    };
-    eventBus.publish(
-      FeedsEvent.PublishType.createTopicSuccess,
-      createTopicSuccessData,
-    );
-    eventBus.publish(FeedsEvent.PublishType.channelsDataUpdate);
   }
 
   getCurrentTimeNum(): number {
