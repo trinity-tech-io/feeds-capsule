@@ -273,8 +273,8 @@ export class CreatenewfeedPage implements OnInit {
         await this.hiveVaultApi.registeScripting()
         localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
       }
-      await this.hiveVaultApi.createChannel(name, desc, this.avatar)
-      this.hiveVaultApi.registerSubscriptions() // 订阅自己
+      const channelId = await this.hiveVaultApi.createChannel(name, desc, this.avatar)
+      await this.hiveVaultApi.callSubscription(channelId, name) // 订阅自己
 
       this.native.hideLoading()
       this.native.pop()

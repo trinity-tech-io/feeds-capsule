@@ -35,6 +35,7 @@ export class HiveVaultApi {
     this.registerGetAllPostScripting()
     this.registerGetChannelScripting()
     this.registerGetCommentScripting()
+    this.registerSubscriptions()
     // this.registerGetPostScripting()
     // this.registerGetSomeTimePostScripting()
   }
@@ -136,7 +137,7 @@ export class HiveVaultApi {
     let channelIntro = request.intro
     console.log("channelId ===== ", channelId)
     // let avatar = this.serializeDataService.decodeData(avatarBin);
-    let nodeChannelId = userDid + HiveService.CHANNEL
+    let nodeChannelId = userDid + HiveVaultApi.TABLE_CHANNELS
 
     let channel: FeedsData.Channels = {
       channel_id: channel_id,
@@ -301,8 +302,8 @@ export class HiveVaultApi {
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     const timeStamp = new Date().getTime().toString()
-    const executable = new FindExecutable("find_message", HiveService.CHANNEL, executablefilter, options).setOutput(true)
-    const condition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_CHANNELS, executablefilter, options).setOutput(true)
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.SCRIPT_SUBSCRIPTION, conditionfilter, null)
     console.log("registerGetChannelScripting ====== ")
     return this.hiveService.registerChannel(HiveVaultApi.SCRIPT_CHANNEL, executable, condition, false)
   }
@@ -316,10 +317,10 @@ export class HiveVaultApi {
     let conditionfilter1 = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     let conditionfilter2 = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": "public" }
     let timeStamp = new Date().getTime().toString()
-    let queryCondition1 = new QueryHasResultCondition("subscription_permission", HiveService.SUBSCRIPTION, conditionfilter1, null)
-    let queryCondition2 = new QueryHasResultCondition("post_permission", HiveService.POST, conditionfilter2, null)
+    let queryCondition1 = new QueryHasResultCondition("subscription_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionfilter1, null)
+    let queryCondition2 = new QueryHasResultCondition("post_permission", HiveVaultApi.TABLE_POSTS, conditionfilter2, null)
     let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
-    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+    let findExe = new FindExecutable("find_message", HiveVaultApi.TABLE_POSTS, executablefilter, options).setOutput(true)
     console.log("registerGetPostScripting ====== ")
     return this.hiveService.registerPost(timeStamp, findExe, andCondition, false, false)
   }
@@ -332,8 +333,8 @@ export class HiveVaultApi {
     let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
-    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionfilter, null)
+    let findExe = new FindExecutable("find_message", HiveVaultApi.TABLE_POSTS, executablefilter, options).setOutput(true)
     console.log("registerGetAllPostScripting ====== ")
     return this.hiveService.registerAllPost(HiveVaultApi.SCRIPT_ALLPOST, findExe, queryCondition, false, false)
   }
@@ -347,20 +348,41 @@ export class HiveVaultApi {
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     let timeStamp = new Date().getTime().toString()
-    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveService.SUBSCRIPTION, conditionfilter, null)
-    let findExe = new FindExecutable("find_message", HiveService.POST, executablefilter, options).setOutput(true)
+    let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionfilter, null)
+    let findExe = new FindExecutable("find_message", HiveVaultApi.TABLE_POSTS, executablefilter, options).setOutput(true)
     console.log("registerGetSomeTimePostScripting ====== ")
     return this.hiveService.registerSomeTimePost(timeStamp, findExe, queryCondition, false, false)
   }
 
   // 注册订阅
   registerSubscriptions(): Promise<void> {
+    // let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "display_name": "$params.display_name" }
     let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "created_at": "$params.created_at", "display_name": "$params.display_name" }
     let options = { "projection": { "_id": false } }
     let conditionfilter = { "channel_id": "$params.channel_id", "type": "public" }
     console.log("registerSubscriptions ====== ")
     // 此nama与订阅频道无关，可随意取，保持在vault中唯一即可
-    return this.hiveService.registerSubscriptions(HiveVaultApi.SCRIPT_SUBSCRIPTION, new InsertExecutable("database_insert", HiveService.SUBSCRIPTION, document, options), new QueryHasResultCondition("verify_user_permission", HiveService.CHANNEL, conditionfilter, null))
+    return this.hiveService.registerSubscriptions(HiveVaultApi.SCRIPT_SUBSCRIPTION, new InsertExecutable("database_insert", HiveVaultApi.TABLE_SUBSCRIPTIONS, document, options), new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_CHANNELS, conditionfilter, null))
+  }
+
+  //订阅者调用
+  callSubscription(channelId: string, channelName: string): Promise<void> {
+    return this.hiveService.callSubscription(HiveVaultApi.SCRIPT_SUBSCRIPTION, channelId, channelName,)
+  }
+
+  async getHomePostContent() {
+    //获得订阅的channel列表
+    const channelIds = await this.getSubscriptChannelId()
+    // 获得订阅的post
+  }
+
+  getSubscriptChannelId(): Promise<void> {
+    return this.listSubscriptDB()
+  }
+
+  listSubscriptDB(): Promise<void> {
+    let query = {}
+    return this.hiveService.listPostDB(HiveVaultApi.TABLE_SUBSCRIPTIONS, query)
   }
 
   //API
