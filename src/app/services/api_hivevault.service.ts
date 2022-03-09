@@ -7,6 +7,7 @@ import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable
 import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
+import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
 
 const TAG = 'API-HiveVault';
 let eventBus: Events = null;
@@ -276,7 +277,7 @@ export class HiveVaultApi {
       }
 
       try {
-        const insertResult = this.hiveService.insertDBData(HiveVaultApi.TABLE_CHANNELS, doc)
+        const insertResult = this.hiveService.insertDBData(HiveVaultApi.TABLE_POSTS, doc)
         Logger.log(TAG, 'insert postData result', insertResult);
         //TODO resolve result
         resolve('SUCCESS');
@@ -384,20 +385,22 @@ export class HiveVaultApi {
     })
   }
 
-   //获得订阅的channel列表
-  async getHomePostContent() {
-
-    const channelIds = await this.getSubscriptChannelId()
-    // 获得订阅的post
-  }
-
-  getSubscriptChannelId(): Promise<void> {
-    return this.listSubscriptDB()
-  }
-
-  listSubscriptDB(): Promise<void> {
-    const query = {}
-    return this.hiveService.findPostDB(HiveVaultApi.TABLE_SUBSCRIPTIONS, query)
+  // 查询channel下所有 Post内容
+  callGetAllPostScripting(channelId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let userDid = (await this.dataHelper.getSigninData()).did
+        let appid = Config.APPLICATION_DID
+        console.log("appid ===== ", appid)
+        console.log("userDid ===== ", userDid)
+        let result = await this.hiveService.callScript(HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId }, userDid, appid)
+        console.log("callChannel result ======= ", result)
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'callGetAllPostScripting error:', error)
+        reject(error)
+      }
+    })
   }
 
   // 查询指定的post
@@ -413,12 +416,38 @@ export class HiveVaultApi {
         console.log("userDid ===== ", userDid)
         let result = await this.hiveService.callScript(HiveVaultApi.SCRIPT_SPECIFIED_POST, { "channel_id": channelId }, userDid, appid)
         console.log("callChannel result ======= ", result)
-        resolve()
+        resolve(result)
       } catch (error) {
-        Logger.error(TAG, 'call Post error:', error)
+        Logger.error(TAG, 'callGetSpecifiedPostScripting error:', error)
         reject(error)
       }
     })
+  }
+
+  //获得订阅的channel列表
+  async getHomePostContent() {
+
+    const channelIds = await this.getSubscriptChannelId()
+    // 获得订阅的post
+    console.log("channelIds ===== ", channelIds)
+    channelIds.forEach(async (item) => {
+      console.log("item ===== ", item)
+      const channelId = item["channel_id"].toString()
+      console.log("channelId ===== ", channelId)
+      /*
+      {"find_message": {"items": [{"channel_id": "304", "post_id": "d9b9b6d8ff80d1641e48e5b3fe8f51ac5874219f72a556f35d6e55d50d2d1a3e", "created_at": 1646792481412, "updated_at": 1646792481412, "content": "{\"version\":\"2.0\",\"text\":\"\u6d4b\u8bd5\u4e00\u4e0b\u8fd9\u4e2a\",\"data\":[]}", "status": 0, "memo": "", "type": "0", "tag": "Feeds-createpost", "created": {"$date": 1646792482693}, "modified": {"$date": 1646792482693}}]}}
+      */
+      await this.callGetAllPostScripting(channelId)
+    })
+  }
+
+  getSubscriptChannelId(): Promise<JSONObject[]> {
+    return this.listSubscriptDB()
+  }
+
+  listSubscriptDB(): Promise<JSONObject[]> {
+    const query = {}
+    return this.hiveService.findPostDB(HiveVaultApi.TABLE_SUBSCRIPTIONS, query)
   }
 
   //API
