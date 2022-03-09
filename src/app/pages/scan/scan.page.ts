@@ -96,7 +96,7 @@ export class ScanPage{
 
   async showCamera() {
     // Make sure to make ion-app and ion-content transparent to see the camera preview
-    document.body.classList.add("transparentBody");
+    //document.body.classList.add("transparentBody");
     await this.qrScanner.show();
     document.querySelector("my-app").classList.add("scanHide");
     let ionPopover = document.querySelector("ion-popover") || null;
@@ -113,7 +113,7 @@ async hideCamera() {
 
   this.zone.run(() => {
     this.isCameraShown = false;
-    document.body.classList.remove("transparentBody");
+    //document.body.classList.remove("transparentBody");
     document.querySelector("my-app").classList.remove("scanHide");
     let ionPopover = document.querySelector("ion-popover") || null;
     if(ionPopover != null ){
@@ -123,15 +123,18 @@ async hideCamera() {
 }
 
   ionViewWillLeave() {
-    this.zone.run(() => {
-        console.log("Scanner", "Scan view is leaving")
-        this.stopScanning();
-        this.hideCamera();
+    this.zone.run(async () => {
+       this.stopScanning();
+       await this.hideCamera();
     });
   }
 
   ionViewDidLeave() {
-    document.body.removeAttribute("style");
+    let sid = setTimeout(()=>{
+      document.body.removeAttribute("style");
+      clearTimeout(sid);
+      sid = null;
+    },100);
   }
 
   stopScanning() {
@@ -288,6 +291,7 @@ async hideCamera() {
     this.popover.onWillDismiss().then(() => {
       if (this.popover != null) {
         this.popover = null;
+        document.body.removeAttribute("style");
       }
     });
     await this.popover.present();
