@@ -186,13 +186,13 @@ export class HiveService {
     })
   }
 
-  findPostDB(collectionName: string, filter: any): Promise<void> {
+  findPostDB(collectionName: string, filter: any): Promise<JSONObject[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let dbService = (await this.getVault()).getDatabaseService()
         let result = dbService.findMany(collectionName, filter)
         console.log("findPostDB ======  ", result)
-        resolve()
+        resolve(result)
       } catch (error) {
         Logger.error(TAG, 'listPostDB error:', error)
         reject(error)
