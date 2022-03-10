@@ -3,7 +3,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable } from "@dchagastelles/elastos-hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable } from "@dchagastelles/elastos-hive-js-sdk";
 import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
@@ -34,6 +34,9 @@ export class HiveVaultApi {
   public static readonly SCRIPT_FIND_COMMENT_BY_POSTID = "script_find_comment_by_postid";
   public static readonly SCRIPT_FIND_COMMENT_BY_COMMENTID = "script_find_comment_by_commentid";
 
+  public static readonly SCRIPT_CREATE_LIKE = "script_add_like";
+  public static readonly SCRIPT_REMOVE_LIKE = "script_remove_like";
+  public static readonly SCRIPT_FIND_LIKE_BY_ID = "script_find_like_by_id";
 
   constructor(
     private hiveService: HiveService,
@@ -746,5 +749,138 @@ export class HiveVaultApi {
         reject(error);
       }
     });
+  }
+
+  ////Like////
+  //Registe find like script
+  private registerFindLikeByIdScripting() {
+    let conditionFilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+    const executableFilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id",
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_LIKES, executableFilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_LIKE_BY_ID, executable, condition, false);
+  }
+
+  //Registe create like script
+  private registerCreateLikeScripting() {
+    let conditionfilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionfilter, null);
+
+    let executablefilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id",
+      "created_at": "$params.created_at",
+      "creater_did": "$caller_did"
+    }
+
+    let options = {
+      "projection":
+      {
+        "_id": false
+      }
+    };
+    const executable = new InsertExecutable("database_insert", HiveVaultApi.TABLE_LIKES, executablefilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_CREATE_LIKE, executable, condition, false);
+  }
+
+  //Remove like
+  private registerRemoveLikeScripting() {
+    let conditionfilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id",
+      "creater_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_LIKES, conditionfilter, null);
+
+    const filter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id"
+    };
+    const executable = new DeleteExecutable("database_delete", HiveVaultApi.TABLE_COMMENTS, filter).setOutput(true);
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_REMOVE_LIKE, executable, condition, false);
+  }
+
+  callAddLike(channelId: string, postId: string, commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const createdAt = UtilService.getCurrentTimeNum();
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId,
+          "comment_id": commentId,
+          "created_at": createdAt
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_CREATE_LIKE, params);
+        console.log("Add like from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Add like from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  callRemoveLike(channelId: string, postId: string, commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId,
+          "comment_id": commentId,
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_REMOVE_LIKE, params);
+        console.log("Remove like from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Remove like from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  callFindLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId,
+          "comment_id": commentId,
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_LIKE_BY_ID, params);
+        console.log("Remove like from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Remove like from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  addLike(channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callAddLike(channelId, postId, commentId);
+  }
+
+  removeLike(channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callRemoveLike(channelId, postId, commentId);
+  }
+
+  findLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callFindLikeById(channelId, postId, commentId);
   }
 }
