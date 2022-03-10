@@ -206,25 +206,6 @@ export class HiveService {
     return result
   }
 
-  async updatePost(channelName: string, channel_id: number, origin: any, content: any, status: string): Promise<UpdateResult> {
-    // const channle = this.dataHelper.getChannel(channel_id.toString())
-    const post_id = 0 // todo
-    const created_at = this.getCurrentTimeNum()
-    const update_at = this.getCurrentTimeNum()
-    const memo = ""
-    const type = ""
-    const tag = ""
-    // content 中可能包含文字和图片
-    const update = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
-    let updateNode = { "$set": update }
-    const doc = { "channel_id": channel_id, "post_id": post_id, "created_at": created_at, "update_at": update_at, "content": content, "status": status, "memo": memo, "type": type, "tag": tag }
-    return (await this.getVault()).getDatabaseService().updateOne(channelName, origin, updateNode, new UpdateOptions(false, true))
-  }
-
-  async deleatePost(channelName: string, one: any,): Promise<void> {
-    return (await this.getVault()).getDatabaseService().deleteOne(channelName, one)
-  }
-
   async getMyChannelList() {
     let userDid = (await this.dataHelper.getSigninData()).did
     this.dataHelper.getMyChannelListWithHive(userDid)
@@ -389,25 +370,6 @@ export class HiveService {
     }
   }
 
-  async insertOne(one: any) {
-    try {
-      // 检测app启动时是否 备份成功
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
-      if (feeds_subscription === '') {
-        this.backupSubscriptionToHive()
-      }
-      else {
-        let vault = await this.getVault()
-        let result = vault.getDatabaseService().insertOne(HiveService.collectName, one, new InsertOptions(false, true))
-        Logger.log(TAG, 'Insert success', result);
-      }
-    }
-    catch (error) {
-      Logger.error(TAG, 'Insert error:', error);
-    }
-  }
-
   async deleteOne(one: any) {
     try {
       let userDid = (await this.dataHelper.getSigninData()).did
@@ -426,25 +388,6 @@ export class HiveService {
     }
   }
 
-  async updateOne(origin: FeedsData.Channels, update: FeedsData.Channels) {
-    try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
-
-      if (feeds_subscription === '') {
-        // 如果本地没有本分成功，则直接返回，不做处理
-        this.backupSubscriptionToHive()
-      }
-      else {
-        let vault = await this.getVault()
-        let updateNode = { "$set": update }
-        let result = vault.getDatabaseService().updateOne(HiveService.collectName, origin, updateNode, new UpdateOptions(false, true))
-        Logger.log(TAG, 'Update success', result);
-      }
-    } catch (error) {
-      Logger.error(TAG, 'Update error', error);
-    }
-  }
   /*
     createCollection(userDid: string, list: FeedsData.Channels[]): Promise<string> {
       return new Promise(async (resolve, reject) => {
@@ -480,15 +423,43 @@ export class HiveService {
   insertDBData(collectName: string, doc: any): Promise<InsertResult> {
     return new Promise(async (resolve, reject) => {
       try {
-        const vaultService = await this.getVault();
-        const dbService = vaultService.getDatabaseService();
+        const vaultService = await this.getVault()
+        const dbService = vaultService.getDatabaseService()
         const insertResult = await dbService.insertOne(collectName, doc, new InsertOptions(false, true));
-        resolve(insertResult);
+        resolve(insertResult)
       } catch (error) {
-        Logger.error(TAG, 'Insert error:', error);
-        reject(error);
+        Logger.error(TAG, 'Insert error:', error)
+        reject(error)
       }
-    });
+    })
+  }
+
+  updateOneDBData(collectName: string, origin: JSONObject, update: JSONObject, option: UpdateOptions): Promise<UpdateResult> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const vaultService = await this.getVault()
+        const dbService = vaultService.getDatabaseService()
+        const insertResult = await dbService.updateOne(collectName, origin, update, option)
+        resolve(insertResult)
+      } catch (error) {
+        Logger.error(TAG, 'update one error:', error)
+        reject(error)
+      }
+    })
+  }
+
+  deleateOneDBData(collectName: string, fillter: JSONObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const vaultService = await this.getVault()
+        const dbService = vaultService.getDatabaseService()
+        await dbService.deleteOne(collectName, fillter)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'delete one error:', error)
+        reject(error)
+      }
+    })
   }
 
   newInsertOptions() {
