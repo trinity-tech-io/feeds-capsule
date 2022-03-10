@@ -39,6 +39,8 @@ export class HiveVaultApi {
   public static readonly SCRIPT_REMOVE_LIKE = "script_remove_like";
   public static readonly SCRIPT_FIND_LIKE_BY_ID = "script_find_like_by_id";
 
+  public static readonly SCRIPT_FIND_SUBSCRIPTION_BY_ID = "script_find_subscription_by_id";
+
   constructor(
     private hiveService: HiveService,
     private dataHelper: DataHelper,
@@ -47,13 +49,37 @@ export class HiveVaultApi {
     eventBus = events;
   }
 
-  registeScripting() {
-    this.registerGetAllPostScripting()
-    this.registerGetChannelScripting()
-    this.registerCreateCommentScripting
-    this.registerSubscriptions()
-    // this.registerGetSpecifiedPostScripting()
-    // this.registerGetSomeTimePostScripting()
+  registeScripting(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //channel
+        await this.registerGetChannelScripting();
+
+        //post
+        this.registerGetAllPostScripting();
+        this.registerGetSomeTimePostScripting();
+        this.registerGetSpecifiedPostScripting();
+
+        //subscription
+        await this.registerSubscriptions();
+        await this.registerFindSubscriptionByIdScripting();
+
+        //comment
+        await this.registerCreateCommentScripting();
+        await this.registerFindCommentScriptingByCommentId();
+        await this.registerFindCommentScriptingByPostId();
+        await this.registerUpdateCommentScripting();
+        await this.registerDeleteCommentScripting();
+
+        //like
+        await this.registerCreateLikeScripting();
+        await this.registerFindLikeByIdScripting();
+        await this.registerRemoveLikeScripting();
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(error);
+      }
+    });
   }
 
   //API
@@ -942,5 +968,37 @@ export class HiveVaultApi {
 
   findLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
     return this.callFindLikeById(channelId, postId, commentId);
+  }
+
+
+  ////Find subscriptions scripting
+  private registerFindSubscriptionByIdScripting() {
+    const executableFilter = {
+      "channel_id": "$params.channel_id"
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_LIKES, executableFilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, executable, null, false);
+  }
+
+  callFindSubscriptionById(channelId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, params);
+        console.log("Find subscription from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Find subscription from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  getSubscription(channelId: string): Promise<any> {
+    return this.callFindSubscriptionById(channelId);
   }
 }
