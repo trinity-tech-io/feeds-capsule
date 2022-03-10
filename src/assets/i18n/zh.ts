@@ -189,6 +189,7 @@ export const zh = {
     published: "已公开",
     queryTransactionResult: '已发起交易，正在查询结果',
     sorry: "抱歉",
+    auction: "此订单为拍卖订单，暂不支持购买"
   },
   app: {
     profileDetails: '档案详情',

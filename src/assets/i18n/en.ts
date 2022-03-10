@@ -188,7 +188,8 @@ export const en = {
     unpublished: "Unpublished",
     published: "Published",
     queryTransactionResult: 'A transaction has been initiated and the result is being queried',
-    sorry: "Sorry"
+    sorry: "Sorry",
+    auction: "This order is an auction order. Purchase is not supported temporarily"
   },
   app: {
     profileDetails: 'Profile Details',

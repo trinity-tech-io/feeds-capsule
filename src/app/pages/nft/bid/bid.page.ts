@@ -70,7 +70,7 @@ export class BidPage implements OnInit {
   public loadingTitle:string = "common.waitMoment";
   public loadingText:string = "common.buyingOrderDesc";
   public loadingCurNumber:string = "1";
-  public loadingMaxNumber:string = "1";
+  public loadingMaxNumber:string = "2";
   public usdPrice:string = null;
   public imageType:string = "";
   private creator: string = "";
@@ -401,6 +401,11 @@ export class BidPage implements OnInit {
 
     let orderInfo = await this.nftContractControllerService.getPasar().getOrderById(this.saleOrderId);
     let orderState = parseInt(orderInfo[2]);
+    let orderType =  orderInfo[1] || "1";
+    if(orderType === "2"){
+      this.native.toast_trans('common.auction');
+        return;
+    }
     if(orderState === FeedsData.OrderState.SOLD){
       this.native.toast_trans('common.sold');
           return;
@@ -432,8 +437,8 @@ export class BidPage implements OnInit {
       this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity, this.didUri, (eventName: string, result: FeedsData.ContractEventResult) => {
         if (eventName == FeedsData.ContractEvent.TRANSACTION_HASH) {
           this.loadingText = 'common.queryTransactionResult';
-          this.loadingCurNumber = null;
-          this.loadingMaxNumber = null;
+          this.loadingCurNumber = "2";
+          // this.loadingMaxNumber = null;
         }
       }).then(() => {
         //Finish buy order
