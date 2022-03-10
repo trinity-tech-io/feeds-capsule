@@ -3,11 +3,12 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable } from "@dchagastelles/elastos-hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, DeleteOptions } from "@dchagastelles/elastos-hive-js-sdk";
 import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
 import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
+import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 
 const TAG = 'API-HiveVault';
 let eventBus: Events = null;
@@ -49,7 +50,7 @@ export class HiveVaultApi {
   registeScripting() {
     this.registerGetAllPostScripting()
     this.registerGetChannelScripting()
-    this.registerGetCommentScripting()
+    this.registerCreateCommentScripting
     this.registerSubscriptions()
     // this.registerGetSpecifiedPostScripting()
     // this.registerGetSomeTimePostScripting()
@@ -252,27 +253,51 @@ export class HiveVaultApi {
 
       try {
         const insertResult = this.hiveService.insertDBData(HiveVaultApi.TABLE_CHANNELS, doc);
-        Logger.log(TAG, 'Insert channel db result', insertResult);
-        //TODO resolve result
-        resolve(doc);
+        Logger.log(TAG, 'Insert channel db result', insertResult)
+        resolve(doc)
       } catch (error) {
-        Logger.error(TAG, 'Insert channel db error', error);
+        Logger.error(TAG, 'Insert channel db error', error)
         reject(error)
       }
-    });
+    })
   }
 
   //API
   //Channel
   //Update
-  updateDataToChannelDB() {
-
+  updateDataToChannelDB(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
+    newTippingAddress: string, newNft: string): Promise<UpdateResult> {
+    return new Promise(async (resolve, reject) => {
+      const channel = this.dataHelper.getChannel(channelId.toString())
+      const updated_at = new Date().getTime().toString()
+      const doc = {
+        "channel_id": channelId,
+        "name": newName,
+        "intro": newIntro,
+        "avatar": newAvatar,
+        "created_at": channel.created_at,
+        "updated_at": updated_at,
+        "type": newType,
+        "tipping_address": newTippingAddress,
+        "nft": newNft,
+        "memo": newMemo,
+      }
+      const option = new UpdateOptions(false, true)
+      try {
+        const updateResult = this.hiveService.updateOneDBData(HiveVaultApi.TABLE_CHANNELS, channel, doc, option)
+        Logger.log(TAG, 'update channel result', updateResult)
+        resolve(updateResult)
+      } catch (error) {
+        Logger.error(TAG, 'updateDataToChannelDB error', error)
+        reject(error)
+      }
+    })
   }
 
   //API
   //Post
   //insert
-  insertDataToPostDB(postId: string, channelId: string, type: string, tag: string, content: string, memo: string, createdAt: number, updateAt: number, status: number): Promise<string> {
+  insertDataToPostDB(postId: string, channelId: string, type: string, tag: string, content: string, memo: string, createdAt: number, updateAt: number, status: number): Promise<InsertResult> {
     return new Promise(async (resolve, reject) => {
       const doc =
       {
@@ -289,26 +314,63 @@ export class HiveVaultApi {
 
       try {
         const insertResult = this.hiveService.insertDBData(HiveVaultApi.TABLE_POSTS, doc)
-        Logger.log(TAG, 'insert postData result', insertResult);
-        //TODO resolve result
-        resolve('SUCCESS');
+        Logger.log(TAG, 'insert postData result', insertResult)
+        resolve(insertResult)
       } catch (error) {
-        Logger.error(TAG, 'insertDataToPostDB error', error);
-        reject(error);
+        Logger.error(TAG, 'insertDataToPostDB error', error)
+        reject(error)
       }
-    });
+    })
   }
 
   //API
   //Post
   //Update
-  updateDataToPostDB() {
+  updateDataToPostDB(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<UpdateResult> {
+    return new Promise(async (resolve, reject) => {
+      const key = this.dataHelper.getKey("", Number(channelId), Number(postId), 0)
+      const post = this.dataHelper.getPost(key)
+      const updated_at = new Date().getTime().toString()
+      const doc =
+      {
+        "channel_id": channelId,
+        "post_id": postId,
+        "created_at": post.created_at,
+        "updated_at": updated_at,
+        "content": newContent,
+        "status": newStatus,
+        "memo": newMemo,
+        "type": newType,
+        "tag": newTag
+      }
+      const option = new UpdateOptions(false, true)
+      try {
+        const updateResult = this.hiveService.updateOneDBData(HiveVaultApi.TABLE_POSTS, post, doc, option)
+        Logger.log(TAG, 'update post result', updateResult)
+        resolve(updateResult)
+      } catch (error) {
+        Logger.error(TAG, 'updateDataToPostDB error', error)
+        reject(error)
+      }
+    })
   }
 
   //API
   //Post
   //Delete
-  deleteDataFromPostDB() {
+  deleteDataFromPostDB(collectName: string, channelId: string, postId: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      const key = this.dataHelper.getKey("", Number(channelId), Number(postId), 0)
+      const post = this.dataHelper.getPost(key)
+      try {
+        this.hiveService.deleateOneDBData(HiveVaultApi.TABLE_POSTS, post)
+        Logger.log(TAG, 'delete post result success')
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'deleteDataFromPostDB error', error)
+        reject(error)
+      }
+    })
   }
 
   // 查询channel信息
@@ -402,8 +464,6 @@ export class HiveVaultApi {
       try {
         let userDid = (await this.dataHelper.getSigninData()).did
         let appid = Config.APPLICATION_DID
-        console.log("appid ===== ", appid)
-        console.log("userDid ===== ", userDid)
         let result = await this.hiveService.callScript(HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId }, userDid, appid)
         console.log("callChannel result ======= ", result)
         resolve(result)
