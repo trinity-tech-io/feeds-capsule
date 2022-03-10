@@ -3,7 +3,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable } from "@dchagastelles/elastos-hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable } from "@dchagastelles/elastos-hive-js-sdk";
 import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
@@ -27,11 +27,19 @@ export class HiveVaultApi {
   public static readonly SCRIPT_COMMENT = "script_comment_name";
   public static readonly SCRIPT_SUBSCRIPTION = "script_subscriptions_name";
 
+  public static readonly SCRIPT_CREATE_COMMENT = "script_create_comment";
+  public static readonly SCRIPT_UPDATE_COMMENT = "script_update_comment";
+  public static readonly SCRIPT_FIND_COMMENT = "script_find_comment";
+  public static readonly SCRIPT_DELETE_COMMENT = "script_delete_comment";
+  public static readonly SCRIPT_FIND_COMMENT_BY_POSTID = "script_find_comment_by_postid";
+  public static readonly SCRIPT_FIND_COMMENT_BY_COMMENTID = "script_find_comment_by_commentid";
+
+
   constructor(
     private hiveService: HiveService,
     private dataHelper: DataHelper,
     private events: Events,
-  ) {    
+  ) {
     eventBus = events;
   }
 
@@ -89,7 +97,7 @@ export class HiveVaultApi {
         console.log("cId ====== ", cId)
         const channelId = cId !== '' ? Number(cId) + 1 : 0
 
-        // const channelId = UtilService.SHA256(signinDid + createdAt + 'channel');
+        // const channelId = UtilService.generateChannelId(signinDid);
         const memo = '';
         console.log("Number(channelId)  ====== ", channelId)
         const doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
@@ -161,7 +169,7 @@ export class HiveVaultApi {
       owner_did: "",
       subscribers: 0,
       last_update: new Date().getTime(),
-      last_post: '', 
+      last_post: '',
       // avatar: avatar,
       isSubscribed: false,
     };
@@ -189,7 +197,7 @@ export class HiveVaultApi {
 
         const createdAt = UtilService.getCurrentTimeNum();
         const updatedAt = UtilService.getCurrentTimeNum();
-        const postId = UtilService.SHA256(signinDid + createdAt + 'post');
+        const postId = UtilService.generatePostId(signinDid);
         const memo = '';
 
         await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status);
@@ -208,7 +216,7 @@ export class HiveVaultApi {
 
         const createdAt = UtilService.getCurrentTimeNum();
         const updatedAt = UtilService.getCurrentTimeNum();
-        const commentId = UtilService.SHA256(signinDid + createdAt + 'comment');
+        const commentId = UtilService.generateCommentId(signinDid);
         const memo = '';
 
         await this.insertDataToCommentDB(commentId, channelId, postId, refcommentId, content, memo, createdAt, updatedAt, status, createrDid);
@@ -482,20 +490,261 @@ export class HiveVaultApi {
     });
   }
 
+  //Registe find comment script for post
+  private registerFindCommentScriptingByPostId() {
+    let conditionFilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionFilter, null);
 
-  private registerGetCommentScripting() {
+    const executableFilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_COMMENTS, executableFilter, options).setOutput(true)
+
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_COMMENT_BY_POSTID, executable, condition, false);
   }
 
-  callGetCommentScripting() {
+  //Registe find comment script for comment
+  private registerFindCommentScriptingByCommentId() {
+    let conditionFilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+    const executableFilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id"
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_COMMENTS, executableFilter, options).setOutput(true)
+
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_COMMENT_BY_COMMENTID, executable, condition, false);
   }
 
-  createComment() {
+  //Registe create comment script
+  private registerCreateCommentScripting() {
+    let conditionfilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionfilter, null);
+
+    let executablefilter = {
+      "comment_id": "$params.comment_id",
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "refcomment_id": "$params.refcomment_id",
+      "content": "$params.content",
+      "status": 0,
+      "created_at": "$params.created_at",
+      "updated_at": "$params.created_at",
+      "creater_did": "$caller_did"
+    }
+
+    let options = {
+      "projection":
+      {
+        "_id": false
+      }
+    };
+    const executable = new InsertExecutable("database_update", HiveVaultApi.TABLE_COMMENTS, executablefilter, options).setOutput(true)
+
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_CREATE_COMMENT, executable, condition, false);
   }
 
-  updateComment() {
+  //Update comment
+  private registerUpdateCommentScripting() {
+    let conditionfilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id",
+      "creater_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_COMMENTS, conditionfilter, null);
+
+    const filter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id"
+    };
+    const update = {
+      "status": FeedsData.PostCommentStatus.edited,
+      "content": "$params.content",
+      "updated_at": "$params.updated_at",
+      "creater_did": "$caller_did"
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new UpdateExecutable("database_update", HiveVaultApi.TABLE_COMMENTS, filter, update, options).setOutput(true)
+
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_UPDATE_COMMENT, executable, condition, false);
   }
 
-  deleteComment() {
+  //Delete comment
+  private registerDeleteCommentScripting() {
+    let conditionfilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id",
+      "creater_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_COMMENTS, conditionfilter, null);
+
+    const filter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id",
+      "comment_id": "$params.comment_id"
+    };
+    const update = {
+      "status": FeedsData.PostCommentStatus.deleted
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new UpdateExecutable("database_update", HiveVaultApi.TABLE_COMMENTS, filter, update, options).setOutput(true)
+
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_DELETE_COMMENT, executable, condition, false);
   }
 
+  callGetCommentByPostIdScripting(channelId: string, postId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_COMMENT_BY_POSTID, params);
+        console.log("Get comment from scripting by post id , result is ", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Get comment from scripting by post id error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  callGetCommentByCommentIdScripting(channelId: string, postId: string, commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId,
+          "comment_id": commentId
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_COMMENT_BY_COMMENTID, params);
+        console.log("Get comment from scripting by comment id , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Get comment from scripting by comment id error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  callUpdateComment(channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId,
+          "comment_id": commentId,
+          "content": content,
+          "updated_at": UtilService.getCurrentTimeNum()
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_UPDATE_COMMENT, params);
+        console.log("Get comment from scripting by comment id , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Get comment from scripting by comment id error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  callDeleteComment(channelId: string, postId: string, commentId: string,): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId,
+          "comment_id": commentId
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_DELETE_COMMENT, params);
+        console.log("Delete comment from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Delete comment from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  callCreateComment(commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "comment_id": commentId,
+          "channel_id": channelId,
+          "post_id": postId,
+          "refcomment_id": refcommentId,
+          "content": content,
+          "created_at": UtilService.getCurrentTimeNum()
+        }
+        const result = await this.callScript(HiveVaultApi.SCRIPT_CREATE_COMMENT, params);
+        console.log("Create comment from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Create comment from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  getComment(channelId: string, postId: string): Promise<any> {
+    return this.callGetCommentByPostIdScripting(channelId, postId);
+  }
+
+  createComment(channelId: string, postId: string, refcommentId: string, content: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const signinDid = (await this.dataHelper.getSigninData()).did;
+        const commentId = UtilService.generateCommentId(signinDid);
+        const result = await this.callCreateComment(commentId, channelId, postId, refcommentId, content);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  updateComment(channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    return this.callUpdateComment(channelId, postId, commentId, content);
+  }
+
+  deleteComment(channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callDeleteComment(channelId, postId, commentId);
+  }
+
+  callScript(scriptName: string, params: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userDid = (await this.dataHelper.getSigninData()).did;
+        const appid = Config.APPLICATION_DID;
+
+        let result = await this.hiveService.callScript(scriptName, params, userDid, appid);
+        console.log("callScript result ======= ", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'callScript error:', error);
+        reject(error);
+      }
+    });
+  }
 }
