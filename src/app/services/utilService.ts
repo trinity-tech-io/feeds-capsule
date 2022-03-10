@@ -732,4 +732,15 @@ export class UtilService {
     return new Date().getTime();
   }
 
+  public static generateChannelId(did: string) {
+    return UtilService.SHA256(did + UtilService.getCurrentTimeNum() + 'channel');
+  }
+
+  public static generatePostId(did: string) {
+    return UtilService.SHA256(did + UtilService.getCurrentTimeNum() + 'post');
+  }
+
+  public static generateCommentId(did: string) {
+    return UtilService.SHA256(did + UtilService.getCurrentTimeNum() + 'comment');
+  }
 }
