@@ -27,7 +27,7 @@ export class WalletteachPage implements OnInit {
   initTile() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('WalletteachPage.title'),
+      "",
     );
     this.titleBarService.setTitleBarBlankButton(this.titleBar);
   }
