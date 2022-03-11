@@ -232,6 +232,10 @@ const routes: Routes = [
     path: 'migrationdata',
     loadChildren: () => import('./pages/settings/migrationdata/migrationdata.module').then(m => m.MigrationdataPageModule)
   },
+  {
+    path: 'hive-interface-test',
+    loadChildren: () => import('./pages/hive-interface-test/hive-interface-test.module').then( m => m.HiveInterfaceTestPageModule)
+  },
 ];
 
 @NgModule({

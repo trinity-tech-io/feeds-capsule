@@ -45,9 +45,9 @@ export class DeveloperPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  navToConfigureNetwork(){
+  navToConfigureNetwork() {
     //select-net
-    this.native.navigateForward(['/select-net'],{})
+    this.native.navigateForward(['/select-net'], {})
   }
 
   toggleLogMode() {
@@ -59,5 +59,9 @@ export class DeveloperPage implements OnInit {
       Logger.setLogLevel(LogLevel.DEBUG);
     else
       Logger.setLogLevel(LogLevel.WARN);
+  }
+
+  interfaceTest() {
+    this.native.navigateForward(['/hive-interface-test'], {})
   }
 }

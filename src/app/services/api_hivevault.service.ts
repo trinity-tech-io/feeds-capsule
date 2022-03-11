@@ -430,7 +430,7 @@ export class HiveVaultApi {
   //API
   //Post
   //Register Get
-  registerGetAllPostScripting(): Promise<void> {
+  private registerGetAllPostScripting(): Promise<void> {
     let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
@@ -444,7 +444,7 @@ export class HiveVaultApi {
   //API
   //Post
   //Register Get
-  registerGetSomeTimePostScripting() {
+  private registerGetSomeTimePostScripting() {
     let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { "$gt": "$params.start", "$lt": "$params.end" } }
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
@@ -455,7 +455,7 @@ export class HiveVaultApi {
   }
 
   // 注册订阅
-  registerSubscriptions(): Promise<void> {
+  private registerSubscriptions(): Promise<void> {
     // let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "display_name": "$params.display_name" }
     let document = { "channel_id": "$params.channel_id", "user_did": "$caller_did", "created_at": "$params.created_at", "display_name": "$params.display_name" }
     let options = { "projection": { "_id": false } }
@@ -702,7 +702,7 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_DELETE_COMMENT, executable, condition, false);
   }
 
-  callGetCommentByPostIdScripting(channelId: string, postId: string): Promise<any> {
+  private callGetCommentByPostIdScripting(channelId: string, postId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -719,7 +719,7 @@ export class HiveVaultApi {
     });
   }
 
-  callGetCommentByCommentIdScripting(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callGetCommentByCommentIdScripting(channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -737,7 +737,7 @@ export class HiveVaultApi {
     });
   }
 
-  callUpdateComment(channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+  private callUpdateComment(channelId: string, postId: string, commentId: string, content: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -757,7 +757,7 @@ export class HiveVaultApi {
     });
   }
 
-  callDeleteComment(channelId: string, postId: string, commentId: string,): Promise<any> {
+  private callDeleteComment(channelId: string, postId: string, commentId: string,): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -775,7 +775,7 @@ export class HiveVaultApi {
     });
   }
 
-  callCreateComment(commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
+  private callCreateComment(commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -821,7 +821,7 @@ export class HiveVaultApi {
     return this.callDeleteComment(channelId, postId, commentId);
   }
 
-  callScript(scriptName: string, params: any): Promise<any> {
+  private callScript(scriptName: string, params: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const userDid = (await this.dataHelper.getSigninData()).did;
@@ -902,7 +902,7 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_REMOVE_LIKE, executable, condition, false);
   }
 
-  callAddLike(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callAddLike(channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const createdAt = UtilService.getCurrentTimeNum();
@@ -922,7 +922,7 @@ export class HiveVaultApi {
     });
   }
 
-  callRemoveLike(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callRemoveLike(channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -940,7 +940,7 @@ export class HiveVaultApi {
     });
   }
 
-  callFindLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callFindLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -970,7 +970,6 @@ export class HiveVaultApi {
     return this.callFindLikeById(channelId, postId, commentId);
   }
 
-
   ////Find subscriptions scripting
   private registerFindSubscriptionByIdScripting() {
     const executableFilter = {
@@ -982,7 +981,7 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, executable, null, false);
   }
 
-  callFindSubscriptionById(channelId: string): Promise<any> {
+  private callFindSubscriptionById(channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -998,7 +997,7 @@ export class HiveVaultApi {
     });
   }
 
-  getSubscription(channelId: string): Promise<any> {
+  getSubscriptionByChannelId(channelId: string): Promise<any> {
     return this.callFindSubscriptionById(channelId);
   }
 }
