@@ -51,6 +51,12 @@ export class MyApp {
   public walletAddress: string = '';
   public walletAddressStr: string = '';
 
+  public isLoading:boolean = false;
+  public loadingTitle: string = "";
+  public loadingText: string = null;
+  public loadingCurNumber: string = null;
+  public loadingMaxNumber: string = null;
+
   constructor(
     private modalController: ModalController,
     private events: Events,
@@ -89,6 +95,16 @@ export class MyApp {
 
     this.events.subscribe(FeedsEvent.PublishType.walletAccountChanged, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.nftLoadingUpdateText, (textObj:any) => {
+            this.isLoading = textObj.isLoading;
+            if(this.isLoading){
+              this.loadingTitle =  textObj.loadingTitle;
+              this.loadingText = textObj.loadingText;
+              this.loadingCurNumber = textObj.loadingCurNumber || null;
+              this.loadingMaxNumber = textObj.loadingMaxNumber || null;
+            }
     });
   }
 
@@ -410,6 +426,7 @@ export class MyApp {
     }
 
     this.events.unsubscribe(FeedsEvent.PublishType.walletAccountChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
   }
 
   profiledetail() {
