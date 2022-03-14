@@ -41,5 +41,15 @@
 
     <!-- <ion-router-outlet  [swipeGesture]="true" id="my-content"></ion-router-outlet> -->
     <ion-router-outlet  id="my-content"></ion-router-outlet>
+
+    <!--nft loading-->
+    <app-nftloading
+    *ngIf="isLoading"
+    [loadingTitle] = "loadingTitle"
+    [loadingText] = "loadingText"
+    [loadingCurNumber] = "loadingCurNumber"
+    [loadingMaxNumber] = "loadingMaxNumber"
+    >
+    </app-nftloading>
   </ion-app>
 

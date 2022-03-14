@@ -118,7 +118,7 @@ export class NftdialogComponent implements OnInit {
       return;
     }
     await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.burningNFTSDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.burningNFTSDesc", title: "common.waitMoment", curNum:null, maxNum: null, type: "changePrice" });
     let sId = setTimeout(() => {
       this.nftContractControllerService.getSticker().cancelBurnProcess();
       this.events.publish(FeedsEvent.PublishType.endLoading);
@@ -209,7 +209,7 @@ export class NftdialogComponent implements OnInit {
       return;
     }
     await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.sellingOrderDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.sellingOrderDesc", title: "common.waitMoment", curNum: null, maxNum: null, type: "changePrice" });
     let sId = setTimeout(() => {
       this.nftContractControllerService.getGalleria().cancelCreatePanelProcess();
       this.nftContractControllerService.getSticker().cancelSetApprovedProcess();
@@ -302,7 +302,7 @@ export class NftdialogComponent implements OnInit {
 
   async sellCollectibles(tokenId: any, type: string) {
     await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.sellingOrderDesc", title: "common.waitMoment", curNum: "1", maxNum: "1", type: "changePrice" });
+    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.sellingOrderDesc", title: "common.waitMoment", curNum: null, maxNum: null, type: "changePrice" });
     this.didUri = await this.getDidUri();
     if (this.didUri === null) {
       this.native.toast("common.didUriNull");

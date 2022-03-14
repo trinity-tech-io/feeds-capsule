@@ -151,11 +151,6 @@ export class ProfilePage implements OnInit {
   public onSaleList: any = [];
   public isFinsh: any = [];
 
-  public isLoading: boolean = false;
-  public loadingTitle: string = "";
-  public loadingText: string = "";
-  public loadingCurNumber: string = "";
-  public loadingMaxNumber: string = "";
   public elaPrice: string = null;
 
   private notSaleOrderCount = 0;
@@ -295,19 +290,28 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
+
       let title = obj["title"];
       let des = obj["des"];
       let curNum = obj["curNum"];
       let maxNum = obj["maxNum"];
-      this.loadingTitle = title;
-      this.loadingText = des;
-      this.loadingCurNumber = curNum;
-      this.loadingMaxNumber = maxNum;
-      this.isLoading = true;
+
+      let textObj = {
+      "isLoading":true,
+      "loadingTitle":title,
+      "loadingText":des,
+      "loadingCurNumber":curNum,
+      "loadingMaxNumber":maxNum
+       }
+     this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText,textObj);
+
     });
 
     this.events.subscribe(FeedsEvent.PublishType.endLoading, (obj) => {
-      this.isLoading = false;
+      let textObj = {
+        "isLoading":false,
+         }
+      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText,textObj);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
@@ -690,7 +694,6 @@ export class ProfilePage implements OnInit {
     }
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
-    this.isLoading = false;
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
