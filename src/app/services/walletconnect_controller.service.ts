@@ -212,5 +212,6 @@ export class WalletConnectControllerService {
 
   publishAccount(account: string) {
     this.events.publish(FeedsEvent.PublishType.walletAccountChanged, account);
+    this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage,account);
   }
 }
