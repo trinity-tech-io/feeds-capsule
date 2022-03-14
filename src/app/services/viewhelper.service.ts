@@ -186,7 +186,7 @@ export class ViewHelper {
       mode: 'ios',
       cssClass: 'genericPopup',
       component: PaypromptComponent,
-      backdropDismiss: false,
+      backdropDismiss: true,
       componentProps: {
         title: this.translate.instant('ChannelsPage.tip'),
         elaAddress: elaAddress,

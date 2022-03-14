@@ -93,7 +93,7 @@ export class MyApp {
       }
     })
 
-    this.events.subscribe(FeedsEvent.PublishType.walletAccountChanged, (walletAccount) => {
+    this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
     });
 
@@ -425,7 +425,7 @@ export class MyApp {
       this.popover = null;
     }
 
-    this.events.unsubscribe(FeedsEvent.PublishType.walletAccountChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
   }
 
