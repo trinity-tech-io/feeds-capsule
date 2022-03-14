@@ -3,7 +3,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, DeleteOptions } from "@dchagastelles/elastos-hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, DeleteOptions, FileDownloadExecutable } from "@dchagastelles/elastos-hive-js-sdk";
 import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
@@ -999,5 +999,26 @@ export class HiveVaultApi {
 
   getSubscriptionByChannelId(channelId: string): Promise<any> {
     return this.callFindSubscriptionById(channelId);
+  }
+
+  uploadMediaData(data: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const randomDataId = UtilService.getCurrentTimeNum();
+        const remoteName = 'feeds/data/' + randomDataId;
+        await this.hiveService.uploadCustomeAvatar(remoteName, data);
+
+        const scriptName = "getFeedsData" + randomDataId;
+        this.registerFileDownloadScripting(scriptName, remoteName);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  registerFileDownloadScripting(scriptName: string, remoteName: string): Promise<void> {
+    const executable = new FileDownloadExecutable(remoteName).setOutput(true);
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_CHANNEL, executable, null, false);
   }
 }
