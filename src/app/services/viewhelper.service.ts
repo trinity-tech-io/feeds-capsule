@@ -181,18 +181,21 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showPayPrompt(nodeId: string, channelId: number, elaAddress: string) {
+  async showPayPrompt(nodeId: string, channelId: number, elaAddress: string,amount?: any,memo?: any) {
+    let amountData = amount || "";
+    let memoData = memo || "";
     let popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
       component: PaypromptComponent,
-      backdropDismiss: true,
+      backdropDismiss:false,
       componentProps: {
         title: this.translate.instant('ChannelsPage.tip'),
         elaAddress: elaAddress,
-        defalutMemo: '',
+        defalutMemo: memoData,
         nodeId: nodeId,
         channelId: channelId,
+        amount: amountData
       },
     });
     popover.onWillDismiss().then(() => {

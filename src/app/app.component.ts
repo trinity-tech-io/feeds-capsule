@@ -24,6 +24,7 @@ import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './services/ApiUrl';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService';
+import { ViewHelper } from './services/viewhelper.service';
 
 let TAG: string = 'app-component';
 
@@ -79,6 +80,7 @@ export class MyApp {
     private httpService: HttpService,
     private ipfsService: IPFSService,
     private hiveService: HiveService,
+    private viewHelper: ViewHelper
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -105,6 +107,15 @@ export class MyApp {
               this.loadingCurNumber = textObj.loadingCurNumber || null;
               this.loadingMaxNumber = textObj.loadingMaxNumber || null;
             }
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.openPayPrompt,(obj)=>{
+         let nodeId:string = obj.nodeId;
+         let channelId:number = obj.channelId;
+         let elaAddress:string = obj.elaAddress;
+         let amount:string = obj.amount;
+         let memo:string = obj. memo;
+         this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress,amount,memo);
     });
   }
 
@@ -427,6 +438,7 @@ export class MyApp {
 
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
+    this.events.unsubscribe(FeedsEvent.PublishType.openPayPrompt);
   }
 
   profiledetail() {

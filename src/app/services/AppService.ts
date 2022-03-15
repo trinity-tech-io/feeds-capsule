@@ -35,7 +35,6 @@ export class AppService {
       localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') ||
       '';
     let bindingServer = this.feedService.getBindingServer() || null;
-    let openBarcodeScanner = this.dataHelper.getOpenBarcodeScanner();
     if (
       (this.router.url.indexOf('/bindservice/scanqrcode') > -1 &&
         isFirstBindFeedService === '' &&
@@ -52,14 +51,7 @@ export class AppService {
     ) {
       this.createDialog();
     }else if(this.router.url === "/tabs/search" || this.router.url === "/tabs/profile" ){
-            if(!openBarcodeScanner){
               navigator['app'].exitApp();
-              return;
-            }
-            let sid = setTimeout(()=>{
-              this.dataHelper.setOpenBarcodeScanner(false);
-             clearTimeout(sid);
-            },10);
     }else if ( this.router.url === "/tabs/home" ||
                this.router.url === "/tabs/notification" ||
                this.router.url === "/signin" ||

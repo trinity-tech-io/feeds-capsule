@@ -181,7 +181,6 @@ export class SearchPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = '';
     }
-    this.dataHelper.setOpenBarcodeScanner(false);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
