@@ -83,7 +83,7 @@ export class HiveVaultApi {
   }
 
   //API
-  createCollection(collectName: string): Promise<void> {
+  async createCollection(collectName: string): Promise<void> {
     return this.hiveService.createCollection(collectName);
   }
 
@@ -466,16 +466,15 @@ export class HiveVaultApi {
   }
 
   //订阅者调用
-  callSubscription(channelId: string, channelName: string): Promise<any> {
+  callSubscription(userDid: string, channelId: string, channelName: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
         let appid = Config.APPLICATION_DID
         console.log("appid ===== ", appid)
         console.log("userDid ===== ", userDid)
         const timeStamp = new Date().getTime().toString()
         const doc = { "channel_id": channelId, "display_name": channelName, "created_at": timeStamp, "user_did": userDid }
-        const result = await this.hiveService.callScript(HiveVaultApi.SCRIPT_SUBSCRIPTION, doc, userDid, appid)
+        const result = await this.hiveService.callScript(userDid, HiveVaultApi.SCRIPT_SUBSCRIPTION, doc, appid)
         resolve(result)
       } catch (error) {
         Logger.error(TAG, 'callSubscription error:', error)
@@ -485,12 +484,11 @@ export class HiveVaultApi {
   }
 
   // 查询channel下所有 Post内容
-  callGetAllPostScripting(channelId: string): Promise<any> {
+  callGetAllPostScripting(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
         let appid = Config.APPLICATION_DID
-        let result = await this.hiveService.callScript(HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId }, userDid, appid)
+        let result = await this.hiveService.callScript(userDid, HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId }, appid)
         console.log("callChannel result ======= ", result)
         resolve(result)
       } catch (error) {
@@ -504,14 +502,13 @@ export class HiveVaultApi {
   //API
   //Post
   //Call Get
-  callGetSpecifiedPostScripting(channelId: string): Promise<any> {
+  callGetSpecifiedPostScripting(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
         let appid = Config.APPLICATION_DID
         console.log("appid ===== ", appid)
         console.log("userDid ===== ", userDid)
-        let result = await this.hiveService.callScript(HiveVaultApi.SCRIPT_SPECIFIED_POST, { "channel_id": channelId }, userDid, appid)
+        let result = await this.hiveService.callScript(userDid, HiveVaultApi.SCRIPT_SPECIFIED_POST, { "channel_id": channelId }, appid)
         console.log("callChannel result ======= ", result)
         resolve(result)
       } catch (error) {
@@ -526,15 +523,13 @@ export class HiveVaultApi {
 
     const channelIds = await this.getSubscriptChannelId()
     // 获得订阅的post
-    console.log("channelIds ===== ", channelIds)
     channelIds.forEach(async (item) => {
-      console.log("item ===== ", item)
       const channelId = item["channel_id"].toString()
-      console.log("channelId ===== ", channelId)
       /*
       {"find_message": {"items": [{"channel_id": "304", "post_id": "d9b9b6d8ff80d1641e48e5b3fe8f51ac5874219f72a556f35d6e55d50d2d1a3e", "created_at": 1646792481412, "updated_at": 1646792481412, "content": "{\"version\":\"2.0\",\"text\":\"\u6d4b\u8bd5\u4e00\u4e0b\u8fd9\u4e2a\",\"data\":[]}", "status": 0, "memo": "", "type": "0", "tag": "Feeds-createpost", "created": {"$date": 1646792482693}, "modified": {"$date": 1646792482693}}]}}
       */
-      await this.callGetAllPostScripting(channelId)
+      let userDid = (await this.dataHelper.getSigninData()).did
+      await this.callGetAllPostScripting(userDid, channelId)
     })
   }
 
@@ -702,14 +697,14 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_DELETE_COMMENT, executable, condition, false);
   }
 
-  private callGetCommentByPostIdScripting(channelId: string, postId: string): Promise<any> {
+  private callGetCommentByPostIdScripting(userDid: string, channelId: string, postId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
           "channel_id": channelId,
           "post_id": postId
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_COMMENT_BY_POSTID, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_COMMENT_BY_POSTID, params);
         console.log("Get comment from scripting by post id , result is ", result);
         resolve(result);
       } catch (error) {
@@ -719,7 +714,7 @@ export class HiveVaultApi {
     });
   }
 
-  private callGetCommentByCommentIdScripting(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callGetCommentByCommentIdScripting(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -727,7 +722,7 @@ export class HiveVaultApi {
           "post_id": postId,
           "comment_id": commentId
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_COMMENT_BY_COMMENTID, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_COMMENT_BY_COMMENTID, params);
         console.log("Get comment from scripting by comment id , result is", result);
         resolve(result);
       } catch (error) {
@@ -737,7 +732,7 @@ export class HiveVaultApi {
     });
   }
 
-  private callUpdateComment(channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+  private callUpdateComment(userDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -747,7 +742,7 @@ export class HiveVaultApi {
           "content": content,
           "updated_at": UtilService.getCurrentTimeNum()
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_UPDATE_COMMENT, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_UPDATE_COMMENT, params);
         console.log("Get comment from scripting by comment id , result is", result);
         resolve(result);
       } catch (error) {
@@ -757,7 +752,7 @@ export class HiveVaultApi {
     });
   }
 
-  private callDeleteComment(channelId: string, postId: string, commentId: string,): Promise<any> {
+  private callDeleteComment(userDid: string, channelId: string, postId: string, commentId: string,): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -765,7 +760,7 @@ export class HiveVaultApi {
           "post_id": postId,
           "comment_id": commentId
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_DELETE_COMMENT, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_DELETE_COMMENT, params);
         console.log("Delete comment from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -775,7 +770,7 @@ export class HiveVaultApi {
     });
   }
 
-  private callCreateComment(commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
+  private callCreateComment(userDid: string, commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -786,7 +781,7 @@ export class HiveVaultApi {
           "content": content,
           "created_at": UtilService.getCurrentTimeNum()
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_CREATE_COMMENT, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_CREATE_COMMENT, params);
         console.log("Create comment from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -796,16 +791,16 @@ export class HiveVaultApi {
     });
   }
 
-  getComment(channelId: string, postId: string): Promise<any> {
-    return this.callGetCommentByPostIdScripting(channelId, postId);
+  getComment(userDid: string, channelId: string, postId: string): Promise<any> {
+    return this.callGetCommentByPostIdScripting(userDid, channelId, postId);
   }
 
-  createComment(channelId: string, postId: string, refcommentId: string, content: string): Promise<any> {
+  createComment(userDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const signinDid = (await this.dataHelper.getSigninData()).did;
         const commentId = UtilService.generateCommentId(signinDid);
-        const result = await this.callCreateComment(commentId, channelId, postId, refcommentId, content);
+        const result = await this.callCreateComment(userDid, commentId, channelId, postId, refcommentId, content);
         resolve(result);
       } catch (error) {
         reject(error);
@@ -813,21 +808,20 @@ export class HiveVaultApi {
     });
   }
 
-  updateComment(channelId: string, postId: string, commentId: string, content: string): Promise<any> {
-    return this.callUpdateComment(channelId, postId, commentId, content);
+  updateComment(userDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    return this.callUpdateComment(userDid, channelId, postId, commentId, content);
   }
 
-  deleteComment(channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.callDeleteComment(channelId, postId, commentId);
+  deleteComment(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callDeleteComment(userDid, channelId, postId, commentId);
   }
 
-  private callScript(scriptName: string, params: any): Promise<any> {
+  private callScript(userDid: string, scriptName: string, params: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const userDid = (await this.dataHelper.getSigninData()).did;
         const appid = Config.APPLICATION_DID;
 
-        let result = await this.hiveService.callScript(scriptName, params, userDid, appid);
+        let result = await this.hiveService.callScript(scriptName, params, userDid, appid)
         console.log("callScript result ======= ", result);
         resolve(result);
       } catch (error) {
@@ -902,7 +896,7 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_REMOVE_LIKE, executable, condition, false);
   }
 
-  private callAddLike(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callAddLike(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const createdAt = UtilService.getCurrentTimeNum();
@@ -912,7 +906,7 @@ export class HiveVaultApi {
           "comment_id": commentId,
           "created_at": createdAt
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_CREATE_LIKE, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_CREATE_LIKE, params);
         console.log("Add like from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -922,7 +916,7 @@ export class HiveVaultApi {
     });
   }
 
-  private callRemoveLike(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callRemoveLike(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -930,7 +924,7 @@ export class HiveVaultApi {
           "post_id": postId,
           "comment_id": commentId,
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_REMOVE_LIKE, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_REMOVE_LIKE, params);
         console.log("Remove like from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -940,7 +934,7 @@ export class HiveVaultApi {
     });
   }
 
-  private callFindLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
+  private callFindLikeById(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
@@ -948,7 +942,7 @@ export class HiveVaultApi {
           "post_id": postId,
           "comment_id": commentId,
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_LIKE_BY_ID, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_LIKE_BY_ID, params);
         console.log("Remove like from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -958,16 +952,16 @@ export class HiveVaultApi {
     });
   }
 
-  addLike(channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.callAddLike(channelId, postId, commentId);
+  addLike(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callAddLike(userDid, channelId, postId, commentId);
   }
 
-  removeLike(channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.callRemoveLike(channelId, postId, commentId);
+  removeLike(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callRemoveLike(userDid, channelId, postId, commentId);
   }
 
-  findLikeById(channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.callFindLikeById(channelId, postId, commentId);
+  findLikeById(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.callFindLikeById(userDid, channelId, postId, commentId);
   }
 
   ////Find subscriptions scripting
@@ -981,13 +975,13 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, executable, null, false);
   }
 
-  private callFindSubscriptionById(channelId: string): Promise<any> {
+  private callFindSubscriptionById(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
           "channel_id": channelId,
         }
-        const result = await this.callScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, params);
         console.log("Find subscription from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -997,8 +991,8 @@ export class HiveVaultApi {
     });
   }
 
-  getSubscriptionByChannelId(channelId: string): Promise<any> {
-    return this.callFindSubscriptionById(channelId);
+  getSubscriptionByChannelId(userDid: string, channelId: string): Promise<any> {
+    return this.callFindSubscriptionById(userDid, channelId);
   }
 
   uploadMediaData(data: any): Promise<string> {
@@ -1031,10 +1025,10 @@ export class HiveVaultApi {
       if (essavatar) {
         return
       }
-      const result = await this.hiveService.downloadEssAvatarTransactionId()
+      const result = await this.hiveService.downloadEssAvatarTransactionId(userDid)
       const transaction_id = result["download"]["transaction_id"]
       let self = this
-      let dataBuffer = await this.hiveService.downloadScripting(transaction_id)
+      let dataBuffer = await this.hiveService.downloadScripting(userDid, transaction_id)
 
       const savekey = userDid + "_ess_avatar"
       const rawImage = await rawImageToBase64DataUrl(dataBuffer)
@@ -1055,11 +1049,10 @@ export class HiveVaultApi {
         return
       }
 
-
       let self = this
       let imgstr = ''
       try {
-        var dataBuffer = await this.hiveService.downloadFile(remotePath)
+        var dataBuffer = await this.hiveService.downloadFile(userDid, remotePath)
         // dataBuffer = dataBuffer.slice(1, -1)
         imgstr = dataBuffer.toString()
         self.dataHelper.saveUserAvatar(userDid, imgstr)
