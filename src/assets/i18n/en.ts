@@ -189,7 +189,10 @@ export const en = {
     published: "Published",
     queryTransactionResult: 'A transaction has been initiated and the result is being queried',
     sorry: "Sorry",
-    auction: "This order is an auction order. Purchase is not supported temporarily"
+    auction: "This order is an auction order. Purchase is not supported temporarily",
+    editedContentDes:"Are you sure to cancel? Canceling will discard your edited content!",
+    editedContentDes1:"Confirm",
+    editedContentDes2:"Cancel"
   },
   app: {
     profileDetails: 'Profile Details',

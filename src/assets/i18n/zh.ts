@@ -189,7 +189,10 @@ export const zh = {
     published: "已公开",
     queryTransactionResult: '已发起交易，正在查询结果',
     sorry: "抱歉",
-    auction: "此订单为拍卖订单，暂不支持购买"
+    auction: "此订单为拍卖订单，暂不支持购买",
+    editedContentDes:"确认取消吗？取消将会丢弃您已编辑的内容！",
+    editedContentDes1:"确定",
+    editedContentDes2:"取消",
   },
   app: {
     profileDetails: '档案详情',

@@ -12,7 +12,6 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
-  private openBarcodeScanner: boolean = false;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
   private isShowAdult: boolean = true;
@@ -2814,14 +2813,6 @@ export class DataHelper {
 
   getAssetPageAssetItem(): FeedsData.NFTItem {
     return this.assetPageAssetItem;
-  }
-
-  setOpenBarcodeScanner(openBarcodeScanner: boolean) {
-    this.openBarcodeScanner = openBarcodeScanner;
-  }
-
-  getOpenBarcodeScanner() {
-    return this.openBarcodeScanner;
   }
 
   setPublishedActivePanelList(publishedActivePanelList: any) {
