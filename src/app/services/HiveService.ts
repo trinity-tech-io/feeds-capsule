@@ -22,25 +22,18 @@ let eventBus: Events = null;
 export class HiveService {
   public static CREATEALLCollECTION = "feeds_createALLCollections" // 本地标识是否创建了Collection
   public static readonly CHANNEL = "channels"
-  private static readonly POST = "posts"
-  private static readonly SUBSCRIPTION = "subscriptions"
   public static readonly TARGETDID = "targetDid"
   public static readonly postId = "channelId"
   private static readonly RESOLVE_CACHE = "data/didCache"
-  private static collectName = "feeds_subscription"//标识是否备份到hive
-  private static isSync = "feeds_subscription_synchronize" // 标识是否同步数据到本地
-  private static createCollection = "feeds_subscription_createCollection" // 本地标识是否创建了Collection
-  private static INSTANCE: HiveService
-  public context: AppContext
-  public vault: VaultServices
-  public tarDID: string
-  public tarAppDID: string
-  public avatarParam: string
-  public avatarScriptName: string
+
   public image = null
   public appinstanceDid: string
+  private avatarScriptNameMap: { [userDid: string]: string } = {}
+  private avatarParamMap: { [userDid: string]: string } = {}
+  private tarDIDMap: { [userDid: string]: string } = {}
+  private tarAppDIDMap: { [userDid: string]: string } = {}
+  private vaultMap: { [userDid: string]: VaultServices } = {}
 
-  private avatarVC: VerifiableCredential
   constructor(
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
@@ -62,7 +55,7 @@ export class HiveService {
         const path = rootDirEntry.fullPath
         // auth
         let self = this
-        this.context = await AppContext.build({
+        const context = await AppContext.build({
           getLocalDataDir(): string {
             return path
           },
@@ -89,7 +82,7 @@ export class HiveService {
             })
           }
         }, userDidString);
-        resolve(this.context)
+        resolve(context)
       } catch (error) {
         Logger.error(TAG, "creat Error: ", error)
         reject(error)
@@ -97,34 +90,33 @@ export class HiveService {
     })
   }
 
-  async creatVault() {
+  async creatVault(userDid: string) {
     try {
       let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
-      let userDid = (await this.dataHelper.getSigninData()).did
       const userDID = DID.from(userDid)
+      const context = await this.creatAppContext(appinstanceDocument, userDid)
       const userDIDDocument = await userDID.resolve()
       let provider = this.parseUserDIDDocument(userDid, userDIDDocument)
-      if (this.context == null) {
-        this.context = await this.creatAppContext(appinstanceDocument, userDid)
-      }
-      this.vault = new VaultServices(this.context, provider)
+      const vault = new VaultServices(context, provider)
+      this.vaultMap[userDid] = vault
     }
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
     }
   }
 
-  parseUserDIDDocument(userDID: string, userDIDDocument: DIDDocument) {
-    const avatarDid = userDID + "#avatar"
-    this.avatarVC = userDIDDocument.getCredential(avatarDid)
-    if (this.avatarVC != null) { // 有头像
-      const sub = this.avatarVC.getSubject()
+  parseUserDIDDocument(userDid: string, userDIDDocument: DIDDocument) {
+    const avatarDid = userDid + "#avatar"
+    const avatarVC = userDIDDocument.getCredential(avatarDid)
+    if (avatarVC != null) { // 有头像
+      const sub = avatarVC.getSubject()
       const pro = sub.getProperty("avatar")
       const data: string = pro["data"]
       const type = pro["type"]
       const prefix = "hive://"
-      this.avatarParam = data.substr(prefix.length)
-      const parts = this.avatarParam.split("/")
+      const avatarParam = data.substr(prefix.length)
+      this.avatarParamMap[userDid] = avatarParam
+      const parts = avatarParam.split("/")
       if (parts.length < 2) // TODO 验证parts是否大于2个 ，否则 抛出异常
         throw "userDIDDocument 中缺少参数"
 
@@ -137,41 +129,46 @@ export class HiveService {
       if (values.length != 2) // TODO 验证values是否等于2个 ，否则 抛出异常
         throw "userDIDDocument 中缺少参数"
 
-      this.avatarScriptName = values[0]
+      const avatarScriptName = values[0]
+      this.avatarScriptNameMap[userDid] = avatarScriptName
       const paramStr = values[1]
       const scriptParam = JSON.parse(paramStr.substr(7))
-      this.tarDID = dids[0]
-      this.tarAppDID = dids[1]
+      const tarDID = dids[0]
+      const tarAppDID = dids[1]
+      this.tarDIDMap[userDid] = tarDID
+      this.tarAppDIDMap[userDid] = tarAppDID
     }
-    const serviceDid = userDID + "#hivevault"
+    const serviceDid = userDid + "#hivevault"
     const service = userDIDDocument.getService(serviceDid)
     const provider = service.getServiceEndpoint() + ":443"
     return provider
   }
 
-  async getVault() {
-    if (this.vault == null) {
-      await this.creatVault()
+  async getVault(userDid: string) {
+    let vault = this.vaultMap[userDid]
+    if (vault == null) {
+      await this.creatVault(userDid)
     }
-    return this.vault
+    return this.vaultMap[userDid]
   }
 
-  async getDatabaseService() {
-    return (await this.getVault()).getDatabaseService()
+  async getDatabaseService(userDid: string) {
+    return (await this.getVault(userDid)).getDatabaseService()
   }
 
-  async getScriptingService() {
-    return (await this.getVault()).getScriptingService()
+  async getScriptingService(userDid: string) {
+    return (await this.getVault(userDid)).getScriptingService()
   }
 
-  async getFilesService() {
-    return (await this.getVault()).getFilesService()
+  async getFilesService(userDid: string) {
+    return (await this.getVault(userDid)).getFilesService()
   }
 
   async createCollection(channelName: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        const databaseService = await this.getDatabaseService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        const databaseService = await this.getDatabaseService(userDid)
         const result = await databaseService.createCollection(channelName);
         resolve(result)
       } catch (error) {
@@ -184,7 +181,8 @@ export class HiveService {
   registerScript(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let scriptingService = await this.getScriptingService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        let scriptingService = await this.getScriptingService(userDid)
         await scriptingService.registerScript(scriptName, executable,
           condition, allowAnonymousUser, allowAnonymousApp)
         resolve()
@@ -198,7 +196,8 @@ export class HiveService {
   findPostDB(collectionName: string, filter: any): Promise<JSONObject[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let dbService = await this.getDatabaseService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        let dbService = await this.getDatabaseService(userDid)
         let result = dbService.findMany(collectionName, filter)
         console.log("findPostDB ======  ", result)
         resolve(result)
@@ -209,44 +208,48 @@ export class HiveService {
     })
   }
 
-  async callScript(scriptName: string, document: any, userDid: string, appid: string): Promise<any> {
-    let scriptingService = await this.getScriptingService()
+  async callScript(userDid: string, scriptName: string, document: any, appid: string): Promise<any> {
+    let scriptingService = await this.getScriptingService(userDid)
     let result = await scriptingService.callScript<any>(scriptName, document, userDid, appid)
     console.log("callChannel result ======= ", result)
     return result
   }
 
-  async getMyChannelList() {
-    let userDid = (await this.dataHelper.getSigninData()).did
+  async getMyChannelList(userDid: string) {
     this.dataHelper.getMyChannelListWithHive(userDid)
   }
 
-  async downloadEssAvatarTransactionId() {
+  async downloadEssAvatarTransactionId(userDid: string,) {
     try {
-      if (this.avatarVC === null) {
+      const avatarParam = this.avatarParamMap[userDid]
+      if (avatarParam === null) {
         return
         }
-      const scriptingService = await this.getScriptingService()
-      return await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
+      const scriptingService = await this.getScriptingService(userDid)
+      const avatarScriptName = this.avatarScriptNameMap[userDid]
+      const tarDID = this.tarDIDMap[userDid]
+      const tarAppDID = this.tarAppDIDMap[userDid]
+      return await scriptingService.callScript(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
       reject(error)
     }
   }
 
-  async downloadScripting(transaction_id: string) {
-    const scriptingService = await this.getScriptingService()
+  async downloadScripting(userDid: string, transaction_id: string) {
+    const scriptingService = await this.getScriptingService(userDid)
     return await scriptingService.downloadFile(transaction_id)
   }
 
-  async downloadFile(remotePath: string) {
-    const fileService = await this.getFilesService()
+  async downloadFile(userDid: string, remotePath: string) {
+    const fileService = await this.getFilesService(userDid)
     return await fileService.download(remotePath)
   }
 
   async uploadCustomeAvatar(remotePath: string, img: any) {
     try {
-      const fileService = await this.getFilesService()
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const fileService = await this.getFilesService(userDid)
       await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
     }
     catch (error) {
@@ -257,7 +260,8 @@ export class HiveService {
   insertDBData(collectName: string, doc: any): Promise<InsertResult> {
     return new Promise(async (resolve, reject) => {
       try {
-        const dbService = await this.getDatabaseService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        const dbService = await this.getDatabaseService(userDid)
         const insertResult = await dbService.insertOne(collectName, doc, new InsertOptions(false, true));
         resolve(insertResult)
       } catch (error) {
@@ -270,7 +274,8 @@ export class HiveService {
   updateOneDBData(collectName: string, origin: JSONObject, update: JSONObject, option: UpdateOptions): Promise<UpdateResult> {
     return new Promise(async (resolve, reject) => {
       try {
-        const dbService = await this.getDatabaseService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        const dbService = await this.getDatabaseService(userDid)
         const insertResult = await dbService.updateOne(collectName, origin, update, option)
         resolve(insertResult)
       } catch (error) {
@@ -283,7 +288,8 @@ export class HiveService {
   deleateOneDBData(collectName: string, fillter: JSONObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        const dbService = await this.getDatabaseService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        const dbService = await this.getDatabaseService(userDid)
         await dbService.deleteOne(collectName, fillter)
         resolve()
       } catch (error) {
