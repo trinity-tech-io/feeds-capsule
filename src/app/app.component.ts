@@ -26,6 +26,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService';
 import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { HiveVaultApi } from 'src/app/services/api_hivevault.service';
 
 let TAG: string = 'app-component';
 
@@ -54,7 +55,7 @@ export class MyApp {
   public walletAddress: string = '';
   public walletAddressStr: string = '';
 
-  public isLoading:boolean = false;
+  public isLoading: boolean = false;
   public loadingTitle: string = "";
   public loadingText: string = null;
   public loadingCurNumber: string = null;
@@ -85,6 +86,7 @@ export class MyApp {
     private hiveService: HiveService,
     private viewHelper: ViewHelper,
     private keyboard: Keyboard,
+    private hiveVaultApi: HiveVaultApi,
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -103,29 +105,29 @@ export class MyApp {
       this.updateWalletAddress(walletAccount);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftLoadingUpdateText, (textObj:any) => {
-            this.isLoading = textObj.isLoading;
-            if(this.isLoading){
-              this.loadingTitle =  textObj.loadingTitle;
-              this.loadingText = textObj.loadingText;
-              this.loadingCurNumber = textObj.loadingCurNumber || null;
-              this.loadingMaxNumber = textObj.loadingMaxNumber || null;
-            }
+    this.events.subscribe(FeedsEvent.PublishType.nftLoadingUpdateText, (textObj: any) => {
+      this.isLoading = textObj.isLoading;
+      if (this.isLoading) {
+        this.loadingTitle = textObj.loadingTitle;
+        this.loadingText = textObj.loadingText;
+        this.loadingCurNumber = textObj.loadingCurNumber || null;
+        this.loadingMaxNumber = textObj.loadingMaxNumber || null;
+      }
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.openPayPrompt,(obj)=>{
-         let nodeId:string = obj.nodeId;
-         let channelId:number = obj.channelId;
-         let elaAddress:string = obj.elaAddress;
-         let amount:string = obj.amount;
-         let memo:string = obj. memo;
-         this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress,amount,memo);
+    this.events.subscribe(FeedsEvent.PublishType.openPayPrompt, (obj) => {
+      let nodeId: string = obj.nodeId;
+      let channelId: number = obj.channelId;
+      let elaAddress: string = obj.elaAddress;
+      let amount: string = obj.amount;
+      let memo: string = obj.memo;
+      this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
     });
   }
 
   initializeApp() {
     this.platform.ready()
-      .then(async() => {
+      .then(async () => {
         return await this.dataHelper.loadApiProvider();
       })
       .then(async (api) => {
@@ -145,19 +147,19 @@ export class MyApp {
 
         this.platform.backButton.subscribeWithPriority(99999, async () => {
           this.backButtoncount++;
-          if(this.backButtoncount === 2){
+          if (this.backButtoncount === 2) {
             this.backButtoncount = 0;
 
             //ess登陆框
-            let sveltekqf8ju = document.getElementsByClassName("svelte-kqf8ju")|| [];
-            if(sveltekqf8ju.length > 0){
+            let sveltekqf8ju = document.getElementsByClassName("svelte-kqf8ju") || [];
+            if (sveltekqf8ju.length > 0) {
               sveltekqf8ju[0].click();
               return;
             }
 
             //nft loading
-            let nftloading:HTMLElement = document.querySelector("app-nftloading")|| null;
-            if(nftloading != null){
+            let nftloading: HTMLElement = document.querySelector("app-nftloading") || null;
+            if (nftloading != null) {
               return;
             }
 
@@ -166,37 +168,37 @@ export class MyApp {
               return;
             }
 
-          //评论框
-          let comment:HTMLElement = document.querySelector("app-comment")|| null;
-          if(comment != null){
-            let commentMask:HTMLElement = document.getElementById("commentMask") || null;
-           if(commentMask != null){
-            commentMask.click();
-           }
-            return;
-           }
-         //频道选择框 app-switchfeed
-         let switchfeed:HTMLElement = document.querySelector("app-switchfeed")|| null;
-         if(switchfeed != null){
-           let switchfeedMask:HTMLElement = document.getElementById("switchfeedMask") || null;
-          if(switchfeedMask != null){
-            switchfeedMask.click();
-          }
-           return;
-          }
+            //评论框
+            let comment: HTMLElement = document.querySelector("app-comment") || null;
+            if (comment != null) {
+              let commentMask: HTMLElement = document.getElementById("commentMask") || null;
+              if (commentMask != null) {
+                commentMask.click();
+              }
+              return;
+            }
+            //频道选择框 app-switchfeed
+            let switchfeed: HTMLElement = document.querySelector("app-switchfeed") || null;
+            if (switchfeed != null) {
+              let switchfeedMask: HTMLElement = document.getElementById("switchfeedMask") || null;
+              if (switchfeedMask != null) {
+                switchfeedMask.click();
+              }
+              return;
+            }
 
-          //分享菜单了 app-sharemenu
-          let sharemenu:HTMLElement = document.querySelector("app-sharemenu") || null;
-          if(sharemenu != null){
-            let sharemenuMask:HTMLElement = document.getElementById("sharemenuMask") || null;
-           if(sharemenuMask!= null){
-            sharemenuMask.click();
-            sharemenu.remove();
-           }
-            return;
-           }
+            //分享菜单了 app-sharemenu
+            let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
+            if (sharemenu != null) {
+              let sharemenuMask: HTMLElement = document.getElementById("sharemenuMask") || null;
+              if (sharemenuMask != null) {
+                sharemenuMask.click();
+                sharemenu.remove();
+              }
+              return;
+            }
 
-           const menu = await this.menuController.getOpen();
+            const menu = await this.menuController.getOpen();
             if (menu) {
               await this.menuController.close();
               return;
@@ -214,7 +216,7 @@ export class MyApp {
             }
             const modal = await this.modalController.getTop();
             if (modal) {
-             await modal.dismiss();
+              await modal.dismiss();
               return;
             }
             this.appService.handleBack();
@@ -391,14 +393,14 @@ export class MyApp {
     let ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
     if (ipfsBaseUrl === '') {
       ipfsBaseUrl = Config.defaultIPFSApi();
-      localStorage.setItem("selectedIpfsNetwork",ipfsBaseUrl);
+      localStorage.setItem("selectedIpfsNetwork", ipfsBaseUrl);
     }
 
     ApiUrl.setIpfs(ipfsBaseUrl);
     this.globalService.refreshBaseNFTIPSFUrl();
   }
 
-  initAssist(){
+  initAssist() {
     // let assistBaseUrl = localStorage.getItem("selectedAssistPasarNetwork") || '';
     // if(assistBaseUrl === ""){
     //   assistBaseUrl = Config.defaultAssistApi();
@@ -408,7 +410,7 @@ export class MyApp {
     this.globalService.refreshBaseAssistUrl();
   }
 
-  initUserDidUri(){
+  initUserDidUri() {
     return this.dataHelper.loadUserDidUriMap();
   }
 
@@ -539,18 +541,18 @@ export class MyApp {
       .catch(() => { });
   }
 
-  initWhiteList(){
+  initWhiteList() {
     this.feedService.getData("feeds.WhiteList")
-    .then((whiteListData :FeedsData.WhiteItem[])=>{
-      if(whiteListData === null){
-        this.feedService.setWhiteListData([]);
+      .then((whiteListData: FeedsData.WhiteItem[]) => {
+        if (whiteListData === null) {
+          this.feedService.setWhiteListData([]);
+          this.ajaxGetWhiteList(false);
+          return;
+        }
+        this.feedService.setWhiteListData(whiteListData);
         this.ajaxGetWhiteList(false);
-        return;
-      }
-      this.feedService.setWhiteListData(whiteListData);
-      this.ajaxGetWhiteList(false);
-    })
-    .catch()
+      })
+      .catch()
   }
 
   async initFeedsSortType() {
@@ -622,10 +624,10 @@ export class MyApp {
         this.feedService.setElaUsdPrice(elaPrice);
         this.feedService.setData("feeds:elaPrice", elaPrice);
       }
-    }).catch(()=>{
-      if(caceElaPrice!=""){
+    }).catch(() => {
+      if (caceElaPrice != "") {
         this.feedService.setElaUsdPrice(caceElaPrice);
-        this.feedService.setData("feeds:elaPrice",caceElaPrice);
+        this.feedService.setData("feeds:elaPrice", caceElaPrice);
       }
     });
   }
@@ -644,47 +646,47 @@ export class MyApp {
       })
   }
 
-  initHideAdult(){
-    this.dataHelper.loadData('feeds.hideAdult').then((isShowAdult)=>{
-          if(isShowAdult === null){
-            this.dataHelper.changeAdultStatus(true);
-              return;
-          }
-          this.dataHelper.changeAdultStatus(isShowAdult);
-    }).catch((err)=>{
+  initHideAdult() {
+    this.dataHelper.loadData('feeds.hideAdult').then((isShowAdult) => {
+      if (isShowAdult === null) {
+        this.dataHelper.changeAdultStatus(true);
+        return;
+      }
+      this.dataHelper.changeAdultStatus(isShowAdult);
+    }).catch((err) => {
 
     });
   }
 
-  initPublishedActivePanelList(){
-    this.dataHelper.loadData('feeds.published.activePanel.list').then((publishedActivePanelList)=>{
-          if(publishedActivePanelList === null){
-            this.dataHelper.setPublishedActivePanelList([]);
-              return;
-          }
+  initPublishedActivePanelList() {
+    this.dataHelper.loadData('feeds.published.activePanel.list').then((publishedActivePanelList) => {
+      if (publishedActivePanelList === null) {
+        this.dataHelper.setPublishedActivePanelList([]);
+        return;
+      }
       this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
-    }).catch((err)=>{
+    }).catch((err) => {
 
     });
   }
 
-  ajaxGetWhiteList(isLoading: boolean){
-    this.httpService.ajaxGet(ApiUrl.getWhiteList,isLoading).then((result:any)=>{
-      if(result.code === 200){
+  ajaxGetWhiteList(isLoading: boolean) {
+    this.httpService.ajaxGet(ApiUrl.getWhiteList, isLoading).then((result: any) => {
+      if (result.code === 200) {
         const whiteListData = result.data || [];
         this.feedService.setWhiteListData(whiteListData);
-        this.feedService.setData("feeds.WhiteList",whiteListData);
+        this.feedService.setData("feeds.WhiteList", whiteListData);
       }
-    }).catch((err)=>{
+    }).catch((err) => {
 
     });
   }
 
   async downloadCustomeAvatar() {
-    await this.hiveService.downloadCustomeAvatar("custome")
+    await this.hiveVaultApi.downloadCustomeAvatar("custome")
   }
   async downloadEssAvatar() {
-    await this.hiveService.downloadEssAvatar()
+    await this.hiveVaultApi.downloadEssAvatar()
   }
 
 }
