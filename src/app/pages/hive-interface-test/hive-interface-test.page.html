@@ -2,6 +2,20 @@
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
 
+    <ion-row class="section" (click)="createCollection()">
+      <ion-col size="9" class="title-col">
+          <h1>createCollection</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
     <ion-row class="section" (click)="registeScripting()">
         <ion-col size="9" class="title-col">
             <h1>registeScripting</h1>
@@ -165,10 +179,28 @@
           <h1>-----------------------</h1>
       </ion-col>
     </ion-row>
-    
+
     <ion-row class="section" (click)="getLikes()">
       <ion-col size="9" class="title-col">
-          <h1>getLikes</h1>
+          <h1>getLikesById</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="getLikesByPost()">
+      <ion-col size="9" class="title-col">
+          <h1>getLikesByPost</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="getLikesByChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>getLikesByChannel</h1>
       </ion-col>
       <ion-col size="3" class="arrow-col">
           <ion-img src="assets/icons/right-arrow.svg"></ion-img>
