@@ -209,9 +209,9 @@ export class HiveService {
     })
   }
 
-  async callScript(userDid: string, scriptName: string, document: any, appid: string): Promise<any> {
+  async callScript(userDid: string, scriptName: string, document: any, callerDid: string, appid: string): Promise<any> {
     let scriptingService = await this.getScriptingService(userDid)
-    let result = await scriptingService.callScript<any>(scriptName, document, userDid, appid)
+    let result = await scriptingService.callScript<any>(scriptName, document, callerDid, appid)
     console.log("callChannel result ======= ", result)
     return result
   }
@@ -225,7 +225,7 @@ export class HiveService {
       const avatarParam = this.avatarParamMap[userDid]
       if (avatarParam === null) {
         return
-        }
+      }
       const scriptingService = await this.getScriptingService(userDid)
       const avatarScriptName = this.avatarScriptNameMap[userDid]
       const tarDID = this.tarDIDMap[userDid]

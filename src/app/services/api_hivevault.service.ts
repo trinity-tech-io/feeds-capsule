@@ -485,12 +485,10 @@ export class HiveVaultApi {
   callSubscription(userDid: string, channelId: string, channelName: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let appid = Config.APPLICATION_DID
-        console.log("appid ===== ", appid)
         console.log("userDid ===== ", userDid)
         const timeStamp = new Date().getTime().toString()
         const doc = { "channel_id": channelId, "display_name": channelName, "created_at": timeStamp, "user_did": userDid }
-        const result = await this.hiveService.callScript(userDid, HiveVaultApi.SCRIPT_SUBSCRIPTION, doc, appid)
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_SUBSCRIPTION, doc)
         resolve(result)
       } catch (error) {
         Logger.error(TAG, 'callSubscription error:', error)
@@ -590,8 +588,7 @@ export class HiveVaultApi {
   callGetAllPostScripting(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        let appid = Config.APPLICATION_DID
-        let result = await this.hiveService.callScript(userDid, HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId }, appid)
+        let result = await this.callScript(userDid, HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId })
         console.log("callChannel result ======= ", result)
         resolve(result)
       } catch (error) {
@@ -611,7 +608,7 @@ export class HiveVaultApi {
         let appid = Config.APPLICATION_DID
         console.log("appid ===== ", appid)
         console.log("userDid ===== ", userDid)
-        let result = await this.hiveService.callScript(userDid, HiveVaultApi.SCRIPT_SPECIFIED_POST, { "channel_id": channelId }, appid)
+        let result = await this.callScript(userDid, HiveVaultApi.SCRIPT_SPECIFIED_POST, { "channel_id": channelId })
         console.log("callChannel result ======= ", result)
         resolve(result)
       } catch (error) {
@@ -929,8 +926,8 @@ export class HiveVaultApi {
     return new Promise(async (resolve, reject) => {
       try {
         const appid = Config.APPLICATION_DID;
-
-        let result = await this.hiveService.callScript(scriptName, params, userDid, appid)
+        let callerDid = (await this.dataHelper.getSigninData()).did;
+        let result = await this.hiveService.callScript(userDid, scriptName, params, callerDid, appid)
         console.log("callScript result ======= ", result);
         resolve(result);
       } catch (error) {
