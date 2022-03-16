@@ -148,12 +148,48 @@ export class MyApp {
           if(this.backButtoncount === 2){
             this.backButtoncount = 0;
 
+            //nft loading
+            let nftloading:HTMLElement = document.querySelector("app-nftloading")|| null;
+            if(nftloading != null){
+              return;
+            }
+
             if (this.keyboard.isVisible) {
               this.keyboard.hide();
               return;
-              }
+            }
 
-            const menu = await this.menuController.getOpen();
+          //评论框
+          let comment:HTMLElement = document.querySelector("app-comment")|| null;
+          if(comment != null){
+            let commentMask:HTMLElement = document.getElementById("commentMask") || null;
+           if(commentMask != null){
+            commentMask.click();
+           }
+            return;
+           }
+         //频道选择框 app-switchfeed
+         let switchfeed:HTMLElement = document.querySelector("app-switchfeed")|| null;
+         if(switchfeed != null){
+           let switchfeedMask:HTMLElement = document.getElementById("switchfeedMask") || null;
+          if(switchfeedMask != null){
+            switchfeedMask.click();
+          }
+           return;
+          }
+
+          //分享菜单了 app-sharemenu
+
+          let sharemenu:HTMLElement = document.querySelector("app-sharemenu")|| null;
+          if(sharemenu != null){
+            let sharemenuMask:HTMLElement = document.getElementById("sharemenuMask") || null;
+           if(sharemenuMask!= null){
+            sharemenuMask.click();
+           }
+            return;
+           }
+
+           const menu = await this.menuController.getOpen();
             if (menu) {
               await this.menuController.close();
               return;
