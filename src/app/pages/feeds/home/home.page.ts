@@ -2189,30 +2189,30 @@ export class HomePage implements OnInit {
   }
 
   create() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+    // if (this.feedService.getConnectionStatus() != 0) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
-    let bindingServer = this.feedService.getBindingServer();
-    if (bindingServer == null || bindingServer == undefined) {
-      //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-      this.viewHelper.showPublisherDialog("home");
-      return;
-    }
+    // let bindingServer = this.feedService.getBindingServer();
+    // if (bindingServer == null || bindingServer == undefined) {
+    //   //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
+    //   this.viewHelper.showPublisherDialog("home");
+    //   return;
+    // }
 
-    let nodeId = bindingServer['nodeId'];
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // let nodeId = bindingServer['nodeId'];
+    // if (this.checkServerStatus(nodeId) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
-    if (
-      !this.feedService.checkBindingServerVersion(() => {
-        this.feedService.hideAlertPopover();
-      })
-    )
-      return;
+    // if (
+    //   !this.feedService.checkBindingServerVersion(() => {
+    //     this.feedService.hideAlertPopover();
+    //   })
+    // )
+    //   return;
 
     this.pauseAllVideo();
     this.clearData();
