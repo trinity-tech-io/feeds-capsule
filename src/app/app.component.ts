@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, PopoverController, MenuController, ModalController } from '@ionic/angular';
+import { Platform, PopoverController, MenuController, ModalController, ActionSheetController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
@@ -25,6 +25,7 @@ import { ApiUrl } from './services/ApiUrl';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService';
 import { ViewHelper } from './services/viewhelper.service';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 let TAG: string = 'app-component';
 
@@ -41,6 +42,7 @@ let TAG: string = 'app-component';
   styleUrls: ['app.scss'],
 })
 export class MyApp {
+  private backButtoncount: number = 0;
   public name: string = '';
   public avatar: string = '';
   public wName: string = '';
@@ -59,6 +61,7 @@ export class MyApp {
   public loadingMaxNumber: string = null;
 
   constructor(
+    private actionSheetController: ActionSheetController,
     private modalController: ModalController,
     private events: Events,
     private platform: Platform,
@@ -80,7 +83,8 @@ export class MyApp {
     private httpService: HttpService,
     private ipfsService: IPFSService,
     private hiveService: HiveService,
-    private viewHelper: ViewHelper
+    private viewHelper: ViewHelper,
+    private keyboard: Keyboard,
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -140,12 +144,38 @@ export class MyApp {
         this.statusBar.show();
 
         this.platform.backButton.subscribeWithPriority(99999, async () => {
-          const modal = await this.modalController.getTop();
-          if (modal) {
-            modal.dismiss();
-            return;
+          this.backButtoncount++;
+          if(this.backButtoncount === 2){
+            this.backButtoncount = 0;
+
+            if (this.keyboard.isVisible) {
+              this.keyboard.hide();
+              return;
+              }
+
+            const menu = await this.menuController.getOpen();
+            if (menu) {
+              await this.menuController.close();
+              return;
+            }
+
+            const actionSheet = await this.actionSheetController.getTop();
+            if (actionSheet) {
+              await this.actionSheetController.dismiss();
+              return;
+            }
+            const popover = await this.popoverController.getTop();
+            if (popover) {
+              await this.popoverController.dismiss();
+              return;
+            }
+            const modal = await this.modalController.getTop();
+            if (modal) {
+             await modal.dismiss();
+              return;
+            }
+            this.appService.handleBack();
           }
-          this.appService.handleBack();
         });
 
 
