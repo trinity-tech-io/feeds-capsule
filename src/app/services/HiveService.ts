@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, FindExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions, HttpClient, AndCondition, FindOptions, Condition } from "@dchagastelles/elastos-hive-js-sdk";
+import { Executable, InsertOptions, File as HiveFile, VaultServices, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -7,7 +7,8 @@ import { resolve } from 'url';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
+// import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
+import { } from '@elastosfoundation/hive-js-sdk'
 import { isEqual, isNil, reject } from 'lodash';
 import { on } from 'process';
 import { VideoService } from './video.service';

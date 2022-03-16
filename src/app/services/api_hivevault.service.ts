@@ -3,12 +3,12 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, DeleteOptions, FileDownloadExecutable } from "@dchagastelles/elastos-hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
 import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
 import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
-import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
+// import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 
 const TAG = 'API-HiveVault';
 let eventBus: Events = null;
