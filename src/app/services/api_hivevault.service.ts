@@ -28,6 +28,12 @@ export class HiveVaultApi {
   public static readonly SCRIPT_COMMENT = "script_comment_name";
   public static readonly SCRIPT_SUBSCRIPTION = "script_subscriptions_name";
 
+
+  public static readonly SCRIPT_SUBSCRIBE_CHANNEL = "script_subscribe_channel";
+  public static readonly SCRIPT_UNSUBSCRIBE_CHANNEL = "script_unsubscribe_channel";
+  public static readonly SCRIPT_FIND_SUBSCRIPTION_BY_CHANNELID = "script_find_subscription_by_channelid";
+  public static readonly SCRIPT_FIND_SUBSCRIPTION_BY_USERDID = "script_find_subscription_by_userdid";
+
   public static readonly SCRIPT_CREATE_COMMENT = "script_create_comment";
   public static readonly SCRIPT_UPDATE_COMMENT = "script_update_comment";
   public static readonly SCRIPT_FIND_COMMENT = "script_find_comment";
@@ -38,8 +44,10 @@ export class HiveVaultApi {
   public static readonly SCRIPT_CREATE_LIKE = "script_add_like";
   public static readonly SCRIPT_REMOVE_LIKE = "script_remove_like";
   public static readonly SCRIPT_FIND_LIKE_BY_ID = "script_find_like_by_id";
+  public static readonly SCRIPT_FIND_LIKE_BY_POST = "script_find_like_by_post";
+  public static readonly SCRIPT_FIND_LIKE_BY_CHANNEL = "script_find_like_by_channel";
 
-  public static readonly SCRIPT_FIND_SUBSCRIPTION_BY_ID = "script_find_subscription_by_id";
+  // public static readonly SCRIPT_FIND_SUBSCRIPTION_BY_ID = "script_find_subscription_by_id";
 
   constructor(
     private hiveService: HiveService,
@@ -62,7 +70,10 @@ export class HiveVaultApi {
 
         //subscription
         await this.registerSubscriptions();
-        await this.registerFindSubscriptionByIdScripting();
+        await this.registerSubscribeScripting();
+        await this.registerFindSubscriptionByChannelIdScripting();
+        await this.registerFindSubscriptionByUserDIDScripting();
+        await this.registerUnsubscribeScripting();
 
         //comment
         await this.registerCreateCommentScripting();
@@ -71,10 +82,12 @@ export class HiveVaultApi {
         await this.registerUpdateCommentScripting();
         await this.registerDeleteCommentScripting();
 
-        //like
+        // //like
         await this.registerCreateLikeScripting();
         await this.registerFindLikeByIdScripting();
         await this.registerRemoveLikeScripting();
+        await this.registerFindLikeByChannelScripting();
+        await this.registerFindLikeByPostScripting();
         resolve('FINISH');
       } catch (error) {
         Logger.error(error);
@@ -445,12 +458,15 @@ export class HiveVaultApi {
   //Post
   //Register Get
   private registerGetSomeTimePostScripting() {
-    let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { "$gt": "$params.start", "$lt": "$params.end" } }
+    let executablefilter =
+      { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { $gt: "$params.start", $lt: "$params.end" } }
+    console.log("executablefilter = ", executablefilter);
+
     let options = { "projection": { "_id": false }, "limit": 100 }
     let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionfilter, null)
     let findExe = new FindExecutable("find_message", HiveVaultApi.TABLE_POSTS, executablefilter, options).setOutput(true)
-    console.log("registerGetSomeTimePostScripting ====== ")
+    console.log("registerGetSomeTimePostScripting ====== ", findExe)
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
   }
 
@@ -481,6 +497,93 @@ export class HiveVaultApi {
         reject(error)
       }
     })
+  }
+
+  private registerSubscribeScripting(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const type = 'public';    //Currently only public channels are found for subscription
+        let conditionfilter = {
+          "channel_id": "$params.channel_id",
+          "type": type
+        };
+        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_CHANNELS, conditionfilter, null);
+
+        let document = {
+          "channel_id": "$params.channel_id",
+          "user_did": "$caller_did",
+          "created_at": "$params.created_at",
+          "display_name": "$params.display_name"
+        }
+        let options = { "projection": { "_id": false } };
+
+        const executable = new InsertExecutable("database_insert", HiveVaultApi.TABLE_SUBSCRIPTIONS, document, options);
+        await this.hiveService.registerScript(HiveVaultApi.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(error);
+        reject(error);
+      }
+    });
+  }
+
+  private callSubscribeScripting(userDid: string, channelId: string, userDisplayName: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "created_at": UtilService.getCurrentTimeNum(),
+          "display_name": userDisplayName
+        }
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_SUBSCRIBE_CHANNEL, params);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'callSubscription error:', error)
+        reject(error)
+      }
+    })
+  }
+
+  subscribeChannel(userDid: string, channelId: string, displayName: string) {
+    return this.callSubscribeScripting(userDid, channelId, displayName);
+  }
+
+
+  private registerUnsubscribeScripting(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const filter = {
+          "channel_id": "$params.channel_id",
+          "user_did": "$caller_did"
+        }
+
+        const executable = new DeleteExecutable("database_delete", HiveVaultApi.TABLE_SUBSCRIPTIONS, filter);
+        await this.hiveService.registerScript(HiveVaultApi.SCRIPT_UNSUBSCRIBE_CHANNEL, executable, null);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(error);
+        reject(error);
+      }
+    });
+  }
+
+  private callUnsubscribeScripting(userDid: string, channelId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId
+        }
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_UNSUBSCRIBE_CHANNEL, params);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'callSubscription error:', error)
+        reject(error)
+      }
+    })
+  }
+
+  unsubscribeChannel(userDid: string, channelId: string) {
+    return this.callUnsubscribeScripting(userDid, channelId);
   }
 
   // 查询channel下所有 Post内容
@@ -540,6 +643,10 @@ export class HiveVaultApi {
   listSubscriptDB(): Promise<JSONObject[]> {
     const query = {}
     return this.hiveService.findPostDB(HiveVaultApi.TABLE_SUBSCRIPTIONS, query)
+  }
+
+  getSubscriptChannelsInfo() {
+
   }
 
   //API
@@ -659,16 +766,17 @@ export class HiveVaultApi {
       "post_id": "$params.post_id",
       "comment_id": "$params.comment_id"
     };
-    const update = {
+
+    let set = {
       "status": FeedsData.PostCommentStatus.edited,
       "content": "$params.content",
-      "updated_at": "$params.updated_at",
+      "updated_at": `$params.updated_at`,
       "creater_did": "$caller_did"
     };
+    let update = { "$set": set };
+    let options = { "bypass_document_validation": false, "upsert": true };
 
-    let options = { "projection": { "_id": false }, "limit": 100 };
     const executable = new UpdateExecutable("database_update", HiveVaultApi.TABLE_COMMENTS, filter, update, options).setOutput(true)
-
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_UPDATE_COMMENT, executable, condition, false);
   }
 
@@ -687,13 +795,14 @@ export class HiveVaultApi {
       "post_id": "$params.post_id",
       "comment_id": "$params.comment_id"
     };
-    const update = {
-      "status": FeedsData.PostCommentStatus.deleted
+
+    let set = {
+      "status": FeedsData.PostCommentStatus.deleted,
     };
+    let update = { "$set": set };
+    let options = { "bypass_document_validation": false, "upsert": true };
 
-    let options = { "projection": { "_id": false }, "limit": 100 };
     const executable = new UpdateExecutable("database_update", HiveVaultApi.TABLE_COMMENTS, filter, update, options).setOutput(true)
-
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_DELETE_COMMENT, executable, condition, false);
   }
 
@@ -851,6 +960,39 @@ export class HiveVaultApi {
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_LIKE_BY_ID, executable, condition, false);
   }
 
+  private registerFindLikeByChannelScripting() {
+    let conditionFilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+    const executableFilter = {
+      "channel_id": "$params.channel_id"
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_LIKES, executableFilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_LIKE_BY_CHANNEL, executable, condition, false);
+  }
+
+  private registerFindLikeByPostScripting() {
+    let conditionFilter = {
+      "channel_id": "$params.channel_id",
+      "user_did": "$caller_did"
+    };
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+    const executableFilter = {
+      "channel_id": "$params.channel_id",
+      "post_id": "$params.post_id"
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_LIKES, executableFilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_LIKE_BY_POST, executable, condition, false);
+  }
+
   //Registe create like script
   private registerCreateLikeScripting() {
     let conditionfilter = {
@@ -892,7 +1034,7 @@ export class HiveVaultApi {
       "post_id": "$params.post_id",
       "comment_id": "$params.comment_id"
     };
-    const executable = new DeleteExecutable("database_delete", HiveVaultApi.TABLE_COMMENTS, filter).setOutput(true);
+    const executable = new DeleteExecutable("database_delete", HiveVaultApi.TABLE_LIKES, filter).setOutput(true);
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_REMOVE_LIKE, executable, condition, false);
   }
 
@@ -952,6 +1094,41 @@ export class HiveVaultApi {
     });
   }
 
+  private callFindLikeByPost(userDid: string, channelId: string, postId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId,
+          "post_id": postId
+        }
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_LIKE_BY_POST, params);
+        console.log("Remove like from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Remove like from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  private callFindLikeByChannel(userDid: string, channelId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "channel_id": channelId
+        }
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_LIKE_BY_CHANNEL, params);
+        console.log("Remove like from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Remove like from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+
+
   addLike(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return this.callAddLike(userDid, channelId, postId, commentId);
   }
@@ -964,24 +1141,33 @@ export class HiveVaultApi {
     return this.callFindLikeById(userDid, channelId, postId, commentId);
   }
 
+  findLikeByPost(userDid: string, channelId: string, postId: string): Promise<any> {
+    return this.callFindLikeByPost(userDid, channelId, postId);
+  }
+
+  findLikeByChannel(userDid: string, channelId: string): Promise<any> {
+    return this.callFindLikeByChannel(userDid, channelId);
+  }
+
+
   ////Find subscriptions scripting
-  private registerFindSubscriptionByIdScripting() {
+  private registerFindSubscriptionByChannelIdScripting() {
     const executableFilter = {
       "channel_id": "$params.channel_id"
     };
 
     let options = { "projection": { "_id": false }, "limit": 100 };
-    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_LIKES, executableFilter, options).setOutput(true)
-    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, executable, null, false);
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
   }
 
-  private callFindSubscriptionById(userDid: string, channelId: string): Promise<any> {
+  private callFindSubscriptionByChannelId(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const params = {
           "channel_id": channelId,
         }
-        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_ID, params);
+        const result = await this.callScript(userDid, HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_CHANNELID, params);
         console.log("Find subscription from scripting , result is", result);
         resolve(result);
       } catch (error) {
@@ -991,8 +1177,38 @@ export class HiveVaultApi {
     });
   }
 
+  private registerFindSubscriptionByUserDIDScripting() {
+    const executableFilter = {
+      "user_did": "$params.user_did"
+    };
+
+    let options = { "projection": { "_id": false }, "limit": 100 };
+    const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_USERDID, executable, null, false);
+  }
+
+  private callFindSubscriptionByUserDID(destUserDid: string, userDid: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const params = {
+          "user_did": userDid
+        }
+        const result = await this.callScript(destUserDid, HiveVaultApi.SCRIPT_FIND_SUBSCRIPTION_BY_USERDID, params);
+        console.log("Find subscription from scripting , result is", result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Find subscription from scripting , error:', error);
+        reject(error);
+      }
+    });
+  }
+
+  getSubscriptionByUserDID(destUserDid: string, userDid: string): Promise<any> {
+    return this.callFindSubscriptionByUserDID(destUserDid, userDid);
+  }
+
   getSubscriptionByChannelId(userDid: string, channelId: string): Promise<any> {
-    return this.callFindSubscriptionById(userDid, channelId);
+    return this.callFindSubscriptionByChannelId(userDid, channelId);
   }
 
   uploadMediaData(data: any): Promise<string> {
@@ -1004,6 +1220,10 @@ export class HiveVaultApi {
 
         const scriptName = "getFeedsData" + randomDataId;
         this.registerFileDownloadScripting(scriptName, remoteName);
+
+        const signinDid = (await this.dataHelper.getSigninData()).did;
+        let avatarHiveURL = "hive://" + signinDid + "@" + Config.APPLICATION_DID + "/" + scriptName + "?params={\"empty\":0}"; // 
+        Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
         resolve('SUCCESS');
       } catch (error) {
         reject(error);

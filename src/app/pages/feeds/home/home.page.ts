@@ -272,9 +272,9 @@ export class HomePage implements OnInit {
 
   async ionViewWillEnter() {
 
-    let mAppIdCredential = await this.storageService.get('appIdCredential');
-    Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
-    console.log("appid ====== ", mAppIdCredential);
+    // let mAppIdCredential = await this.storageService.get('appIdCredential');
+    // Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
+    // console.log("appid ====== ", mAppIdCredential);
 
     this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");

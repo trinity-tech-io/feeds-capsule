@@ -47,6 +47,10 @@ export class HiveInterfaceTestPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
+  createCollection() {
+    this.hiveVaultApi.createAllCollections();
+  }
+
   //
   registeScripting() {
     this.hiveVaultApi.registeScripting();
@@ -81,56 +85,79 @@ export class HiveInterfaceTestPage implements OnInit {
 
   //subscription
   getSubscriptionInfo() {
-    // this.hiveVaultApi.getSubscriptionByChannelId();
-    alert('getSubscriptionInfo');
+    this.hiveVaultApi.getSubscriptionByChannelId('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    // alert('getSubscriptionInfo');
   }
 
   getSubscriptionByUser() {
-    alert('getSubscriptionByUser');
+    this.hiveVaultApi.getSubscriptionByUserDID('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D');
+    // alert('getSubscriptionByUser');
   }
 
   subscribe() {
-    alert('subscribe');
+    this.hiveVaultApi.subscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'wangran');
+    // alert('subscribe');
   }
 
   unSubscribe() {
-    alert('unSubscribe');
+    this.hiveVaultApi.unsubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    // alert('unSubscribe');
   }
 
+  // v
   //comment
   addComment() {
-    // this.hiveVaultApi.createComment();
-    alert('addComment');
+    this.hiveVaultApi.createComment('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'refcommentId01', 'test content');
+    // alert('addComment');
   }
 
+  // v
   updateComment() {
     // this.hiveVaultApi.updateComment();
-    alert('updateComment');
+    this.hiveVaultApi.updateComment('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6', 'update content');
+    // alert('updateComment');
   }
 
+  // v
   getComments() {
     // this.hiveVaultApi.getComment();
-    alert('getComments');
+    this.hiveVaultApi.getComment('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
+    // alert('getComments');
   }
 
   deleteComment() {
-    // this.hiveVaultApi.deleteComment();
-    alert('deleteComment');
+    this.hiveVaultApi.deleteComment('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6');
+    // alert('deleteComment');
   }
 
   //like
   getLikes() {
     // this.hiveVaultApi.findLikeById();
+    this.hiveVaultApi.findLikeById('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6');
     alert('getLikes');
   }
 
-  addLike() {
+  getLikesByPost() {
+    // this.hiveVaultApi.findLikeById();
+    this.hiveVaultApi.findLikeByPost('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
+    alert('getLikes');
+  }
+
+  getLikesByChannel() {
+    // this.hiveVaultApi.findLikeById();
+    this.hiveVaultApi.findLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    alert('getLikes');
+  }
+
+  async addLike() {
+    await this.hiveVaultApi.addLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6');
     // this.hiveVaultApi.addLike();
-    alert('addLike');
+    // alert('addLike');
   }
 
   removeLike() {
+    this.hiveVaultApi.removeLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', '');
     // this.hiveVaultApi.removeLike();
-    alert('removeLike');
+    // alert('removeLike');
   }
 }
