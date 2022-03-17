@@ -189,8 +189,9 @@ export class HomePage implements OnInit {
     private dataHelper: DataHelper,
     private keyboard: Keyboard,
     private fileHelperService: FileHelperService,
-    private postHelperService: PostHelperService
-  ) { }
+    private postHelperService: PostHelperService,
+  ) {
+  }
 
   initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = false;
@@ -1155,6 +1156,16 @@ export class HomePage implements OnInit {
 
   initTitleBar() {
     let title = this.translate.instant('FeedsPage.tabTitle1');
+    if("FeedsPage.tabTitle1" === title){
+     let code = localStorage.getItem('io.trinity.feeds.language') || "";
+     if(code === "zh"){
+         title = "主页";
+     }else if(code === "en"){
+         title = "Home";
+     }else{
+         title = "Home";
+     }
+    }
     this.titleBarService.setTitle(this.titleBar, title);
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }

@@ -33,6 +33,7 @@ export class FeedsPage implements OnInit {
 
   initTab() {
     let currentTab = this.feedService.getCurTab();
+    console.log("======================");
     switch (currentTab) {
       case 'home':
         this.home();
@@ -79,7 +80,7 @@ export class FeedsPage implements OnInit {
 
   home(isClick?:string) {
     this.currentTab = 'home';
-    this.title = 'FeedsPage.tabTitle1';
+    //this.title = 'FeedsPage.tabTitle1';
     this.feedService.setCurTab(this.currentTab);
     isClick = isClick || "";
     if(isClick!=""){
@@ -89,19 +90,19 @@ export class FeedsPage implements OnInit {
 
   profile() {
     this.currentTab = 'profile';
-    this.title = 'FeedsPage.tabTitle2';
+    //this.title = 'FeedsPage.tabTitle2';
     this.feedService.setCurTab(this.currentTab);
   }
 
   notification() {
     this.currentTab = 'notification';
-    this.title = 'FeedsPage.tabTitle3';
+    //this.title = 'FeedsPage.tabTitle3';
     this.feedService.setCurTab(this.currentTab);
   }
 
   search() {
     this.currentTab = 'search';
-    this.title = 'FeedsPage.tabTitle4';
+    //this.title = 'FeedsPage.tabTitle4';
     this.feedService.setCurTab(this.currentTab);
   }
 
