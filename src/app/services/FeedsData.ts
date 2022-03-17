@@ -854,6 +854,12 @@ declare namespace FeedsData {
   //     }
   //   ]
   // }
+  type postHiveContent = {
+    version: "2.0",
+    text: string,
+    data: string
+  }
+
   type postContent = {
     version: "2.0",
     text: string,

@@ -8,6 +8,8 @@ import { VideoService } from './video.service';
 import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
 import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
+import { PostHelperService } from 'src/app/services/post_helper.service';
+import { userInfo } from 'os';
 // import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 
 const TAG = 'API-HiveVault';
@@ -52,6 +54,7 @@ export class HiveVaultApi {
   constructor(
     private hiveService: HiveService,
     private dataHelper: DataHelper,
+    private postHelperService: PostHelperService,
     private events: Events,
   ) {
     eventBus = events;
@@ -143,7 +146,10 @@ export class HiveVaultApi {
         // const channelId = UtilService.generateChannelId(signinDid);
         const memo = '';
         console.log("Number(channelId)  ====== ", channelId)
-        const doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
+
+        // 处理avatar
+        const avatarHiveURL = await this.uploadMediaData(avatarAddress)
+        const doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarHiveURL, memo, createdAt, updatedAt, type, tippingAddress, nft);
         localStorage.setItem(signinDid + HiveService.postId, channelId.toString())
         this.handleResult(
           "create_channel", channelId, signinDid, channelName, 0, doc
@@ -1214,23 +1220,43 @@ export class HiveVaultApi {
         const randomDataId = UtilService.getCurrentTimeNum();
         const remoteName = 'feeds/data/' + randomDataId;
         await this.hiveService.uploadCustomeAvatar(remoteName, data);
-
         const scriptName = "getFeedsData" + randomDataId;
-        this.registerFileDownloadScripting(scriptName, remoteName);
-
-        const signinDid = (await this.dataHelper.getSigninData()).did;
-        let avatarHiveURL = "hive://" + signinDid + "@" + Config.APPLICATION_DID + "/" + scriptName + "?params={\"empty\":0}"; // 
+        await this.registerFileDownloadScripting(scriptName);
+        await this.registerFileDownloadScripting(scriptName)
+        let avatarHiveURL = scriptName + "@" + remoteName // 
         Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
-        resolve('SUCCESS');
+        resolve(avatarHiveURL);
       } catch (error) {
         reject(error);
       }
     });
   }
 
-  registerFileDownloadScripting(scriptName: string, remoteName: string): Promise<void> {
-    const executable = new FileDownloadExecutable(remoteName).setOutput(true);
-    return this.hiveService.registerScript(HiveVaultApi.SCRIPT_CHANNEL, executable, null, false);
+  registerFileDownloadScripting(scriptName: string): Promise<void> {
+    const executable = new FileDownloadExecutable(scriptName).setOutput(true);
+    return this.hiveService.registerScript(scriptName, executable, null, false);
+  }
+
+  async downloadScripting(userDid: string, avatarHiveURL: string) {
+    const transaction_id = await this.downloadScriptingTransactionID(userDid, avatarHiveURL)
+    const rawData = await this.downloadScriptingData(userDid, transaction_id)
+    return rawData
+  }
+
+  // avatarHiveURL = scriptName@remoteName
+  private async downloadScriptingTransactionID(userDid: string, avatarHiveURL: string) {
+    const params = avatarHiveURL.split("@")
+    const scriptName = params[0]
+    const remoteName = params[1]
+    const result = await this.callScript(userDid, scriptName, { "path": remoteName })
+    const transaction_id = result[scriptName]["transaction_id"]
+    return transaction_id
+  }
+
+  private async downloadScriptingData(userDid: string, transactionID: string) {
+    let dataBuffer = await this.hiveService.downloadScripting(userDid, transactionID)
+    const rawData = await rawImageToBase64DataUrl(dataBuffer)
+    return rawData
   }
 
   async downloadEssAvatar() {

@@ -21,6 +21,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
+import { DataHelper } from 'src/app/services/DataHelper';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -91,6 +92,8 @@ export class CreatenewpostPage implements OnInit {
     private file: File,
     private fileHelperService: FileHelperService,
     private ipfsService: IPFSService,
+    private dataHelper: DataHelper,
+
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
     // private hiveService: HiveService,
@@ -259,8 +262,6 @@ export class CreatenewpostPage implements OnInit {
   post() {
     this.zone.run(async () => {
       let newPost = this.native.iGetInnerText(this.newPost);
-
-      console.log("newPost ===== ", newPost)
       // if (this.feedService.getConnectionStatus() != 0) {
       //   this.native.toastWarn('common.connectionError');
       //   return;
@@ -270,21 +271,14 @@ export class CreatenewpostPage implements OnInit {
       //   this.native.toastWarn('common.connectionError1');
       //   return;
       // }
-
-      console.log("this.imgUrl ===== ", this.imgUrl)
-      console.log("this.flieUri ===== ", this.flieUri)
-
       if (newPost === '' && this.imgUrl === '' && this.flieUri === '') {
         this.native.toast_trans('CreatenewpostPage.tipMsg');
         return false;
       }
-      console.log("this.posterImg ===== ", this.posterImg)
-      console.log("this.flieUri ===== ", this.flieUri)
       if (this.posterImg != '' && this.flieUri === '') {
         this.native.toast_trans('CreatenewpostPage.tipMsg2');
         return false;
       }
-      console.log("this.isPublishing ===== ", this.isPublishing)
       if (!this.isPublishing) {
         this.isPublishing = true;
         //show dialog
@@ -305,37 +299,10 @@ export class CreatenewpostPage implements OnInit {
   prepareTempPost() { }
 
   async sendPost() {
-    const content = await this.postHelperService.preparePublishPost(this.nodeId, this.channelId, this.newPost, [this.imgUrl], this.videoData);
+    const mediaData = await this.postHelperService.prepareMediaData([this.imgUrl], this.videoData)
+    const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(mediaData)
+    const content = await this.postHelperService.preparePublishPostContent(this.newPost, avatarHiveURL);
     await this.hiveVaultApi.publishPost(this.channelId.toString(), TAG, content, "0")
-    // const timeStamp = await this.hiveService.registerPost((await post_id).toString(), this.channelId.toString())
-    // const timeStamp = await this.hiveService.registerAllPost(this.channelId.toString())
-    // console.log("callPost 开始===== ")
-    // await this.hiveService.callPost(timeStamp, this.channelId.toString())
-    // console.log("callPost 结束===== ")
-    // await this.hiveService.callPost(timeStamp, this.channelId.toString())
-    // const channle = this.dataHelper.getChannel(channel_id.toString())
-    // this.hiveService.register()
-    //TODO
-    // this.feedService.publishPost(
-    //   this.nodeId,
-    //   this.channelId,
-    //   content,
-    //   tempPostId,
-    // );
-
-    // //Only text content
-    // if (this.imgUrl == '' && this.flieUri == '') {
-    //   let content = this.feedService.createContent(this.newPost, null, null);
-    //   this.feedService.publishPost(
-    //     this.nodeId,
-    //     this.channelId,
-    //     content,
-    //     tempPostId,
-    //   );
-    //   return;
-    // }
-
-    // await this.publishPostThrowMsg(tempPostId);
   }
 
   async publishPostThrowMsg(tempPostId: number) {
@@ -378,7 +345,6 @@ export class CreatenewpostPage implements OnInit {
         imgSize: imgSize,
       };
       imgThumbs.push(imgThumb);
-
       content = this.feedService.createContent(this.newPost, imgThumbs, null);
     }
 
