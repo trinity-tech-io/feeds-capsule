@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Executable, InsertOptions, File as HiveFile, VaultServices, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
+import { ScriptingService, Executable, InsertOptions, File as HiveFile, VaultServices, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -220,7 +220,12 @@ export class HiveService {
     this.dataHelper.getMyChannelListWithHive(userDid)
   }
 
-  async downloadEssAvatarTransactionId(userDid: string,) {
+  async uploadScriting(userDid: string, transactionId: string, data: string) {
+    const scriptingService = await this.getScriptingService(userDid)
+    return scriptingService.uploadFile(transactionId, data)
+  }
+
+  async downloadEssAvatarTransactionId(userDid: string) {
     try {
       const avatarParam = this.avatarParamMap[userDid]
       if (avatarParam === null) {
@@ -238,8 +243,24 @@ export class HiveService {
   }
 
   async downloadScripting(userDid: string, transaction_id: string) {
-    const scriptingService = await this.getScriptingService(userDid)
-    return await scriptingService.downloadFile(transaction_id)
+    try {
+      console.log("downloadScripting transaction_id ==== ", transaction_id)
+      const scriptingService = await this.getScriptingService(userDid)
+      console.log("downloadScripting ==== ", scriptingService)
+      return await scriptingService.downloadFile(transaction_id) 
+    } catch (error) {
+      console.log("scriptingService.downloadFile error: ==== ", error)
+    }
+  }
+
+  async downloadScriptingURL(userDid: string, avatarHiveURL: string) {
+    try {
+      const scriptingService = await this.getScriptingService(userDid)
+      console.log("scriptingServicev ==== ", scriptingService)
+      // return await scriptingService.downloadScriptingURL(avatarHiveURL)
+    } catch (error) {
+      console.log("downloadScriptingURL  ===== ", error)
+    }
   }
 
   async downloadFile(userDid: string, remotePath: string) {

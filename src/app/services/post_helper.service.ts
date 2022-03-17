@@ -38,6 +38,29 @@ export class PostHelperService {
   //     }
   //   ]
   // }
+  prepareMediaData(imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
+        resolve(JSON.stringify(mediaDatas));
+      } catch (error) {
+        const errorMsg = 'Prepare publish post error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+
+    });
+  }
+
+  preparePublishPostContent(postText: string, mediaPath: string): string {
+    const content: FeedsData.postHiveContent = {
+      version: "2.0",
+      text: postText,
+      data: mediaPath
+    }
+    return JSON.stringify(content);
+  }
+
   preparePublishPost(nodeId: string, channelId: number, postText: string, imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
