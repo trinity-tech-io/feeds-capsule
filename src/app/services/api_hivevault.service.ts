@@ -9,7 +9,8 @@ import { Events } from 'src/app/services/events.service';
 import { Config } from 'src/app/services/config';
 import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
 import { PostHelperService } from 'src/app/services/post_helper.service';
-import { userInfo } from 'os';
+import SparkMD5 from 'spark-md5';
+
 // import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 
 const TAG = 'API-HiveVault';
@@ -136,16 +137,13 @@ export class HiveVaultApi {
     return new Promise(async (resolve, reject) => {
       try {
         const signinDid = (await this.dataHelper.getSigninData()).did;
-
         const createdAt = UtilService.getCurrentTimeNum();
         const updatedAt = UtilService.getCurrentTimeNum();
         const cId = localStorage.getItem(signinDid + HiveService.postId) || ''
-        console.log("cId ====== ", cId)
         const channelId = cId !== '' ? Number(cId) + 1 : 0
 
         // const channelId = UtilService.generateChannelId(signinDid);
         const memo = '';
-        console.log("Number(channelId)  ====== ", channelId)
 
         // 处理avatar
         const avatarHiveURL = await this.uploadMediaData(avatarAddress)
@@ -1217,12 +1215,12 @@ export class HiveVaultApi {
   uploadMediaData(data: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const randomDataId = UtilService.getCurrentTimeNum();
-        const remoteName = 'feeds/data/' + randomDataId;
+        const hash = SparkMD5.hash(data)
+        // const randomDataId = UtilService.getCurrentTimeNum();
+        const remoteName = 'feeds/data/' + hash;
         await this.hiveService.uploadCustomeAvatar(remoteName, data);
-        const scriptName = "getFeedsData" + randomDataId;
+        const scriptName = hash
         await this.registerFileDownloadScripting(scriptName);
-        await this.registerFileDownloadScripting(scriptName)
         let avatarHiveURL = scriptName + "@" + remoteName // 
         Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
         resolve(avatarHiveURL);
