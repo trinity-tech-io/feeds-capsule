@@ -148,6 +148,13 @@ export class MyApp {
           if(this.backButtoncount === 2){
             this.backButtoncount = 0;
 
+            //ess登陆框
+            let sveltekqf8ju = document.getElementsByClassName("svelte-kqf8ju")|| [];
+            if(sveltekqf8ju.length > 0){
+              sveltekqf8ju[0].click();
+              return;
+            }
+
             //nft loading
             let nftloading:HTMLElement = document.querySelector("app-nftloading")|| null;
             if(nftloading != null){
