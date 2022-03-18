@@ -2852,38 +2852,38 @@ export class DataHelper {
 
   //// New data type
   // subscribedChannelV3
-  addSubscribedChannel(destDid: string, channelId: string) {
+  addSubscribedChannelV3(destDid: string, channelId: string) {
     const key = UtilService.getKey(destDid, channelId);
   }
 
-  removeSubscribedChannel(subscribedChannel: FeedsData.SubscribedChannelV3) {
+  removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
   }
 
-  getSubscribedChannelList(): FeedsData.SubscribedChannelV3[] {
+  getSubscribedChannelV3List(): FeedsData.SubscribedChannelV3[] {
     return null;
   }
 
-  getSubscribedChannelByKey(destDid: string, channelId: string): FeedsData.SubscribedChannelV3 {
+  getSubscribedChannelV3ByKey(destDid: string, channelId: string): FeedsData.SubscribedChannelV3 {
     return null;
   }
 
-  loadSubscribedChannelMap(): Promise<{ [key: string]: FeedsData.SubscribedChannelV3 }> {
+  loadSubscribedChannelV3Map(): Promise<{ [key: string]: FeedsData.SubscribedChannelV3 }> {
     return null;
   }
 
   //subscriptionV3
-  addSubscriptionData(subscription: FeedsData.SubscriptionV3) {
+  addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3) {
     const key = UtilService.getKey(subscription.destDid, subscription.channelId);
   }
 
-  updateSubscriptionData(subscription: FeedsData.SubscriptionV3) {
+  updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3) {
   }
 
-  getSubscriptionNumByChannelId(destDid: string, channelId: string): number {
+  getSubscriptionV3NumByChannelId(destDid: string, channelId: string): number {
     return 0;
   }
 
-  getSubscriptionDataByChannelId(destDid: string, channelId: string): FeedsData.SubscriptionV3 {
+  getSubscriptionV3DataByChannelId(destDid: string, channelId: string): FeedsData.SubscriptionV3 {
     return null;
   }
 
