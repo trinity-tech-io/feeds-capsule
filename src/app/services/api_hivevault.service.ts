@@ -244,7 +244,7 @@ export class HiveVaultApi {
 
         const createdAt = UtilService.getCurrentTimeNum();
         const updatedAt = UtilService.getCurrentTimeNum();
-        const postId = UtilService.generatePostId(signinDid);
+        const postId = UtilService.generatePostId(signinDid, channelId, content);
         const memo = '';
 
         await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status);
@@ -263,7 +263,7 @@ export class HiveVaultApi {
 
         const createdAt = UtilService.getCurrentTimeNum();
         const updatedAt = UtilService.getCurrentTimeNum();
-        const commentId = UtilService.generateCommentId(signinDid);
+        const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
         const memo = '';
 
         await this.insertDataToCommentDB(commentId, channelId, postId, refcommentId, content, memo, createdAt, updatedAt, status, createrDid);
@@ -909,7 +909,7 @@ export class HiveVaultApi {
     return new Promise(async (resolve, reject) => {
       try {
         const signinDid = (await this.dataHelper.getSigninData()).did;
-        const commentId = UtilService.generateCommentId(signinDid);
+        const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
         const result = await this.callCreateComment(userDid, commentId, channelId, postId, refcommentId, content);
         resolve(result);
       } catch (error) {

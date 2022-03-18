@@ -732,15 +732,19 @@ export class UtilService {
     return new Date().getTime();
   }
 
-  public static generateChannelId(did: string) {
-    return UtilService.SHA256(did + UtilService.getCurrentTimeNum() + 'channel');
+  public static generateChannelId(did: string, channelName: string) {
+    return UtilService.SHA256(did + channelName);
   }
 
-  public static generatePostId(did: string) {
-    return UtilService.SHA256(did + UtilService.getCurrentTimeNum() + 'post');
+  public static generatePostId(did: string, channelId: string, postContent: string) {
+    return UtilService.SHA256(did + channelId + postContent);
   }
 
-  public static generateCommentId(did: string) {
-    return UtilService.SHA256(did + UtilService.getCurrentTimeNum() + 'comment');
+  public static generateCommentId(did: string, postId: string, refCommentId: string, commentContent: string) {
+    return UtilService.SHA256(did + postId + refCommentId + commentContent);
+  }
+
+  public static getKey(did: string, id: string) {
+    return did + '#' + id;
   }
 }

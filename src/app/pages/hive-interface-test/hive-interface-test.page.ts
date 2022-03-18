@@ -59,10 +59,12 @@ export class HiveInterfaceTestPage implements OnInit {
   // channel
   createChannel() {
     // this.hiveVaultApi.createChannel();
+    this.hiveVaultApi.createChannel('channel01', 'channel01 desc', 'address');
     alert('createChannel');
   }
 
   getChannelInfo() {
+    this.hiveVaultApi.getSubscriptChannelId();
     alert('getChannelInfo');
   }
 

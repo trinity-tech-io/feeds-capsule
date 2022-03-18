@@ -56,7 +56,7 @@ export class CreatenewfeedPage implements OnInit {
     private hiveService: HiveService,
     private dataHelper: DataHelper,
     private hiveVaultApi: HiveVaultApi
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log("create channle ====== ")
@@ -155,11 +155,11 @@ export class CreatenewfeedPage implements OnInit {
     );
   }
 
-  mintChannel(nodeId: string,channelId: number){
-    this.native.navigateForward(['/galleriachannel'],{ queryParams:{"nodeId": nodeId,"channelId": channelId }});
+  mintChannel(nodeId: string, channelId: number) {
+    this.native.navigateForward(['/galleriachannel'], { queryParams: { "nodeId": nodeId, "channelId": channelId } });
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.tipdialogCancel);
@@ -266,7 +266,9 @@ export class CreatenewfeedPage implements OnInit {
     try {
       await this.native.showLoading('common.waitMoment');
       // 创建channles（用来存储userid下的所有创建的频道info）
-      let userDid = (await this.dataHelper.getSigninData()).did
+      const signinData = await this.dataHelper.getSigninData();
+      let userDid = signinData.did
+      let userDisplayName = signinData.name;
       let isCreateAllCollections = localStorage.getItem(userDid + HiveService.CREATEALLCollECTION) || ''
       if (isCreateAllCollections === '') {
         await this.hiveVaultApi.createAllCollections()
@@ -274,7 +276,8 @@ export class CreatenewfeedPage implements OnInit {
         localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
       }
       const channelId = await this.hiveVaultApi.createChannel(name, desc, this.avatar)
-      await this.hiveVaultApi.callSubscription(userDid, channelId, name) // 订阅自己
+      // await this.hiveVaultApi.callSubscription(userDid, channelId, name) // 订阅自己
+      await this.hiveVaultApi.subscribeChannel(userDid, channelId, userDisplayName);
 
       this.native.hideLoading()
       this.native.pop()
@@ -328,7 +331,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    this.mintChannel(nodeId,feedId);
+    this.mintChannel(nodeId, feedId);
   }
 
   help(event: any) {
@@ -345,22 +348,22 @@ export class CreatenewfeedPage implements OnInit {
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
-  handleAvatar(){
+  handleAvatar() {
     let imgUri = "";
     if (this.avatar.indexOf('feeds:imgage:') > -1) {
       imgUri = this.avatar.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('feeds:image:') > -1){
+    } else if (this.avatar.indexOf('feeds:image:') > -1) {
       imgUri = this.avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('pasar:image:') > -1){
+    } else if (this.avatar.indexOf('pasar:image:') > -1) {
       imgUri = this.avatar.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
-    else{
+    else {
       imgUri = this.avatar;
     }
     return imgUri;

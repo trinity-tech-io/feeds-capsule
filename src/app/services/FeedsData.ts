@@ -941,4 +941,78 @@ declare namespace FeedsData {
   }
 
 
+
+  ////new data type
+  type ChannelV3 = {
+    destDid: string,
+    channelId: string,
+
+    createdAt: number,
+    updatedAt: number,
+    name: string,
+    intro: string,
+    avatar: string,
+    type: string,
+    tipping_address: string,
+    nft: string,
+    category: string,
+    proof: string
+    memo: string,
+  }
+
+  type PostV3 = {
+    destDid: string,
+    postId: string,
+
+    channelId: string,
+    createdAt: number,
+    updatedAt: number,
+    content: string,
+    status: string,
+    type: string,
+    tag: string,
+    proof: string,
+    memo: string
+  }
+
+  type CommentV3 = {
+    destDid: string,
+    commentId: string,
+
+    channelId: string,
+    postId: string,
+    refcommentId: string,
+    content: string,
+    status: PostCommentStatus
+    updatedAt: number,
+    createdAt: number,
+    proof: string,
+    memo: string
+  }
+
+  type LikeV3 = {
+    destDid: string,
+    postId: string,
+    commentId: string,
+
+    channelId: string,
+    createdAt: number,
+    createrDid: string,
+    proof: string,
+    memo: string
+  }
+
+  type SubscriptionV3 = {
+    destDid: string,
+    channelId: string,
+
+    userDid: string,
+    createdAt: number,
+    displayName: string,
+  }
+
+  type SubscribedChannelV3 = {
+    destDid: string,
+    channelId: string
+  }
 }
