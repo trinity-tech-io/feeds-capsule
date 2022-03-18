@@ -65,7 +65,7 @@ export class HiveVaultApi {
     return new Promise(async (resolve, reject) => {
       try {
         //channel
-        await this.registerGetChannelScripting();
+        await this.registerGetChannelInfoScripting();
 
         //post
         this.registerGetAllPostScripting();
@@ -256,29 +256,29 @@ export class HiveVaultApi {
     });
   }
 
-  publishComment(channelId: string, postId: string, refcommentId: string, content: string, createrDid: string, status: number = FeedsData.PostCommentStatus.available) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const signinDid = (await this.dataHelper.getSigninData()).did;
+  // publishComment(channelId: string, postId: string, refcommentId: string, content: string, createrDid: string, status: number = FeedsData.PostCommentStatus.available) {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const signinDid = (await this.dataHelper.getSigninData()).did;
 
-        const createdAt = UtilService.getCurrentTimeNum();
-        const updatedAt = UtilService.getCurrentTimeNum();
-        const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
-        const memo = '';
+  //       const createdAt = UtilService.getCurrentTimeNum();
+  //       const updatedAt = UtilService.getCurrentTimeNum();
+  //       const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
+  //       const memo = '';
 
-        await this.insertDataToCommentDB(commentId, channelId, postId, refcommentId, content, memo, createdAt, updatedAt, status, createrDid);
-        resolve(postId);
-      } catch (error) {
-        Logger.error(error);
-        reject()
-      }
-    });
-  }
+  //       await this.insertDataToCommentDB(commentId, channelId, postId, refcommentId, content, memo, createdAt, updatedAt, status, createrDid);
+  //       resolve(postId);
+  //     } catch (error) {
+  //       Logger.error(error);
+  //       reject()
+  //     }
+  //   });
+  // }
 
   //API
   //Channel
   //Insert
-  insertDataToChannelDB(channelId: string, name: string, intro: string, avatar: string, memo: string,
+  private insertDataToChannelDB(channelId: string, name: string, intro: string, avatar: string, memo: string,
     createdAt: number, updatedAt: number, type: string, tippingAddress: string, nft: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const doc = {
@@ -337,6 +337,10 @@ export class HiveVaultApi {
     })
   }
 
+  updateChannel(channelId: string) {
+    // this.updateDataToChannelDB()
+  }
+
   //API
   //Post
   //insert
@@ -369,7 +373,7 @@ export class HiveVaultApi {
   //API
   //Post
   //Update
-  updateDataToPostDB(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<UpdateResult> {
+  private updateDataToPostDB(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<UpdateResult> {
     return new Promise(async (resolve, reject) => {
       const key = this.dataHelper.getKey("", Number(channelId), Number(postId), 0)
       const post = this.dataHelper.getPost(key)
@@ -398,10 +402,14 @@ export class HiveVaultApi {
     })
   }
 
+  updatePost() {
+    // this.updateDataToPostDB();
+  }
+
   //API
   //Post
   //Delete
-  deleteDataFromPostDB(collectName: string, channelId: string, postId: string): Promise<void> {
+  private deleteDataFromPostDB(collectName: string, channelId: string, postId: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const key = this.dataHelper.getKey("", Number(channelId), Number(postId), 0)
       const post = this.dataHelper.getPost(key)
@@ -416,16 +424,29 @@ export class HiveVaultApi {
     })
   }
 
+  deletePost() {
+    this.updatePost();
+  }
+
   // 查询channel信息
-  registerGetChannelScripting(): Promise<void> {
+  private registerGetChannelInfoScripting(): Promise<void> {
     let executablefilter = { "channel_id": "$params.channel_id" }
     let options = { "projection": { "_id": false }, "limit": 100 }
-    let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+    // let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
     const executable = new FindExecutable("find_message", HiveVaultApi.TABLE_CHANNELS, executablefilter, options).setOutput(true)
-    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.SCRIPT_SUBSCRIPTION, conditionfilter, null)
+    const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultApi.SCRIPT_SUBSCRIPTION, null, null)
     console.log("registerGetChannelScripting ====== ")
     return this.hiveService.registerScript(HiveVaultApi.SCRIPT_CHANNEL, executable, condition, false)
   }
+
+  private callGetChannelInfo() {
+
+  }
+
+  getChannelInfo(channelId: string) {
+
+  }
+
   //  查询指定post内容
   //API
   //Post
@@ -589,7 +610,7 @@ export class HiveVaultApi {
   }
 
   // 查询channel下所有 Post内容
-  callGetAllPostScripting(userDid: string, channelId: string): Promise<any> {
+  private callGetAllPostScripting(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         let result = await this.callScript(userDid, HiveVaultApi.SCRIPT_ALLPOST, { "channel_id": channelId })
@@ -602,11 +623,15 @@ export class HiveVaultApi {
     })
   }
 
+  getPosts(destDid: string, channelId: string) {
+    return this.callGetAllPostScripting(destDid, channelId);
+  }
+
   // 查询指定的post
   //API
   //Post
   //Call Get
-  callGetSpecifiedPostScripting(userDid: string, channelId: string): Promise<any> {
+  private callGetSpecifiedPostScripting(userDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         let appid = Config.APPLICATION_DID
@@ -622,8 +647,22 @@ export class HiveVaultApi {
     })
   }
 
+  getPostByChannelId(userDid: string, channelId: string) {
+    return this.callGetSpecifiedPostScripting(userDid, channelId);
+  }
+
   //获得订阅的channel列表
   async getHomePostContent() {
+    // const subscribedChannels = await this.dataHelper.getSubscribedChannelList();
+    // subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
+    //   const destDid = item.destDid;
+    //   const channelId = item.channelId;
+
+    //   const result = await this.getPosts(destDid, channelId);
+    //   // handleResult
+    // });
+
+
 
     const channelIds = await this.getSubscriptChannelId()
     // 获得订阅的post
@@ -1304,6 +1343,20 @@ export class HiveVaultApi {
       Logger.error(TAG, 'Download error', error)
     }
   }
+
+
+  registerQueryChannelScripting() {
+
+  }
+
+  callQueryChannelScripting() {
+
+  }
+
+  queryChannel(destDid: string, channelId: string) {
+  }
+
+
 }
 
 interface Mime {

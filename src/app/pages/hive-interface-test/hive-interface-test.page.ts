@@ -82,6 +82,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   updatePost() {
+    this.hiveVaultApi.updatePost();
     alert('updatePost');
   }
 
