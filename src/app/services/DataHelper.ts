@@ -207,7 +207,7 @@ export class DataHelper {
     let avatar = channel.avatar
     let memo = channel.memo
     let type = channel.type
-    
+
     this.saveData(FeedsData.PersistenceKey.channelsMap, this.channelsMap);
   }
 
@@ -2849,5 +2849,127 @@ export class DataHelper {
 
   getPublishedActivePanelList() {
     return this.publishedActivePanelList;
+  }
+
+  //// New data type
+  // subscribedChannelV3
+  addSubscribedChannel(destDid: string, channelId: string) {
+    const key = UtilService.getKey(destDid, channelId);
+  }
+
+  removeSubscribedChannel(subscribedChannel: FeedsData.SubscribedChannelV3) {
+  }
+
+  getSubscribedChannelList(): FeedsData.SubscribedChannelV3[] {
+    return null;
+  }
+
+  getSubscribedChannelByKey(destDid: string, channelId: string): FeedsData.SubscribedChannelV3 {
+    return null;
+  }
+
+  loadSubscribedChannelMap(): Promise<{ [key: string]: FeedsData.SubscribedChannelV3 }> {
+    return null;
+  }
+
+  //subscriptionV3
+  addSubscriptionData(subscription: FeedsData.SubscriptionV3) {
+    const key = UtilService.getKey(subscription.destDid, subscription.channelId);
+  }
+
+  updateSubscriptionData(subscription: FeedsData.SubscriptionV3) {
+  }
+
+  getSubscriptionNumByChannelId(destDid: string, channelId: string): number {
+    return 0;
+  }
+
+  getSubscriptionDataByChannelId(destDid: string, channelId: string): FeedsData.SubscriptionV3 {
+    return null;
+  }
+
+  loadSubscriptionsV3Map(): Promise<{ [key: string]: FeedsData.SubscriptionV3 }> {
+    return null;
+  }
+  //TODO later
+  // getSubscriptionListByUserDid(userDid: string): FeedsData.SubscriptionV3[] {
+  //   return null;
+  // }
+
+  //ChannelV3
+  addChannelV3(channel: FeedsData.ChannelV3) {
+    const key = UtilService.getKey(channel.destDid, channel.channelId);
+  }
+
+  updateChannelV3(channel: FeedsData.ChannelV3) {
+  }
+
+  getChannelV3ById(destDid: string, channelId: string): FeedsData.ChannelV3 {
+    return null;
+  }
+
+  loadChannelV3Map() {
+  }
+
+  //postV3
+  addPostV3(post: FeedsData.PostV3) {
+    const key = UtilService.getKey(post.destDid, post.postId);
+  }
+
+  updatePostV3(post: FeedsData.PostV3) {
+  }
+
+  getPostV3ById(destDid: string, postId: string): FeedsData.PostV3 {
+    return null;
+  }
+
+  getPostV3List(): FeedsData.PostV3[] {
+    return null;
+  }
+
+  loadPostV3Map(): Promise<{ [key: string]: FeedsData.PostV3 }> {
+    return null;
+  }
+
+  //commentV3
+  addCommentV3(comment: FeedsData.CommentV3) {
+    const key = UtilService.getKey(comment.destDid, comment.postId + comment.commentId);
+  }
+
+  updateCommentV3(comment: FeedsData.CommentV3) {
+
+  }
+
+  getCommentV3ById(destDid: string, postId: string, commentId: string): FeedsData.CommentV3 {
+    return null;
+  }
+
+  getCommentV3List(destDid: string, postId: string): FeedsData.CommentV3[] {
+    return null;
+  }
+
+  loadCommentV3Map(): Promise<{ [key: string]: FeedsData.CommentV3 }> {
+    return null;
+  }
+
+  //liveV3
+  addLikeV3(like: FeedsData.LikeV3) {
+    const key = UtilService.getKey(like.destDid, like.postId + like.commentId);
+  }
+
+  removeLikeV3(like: FeedsData.LikeV3) {
+
+  }
+
+  getLikeV3ById(destDid: string, postId: string, commentId: string): FeedsData.LikeV3 {
+    return null;
+  }
+
+  getLikeV3List(destDid: string, postId: string): FeedsData.LikeV3[] {
+    return null;
+  }
+
+  loadLikeV3Map(): Promise<{ [key: string]: FeedsData.LikeV3 }> {
+    return null;
   }
 }
