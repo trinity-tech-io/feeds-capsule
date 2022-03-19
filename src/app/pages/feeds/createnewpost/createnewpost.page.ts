@@ -20,7 +20,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 import { DataHelper } from 'src/app/services/DataHelper';
 
 let TAG: string = 'Feeds-createpost';

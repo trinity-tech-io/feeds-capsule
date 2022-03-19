@@ -40,7 +40,8 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -193,14 +194,15 @@ export class HomePage implements OnInit {
     private fileHelperService: FileHelperService,
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultApi: HiveVaultApi
+    private hiveVaultApi: HiveVaultApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
-    const result = this.hiveVaultApi.getHomePostContent()
+    const result = this.hiveVaultController.getHomePostContent()
     this.totalData = this.sortPostList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);

@@ -247,7 +247,7 @@ export class HiveService {
       console.log("downloadScripting transaction_id ==== ", transaction_id)
       const scriptingService = await this.getScriptingService(userDid)
       console.log("downloadScripting ==== ", scriptingService)
-      return await scriptingService.downloadFile(transaction_id) 
+      return await scriptingService.downloadFile(transaction_id)
     } catch (error) {
       console.log("scriptingService.downloadFile error: ==== ", error)
     }
@@ -298,8 +298,8 @@ export class HiveService {
       try {
         let userDid = (await this.dataHelper.getSigninData()).did
         const dbService = await this.getDatabaseService(userDid)
-        const insertResult = await dbService.updateOne(collectName, origin, update, option)
-        resolve(insertResult)
+        const result = await dbService.updateOne(collectName, origin, update, option)
+        resolve(result)
       } catch (error) {
         Logger.error(TAG, 'update one error:', error)
         reject(error)

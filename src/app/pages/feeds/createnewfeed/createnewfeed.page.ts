@@ -17,7 +17,7 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService'
 import { DataHelper } from 'src/app/services/DataHelper';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 @Component({
   selector: 'app-createnewfeed',
   templateUrl: './createnewfeed.page.html',
