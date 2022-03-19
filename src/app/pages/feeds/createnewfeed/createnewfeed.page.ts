@@ -272,8 +272,8 @@ export class CreatenewfeedPage implements OnInit {
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
       let userDisplayName = signinData.name;
-      this.hiveVaultController.createAndRregiste(userDid)
-      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar)
+      await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+      const channelId = await this.hiveVaultController.createChannel(userDid, name, desc, this.avatar)
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
 
       this.native.hideLoading()

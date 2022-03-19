@@ -989,6 +989,14 @@ declare namespace FeedsData {
     content: string,
     // mediaData: string,// 本地存储图片/视频内容
     mediaPath: string // 云端存储路径
+    // text: string;
+    // mediaType: MediaType;
+    // videoThumbKey: VideoThumbKey;
+    // imgThumbKeys: ImageThumbKey[];
+    // nftTokenId: number;
+    // nftOrderId: number;
+    // nftImageType: string,
+    // mediaDatas: mediaData[]
   }
 
   type CommentV3 = {
