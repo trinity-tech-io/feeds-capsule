@@ -59,33 +59,46 @@ export class HiveVaultController {
   }
 
   async publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string) {
+    console.log("sendPost string publishPost");
+
     const mediaData = await this.postHelperService.prepareMediaData(imagesBase64, videoData)
     const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(mediaData)
     const content = await this.postHelperService.preparePublishPostContent(postText, avatarHiveURL);
+
+    console.log("sendPost string" + postText);
+    console.log("sendPost imagesBase64" + imagesBase64);
+    console.log("sendPost videoData" + videoData);
+    console.log("sendPost content" + content);
+
     return await this.hiveVaultApi.publishPost(channelId, tag, content)
   }
 
-  async createAndRregiste(callerDid: string) {
+  async createCollectionAndRregisteScript(callerDid: string) {
     let isCreateAllCollections = localStorage.getItem(callerDid + HiveVaultController.CREATEALLCollECTION) || ''
     if (isCreateAllCollections === '') {
-      await this.hiveVaultApi.createAllCollections()
+      try {
+        await this.hiveVaultApi.createAllCollections()
+      } catch (error) {
+        localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
+      }
       await this.hiveVaultApi.registeScripting()
-      localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
     }
   }
 
-  async createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<string> {
-
+  async createChannel(destDid: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
         const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(avatarAddress)
         const doc = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft)
+        const channelId = doc['channel_id']
+        const createdAt = doc['created_at']
+        const updatedAt = doc['updated_at']
         let channelV3: FeedsData.ChannelV3 = {
-          destDid: doc.signinDid,
-          channelId: doc.channelId,
-          createdAt: doc.createdAt,
-          updatedAt: doc.updatedAt,
+          destDid: destDid,
+          channelId: channelId,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
           name: channelName,
           intro: intro,
           avatar: avatarAddress, // 存储图片

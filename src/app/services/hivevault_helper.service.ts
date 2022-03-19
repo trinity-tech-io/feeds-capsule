@@ -18,7 +18,7 @@ export class HiveVaultHelper {
     public static readonly TABLE_COMMENTS = "comments";
     public static readonly TABLE_LIKES = "likes";
 
-    public static readonly SCRIPT_ALLPOST = "script_allpost_name";
+    // public static readonly SCRIPT_ALLPOST = "script_allpost_name";
     public static readonly SCRIPT_SPECIFIED_POST = "script_specified_post_name";
     public static readonly SCRIPT_SOMETIME_POST = "script_sometime_post_name";
     public static readonly SCRIPT_CHANNEL = "script_channel_name";
@@ -59,8 +59,8 @@ export class HiveVaultHelper {
 
                 //post
                 this.registerQueryPostByChannelIdScripting();
-                this.registerQueryPostRangeOfTimeScripting();
-                this.registerQueryPostByIdScripting();
+                // this.registerQueryPostRangeOfTimeScripting();
+                // this.registerQueryPostByIdScripting();
 
                 //subscription
                 await this.registerSubscribeScripting();
@@ -143,7 +143,7 @@ export class HiveVaultHelper {
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const channelId = UtilService.generateChannelId(signinDid, channelName);
-                const doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
+                let doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
                 resolve(doc);
             } catch (error) {
                 Logger.error(error);

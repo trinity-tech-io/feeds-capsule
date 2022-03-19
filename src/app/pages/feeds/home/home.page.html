@@ -58,7 +58,7 @@
       <ion-row class="post-row">
         <ion-col class="img-col" size="2">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.nodeId, post.channel_id,post.id)">
-            <img src={{parseAvatar(post.postId,post.channelId)}}>
+            <img src={{parseAvatar(post.destDid,post.channelId)}}>
             <div class="feed-source-card-status">
               <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
             </div>
@@ -69,7 +69,7 @@
             <ion-col class="left-col" size="11">
               <ion-label (click)="navTo(post.nodeId, post.channel_id,post.id)">
                 {{ getChannelName(post.postId, post.channelId, post.destDid) }}
-                <span> {{ handleDisplayTime(post.created_at) }}</span>
+                <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
             </ion-col>
             <img class="moremenuclick"
@@ -80,7 +80,7 @@
           </ion-row>
           <p>@{{ getChannelOwnerName(post.postId, post.channelId) }}</p>
 
-          <h2 *ngIf="post.post_status!=1">
+          <h2 *ngIf="post.status!=1">
             <div *ngIf="getPostContentTextSize(post.content)<=maxTextSize" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content) | html"></pre>
             </div>
@@ -93,7 +93,8 @@
             <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
           </h2>
 
-          <div *ngIf="post.post_status!=1&&post.content.mediaType ===1" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}rpostimg style="width: 100%">
+          <div *ngIf="post.status!=1&&post.content.mediaType ===1" id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}rpostimg
+            style="width: 100%">
             <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
 
           <div style="position:relative;">

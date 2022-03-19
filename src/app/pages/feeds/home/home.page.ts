@@ -207,11 +207,16 @@ export class HomePage implements OnInit {
     if (this.totalData.length - this.pageNumber > 0) {
       console.log("this.postList 6");
       this.postList = this.totalData.slice(0, this.pageNumber);
+
+
       this.startIndex++;
       this.infiniteScroll.disabled = false;
     } else {
-      console.log("this.postList 7");
       this.postList = this.totalData;
+      console.log("this.postList 7" + this.postList);
+      let post: FeedsData.PostV3 = this.postList[0];
+      console.log("this.postList 8" + post.content.content);
+
       this.infiniteScroll.disabled = true;
     }
     if (scrollToTop) {
@@ -279,6 +284,8 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
+
+    this.dataHelper.loadChannelV3Map();
 
     // let mAppIdCredential = await this.storageService.get('appIdCredential');
     // Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
@@ -800,6 +807,8 @@ export class HomePage implements OnInit {
   }
 
   getPostContentTextSize(content: string) {
+
+    console.log("getPostContentTextSize + ", content);
     let text = this.feedsServiceApi.parsePostContentText(content);
     let size = UtilService.getSize(text);
     return size;
@@ -809,13 +818,15 @@ export class HomePage implements OnInit {
     return this.feedsServiceApi.parsePostContentImg(content);
   }
 
-  getChannelOwnerName(postId, channelId): string {
-    // let channel = this.getChannel(nodeId, channelId) || '';
-    // if (channel === '') {
+  getChannelOwnerName(destDid, channelId): string {
+
+    const key = UtilService.getKey(destDid, channelId);
+    let channel = this.dataHelper.channelsMapV3[key];
+    if (channel === null) {
     return '';
-    // } else {
-    //   return UtilService.moreNanme(channel['owner_name'], 40);
-    // }
+    } else {
+      return UtilService.moreNanme(channel['owner_name'], 40);
+    }
   }
 
   ngOnInit() {
@@ -888,12 +899,17 @@ export class HomePage implements OnInit {
     this.feedspage.search();
   }
 
-  parseAvatar(nodeId: string, channelId: number): string {
+  parseAvatar(destDid: string, channelId: string): string {
+
+    const key = UtilService.getKey(destDid, channelId);
+    let channel = this.dataHelper.channelsMapV3[key];
+
+    if (channel == null || channel == undefined) return '';
+    return this.dataHelper.channelsMapV3[key].avatar;
 
     // let channel = this.getChannelV3(nodeId, channelId);
     // if (channel == null || channel == undefined) return '';
     // return this.feedService.parseChannelAvatar(channel.avatar);
-    return "";
   }
 
   handleDisplayTime(createTime: number) {
