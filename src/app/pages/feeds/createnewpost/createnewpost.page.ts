@@ -20,7 +20,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service'
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 import { DataHelper } from 'src/app/services/DataHelper';
 
 let TAG: string = 'Feeds-createpost';
@@ -302,7 +302,7 @@ export class CreatenewpostPage implements OnInit {
     const mediaData = await this.postHelperService.prepareMediaData([this.imgUrl], this.videoData)
     const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(mediaData)
     const content = await this.postHelperService.preparePublishPostContent(this.newPost, avatarHiveURL);
-    await this.hiveVaultApi.publishPost(this.channelId.toString(), TAG, content, "0")
+    await this.hiveVaultApi.publishPost(this.channelId.toString(), TAG, content)
   }
 
   async publishPostThrowMsg(tempPostId: number) {

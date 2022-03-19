@@ -81,11 +81,13 @@ import { VideoService } from 'src/app/services/video.service';
 import { HiveService } from './services/HiveService';
 
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service';
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { MigrateDataService } from 'src/app/services/migratedata.service';
 import { FeedsUtil } from 'src/app/services/feeds_util.service';
 
 import * as Sentry from '@sentry/browser';
+import { HiveVaultHelper } from './services/hivevault_helper.service';
+import { HiveVaultController } from './services/hivevault_controller.service';
 
 Sentry.init({
   dsn:
@@ -227,6 +229,9 @@ export function TranslateLoaderFactory() {
     HiveVaultApi,
     MigrateDataService,
     FeedsUtil,
+    HiveVaultApi,
+    HiveVaultHelper,
+    HiveVaultController,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],

@@ -7,7 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { FeedService } from 'src/app/services/FeedService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger, LogLevel } from 'src/app/services/logger';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service';
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 
 @Component({
   selector: 'app-hive-interface-test',
@@ -58,58 +58,64 @@ export class HiveInterfaceTestPage implements OnInit {
 
   // channel
   createChannel() {
-    // this.hiveVaultApi.createChannel();
     this.hiveVaultApi.createChannel('channel01', 'channel01 desc', 'address');
     alert('createChannel');
   }
 
-  getChannelInfo() {
-    this.hiveVaultApi.getSubscriptChannelId();
-    alert('getChannelInfo');
+  updateChannel() {
+    alert('updateChannel');
+  }
+
+  queryChannelInfo() {
+    alert('queryChannelInfo');
   }
 
   // post
-  getPost() {
-    alert('getPost');
+  publishPost() {
+    alert('publishPost');
   }
 
-  createPost() {
-    alert('createPost');
+  updatePost() {
+    alert('updatePost');
   }
 
   deletePost() {
     alert('deletePost');
   }
 
-  updatePost() {
-    this.hiveVaultApi.updatePost();
-    alert('updatePost');
+  queryPostByChannelId() {
+    // this.hiveVaultApi.queryPostByChannelId();
+    alert('queryPostByChannelId');
+  }
+
+  queryPostById() {
+    alert('queryPostById');
   }
 
   //subscription
-  getSubscriptionInfo() {
-    this.hiveVaultApi.getSubscriptionByChannelId('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+  querySubscrptionInfoByChannelId() {
+    this.hiveVaultApi.querySubscrptionInfoByChannelId('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
     // alert('getSubscriptionInfo');
   }
 
-  getSubscriptionByUser() {
-    this.hiveVaultApi.getSubscriptionByUserDID('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D');
+  querySubscriptionInfoByUserDID() {
+    this.hiveVaultApi.querySubscriptionInfoByUserDID('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D');
     // alert('getSubscriptionByUser');
   }
 
-  subscribe() {
+  subscribeChannel() {
     this.hiveVaultApi.subscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'wangran');
     // alert('subscribe');
   }
 
-  unSubscribe() {
-    this.hiveVaultApi.unsubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+  unSubscribeChannel() {
+    this.hiveVaultApi.unSubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
     // alert('unSubscribe');
   }
 
   // v
   //comment
-  addComment() {
+  createComment() {
     this.hiveVaultApi.createComment('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'refcommentId01', 'test content');
     // alert('addComment');
   }
@@ -122,9 +128,9 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   // v
-  getComments() {
+  queryCommentByPostId() {
     // this.hiveVaultApi.getComment();
-    this.hiveVaultApi.getComment('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
+    this.hiveVaultApi.queryCommentByPostId('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
     // alert('getComments');
   }
 
@@ -133,22 +139,26 @@ export class HiveInterfaceTestPage implements OnInit {
     // alert('deleteComment');
   }
 
+  queryCommentByID() {
+    alert('queryCommentByID');
+  }
+
   //like
-  getLikes() {
+  queryLikeById() {
     // this.hiveVaultApi.findLikeById();
-    this.hiveVaultApi.findLikeById('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6');
+    this.hiveVaultApi.queryLikeById('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6');
     alert('getLikes');
   }
 
-  getLikesByPost() {
+  queryLikeByPost() {
     // this.hiveVaultApi.findLikeById();
-    this.hiveVaultApi.findLikeByPost('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
+    this.hiveVaultApi.queryLikeByPost('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
     alert('getLikes');
   }
 
-  getLikesByChannel() {
+  queryLikeByChannel() {
     // this.hiveVaultApi.findLikeById();
-    this.hiveVaultApi.findLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    this.hiveVaultApi.queryLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
     alert('getLikes');
   }
 
@@ -162,5 +172,17 @@ export class HiveInterfaceTestPage implements OnInit {
     this.hiveVaultApi.removeLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', '');
     // this.hiveVaultApi.removeLike();
     // alert('removeLike');
+  }
+
+  downloadCustomeAvatar() {
+    alert('downloadCustomeAvatar');
+  }
+
+  downloadEssAvatar() {
+    alert('downloadEssAvatar');
+  }
+
+  uploadMediaData() {
+    alert('uploadMediaData');
   }
 }
