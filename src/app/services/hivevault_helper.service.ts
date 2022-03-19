@@ -142,18 +142,9 @@ export class HiveVaultHelper {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
-
                 const channelId = UtilService.generateChannelId(signinDid, channelName);
-
-                // 处理avatar
-                // const avatarHiveURL = await this.uploadMediaData(avatarAddress)
-                const result = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
-                // localStorage.setItem(signinDid + HiveService.postId, channelId.toString())
-                // this.handleResult(
-                //     "create_channel", channelId, signinDid, channelName, 0, doc
-                // );
-
-                resolve(channelId.toString());
+                const doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft);
+                resolve(doc);
             } catch (error) {
                 Logger.error(error);
                 reject()

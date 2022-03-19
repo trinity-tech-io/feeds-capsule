@@ -12,6 +12,14 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  // TODO new add
+  public channelsMapV3: { [key: string]: FeedsData.ChannelV3 } = {};
+  public subscribedChannelMapV3: { [key: string]: FeedsData.SubscribedChannelV3 } = {};
+  public postMapV3: { [key: string]: FeedsData.PostV3 } = {};
+  public commentsMapV3: { [key: string]: FeedsData.CommentV3 } = {};
+  public likeMapV3: { [key: string]: FeedsData.LikeV3 } = {};
+
+
   private localSignInData: SignInData = null;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
@@ -2852,25 +2860,67 @@ export class DataHelper {
   }
 
   //// New data type
-  // subscribedChannelV3
-  addSubscribedChannelV3(destDid: string, channelId: string) {
-    const key = UtilService.getKey(destDid, channelId);
+  // subscribedChannelV3 本地存储订阅列表
+  async addSubscribedChannelV3(destDid: string, channelId: string) {
+    let subscribedChanne: FeedsData.SubscribedChannelV3 = {
+      destDid: destDid,
+      channelId: channelId
+    }
+    this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChanne
+    await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
+    console.log("subscribedChanne ==== ", subscribedChanne)
+    console.log("subscribedChannelMapV3 ==== ", this.subscribedChannelMapV3)
   }
 
   removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+    if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return;
+
+    let key = subscribedChannel.destDid + "#" + subscribedChannel.channelId;
+    this.subscribedChannelMapV3[key] = null;
+    delete this.subscribedChannelMapV3[key];
+    this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
   }
 
-  getSubscribedChannelV3List(): FeedsData.SubscribedChannelV3[] {
-    return null;
+  getSubscribedChannelV3List(): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let list: FeedsData.SubscribedChannelV3[] = []
+        this.subscribedChannelMapV3 = await this.loadData(FeedsData.PersistenceKey.subscribedChannelsV3Map) || {}
+        let keys: string[] = Object.keys(this.subscribedChannelMapV3)
+
+        for (const key in keys) {
+          let subscribedChannel = this.subscribedChannelMapV3[keys[key]]
+          if (subscribedChannel == null) continue
+          // TODO是否添加其他判断条件
+          list.push(subscribedChannel)
+        }
+        resolve(list)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   getSubscribedChannelV3ByKey(destDid: string, channelId: string): FeedsData.SubscribedChannelV3 {
-    return null;
+    if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return null;
+
+    let key = destDid + "#" + channelId;
+    return this.subscribedChannelMapV3[key];
   }
 
   loadSubscribedChannelV3Map(): Promise<{ [key: string]: FeedsData.SubscribedChannelV3 }> {
-    return null;
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.subscribedChannelMapV3 = await this.loadData(FeedsData.PersistenceKey.subscribedChannelsV3Map);
+        // TODO 增加判空
+        resolve(this.subscribedChannelMapV3);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
+
 
   //subscriptionV3
   addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3) {
@@ -2899,62 +2949,202 @@ export class DataHelper {
   //ChannelV3
   addChannelV3(channel: FeedsData.ChannelV3) {
     const key = UtilService.getKey(channel.destDid, channel.channelId);
+    this.channelsMapV3[key] = channel;
+    this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3).then(map => {
+      console.log("test addChannelV3 start");
+      this.loadChannelV3Map();
+    })
+      .catch(err => { });
   }
 
-  updateChannelV3(channel: FeedsData.ChannelV3) {
+  async updateChannelV3(channel: FeedsData.ChannelV3) {
+    // update 的时候更新updateTime
+    const key = UtilService.getKey(channel.destDid, channel.channelId);
+    this.channelsMapV3[key] = channel;
+    await this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3);
   }
 
-  getChannelV3ById(destDid: string, channelId: string): FeedsData.ChannelV3 {
-    return null;
+  getChannelV3ById(destDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.channelsMapV3 = await this.loadData(FeedsData.PersistenceKey.channelsMapV3);
+        console.log("this.channelsMapV3 + ", this.channelsMapV3);
+        const key = UtilService.getKey(destDid, channelId);
+        // TODO 检测是否为nil
+        let result = this.channelsMapV3[key];
+        resolve(result);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  loadChannelV3Map() {
+  // 新加
+  getChannelV3List(): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let list: FeedsData.ChannelV3[] = []
+        this.channelsMapV3 = await this.loadData(FeedsData.PersistenceKey.channelsMapV3) || {}
+        let keys: string[] = Object.keys(this.channelsMapV3)
+
+        for (const key in keys) {
+          let channel = this.channelsMapV3[keys[key]]
+          if (channel == null) continue
+          // TODO是否添加其他判断条件
+          list.push(channel)
+        }
+        resolve(list)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
+  loadChannelV3Map(): Promise<{ [channelId: string]: FeedsData.ChannelV3 }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("FeedsData.PersistenceKey.channelsMapV3" + "loadChannelV3Map");
+        this.channelsMapV3 =
+          (await this.loadData(FeedsData.PersistenceKey.channelsMapV3)) || {};
+        resolve(this.channelsMapV3)
+
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+  
   //postV3
-  addPostV3(post: FeedsData.PostV3) {
+  async addPostV3(post: FeedsData.PostV3) {
     const key = UtilService.getKey(post.destDid, post.postId);
+
+    this.postMapV3[key] = post;
+    await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
   }
 
-  updatePostV3(post: FeedsData.PostV3) {
+  async updatePostV3(post: FeedsData.PostV3) {
+    const key = UtilService.getKey(post.destDid, post.postId);
+    this.postMapV3[key] = post;
+    await this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3);
   }
 
-  getPostV3ById(destDid: string, postId: string): FeedsData.PostV3 {
-    return null;
+  getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3);
+        const key = UtilService.getKey(destDid, postId);
+        // TODO 检测是否为nil
+        let result = this.postMapV3[key];
+        resolve(result);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  getPostV3List(): FeedsData.PostV3[] {
-    return null;
+  getPostV3List(): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let list: FeedsData.PostV3[] = []
+        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
+        let keys: string[] = Object.keys(this.postMapV3)
+
+        for (const key in keys) {
+          let post = this.postMapV3[keys[key]]
+          if (post == null) continue
+          // TODO是否添加其他判断条件
+          list.push(post)
+        }
+        resolve(list)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   loadPostV3Map(): Promise<{ [key: string]: FeedsData.PostV3 }> {
-    return null;
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.postMapV3 =
+          await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {};
+        resolve(this.postMapV3)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   //commentV3
-  addCommentV3(comment: FeedsData.CommentV3) {
+  async addCommentV3(comment: FeedsData.CommentV3) {
     const key = UtilService.getKey(comment.destDid, comment.postId + comment.commentId);
+
+    this.addCommentV3[key] = comment;
+    await this.saveData(FeedsData.PersistenceKey.commentsMapV3, this.commentsMapV3);
   }
 
-  updateCommentV3(comment: FeedsData.CommentV3) {
-
+  async updateCommentV3(comment: FeedsData.CommentV3) {
+    const key = UtilService.getKey(comment.destDid, comment.postId + comment.commentId);
+    this.commentsMapV3[key] = comment;
+    await this.saveData(FeedsData.PersistenceKey.commentsMapV3, this.commentsMapV3);
   }
 
-  getCommentV3ById(destDid: string, postId: string, commentId: string): FeedsData.CommentV3 {
-    return null;
+  getCommentV3ById(destDid: string, postId: string, commentId: string): Promise<FeedsData.CommentV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        this.commentsMapV3 = await this.loadData(FeedsData.PersistenceKey.commentsMapV3);
+        const key = UtilService.getKey(destDid, postId + commentId);
+        // TODO 检测是否为nil
+        let result = this.commentsMapV3[key];
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  getCommentV3List(destDid: string, postId: string): FeedsData.CommentV3[] {
-    return null;
+
+  getCommentV3List(destDid: string, postId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let list: FeedsData.CommentV3[] = []
+        this.commentsMapV3 = await this.loadData(FeedsData.PersistenceKey.commentsMapV3) || {}
+        let keys: string[] = Object.keys(this.commentsMapV3)
+
+        for (const key in keys) {
+          let post = this.commentsMapV3[keys[key]]
+          if (post == null) continue
+          // TODO是否添加其他判断条件
+          list.push(post)
+        }
+        resolve(list)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   loadCommentV3Map(): Promise<{ [key: string]: FeedsData.CommentV3 }> {
-    return null;
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.commentsMapV3 =
+          await this.loadData(FeedsData.PersistenceKey.commentsMapV3) || {};
+        resolve(this.commentsMapV3)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   //liveV3
-  addLikeV3(like: FeedsData.LikeV3) {
+  async addLikeV3(like: FeedsData.LikeV3) {
     const key = UtilService.getKey(like.destDid, like.postId + like.commentId);
+
+    this.likeMapV3[key] = like;
+    await this.saveData(FeedsData.PersistenceKey.likeMapV3, this.likeMapV3);
   }
 
   removeLikeV3(like: FeedsData.LikeV3) {
@@ -2970,6 +3160,13 @@ export class DataHelper {
   }
 
   loadLikeV3Map(): Promise<{ [key: string]: FeedsData.LikeV3 }> {
-    return null;
-  }
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.likeMapV3 =
+          await this.loadData(FeedsData.PersistenceKey.likeMapV3) || {};
+        resolve(this.likeMapV3)
+      } catch (error) {
+        reject(error)
+      }
+    })
 }

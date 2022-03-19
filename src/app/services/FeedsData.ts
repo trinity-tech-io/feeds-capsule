@@ -376,6 +376,14 @@ declare namespace FeedsData {
   };
 
   const enum PersistenceKey {
+    ///new Add
+    channelsMapV3 = 'channelsMapV3',
+    subscribedChannelsV3Map = 'subscribedChannelsV3Map',
+    postsMapV3 = 'postsMapV3',
+    commentsMapV3 = 'commentsMapV3',
+    likeMapV3 = 'likeMapV3',
+
+    
     ///////////////////////////////
     signInData = 'signInData',
     lastSignInData = 'lastSignInData',
@@ -967,12 +975,20 @@ declare namespace FeedsData {
     channelId: string,
     createdAt: number,
     updatedAt: number,
-    content: string,
+    content: postContentV3,
     status: string,
     type: string,
     tag: string,
     proof: string,
     memo: string
+  }
+
+  // 新添加
+  type postContentV3 = {
+    version: "3.0",
+    content: string,
+    // mediaData: string,// 本地存储图片/视频内容
+    mediaPath: string // 云端存储路径
   }
 
   type CommentV3 = {
@@ -1002,7 +1018,7 @@ declare namespace FeedsData {
     memo: string
   }
 
-  type SubscriptionV3 = {
+  type SubscriptionV3 = {// subscription hivenode表模型
     destDid: string,
     channelId: string,
 
@@ -1011,8 +1027,8 @@ declare namespace FeedsData {
     displayName: string,
   }
 
-  type SubscribedChannelV3 = {
-    destDid: string,
+  type SubscribedChannelV3 = {// 本地存储订阅列表模型
+    destDid: string,// 订阅channel的创建者的did
     channelId: string
   }
 }

@@ -198,17 +198,19 @@ export class HomePage implements OnInit {
     private hiveVaultController: HiveVaultController
   ) { }
 
-  initPostListData(scrollToTop: boolean) {
+  async initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
-    const result = this.hiveVaultController.getHomePostContent()
-    this.totalData = this.sortPostList();
+    const result = await this.hiveVaultController.getHomePostContent()
+    this.totalData = await this.sortPostList();
     if (this.totalData.length - this.pageNumber > 0) {
+      console.log("this.postList 6");
       this.postList = this.totalData.slice(0, this.pageNumber);
       this.startIndex++;
       this.infiniteScroll.disabled = false;
     } else {
+      console.log("this.postList 7");
       this.postList = this.totalData;
       this.infiniteScroll.disabled = true;
     }
@@ -222,8 +224,9 @@ export class HomePage implements OnInit {
     this.dataHelper.resetNewPost();
   }
 
-  sortPostList() {
-    let postList = this.feedService.getPostList() || [];
+  async sortPostList() {
+    console.log("postList = 1");
+    let postList = await this.dataHelper.getPostV3List() || [];
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       postList = _.filter(postList, (item: any) => {
@@ -233,19 +236,22 @@ export class HomePage implements OnInit {
     return postList;
   }
 
-  refreshPostList() {
+  async refreshPostList() {
     if (this.startIndex === 0) {
       this.initPostListData(false);
       return;
     }
-    this.totalData = this.sortPostList();
+    this.totalData = await this.sortPostList();
+    console.log("this.totalData + ", this.totalData);
     if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+      console.log("postList = 2");
       this.postList = this.totalData.slice(
         0,
         this.startIndex * this.pageNumber,
       );
       // this.infiniteScroll.disabled = false;
     } else {
+      console.log("postList = 3");
       this.postList = this.totalData;
       // this.infiniteScroll.disabled = true;
     }
@@ -776,7 +782,10 @@ export class HomePage implements OnInit {
   getChannel(nodeId: string, channelId: number): any {
     return this.feedService.getChannelFromId(nodeId, channelId);
   }
-
+  // 新增
+  getChannelV3(destDid: string, channelId: string): any {
+    return this.feedService.getChannelFromIdV3(destDid, channelId);
+  }
   getContentText(content: string): string {
     return this.feedsServiceApi.parsePostContentText(content);
   }
@@ -797,13 +806,13 @@ export class HomePage implements OnInit {
     return this.feedsServiceApi.parsePostContentImg(content);
   }
 
-  getChannelOwnerName(nodeId, channelId): string {
-    let channel = this.getChannel(nodeId, channelId) || '';
-    if (channel === '') {
-      return '';
-    } else {
-      return UtilService.moreNanme(channel['owner_name'], 40);
-    }
+  getChannelOwnerName(postId, channelId): string {
+    // let channel = this.getChannel(nodeId, channelId) || '';
+    // if (channel === '') {
+    return '';
+    // } else {
+    //   return UtilService.moreNanme(channel['owner_name'], 40);
+    // }
   }
 
   ngOnInit() {
@@ -877,9 +886,11 @@ export class HomePage implements OnInit {
   }
 
   parseAvatar(nodeId: string, channelId: number): string {
-    let channel = this.getChannel(nodeId, channelId);
-    if (channel == null || channel == undefined) return '';
-    return this.feedService.parseChannelAvatar(channel.avatar);
+
+    // let channel = this.getChannelV3(nodeId, channelId);
+    // if (channel == null || channel == undefined) return '';
+    // return this.feedService.parseChannelAvatar(channel.avatar);
+    return "";
   }
 
   handleDisplayTime(createTime: number) {
@@ -911,6 +922,7 @@ export class HomePage implements OnInit {
 
   menuMore(post: FeedsData.Post) {
     if (!this.feedService.checkPostIsAvalible(post)) return;
+
     let channel = this.getChannel(post.nodeId, post.channel_id);
     if (channel == null || channel == undefined) return;
     let channelName = channel.name;
@@ -934,10 +946,18 @@ export class HomePage implements OnInit {
     }
   }
 
-  getChannelName(nodeId: string, channelId: number): string {
-    let channel = this.getChannel(nodeId, channelId) || '';
-    if (channel == '') return '';
-    return UtilService.moreNanme(channel.name);
+  getChannelName(postId: string, channelId: string, destDid: string) {
+    // console.log("++++++++++++++ getChannelName" + postId + channelId);
+    const key = UtilService.getKey(destDid, channelId);
+    // this.dataHelper.loadChannelV3Map();
+    // console.log("key = " + this.dataHelper.channelsMapV3);
+    return this.dataHelper.channelsMapV3[key].name;
+    // let channel = await this.dataHelper.getChannelV3ById(destDid, channelId);
+    // return channel.name;
+
+    // let channel = this.getChannel(nodeId, channelId) || '';
+    // if (channel == '') return '';
+    // return UtilService.moreNanme(channel.name);
   }
 
   checkServerStatus(nodeId: string) {
@@ -973,6 +993,7 @@ export class HomePage implements OnInit {
             this.startIndex++;
             this.zone.run(() => {
               let len = this.postList.length - 1;
+              console.log("this.postList 4");
               this.postList = this.postList.concat(arr);
               this.refreshImage(len);
               this.initnodeStatus(arr);
@@ -985,6 +1006,7 @@ export class HomePage implements OnInit {
             );
             this.zone.run(() => {
               let len = this.postList.length - 1;
+              console.log("this.postList 5");
               this.postList = this.postList.concat(arr);
               this.refreshImage(len - 1);
               this.infiniteScroll.disabled = true;
@@ -1117,18 +1139,19 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
-    if (!this.feedService.checkPostIsAvalible(post)) return;
+    // let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+    // this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
 
-    this.postId = postId;
-    this.channelId = channelId;
-    this.nodeId = nodeId;
-    this.channelAvatar = this.parseAvatar(nodeId, channelId);
-    this.channelName = this.getChannelName(nodeId, channelId);
-    this.onlineStatus = this.nodeStatus[nodeId];
-    this.hideComment = false;
+    // this.postId = postId;
+    // this.channelId = channelId;
+    // this.nodeId = nodeId;
+    // // this.channelAvatar = this.parseAvatar(nodeId, channelId);
+    // console.log("his.getChannelName(nodeId, channel");
+    // this.channelName = this.getChannelName(nodeId, channelId);
+    // this.onlineStatus = this.nodeStatus[nodeId];
+    // this.hideComment = false;
   }
 
   hideComponent(event) {

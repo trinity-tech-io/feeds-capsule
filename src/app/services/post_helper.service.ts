@@ -52,6 +52,16 @@ export class PostHelperService {
     });
   }
 
+  preparePublishPostContentV3(postText: string, mediaPath: string): FeedsData.postContentV3 {
+    const content: FeedsData.postContentV3 = {
+      version: "3.0",
+      content: postText,
+      // mediaData: mediaData,
+      mediaPath: mediaPath
+    }
+    return content
+  }
+
   preparePublishPostContent(postText: string, mediaPath: string): string {
     const content: FeedsData.postHiveContent = {
       version: "2.0",
