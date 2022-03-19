@@ -22,6 +22,7 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 
 let TAG: string = 'Feeds-createpost';
 
@@ -47,6 +48,7 @@ export class CreatenewpostPage implements OnInit {
   public newPost: string = '';
   public imgUrl: string = '';
   public nodeId: string = '';
+  public channelIdV3: string = '';
   public channelId: number = 0;
 
   public posterImg: any = '';
@@ -97,7 +99,8 @@ export class CreatenewpostPage implements OnInit {
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
     // private hiveService: HiveService,
-    private hiveVaultApi: HiveVaultApi
+    // private hiveVaultApi: HiveVaultApi,
+    private hiveVaultController: HiveVaultController
 
   ) { }
 
@@ -112,21 +115,25 @@ export class CreatenewpostPage implements OnInit {
     this.newPostIonTextarea.setFocus();
   }
 
-  initFeed() {
-    let currentFeed: FeedsData.Channels = this.feedService.getCurrentFeed();
+  async initFeed() {
+    let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentFeed();
+
+    if (currentFeed == null) {
+
+      const item = await this.dataHelper.getSubscribedChannelV3List();
+      currentFeed = await this.feedService.getChannelFromIdV3(item[1].destDid, item[1].channelId);
+    }
+
+    this.channelIdV3 = currentFeed.channelId;
+
+    // // this.nodeId = currentFeed.channel_id;
+    // this.channelId = currentFeed.channel_id;
+    // console.log("currentFeed = ", this.channelId);
 
 
-
-    // this.nodeId = currentFeed.channel_id;
-    this.channelId = currentFeed.channel_id;
-    console.log("currentFeed = ", this.channelId);
-
-    let myFeed =
-      this.feedService.getChannelFromId(this.nodeId, this.channelId) || {};
-
-    this.channelName = myFeed['name'] || '';
-    this.subscribers = myFeed['subscribers'] || '';
-    this.channelAvatar = this.feedService.parseChannelAvatar(myFeed['avatar']);
+    this.channelName = currentFeed['name'] || '';
+    this.subscribers = currentFeed['subscribers'] || '';
+    this.channelAvatar = this.feedService.parseChannelAvatar(currentFeed['avatar']);
   }
 
   async ionViewWillEnter() {
@@ -607,21 +614,31 @@ export class CreatenewpostPage implements OnInit {
     }
   }
 
-  hideComponent(feed: any) {
-    if (feed === null) {
+  hideComponent(channel: any) {
+    console.log("hideComponent 1", channel);
+
+    if (channel === null) {
       console.log("hideSwitchFeed 2");
       this.hideSwitchFeed = false;
       return;
     }
-    this.nodeId = feed.nodeId;
-    this.channelId = feed.channel_id;
-    let currentFeed = {
-      nodeId: this.nodeId,
-      feedId: this.channelId,
-      channel_id: this.channelId
-    };
-    this.feedService.setCurrentFeed(currentFeed);
-    this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
+
+    console.log("hideComponent 2");
+
+    this.channelName = channel['name'] || '';
+    this.subscribers = channel['subscribers'] || '';
+    this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
+
+
+    // this.nodeId = feed.nodeId;
+    // this.channelId = feed.channel_id;
+    // let currentFeed = {
+    //   nodeId: this.nodeId,
+    //   feedId: this.channelId,
+    //   channel_id: this.channelId
+    // };
+    this.feedService.setCurrentFeed(channel);
+    this.storageService.set('feeds.currentFeed', JSON.stringify(channel));
     this.initFeed();
     this.hideSwitchFeed = false;
   }

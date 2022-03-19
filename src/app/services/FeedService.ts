@@ -353,8 +353,10 @@ export class FeedService {
     return this.dataHelper.getMyChannelList(bindingServer.nodeId);
   }
   async getHiveMyChannelList() {
-    let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.CHANNEL
-    return this.dataHelper.getMyChannelList(channlesKey);
+    // let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.CHANNEL
+    // return this.dataHelper.getMyChannelList(channlesKey);
+    // TODO 需要加载我的channel
+    return await this.dataHelper.getChannelV3List();
   }
   getUnreadNumber(nodeChannelId: string): number {
     return this.dataHelper.getUnreadNumber(nodeChannelId);
@@ -3146,6 +3148,13 @@ export class FeedService {
     return this.dataHelper.getChannel(id.toString());
   }
 
+  async getChannelFromIdV3(destDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
+    // let nodeChannelId = this.getChannelId(nodeId, id);
+    // console.log("getChannelFromId " + nodeChannelId);
+    let channel = await this.dataHelper.getChannelV3ById(destDid, channelId);
+    return channel;
+  }
+
   getPostFromId(
     nodeId: string,
     channelId: number,
@@ -3194,8 +3203,8 @@ export class FeedService {
     );
   }
 
-  getPostList(): FeedsData.Post[] {
-    return this.dataHelper.getPostList();
+  async getPostList(): Promise<FeedsData.PostV3[]> {
+    return await this.dataHelper.getPostV3List();
   }
 
   getChannelId(nodeId: string, channelId: number) {

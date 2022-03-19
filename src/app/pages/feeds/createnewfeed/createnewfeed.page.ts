@@ -17,7 +17,9 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService'
 import { DataHelper } from 'src/app/services/DataHelper';
-import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
+// import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
+
 @Component({
   selector: 'app-createnewfeed',
   templateUrl: './createnewfeed.page.html',
@@ -53,9 +55,10 @@ export class CreatenewfeedPage implements OnInit {
     private popup: PopupProvider,
     private languageService: LanguageService,
     private ipfsService: IPFSService,
-    private hiveService: HiveService,
+    // private hiveService: HiveService,
     private dataHelper: DataHelper,
-    private hiveVaultApi: HiveVaultApi
+    private hiveVaultController: HiveVaultController
+
   ) { }
 
   ngOnInit() {
@@ -102,7 +105,7 @@ export class CreatenewfeedPage implements OnInit {
           })
           .then(() => {
             console.log("1 ====================")
-            this.uploadChannle(name, desc)
+            this.uploadChannel(name, desc)
             // carrirer 发送创建频道
             // this.feedService.createTopic(
             //   this.selectedServer.nodeId,
@@ -259,29 +262,26 @@ export class CreatenewfeedPage implements OnInit {
 
     // this.createDialog(name.value, desc.value);
     console.log(" name.value ====== ", name.value)
-    await this.uploadChannle(name.value, desc.value)
+    await this.uploadChannel(name.value, desc.value)
   }
 
-  async uploadChannle(name: string, desc: string) {
+  async uploadChannel(name: string, desc: string) {
     try {
       await this.native.showLoading('common.waitMoment');
       // 创建channles（用来存储userid下的所有创建的频道info）
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
       let userDisplayName = signinData.name;
-      let isCreateAllCollections = localStorage.getItem(userDid + HiveService.CREATEALLCollECTION) || ''
-      if (isCreateAllCollections === '') {
-        await this.hiveVaultApi.createAllCollections()
-        await this.hiveVaultApi.registeScripting()
-        localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
-      }
-      const channelId = await this.hiveVaultApi.createChannel(name, desc, this.avatar)
-      // await this.hiveVaultApi.callSubscription(userDid, channelId, name) // 订阅自己
-      await this.hiveVaultApi.subscribeChannel(userDid, channelId, userDisplayName);
+      this.hiveVaultController.createAndRregiste(userDid)
+      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar)
+      await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
 
       this.native.hideLoading()
       this.native.pop()
     } catch (error) {
+      const signinData = await this.dataHelper.getSigninData();
+      let userDid = signinData.did
+      localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
       this.native.hideLoading()
       console.log("create channel error =========", JSON.stringify(error))
       this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示

@@ -212,7 +212,6 @@ export class HiveService {
   async callScript(userDid: string, scriptName: string, document: any, callerDid: string, appid: string): Promise<any> {
     let scriptingService = await this.getScriptingService(userDid)
     let result = await scriptingService.callScript<any>(scriptName, document, callerDid, appid)
-    console.log("callChannel result ======= ", result)
     return result
   }
 
@@ -267,7 +266,6 @@ export class HiveService {
     const fileService = await this.getFilesService(userDid)
     return await fileService.download(remotePath)
   }
-
   async uploadCustomeAvatar(remotePath: string, img: any) {
     try {
       let userDid = (await this.dataHelper.getSigninData()).did
@@ -279,7 +277,7 @@ export class HiveService {
     }
   }
 
-  insertDBData(collectName: string, doc: any): Promise<InsertResult> {
+  insertDBData(collectName: string, doc: any,): Promise<InsertResult> {
     return new Promise(async (resolve, reject) => {
       try {
         let userDid = (await this.dataHelper.getSigninData()).did
