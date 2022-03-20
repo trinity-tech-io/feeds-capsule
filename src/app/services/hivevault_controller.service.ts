@@ -4,6 +4,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import SparkMD5 from 'spark-md5';
+import { UtilService } from 'src/app/services/utilService';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -29,12 +30,23 @@ export class HiveVaultController {
       const subscribedPost = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId)
       console.log("subscribedPost ===== ", subscribedPost)
       const items = subscribedPost["find_message"]["items"]
+
       items.forEach(async item => {
-        const contentStr = item["content"]
+        const contentJson = JSON.parse(item["content"])
+        console.log("contentJson === ", contentJson);
+        const mediaPath = contentJson['mediaPath']
+        const version = contentJson['version']
+        const postContent = contentJson['content']
+        const mediaType = contentJson['mediaType']
+
+        const mediaData = await this.hiveVaultApi.downloadScripting(destDid, mediaPath)
+
         let content: FeedsData.postContentV3 = {
-          version: contentStr.version,
-          content: contentStr.content,
-          mediaPath: contentStr.mediaData
+          version: version,
+          mediaData: mediaData,
+          mediaType: mediaType,
+          content: postContent,
+          mediaPath: mediaData
         }
         // 存储post 
         let post: FeedsData.PostV3 = {
@@ -59,18 +71,31 @@ export class HiveVaultController {
   }
 
   async publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string) {
-    console.log("sendPost string publishPost");
+    console.log("sendPost imagesBase64" + imagesBase64);
+    const fileBlob = UtilService.base64ToBlob(imagesBase64[0]);
+
+    // const buff = Buffer.from(imagesBase64, "utf-8");
+    console.log("imagesBase64 +" + fileBlob);
 
     const mediaData = await this.postHelperService.prepareMediaData(imagesBase64, videoData)
     const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(mediaData)
-    const content = await this.postHelperService.preparePublishPostContent(postText, avatarHiveURL);
 
+    let mType = FeedsData.MediaType.noMeida;
+    if (imagesBase64.length > 0) {
+      mType = FeedsData.MediaType.containsImg;
+    } else if (videoData.video.length > 0) {
+      mType = FeedsData.MediaType.containsVideo;
+    }
+
+    const content = await this.postHelperService.preparePublishPostContent(postText, avatarHiveURL, mType);
+    
+    console.log("sendPost mediaData" + mediaData);
     console.log("sendPost string" + postText);
     console.log("sendPost imagesBase64" + imagesBase64);
     console.log("sendPost videoData" + videoData);
     console.log("sendPost content" + content);
 
-    return await this.hiveVaultApi.publishPost(channelId, tag, content)
+    return await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
   }
 
   async createCollectionAndRregisteScript(callerDid: string) {

@@ -189,11 +189,7 @@ export class HiveVaultHelper {
 
     private updateChannelData(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
         newTippingAddress: string, newNft: string) {
-
-        return new Promise(async (resolve, reject) => {
-            //TODO
-            // this.updateDataToChannelDB()
-        });
+        return this.updateDataToChannelDB(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft)
     }
 
     updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
@@ -216,6 +212,14 @@ export class HiveVaultHelper {
     private callQueryChannelInfo() {
         return new Promise(async (resolve, reject) => {
             //TODO
+        /*
+        {
+"context": {
+"target_did": "did:xxx",
+"target_app": "appDid" }
+"params": { "channel_id":"xxx"
+} }
+        */
         });
     }
 
@@ -1127,22 +1131,18 @@ export class HiveVaultHelper {
         });
     }
 
-    downloadData(destDid: string, hiveUrl: string) {
-        return this.downloadScripting(destDid, hiveUrl);
-    }
-
     /** helper */
     private registerFileDownloadScripting(scriptName: string): Promise<void> {
         const executable = new FileDownloadExecutable(scriptName).setOutput(true);
         return this.hiveService.registerScript(scriptName, executable, null, false);
     }
 
-    private downloadScripting(userDid: string, avatarHiveURL: string): Promise<any> {
+    downloadScripting(userDid: string, avatarHiveURL: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const transaction_id = await this.downloadScriptingTransactionID(userDid, avatarHiveURL);
-                const rawData = await this.downloadScriptingData(userDid, transaction_id);
-                resolve(rawData);
+                const mediaDatas = await this.downloadScriptingData(userDid, transaction_id);
+                resolve(mediaDatas);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
                 reject(error);
@@ -1162,8 +1162,27 @@ export class HiveVaultHelper {
 
     private async downloadScriptingData(userDid: string, transactionID: string) {
         let dataBuffer = await this.hiveService.downloadScripting(userDid, transactionID)
-        const rawData = await rawImageToBase64DataUrl(dataBuffer)
-        return rawData
+        let jsonString = dataBuffer.toString();
+        let jsonArray = JSON.parse(jsonString);
+        let mediaDatas: FeedsData.mediaDataV3[] = [];
+
+        for (let index = 0; index < jsonArray.length; index++) {
+            const json = jsonArray[index];
+            let mediaData: FeedsData.mediaDataV3 = {
+                kind: json['kind'],           //"image/video/audio"
+                originMediaCid: json['originMediaCid'],
+                type: json['type'],           //"image/jpg",
+                size: json['size'],           //origin file size
+                thumbnailCid: json['thumbnailCid'],   //"thumbnailCid"
+                duration: json['duration'],
+                imageIndex: json['imageIndex'],
+                additionalInfo: json['additionalInfo'],
+                memo: json['memo']
+            };
+            mediaDatas.push(mediaData);
+        }
+
+        return mediaDatas
     }
 
     private callScript(userDid: string, scriptName: string, params: any): Promise<any> {

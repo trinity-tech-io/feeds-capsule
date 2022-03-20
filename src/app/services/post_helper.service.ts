@@ -42,7 +42,10 @@ export class PostHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
+        console.log("prepareMediaData mediaDatas + ", + mediaDatas);
         resolve(JSON.stringify(mediaDatas));
+        console.log("prepareMediaData JSON.stringify(mediaDatas) + ", + JSON.stringify(mediaDatas));
+
       } catch (error) {
         const errorMsg = 'Prepare publish post error';
         Logger.error(TAG, errorMsg, error);
@@ -52,23 +55,27 @@ export class PostHelperService {
     });
   }
 
-  preparePublishPostContentV3(postText: string, mediaPath: string): FeedsData.postContentV3 {
+  preparePublishPostContentV3(postText: string, mediaPath: string, mType: FeedsData.MediaType): FeedsData.postContentV3 {
+    // TODO mediaData 需要处理
     const content: FeedsData.postContentV3 = {
       version: "3.0",
       content: postText,
-      // mediaData: mediaData,
-      mediaPath: mediaPath
+      mediaData: null,
+      mediaPath: mediaPath,
+      mediaType: mType
     }
     return content
   }
 
-  preparePublishPostContent(postText: string, mediaPath: string): string {
-    const content: FeedsData.postHiveContent = {
-      version: "2.0",
-      text: postText,
-      data: mediaPath
+  preparePublishPostContent(postText: string, mediaPath: string, mType: FeedsData.MediaType): FeedsData.postContentV3 {
+    const content: FeedsData.postContentV3 = {
+      version: "3.0",
+      content: postText,
+      mediaData: null,
+      mediaPath: mediaPath,
+      mediaType: mType
     }
-    return JSON.stringify(content);
+    return content;
   }
 
   preparePublishPost(nodeId: string, channelId: number, postText: string, imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {

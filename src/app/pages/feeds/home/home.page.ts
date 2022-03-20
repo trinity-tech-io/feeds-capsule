@@ -204,6 +204,9 @@ export class HomePage implements OnInit {
     // TODO 首页订阅频道请求
     const result = await this.hiveVaultController.getHomePostContent()
     this.totalData = await this.sortPostList();
+
+    console.log("this totalData" + this.totalData);
+
     if (this.totalData.length - this.pageNumber > 0) {
       console.log("this.postList 6");
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -804,8 +807,6 @@ export class HomePage implements OnInit {
   }
 
   getPostContentTextSize(content: string) {
-
-    console.log("getPostContentTextSize + ", content);
     let text = this.feedsServiceApi.parsePostContentText(content);
     let size = UtilService.getSize(text);
     return size;
@@ -963,17 +964,8 @@ export class HomePage implements OnInit {
   }
 
   getChannelName(postId: string, channelId: string, destDid: string) {
-    // console.log("++++++++++++++ getChannelName" + postId + channelId);
     const key = UtilService.getKey(destDid, channelId);
-    // this.dataHelper.loadChannelV3Map();
-    // console.log("key = " + this.dataHelper.channelsMapV3);
     return this.dataHelper.channelsMapV3[key].name;
-    // let channel = await this.dataHelper.getChannelV3ById(destDid, channelId);
-    // return channel.name;
-
-    // let channel = this.getChannel(nodeId, channelId) || '';
-    // if (channel == '') return '';
-    // return UtilService.moreNanme(channel.name);
   }
 
   checkServerStatus(nodeId: string) {
@@ -996,6 +988,7 @@ export class HomePage implements OnInit {
   }
 
   loadData(event) {
+    console.log("loadData");
     this.refreshEvent = event;
     switch (this.tabType) {
       case 'feeds':
@@ -1181,24 +1174,32 @@ export class HomePage implements OnInit {
   }
 
   setVisibleareaImage(startPos: number) {
+
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
     for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
       let srcId = postgridList[postgridindex].getAttribute('id') || '';
+      console.log("setVisibleareaImage1 + postgridNum ", postgridNum);
+      console.log("setVisibleareaImage2 + postgridList ", postgridList);
+      console.log("setVisibleareaImage3 + postgridList ", postgridList.length);
+
+      console.log("setVisibleareaImage4 + ", srcId);
       if (srcId != '') {
         let arr = srcId.split('-');
-        let nodeId = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
+        let destDid = arr[0];
+        let postId = arr[1];
+        let channel_id = arr[2];
         let mediaType = arr[3];
-        let id = nodeId + '-' + channelId + '-' + postId;
+        // let id = nodeId + '-' + channelId + '-' + postId;
         //postImg
+        console.log("mediaType");
         if (mediaType === '1') {
-          this.handlePsotImg(id, srcId, postgridindex);
+          this.handlePsotImg(destDid, postId, channel_id, postgridindex);
         }
         if (mediaType === '2') {
           //video
-          this.hanldVideo(id, srcId, postgridindex);
+          // TODO
+          // this.hanldVideo(id, srcId, postgridindex);
         }
       }
     }
@@ -1366,237 +1367,264 @@ export class HomePage implements OnInit {
     });
   }
 
-  async handlePsotImg(id: string, srcId: string, rowindex: number) {
+  async handlePsotImg(destDid: string, postId: string, channelId: string, rowindex: number) {
     // 13 存在 12不存在
+
+    let id = destDid + '-' + postId + '-' + channelId;
+
     let isload = this.isLoadimage[id] || '';
     let rpostimg = document.getElementById(id + 'rpostimg');
     let postImage = document.getElementById(id + 'postimg');
-    try {
-      if (
-        id != '' &&
-        postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().top <= this.clientHeight
-      ) {
-        if (isload === '') {
-          this.isLoadimage[id] = '11';
-          let arr = srcId.split('-');
-          let nodeId = arr[0];
-          let channelId: any = arr[1];
-          let postId: any = arr[2];
 
-          let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
-          let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-          );
-          let nftOrdeId = this.isNftOrderId(
-            nodeId,
-            parseInt(channelId),
-            parseInt(postId),
-          );
-          let priceDes = '';
-          let nftQuantity = '';
-          let nftType = "";
-          if (nftOrdeId != '') {
-            // let nftOrder = await this.handlePrice(nftOrdeId);
-            let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
-            let price = '';
-            if (nftOrder != null) {
-              nftQuantity = String(nftOrder.amount);
-              price = String(nftOrder.price);
-            }
-            if (price != '') {
-              priceDes =
-                this.nftContractControllerService.transFromWei(
-                  price.toString(),
-                ) + ' ELA';
-            }
-          }
-          let contentVersion = this.feedService.getContentVersion(
-            nodeId,
-            channelId,
-            postId,
-            0,
-          );
+    let post = await this.dataHelper.getPostV3ById(destDid, postId);
+    let mediaDatas = post.content.mediaData;
 
-          if (contentVersion == '0') {
-            imageKey = thumbkey;
-          }
+    const elements = mediaDatas[0];
+    this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+      .then((value) => {
+        let thumbImage = value || "";
+        console.log("thumbImage" + thumbImage);
+        postImage.setAttribute('src', thumbImage);
 
-          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          if (content.version == '2.0') {
-            postImage.setAttribute('src', './assets/icon/reserve.svg');
-            const mediaDatas = content.mediaDatas;
-            if (mediaDatas && mediaDatas.length > 0) {
-              const elements = mediaDatas[0];
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-                .then((value) => {
-                  let thumbImage = value || "";
-                  postImage.setAttribute('src', thumbImage);
 
-                  // if (thumbImage != '') {
-                  //   this.isLoadimage[id] = '13';
+      })
+      .catch(() => {
+        //TODO
+      });
 
-                  //   if (nftOrdeId != '' && priceDes != '') {
-                  //     let imagesWidth = postImage.clientWidth;
-                  //     let homebidfeedslogo = document.getElementById(
-                  //       id + 'homebidfeedslogo'
-                  //     );
-                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                  //     homebidfeedslogo.style.display = 'block';
 
-                  //     let homebuy = document.getElementById(id + 'homebuy');
-                  //     let homeNftPrice = document.getElementById(
-                  //       id + 'homeNftPrice'
-                  //     );
-                  //     let homeNftQuantity = document.getElementById(
-                  //       id + 'homeNftQuantity'
-                  //     );
-                  //     let homeMaxNftQuantity = document.getElementById(
-                  //       id + 'homeMaxNftQuantity'
-                  //     );
-                  //     homeNftPrice.innerText = priceDes;
-                  //     homeNftQuantity.innerText = nftQuantity;
-                  //     homeMaxNftQuantity.innerText = nftQuantity;
-                  //     homebuy.style.display = 'block';
-                  //   }
-                  //   rpostimg.style.display = 'block';
-                  // } else {
-                  //   this.isLoadimage[id] = '12';
-                  //   rpostimg.style.display = 'none';
-                  // }
-                })
-                .catch(() => {
-                  //TODO
-                });
-            }
-            return;
-          }
+    // try {
+    //   if (
+    //     id != '' &&
+    //     postImage.getBoundingClientRect().top >= -100 &&
+    //     postImage.getBoundingClientRect().top <= this.clientHeight
+    //   ) {
+    //     if (isload === '') {
+    //       this.isLoadimage[id] = '11';
+    //       let arr = srcId.split('-');
+    //       let nodeId = arr[0];
+    //       let channelId: any = arr[1];
+    //       let postId: any = arr[2];
 
-          this.feedService
-            .getData(imageKey)
-            .then(imagedata => {
-              let realImage = imagedata || '';
-              if (realImage != '') {
-                this.isLoadimage[id] = '13';
-                postImage.setAttribute('src', realImage);
-                if (nftOrdeId != '' && priceDes != '') {
-                  let imagesWidth = postImage.clientWidth;
-                  if (this.nftImageType[nftOrdeId] === "avatar") {
+    //       let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
+    //       let thumbkey = this.feedService.getImgThumbKeyStrFromId(
+    //         nodeId,
+    //         channelId,
+    //         postId,
+    //         0,
+    //         0,
+    //       );
+    //       let nftOrdeId = this.isNftOrderId(
+    //         nodeId,
+    //         parseInt(channelId),
+    //         parseInt(postId),
+    //       );
+    //       let priceDes = '';
+    //       let nftQuantity = '';
+    //       let nftType = "";
+    //       if (nftOrdeId != '') {
+    //         // let nftOrder = await this.handlePrice(nftOrdeId);
+    //         let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
+    //         let price = '';
+    //         if (nftOrder != null) {
+    //           nftQuantity = String(nftOrder.amount);
+    //           price = String(nftOrder.price);
+    //         }
+    //         if (price != '') {
+    //           priceDes =
+    //             this.nftContractControllerService.transFromWei(
+    //               price.toString(),
+    //             ) + ' ELA';
+    //         }
+    //       }
+    //       let contentVersion = this.feedService.getContentVersion(
+    //         nodeId,
+    //         channelId,
+    //         postId,
+    //         0,
+    //       );
 
-                    let homebidAvatar = document.getElementById(
-                      id + 'homebidAvatar'
-                    );
-                    homebidAvatar.style.display = 'block';
-                  } else if (this.nftImageType[nftOrdeId] === "video") {
-                    let homebidVideo = document.getElementById(
-                      id + 'homebidVideo'
-                    );
-                    homebidVideo.style.display = 'block';
-                  }
-                  let homebidfeedslogo = document.getElementById(
-                    id + 'homebidfeedslogo'
-                  );
-                  homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                  homebidfeedslogo.style.display = 'block';
+    //       if (contentVersion == '0') {
+    //         imageKey = thumbkey;
+    //       }
 
-                  let homebuy = document.getElementById(id + 'homebuy');
-                  let homeNftPrice = document.getElementById(
-                    id + 'homeNftPrice'
-                  );
-                  let homeNftQuantity = document.getElementById(
-                    id + 'homeNftQuantity'
-                  );
-                  let homeMaxNftQuantity = document.getElementById(
-                    id + 'homeMaxNftQuantity'
-                  );
-                  homeNftPrice.innerText = priceDes;
-                  homeNftQuantity.innerText = nftQuantity;
-                  homeMaxNftQuantity.innerText = nftQuantity;
-                  homebuy.style.display = 'block';
-                }
+    //       const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+    //       console.log("handlePsotImg ++++ 3");
 
-                rpostimg.style.display = 'block';
-              } else {
+    //       if (content.version == '3.0') {
+    //         postImage.setAttribute('src', './assets/icon/reserve.svg');
+    //         const mediaDatas = content.mediaDatas;
+    //         if (mediaDatas && mediaDatas.length > 0) {
+    //           const elements = mediaDatas[0];
+    //           console.log("handlePsotImg ++++ 4");
+    //           this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+    //             .then((value) => {
+    //               let thumbImage = value || "";
+    //               postImage.setAttribute('src', thumbImage);
 
-                this.feedService.getData(thumbkey).then((thumbImagedata) => {
-                  let thumbImage = thumbImagedata || "";
-                  if (thumbImage != '') {
-                    this.isLoadimage[id] = '13';
-                    postImage.setAttribute('src', thumbImagedata);
-                    if (nftOrdeId != '' && priceDes != '') {
-                      let imagesWidth = postImage.clientWidth;
-                      if (this.nftImageType[nftOrdeId] === "avatar") {
+    //               // if (thumbImage != '') {
+    //               //   this.isLoadimage[id] = '13';
 
-                        let homebidAvatar = document.getElementById(
-                          id + 'homebidAvatar'
-                        );
-                        homebidAvatar.style.display = 'block';
-                      } else if (this.nftImageType[nftOrdeId] === "video") {
-                        let homebidVideo = document.getElementById(
-                          id + 'homebidVideo'
-                        );
-                        homebidVideo.style.display = 'block';
-                      }
-                      let homebidfeedslogo = document.getElementById(
-                        id + 'homebidfeedslogo'
-                      );
-                      homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                      homebidfeedslogo.style.display = 'block';
+    //               //   if (nftOrdeId != '' && priceDes != '') {
+    //               //     let imagesWidth = postImage.clientWidth;
+    //               //     let homebidfeedslogo = document.getElementById(
+    //               //       id + 'homebidfeedslogo'
+    //               //     );
+    //               //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+    //               //     homebidfeedslogo.style.display = 'block';
 
-                      let homebuy = document.getElementById(id + 'homebuy');
-                      let homeNftPrice = document.getElementById(
-                        id + 'homeNftPrice'
-                      );
-                      let homeNftQuantity = document.getElementById(
-                        id + 'homeNftQuantity'
-                      );
-                      let homeMaxNftQuantity = document.getElementById(
-                        id + 'homeMaxNftQuantity'
-                      );
-                      homeNftPrice.innerText = priceDes;
-                      homeNftQuantity.innerText = nftQuantity;
-                      homeMaxNftQuantity.innerText = nftQuantity;
-                      homebuy.style.display = 'block';
-                    }
-                    rpostimg.style.display = 'block';
-                  } else {
-                    this.isLoadimage[id] = '12';
-                    rpostimg.style.display = 'none';
-                  }
-                }).catch(() => {
-                  rpostimg.style.display = 'none';
-                })
-              }
-            })
-            .catch(reason => {
-              rpostimg.style.display = 'none';
-              Logger.error(TAG,
-                "Excute 'handlePsotImg' in home page is error , get image data error, error msg is ",
-                reason
-              );
-            });
-        }
-      } else {
-        let postImageSrc = postImage.getAttribute('src') || '';
-        if (
-          postImage.getBoundingClientRect().top < -100 &&
-          this.isLoadimage[id] === '13' &&
-          postImageSrc != ''
-        ) {
-          this.isLoadimage[id] = '';
-          postImage.setAttribute('src', 'assets/images/loading.png');
-        }
-      }
-    } catch (error) {
-      this.isLoadimage[id] = '';
-    }
+    //               //     let homebuy = document.getElementById(id + 'homebuy');
+    //               //     let homeNftPrice = document.getElementById(
+    //               //       id + 'homeNftPrice'
+    //               //     );
+    //               //     let homeNftQuantity = document.getElementById(
+    //               //       id + 'homeNftQuantity'
+    //               //     );
+    //               //     let homeMaxNftQuantity = document.getElementById(
+    //               //       id + 'homeMaxNftQuantity'
+    //               //     );
+    //               //     homeNftPrice.innerText = priceDes;
+    //               //     homeNftQuantity.innerText = nftQuantity;
+    //               //     homeMaxNftQuantity.innerText = nftQuantity;
+    //               //     homebuy.style.display = 'block';
+    //               //   }
+    //               //   rpostimg.style.display = 'block';
+    //               // } else {
+    //               //   this.isLoadimage[id] = '12';
+    //               //   rpostimg.style.display = 'none';
+    //               // }
+    //             })
+    //             .catch(() => {
+    //               //TODO
+    //             });
+    //         }
+    //         return;
+    //       }
+
+    //       this.feedService
+    //         .getData(imageKey)
+    //         .then(imagedata => {
+    //           let realImage = imagedata || '';
+    //           if (realImage != '') {
+    //             this.isLoadimage[id] = '13';
+    //             postImage.setAttribute('src', realImage);
+    //             if (nftOrdeId != '' && priceDes != '') {
+    //               let imagesWidth = postImage.clientWidth;
+    //               if (this.nftImageType[nftOrdeId] === "avatar") {
+
+    //                 let homebidAvatar = document.getElementById(
+    //                   id + 'homebidAvatar'
+    //                 );
+    //                 homebidAvatar.style.display = 'block';
+    //               } else if (this.nftImageType[nftOrdeId] === "video") {
+    //                 let homebidVideo = document.getElementById(
+    //                   id + 'homebidVideo'
+    //                 );
+    //                 homebidVideo.style.display = 'block';
+    //               }
+    //               let homebidfeedslogo = document.getElementById(
+    //                 id + 'homebidfeedslogo'
+    //               );
+    //               homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+    //               homebidfeedslogo.style.display = 'block';
+
+    //               let homebuy = document.getElementById(id + 'homebuy');
+    //               let homeNftPrice = document.getElementById(
+    //                 id + 'homeNftPrice'
+    //               );
+    //               let homeNftQuantity = document.getElementById(
+    //                 id + 'homeNftQuantity'
+    //               );
+    //               let homeMaxNftQuantity = document.getElementById(
+    //                 id + 'homeMaxNftQuantity'
+    //               );
+    //               homeNftPrice.innerText = priceDes;
+    //               homeNftQuantity.innerText = nftQuantity;
+    //               homeMaxNftQuantity.innerText = nftQuantity;
+    //               homebuy.style.display = 'block';
+    //             }
+
+    //             rpostimg.style.display = 'block';
+    //           } else {
+
+    //             this.feedService.getData(thumbkey).then((thumbImagedata) => {
+    //               let thumbImage = thumbImagedata || "";
+    //               if (thumbImage != '') {
+    //                 this.isLoadimage[id] = '13';
+    //                 postImage.setAttribute('src', thumbImagedata);
+    //                 if (nftOrdeId != '' && priceDes != '') {
+    //                   let imagesWidth = postImage.clientWidth;
+    //                   if (this.nftImageType[nftOrdeId] === "avatar") {
+
+    //                     let homebidAvatar = document.getElementById(
+    //                       id + 'homebidAvatar'
+    //                     );
+    //                     homebidAvatar.style.display = 'block';
+    //                   } else if (this.nftImageType[nftOrdeId] === "video") {
+    //                     let homebidVideo = document.getElementById(
+    //                       id + 'homebidVideo'
+    //                     );
+    //                     homebidVideo.style.display = 'block';
+    //                   }
+    //                   let homebidfeedslogo = document.getElementById(
+    //                     id + 'homebidfeedslogo'
+    //                   );
+    //                   homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
+    //                   homebidfeedslogo.style.display = 'block';
+
+    //                   let homebuy = document.getElementById(id + 'homebuy');
+    //                   let homeNftPrice = document.getElementById(
+    //                     id + 'homeNftPrice'
+    //                   );
+    //                   let homeNftQuantity = document.getElementById(
+    //                     id + 'homeNftQuantity'
+    //                   );
+    //                   let homeMaxNftQuantity = document.getElementById(
+    //                     id + 'homeMaxNftQuantity'
+    //                   );
+    //                   homeNftPrice.innerText = priceDes;
+    //                   homeNftQuantity.innerText = nftQuantity;
+    //                   homeMaxNftQuantity.innerText = nftQuantity;
+    //                   homebuy.style.display = 'block';
+    //                 }
+    //                 rpostimg.style.display = 'block';
+    //               } else {
+    //                 this.isLoadimage[id] = '12';
+    //                 rpostimg.style.display = 'none';
+    //               }
+    //             }).catch(() => {
+    //               rpostimg.style.display = 'none';
+    //             })
+    //           }
+    //         })
+    //         .catch(reason => {
+    //           rpostimg.style.display = 'none';
+    //           Logger.error(TAG,
+    //             "Excute 'handlePsotImg' in home page is error , get image data error, error msg is ",
+    //             reason
+    //           );
+    //         });
+    //     }
+    //   } else {
+    //     let postImageSrc = postImage.getAttribute('src') || '';
+    //     if (
+    //       postImage.getBoundingClientRect().top < -100 &&
+    //       this.isLoadimage[id] === '13' &&
+    //       postImageSrc != ''
+    //     ) {
+    //       this.isLoadimage[id] = '';
+    //       postImage.setAttribute('src', 'assets/images/loading.png');
+    //     }
+    //   }
+    // } catch (error) {
+    //   this.isLoadimage[id] = '';
+    // }
   }
 
   hanldVideo(id: string, srcId: string, rowindex: number) {
+
+    console.log("handlePsotImg ++++ 2");
+
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayer');
     let video: any = document.getElementById(id + 'video') || '';
@@ -1731,6 +1759,7 @@ export class HomePage implements OnInit {
   }
 
   ionScroll() {
+    console.log("ionScroll");
     this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
@@ -1749,6 +1778,7 @@ export class HomePage implements OnInit {
   }
 
   refreshImage(startPos: number) {
+    console.log("refreshImage");
     let sid = setTimeout(() => {
       this.postgridindex = startPos;
       this.setVisibleareaImage(startPos);

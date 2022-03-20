@@ -982,21 +982,27 @@ declare namespace FeedsData {
     proof: string,
     memo: string
   }
+  // 新添加 
+
+  type mediaDataV3 = {
+    kind: string,           //"image/video/audio"
+    originMediaCid: string,
+    type: string,           //"image/jpg",
+    size: number,           //origin file size
+    thumbnailCid: string    //"thumbnailCid"
+    duration: number,
+    imageIndex: number,
+    additionalInfo: any,
+    memo: any
+  }
 
   // 新添加
   type postContentV3 = {
     version: "3.0",
     content: string,
-    // mediaData: string,// 本地存储图片/视频内容
-    mediaPath: string // 云端存储路径
-    // text: string;
-    // mediaType: MediaType;
-    // videoThumbKey: VideoThumbKey;
-    // imgThumbKeys: ImageThumbKey[];
-    // nftTokenId: number;
-    // nftOrderId: number;
-    // nftImageType: string,
-    // mediaDatas: mediaData[]
+    mediaData: mediaDataV3[],// 本地存储图片/视频内容
+    mediaPath: string, // 云端存储路径
+    mediaType: MediaType
   }
 
   type CommentV3 = {

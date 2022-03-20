@@ -121,6 +121,10 @@ export class HiveVaultApi {
 
 
   /** Download data */
+  downloadScripting(destDid: string, avatarHiveURL: string): Promise<any> {
+    return this.hiveVaultHelper.downloadScripting(destDid, avatarHiveURL)
+  }
+
   downloadCustomeAvatar(remoteHiveUrlPath: string): Promise<any> {
     return this.hiveVaultHelper.downloadCustomeAvatar(remoteHiveUrlPath);
   }
