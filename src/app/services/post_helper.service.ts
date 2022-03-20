@@ -9,6 +9,7 @@ import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { CameraService } from 'src/app/services/CameraService';
+import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
 
 const TAG: string = 'PostHelper';
 @Injectable()
@@ -20,7 +21,8 @@ export class PostHelperService {
     public videoEditor: VideoEditor,
     private platform: Platform,
     private fileHelperService: FileHelperService,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private hiveVaultHelper: HiveVaultHelper
   ) {
   }
 
@@ -38,14 +40,14 @@ export class PostHelperService {
   //     }
   //   ]
   // }
-  prepareMediaData(imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
+  prepareMediaData(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaData[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
         console.log("prepareMediaData mediaDatas + ", + mediaDatas);
-        resolve(JSON.stringify(mediaDatas));
+        // resolve(JSON.stringify(mediaDatas));
+        resolve(mediaDatas)
         console.log("prepareMediaData JSON.stringify(mediaDatas) + ", + JSON.stringify(mediaDatas));
-
       } catch (error) {
         const errorMsg = 'Prepare publish post error';
         Logger.error(TAG, errorMsg, error);
@@ -55,25 +57,40 @@ export class PostHelperService {
     });
   }
 
-  preparePublishPostContentV3(postText: string, mediaPath: string, mType: FeedsData.MediaType): FeedsData.postContentV3 {
+  prepareMediaDataV3(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaDataV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const mediaDatas: FeedsData.mediaDataV3[] = await this.processUploadMeidasV3(imagesBase64, videoData);
+        console.log("prepareMediaData mediaDatas + ", + mediaDatas);
+        // resolve(JSON.stringify(mediaDatas));
+        resolve(mediaDatas)
+        console.log("prepareMediaData JSON.stringify(mediaDatas) + ", + JSON.stringify(mediaDatas));
+      } catch (error) {
+        const errorMsg = 'Prepare publish post error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+
+    });
+  }
+
+  preparePublishPostContentV3(postText: string, mediaData: FeedsData.mediaDataV3[], mediaType: FeedsData.MediaType): FeedsData.postContentV3 {
     // TODO mediaData 需要处理
     const content: FeedsData.postContentV3 = {
       version: "3.0",
       content: postText,
-      mediaData: null,
-      mediaPath: mediaPath,
-      mediaType: mType
+      mediaData: mediaData,
+      mediaType: mediaType
     }
     return content
   }
 
-  preparePublishPostContent(postText: string, mediaPath: string, mType: FeedsData.MediaType): FeedsData.postContentV3 {
+  preparePublishPostContent(postText: string, mediaData: FeedsData.mediaDataV3[]): FeedsData.postContentV3 {
     const content: FeedsData.postContentV3 = {
       version: "3.0",
       content: postText,
-      mediaData: null,
-      mediaPath: mediaPath,
-      mediaType: mType
+      mediaData: mediaData,
+      mediaType: 0
     }
     return content;
   }
@@ -99,6 +116,96 @@ export class PostHelperService {
       data: mediaDatas
     }
     return content;
+  }
+
+  processUploadMeidasV3(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaDataV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let mediasData: FeedsData.mediaDataV3[] = [];
+
+        if (imagesBase64 && imagesBase64.length > 0) {
+          for (let index = 0; index < imagesBase64.length; index++) {
+            const element = imagesBase64[index];
+            if (!element || element == '')
+              continue;
+
+            // const elementBlob = this.base64ToBlob(element);
+            // const elementBuffer = this.base64ToBuffer(element);
+            const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(element, FeedsData.MediaType.noMeida.toString());
+            if (originMediaData) {
+              const medaPath = originMediaData.medaPath;
+              // this.fileHelperService.savePostData(medaPath, elementBuffer);
+            }
+
+            const thumbnail = await UtilService.compress(element);
+            // const thumbnailBlob = this.base64ToBlob(thumbnail);
+            // const thumbnailBuffer = this.base64ToBuffer(thumbnail);
+            const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(thumbnail, FeedsData.MediaType.containsImg.toString());
+            if (thumbnailMediaData) {
+              const path = thumbnailMediaData.medaPath;
+              // this.fileHelperService.savePostData(path, thumbnailBlob);
+            }
+
+            if (originMediaData && thumbnailMediaData) {
+              const mediaData = this.createMediaDataV3("image", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, 0, 0, {}, {});
+              mediasData.push(mediaData);
+            }
+          }
+        }
+        // TODO Video data 
+
+        if (videoData) {
+          // const videoBlob = this.base64ToBlob(videoData.video);
+          // const videoBuffer = this.base64ToBuffer(videoData.video);
+
+          const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(videoData.video, FeedsData.MediaType.containsVideo.toString());
+          if (originMediaData) {
+            const medaPath = originMediaData.medaPath;
+            // this.fileHelperService.savePostData(medaPath, videoBlob);
+          }
+
+          // const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
+          // const videoThumbBuffer = this.base64ToBuffer(videoData.thumbnail);
+
+          const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(videoData.thumbnail, FeedsData.MediaType.containsVideo.toString());
+          if (thumbnailMediaData) {
+            const medaPath = thumbnailMediaData.medaPath;
+            // this.fileHelperService.savePostData(medaPath, videoThumbBlob);
+          }
+
+          if (originMediaData && thumbnailMediaData) {
+            const mediaData = this.createMediaDataV3("video", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, videoData.duration, 0, {}, {});
+            mediasData.push(mediaData);
+          }
+        }
+        resolve(mediasData);
+      } catch (error) {
+
+        const errorMsg = 'Upload medias error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  uploadDataToHive(mediaString: string, type: string): Promise<FeedsData.originMediaDataV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const size = mediaString.length;
+        // const type = elementBlob.type;
+        const path = await this.hiveVaultHelper.uploadMediaData(mediaString);
+        const originMediaData: FeedsData.originMediaDataV3 = {
+          size: size,
+          type: type,
+          medaPath: path
+        }
+        resolve(originMediaData);
+      } catch (error) {
+        const errorMsg = 'Upload data to hive error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
   }
 
   processUploadMeidas(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaData[]> {
@@ -201,6 +308,21 @@ export class PostHelperService {
     return mediaData;
   }
 
+  createMediaDataV3(kind: string, originMediaPath: string, type: string, size: number, thumbnailPath: string, duration: number, index: number, additionalInfo: any, memo: any): FeedsData.mediaDataV3 {
+    const mediaData: FeedsData.mediaDataV3 = {
+      kind: kind,
+      originMediaPath: originMediaPath,
+      type: type,
+      size: size,
+      imageIndex: index,
+      thumbnailPath: thumbnailPath,
+      duration: duration,
+      additionalInfo: additionalInfo,
+      memo: memo
+    }
+
+    return mediaData;
+  }
   // createVideoThumbnail(path: string) {
   //   this.videoEditor
   //     .createThumbnail({
@@ -503,5 +625,13 @@ export class PostHelperService {
       return null;
     }
     return UtilService.base64ToBlob(base64Data);
+  }
+
+  base64ToBuffer(base64Data: string): Buffer {
+    if (!base64Data && base64Data == '') {
+      Logger.error('Base64 data to blob error, input is null');
+      return null;
+    }
+    return UtilService.base64ToBuffer(base64Data);
   }
 }

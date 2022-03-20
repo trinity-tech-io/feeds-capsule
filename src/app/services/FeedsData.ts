@@ -982,14 +982,20 @@ declare namespace FeedsData {
     proof: string,
     memo: string
   }
-  // 新添加 
 
+  // 新添加 
+  type originMediaDataV3 = {
+    size: number,
+    type: string,
+    medaPath: string
+  }
+  // 新添加
   type mediaDataV3 = {
     kind: string,           //"image/video/audio"
-    originMediaCid: string,
+    originMediaPath: string,
     type: string,           //"image/jpg",
     size: number,           //origin file size
-    thumbnailCid: string    //"thumbnailCid"
+    thumbnailPath: string    //"thumbnailCid"
     duration: number,
     imageIndex: number,
     additionalInfo: any,
@@ -1000,8 +1006,7 @@ declare namespace FeedsData {
   type postContentV3 = {
     version: "3.0",
     content: string,
-    mediaData: mediaDataV3[],// 本地存储图片/视频内容
-    mediaPath: string, // 云端存储路径
+    mediaData: mediaDataV3[],// 已经上传的到hive(size/type/scriptName@path)
     mediaType: MediaType
   }
 

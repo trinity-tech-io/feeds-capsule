@@ -194,7 +194,7 @@ export class HomePage implements OnInit {
     private fileHelperService: FileHelperService,
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultApi: HiveVaultApi,
+    // private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController
   ) { }
 
@@ -208,7 +208,6 @@ export class HomePage implements OnInit {
     console.log("this totalData" + this.totalData);
 
     if (this.totalData.length - this.pageNumber > 0) {
-      console.log("this.postList 6");
       this.postList = this.totalData.slice(0, this.pageNumber);
 
 
@@ -216,9 +215,7 @@ export class HomePage implements OnInit {
       this.infiniteScroll.disabled = false;
     } else {
       this.postList = this.totalData;
-      console.log("this.postList 7" + this.postList);
       let post: FeedsData.PostV3 = this.postList[0];
-      console.log("this.postList 8" + post.content.content);
 
       this.infiniteScroll.disabled = true;
     }
@@ -233,7 +230,6 @@ export class HomePage implements OnInit {
   }
 
   async sortPostList() {
-    console.log("postList = 1");
     let postList = await this.dataHelper.getPostV3List() || [];
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
@@ -250,16 +246,13 @@ export class HomePage implements OnInit {
       return;
     }
     this.totalData = await this.sortPostList();
-    console.log("this.totalData + ", this.totalData);
     if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
-      console.log("postList = 2");
       this.postList = this.totalData.slice(
         0,
         this.startIndex * this.pageNumber,
       );
       // this.infiniteScroll.disabled = false;
     } else {
-      console.log("postList = 3");
       this.postList = this.totalData;
       // this.infiniteScroll.disabled = true;
     }
@@ -991,7 +984,6 @@ export class HomePage implements OnInit {
   }
 
   loadData(event) {
-    console.log("loadData");
     this.refreshEvent = event;
     switch (this.tabType) {
       case 'feeds':
@@ -1005,7 +997,6 @@ export class HomePage implements OnInit {
             this.startIndex++;
             this.zone.run(() => {
               let len = this.postList.length - 1;
-              console.log("this.postList 4");
               this.postList = this.postList.concat(arr);
               this.refreshImage(len);
               this.initnodeStatus(arr);
@@ -1018,7 +1009,6 @@ export class HomePage implements OnInit {
             );
             this.zone.run(() => {
               let len = this.postList.length - 1;
-              console.log("this.postList 5");
               this.postList = this.postList.concat(arr);
               this.refreshImage(len - 1);
               this.infiniteScroll.disabled = true;
@@ -1075,7 +1065,6 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         // 首页刷新
-        console.log("homepage.doRefresh.feeds");
         let sId = setTimeout(() => {
           this.initPostListData(true);
           if (event != null) event.target.complete();
@@ -1084,7 +1073,6 @@ export class HomePage implements OnInit {
         }, 500);
         break;
       case 'pasar':
-        console.log("homepage.doRefresh.pasar");
         this.elaPrice = this.feedService.getElaUsdPrice();
         this.zone.run(async () => {
           await this.refreshPasarList();
@@ -1182,11 +1170,6 @@ export class HomePage implements OnInit {
     let postgridNum = document.getElementsByClassName('post-grid').length;
     for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
       let srcId = postgridList[postgridindex].getAttribute('id') || '';
-      console.log("setVisibleareaImage1 + postgridNum ", postgridNum);
-      console.log("setVisibleareaImage2 + postgridList ", postgridList);
-      console.log("setVisibleareaImage3 + postgridList ", postgridList.length);
-
-      console.log("setVisibleareaImage4 + ", srcId);
       if (srcId != '') {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -1195,7 +1178,6 @@ export class HomePage implements OnInit {
         let mediaType = arr[3];
         // let id = nodeId + '-' + channelId + '-' + postId;
         //postImg
-        console.log("mediaType");
         if (mediaType === '1') {
           this.handlePsotImg(destDid, postId, channel_id, postgridindex);
         }
@@ -1383,13 +1365,17 @@ export class HomePage implements OnInit {
     let mediaDatas = post.content.mediaData;
 
     const elements = mediaDatas[0];
-    this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+
+    let target = postImage.getAttribute('src');
+    if (target != 'assets/images/loading.png') {
+      return;
+    }
+
+    this.hiveVaultController.downloadScripting(destDid, elements.thumbnailPath)
       .then((value) => {
         let thumbImage = value || "";
-        console.log("thumbImage" + thumbImage);
+        console.log("handlePsotImg  thumbImage ====== ", thumbImage);
         postImage.setAttribute('src', thumbImage);
-
-
       })
       .catch(() => {
         //TODO

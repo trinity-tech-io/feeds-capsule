@@ -172,7 +172,6 @@ export class DataHelper {
   ////channelsMap
   setChannelsMap(channelsMap: { [nodeChannelId: string]: FeedsData.Channels }) {
     this.channelsMap = channelsMap;
-    console.log("FeedsData.PersistenceKey.channelsMap" + "setChannelsMap");
     this.saveData(FeedsData.PersistenceKey.channelsMap, this.channelsMap);
   }
 
@@ -180,7 +179,6 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         if (JSON.stringify(this.channelsMap) == '{}') {
-          console.log("FeedsData.PersistenceKey.channelsMap" + "loadChannelsMap");
           this.channelsMap =
             (await this.loadData(FeedsData.PersistenceKey.channelsMap)) || {};
           resolve(this.channelsMap);
@@ -205,7 +203,6 @@ export class DataHelper {
   }
 
   updateChannel(key: string, channel: FeedsData.Channels) {
-    console.log("updateChannel key = " + key);
     this.channelsMap[key] = channel;
 
     let channel_id = channel.channel_id
@@ -223,7 +220,6 @@ export class DataHelper {
   deleteChannel(key: string): Promise<any> {
     this.channelsMap[key] = null;
     delete this.channelsMap[key];
-    console.log("FeedsData.PersistenceKey.channelsMap" + "deleteChannel");
     return this.saveData(
       FeedsData.PersistenceKey.channelsMap,
       this.channelsMap,
@@ -260,7 +256,6 @@ export class DataHelper {
   getChannelsListFromNodeId(nodeId: string): FeedsData.Channels[] {
     let list: FeedsData.Channels[] = [];
     let keys: string[] = Object.keys(this.channelsMap);
-    console.log("keys ===== ", keys)
     for (const index in keys) {
       let feed = this.getChannel(keys[index]);
       if (feed == null) continue;
@@ -2869,8 +2864,6 @@ export class DataHelper {
     }
     this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChanne
     await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
-    console.log("subscribedChanne ==== ", subscribedChanne)
-    console.log("subscribedChannelMapV3 ==== ", this.subscribedChannelMapV3)
   }
 
   removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
@@ -2952,7 +2945,6 @@ export class DataHelper {
     const key = UtilService.getKey(channel.destDid, channel.channelId);
     this.channelsMapV3[key] = channel;
     this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3).then(map => {
-      console.log("test addChannelV3 start");
       this.loadChannelV3Map();
     })
       .catch(err => { });
@@ -2969,7 +2961,6 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         this.channelsMapV3 = await this.loadData(FeedsData.PersistenceKey.channelsMapV3);
-        console.log("this.channelsMapV3 + ", this.channelsMapV3);
         const key = UtilService.getKey(destDid, channelId);
         // TODO 检测是否为nil
         let result = this.channelsMapV3[key];
@@ -3005,7 +2996,6 @@ export class DataHelper {
   loadChannelV3Map(): Promise<{ [channelId: string]: FeedsData.ChannelV3 }> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log("FeedsData.PersistenceKey.channelsMapV3" + "loadChannelV3Map");
         this.channelsMapV3 =
           (await this.loadData(FeedsData.PersistenceKey.channelsMapV3)) || {};
         resolve(this.channelsMapV3)
