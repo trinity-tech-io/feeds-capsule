@@ -125,12 +125,6 @@ export class CreatenewpostPage implements OnInit {
     }
 
     this.channelIdV3 = currentFeed.channelId;
-
-    // // this.nodeId = currentFeed.channel_id;
-    // this.channelId = currentFeed.channel_id;
-    // console.log("currentFeed = ", this.channelId);
-
-
     this.channelName = currentFeed['name'] || '';
     this.subscribers = currentFeed['subscribers'] || '';
     this.channelAvatar = this.feedService.parseChannelAvatar(currentFeed['avatar']);
@@ -226,7 +220,6 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave() {
     this.isLoading = false;
-    console.log("hideSwitchFeed 1");
     this.hideSwitchFeed = false;
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
@@ -593,15 +586,11 @@ export class CreatenewpostPage implements OnInit {
   }
 
   hideComponent(channel: any) {
-    console.log("hideComponent 1", channel);
 
     if (channel === null) {
-      console.log("hideSwitchFeed 2");
       this.hideSwitchFeed = false;
       return;
     }
-
-    console.log("hideComponent 2");
 
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';

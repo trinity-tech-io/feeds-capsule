@@ -205,7 +205,6 @@ export class HiveVaultHelper {
         // let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.SCRIPT_SUBSCRIPTION, null, null)
-        console.log("registerGetChannelScripting ====== ")
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CHANNEL, executable, condition, false)
     }
 
@@ -363,7 +362,6 @@ export class HiveVaultHelper {
         let queryCondition2 = new QueryHasResultCondition("post_permission", HiveVaultHelper.TABLE_POSTS, conditionfilter2, null)
         let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-        console.log("registerGetPostScripting ====== ")
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
     }
 
@@ -385,7 +383,6 @@ export class HiveVaultHelper {
         let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-        console.log("registerGetAllPostScripting ====== ")
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
     }
 
@@ -393,7 +390,6 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, { "channel_id": channelId })
-                console.log("callChannel result ======= ", result)
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'callGetAllPostScripting error:', error)
@@ -411,13 +407,10 @@ export class HiveVaultHelper {
     private registerQueryPostRangeOfTimeScripting() {
         let executablefilter =
             { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { $gt: "$params.start", $lt: "$params.end" } }
-        console.log("executablefilter = ", executablefilter);
-
         let options = { "projection": { "_id": false }, "limit": 100 }
         let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-        console.log("registerGetSomeTimePostScripting ====== ", findExe)
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
     }
     /** query post data range of time end */
@@ -1095,6 +1088,7 @@ export class HiveVaultHelper {
                 Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
                 resolve(avatarHiveURL);
             } catch (error) {
+                console.log("uploadMediaData error:", error)
                 reject(error);
             }
         });
@@ -1141,8 +1135,10 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const transaction_id = await this.downloadScriptingTransactionID(userDid, avatarHiveURL);
-                const mediaDatas = await this.downloadScriptingData(userDid, transaction_id);
-                resolve(mediaDatas);
+                const dataBuffer = await this.downloadScriptingData(userDid, transaction_id);
+                // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
+
+                resolve(dataBuffer);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
                 reject(error);
@@ -1163,26 +1159,7 @@ export class HiveVaultHelper {
     private async downloadScriptingData(userDid: string, transactionID: string) {
         let dataBuffer = await this.hiveService.downloadScripting(userDid, transactionID)
         let jsonString = dataBuffer.toString();
-        let jsonArray = JSON.parse(jsonString);
-        let mediaDatas: FeedsData.mediaDataV3[] = [];
-
-        for (let index = 0; index < jsonArray.length; index++) {
-            const json = jsonArray[index];
-            let mediaData: FeedsData.mediaDataV3 = {
-                kind: json['kind'],           //"image/video/audio"
-                originMediaCid: json['originMediaCid'],
-                type: json['type'],           //"image/jpg",
-                size: json['size'],           //origin file size
-                thumbnailCid: json['thumbnailCid'],   //"thumbnailCid"
-                duration: json['duration'],
-                imageIndex: json['imageIndex'],
-                additionalInfo: json['additionalInfo'],
-                memo: json['memo']
-            };
-            mediaDatas.push(mediaData);
-        }
-
-        return mediaDatas
+        return jsonString
     }
 
     private callScript(userDid: string, scriptName: string, params: any): Promise<any> {

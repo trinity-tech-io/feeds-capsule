@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { conformsTo } from 'lodash';
 import { Logger } from './logger';
 
 @Injectable()
@@ -674,6 +675,23 @@ export class UtilService {
     return new Blob([u8Array], {
       type: mime
     });
+  }
+
+  public static base64ToBuffer(base64Data: string): Buffer {
+    const defaultType = 'image/png';
+    let arr = base64Data.split(',');
+    let mime = arr[0].match(/:(.*?);/)[1] || defaultType;
+    let bytes = atob(arr[1]);
+    let n = bytes.length || 0;
+
+    let u8Array = new Uint8Array(n);
+    while (n--) {
+      u8Array[n] = bytes.charCodeAt(n);
+    }
+
+    var arrayBuffer = u8Array.buffer
+    var buffer = Buffer.from(arrayBuffer)
+    return buffer
   }
 
   public static compress(imgData: string): Promise<string> {

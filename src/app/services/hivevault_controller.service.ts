@@ -22,31 +22,52 @@ export class HiveVaultController {
   //获得订阅的channel列表
   async getHomePostContent() {
     const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-    console.log("subscribedChannelV3List ======== ", subscribedChannels)
     subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
       const channelId = item.channelId
       const destDid = item.destDid
 
       const subscribedPost = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId)
-      console.log("subscribedPost ===== ", subscribedPost)
       const items = subscribedPost["find_message"]["items"]
-
       items.forEach(async item => {
-        const contentJson = JSON.parse(item["content"])
-        console.log("contentJson === ", contentJson);
-        const mediaPath = contentJson['mediaPath']
-        const version = contentJson['version']
-        const postContent = contentJson['content']
-        const mediaType = contentJson['mediaType']
+        const contents = JSON.parse(item['content'])
+        let mDatas = contents['mediaData'];
+        let mData = {}
+        for (let index = 0; index < mDatas.length; index++) {
+          mData = mDatas[index];
+        }
+        console.log("mData ===== ", mData)
+        const mediaType = contents['mediaType'] 
+        // mediaDataV3
+        const kind = mData['kind']
+        const thumbnailPath = mData['thumbnailPath']
+        const originMediaPath = mData['originMediaPath']
+        const type = mData['type']
+        const size = mData['size']
+        const duration = mData['duration']
+        const imageIndex = mData['imageIndex']
+        const additionalInfo = mData['additionalInfo']
+        const memo = mData['memo']
 
-        const mediaData = await this.hiveVaultApi.downloadScripting(destDid, mediaPath)
-
+        const version = contents['version']
+        const postContent = contents['content']
+        const mediaDataV3: FeedsData.mediaDataV3 = {
+          kind: kind,
+          originMediaPath: originMediaPath,
+          type: type,
+          size: size,
+          thumbnailPath: thumbnailPath,
+          duration: duration,
+          imageIndex: imageIndex,
+          additionalInfo: additionalInfo,
+          memo: memo
+        }
+        let mediaDatasV3: FeedsData.mediaDataV3[] = []
+        mediaDatasV3.push(mediaDataV3)
         let content: FeedsData.postContentV3 = {
           version: version,
-          mediaData: mediaData,
-          mediaType: mediaType,
+          mediaData: mediaDatasV3,
           content: postContent,
-          mediaPath: mediaData
+          mediaType: mediaType
         }
         // 存储post 
         let post: FeedsData.PostV3 = {
@@ -64,36 +85,26 @@ export class HiveVaultController {
         }
         await this.dataHelper.addPostV3(post)
       });
-      const getPost = await this.dataHelper.getPostV3List()
-      console.log("getPost ========== ", getPost)
+      // const getPost = await this.dataHelper.getPostV3List()
     })
     //提前加载：TODO
   }
 
+  async downloadScripting(destDid: string, mediaPath: string) {
+
+    return this.hiveVaultApi.downloadScripting(destDid, mediaPath)
+  }
+
   async publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string) {
-    console.log("sendPost imagesBase64" + imagesBase64);
-    const fileBlob = UtilService.base64ToBlob(imagesBase64[0]);
+    const mediaData = await this.postHelperService.prepareMediaDataV3(imagesBase64, videoData)
+    let medaType = FeedsData.MediaType.noMeida
+    if (imagesBase64[0].length > 0) {
+      medaType = FeedsData.MediaType.containsImg
 
-    // const buff = Buffer.from(imagesBase64, "utf-8");
-    console.log("imagesBase64 +" + fileBlob);
-
-    const mediaData = await this.postHelperService.prepareMediaData(imagesBase64, videoData)
-    const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(mediaData)
-
-    let mType = FeedsData.MediaType.noMeida;
-    if (imagesBase64.length > 0) {
-      mType = FeedsData.MediaType.containsImg;
     } else if (videoData.video.length > 0) {
-      mType = FeedsData.MediaType.containsVideo;
+      medaType = FeedsData.MediaType.containsVideo
     }
-
-    const content = await this.postHelperService.preparePublishPostContent(postText, avatarHiveURL, mType);
-    
-    console.log("sendPost mediaData" + mediaData);
-    console.log("sendPost string" + postText);
-    console.log("sendPost imagesBase64" + imagesBase64);
-    console.log("sendPost videoData" + videoData);
-    console.log("sendPost content" + content);
+    const content = await this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
 
     return await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
   }

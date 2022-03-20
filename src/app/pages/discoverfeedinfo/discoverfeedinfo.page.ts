@@ -73,9 +73,6 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
-    console.log("ionViewWillEnter 1111122222");
-
     this.developerMode = this.feedService.getDeveloperMode();
     this.channelSubscribes = this.feedInfo['followers'];
     this.status = this.getChannelStatus(this.feedInfo);
