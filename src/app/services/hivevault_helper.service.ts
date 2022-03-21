@@ -424,14 +424,14 @@ export class HiveVaultHelper {
     /** query post data range of time start */
     private registerQueryPostRangeOfTimeScripting() {
         let executablefilter =
-            { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "update_at": { $gt: "$params.start", $lt: "$params.end" } }
+            { "channel_id": "$params.channel_id", "update_at": { $gt: "$params.start", $lt: "$params.end" } }
         let options = { "projection": { "_id": false }, "limit": 100 }
         let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
     }
-    // TODO : 参数postId是否需要
+
     private callQueryPostRangeOfTimeScripting(destDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -565,7 +565,7 @@ export class HiveVaultHelper {
             }
         });
     }
-
+    
     querySubscriptionInfoByChannelId(destDid: string, channelId: string): Promise<any> {
         return this.callQuerySubscriptionInfoByChannelId(destDid, channelId);
     }
