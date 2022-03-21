@@ -44,10 +44,8 @@ export class PostHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
-        console.log("prepareMediaData mediaDatas + ", + mediaDatas);
         // resolve(JSON.stringify(mediaDatas));
         resolve(mediaDatas)
-        console.log("prepareMediaData JSON.stringify(mediaDatas) + ", + JSON.stringify(mediaDatas));
       } catch (error) {
         const errorMsg = 'Prepare publish post error';
         Logger.error(TAG, errorMsg, error);
@@ -61,10 +59,8 @@ export class PostHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         const mediaDatas: FeedsData.mediaDataV3[] = await this.processUploadMeidasV3(imagesBase64, videoData);
-        console.log("prepareMediaData mediaDatas + ", + mediaDatas);
         // resolve(JSON.stringify(mediaDatas));
         resolve(mediaDatas)
-        console.log("prepareMediaData JSON.stringify(mediaDatas) + ", + JSON.stringify(mediaDatas));
       } catch (error) {
         const errorMsg = 'Prepare publish post error';
         Logger.error(TAG, errorMsg, error);

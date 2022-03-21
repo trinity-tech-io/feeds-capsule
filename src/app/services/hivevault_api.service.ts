@@ -48,16 +48,16 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, '', FeedsData.PostCommentStatus.edited);
   }
 
-  deletePost(postId: string, channelId: string) {
-    return this.hiveVaultHelper.deletePost(postId, channelId);
+  deletePost(postId: string) {
+    return this.hiveVaultHelper.deletePost(postId);
   }
 
   queryPostByChannelId(destDid: string, channelId: string) {
     return this.hiveVaultHelper.queryPostByChannelId(destDid, channelId);
   }
 
-  queryPostById(destDid: string, postId: string) {
-    return this.hiveVaultHelper.queryPostById(destDid, postId);
+  queryPostById(destDid: string, channelId: string, postId: string) {
+    return this.hiveVaultHelper.queryPostById(destDid, channelId, postId);
   }
 
   /** Suscription */
