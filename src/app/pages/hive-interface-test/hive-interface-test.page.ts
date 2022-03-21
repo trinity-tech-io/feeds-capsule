@@ -14,10 +14,13 @@ import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
   templateUrl: './hive-interface-test.page.html',
   styleUrls: ['./hive-interface-test.page.scss'],
 })
+
+
 export class HiveInterfaceTestPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public openLog: boolean = false;
   public selectedNetwork: any = "MainNet";
+  private destDid = 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D';
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -58,37 +61,44 @@ export class HiveInterfaceTestPage implements OnInit {
 
   // channel
   createChannel() {
-    this.hiveVaultApi.createChannel('channel01', 'channel01 desc', 'address');
-    alert('createChannel');
+    this.hiveVaultApi.createChannel('channelId01', 'channel01 desc', 'address');
   }
 
   updateChannel() {
+    //TODO
+    // this.hiveVaultApi.updateChannel();
     alert('updateChannel');
   }
 
   queryChannelInfo() {
-    alert('queryChannelInfo');
+    this.hiveVaultApi.queryChannelInfo(this.destDid, 'channelId01');
   }
 
   // post
   publishPost() {
+    this.hiveVaultApi.publishPost('channelId01', 'tag01', 'testContent');
     alert('publishPost');
   }
 
   updatePost() {
+    //TODO
+    // this.hiveVaultApi.updatePost('');
     alert('updatePost');
   }
 
   deletePost() {
+    //TODO
+    // this.hiveVaultApi.deletePost('');
     alert('deletePost');
   }
 
   queryPostByChannelId() {
-    // this.hiveVaultApi.queryPostByChannelId();
+    this.hiveVaultApi.queryPostByChannelId(this.destDid, 'channelId01');
     alert('queryPostByChannelId');
   }
 
   queryPostById() {
+    this.hiveVaultApi.queryPostById(this.destDid, 'channelId01', 'need Input postId');
     alert('queryPostById');
   }
 

@@ -121,6 +121,7 @@ export class ChannelsPage implements OnInit {
 
   public nftAssetList: any = [];
 
+  private destDid = '';
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -191,7 +192,8 @@ export class ChannelsPage implements OnInit {
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
-      this.nodeId = data.nodeId;
+      // this.nodeId = data.nodeId;
+      this.destDid = data.destDid;
       this.channelId = data.channelId;
     });
   }

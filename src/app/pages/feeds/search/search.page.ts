@@ -23,6 +23,7 @@ import { CarrierService } from 'src/app/services/CarrierService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-search',
@@ -98,7 +99,8 @@ export class SearchPage implements OnInit {
     private carrierService: CarrierService,
     private fileHelperService: FileHelperService,
     private pasarAssistService: PasarAssistService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
@@ -247,7 +249,9 @@ export class SearchPage implements OnInit {
       return;
     }
 
-    this.feedsServiceApi.subscribeChannel(nodeId, id);
+    // this.feedsServiceApi.subscribeChannel(nodeId, id);
+    //TODO
+    // this.hiveVaultController.subscribeChannel();
   }
 
   getItems(events: any) {
@@ -459,9 +463,9 @@ export class SearchPage implements OnInit {
 
   async handleJump(clickType: string) {
     if (clickType === 'scanService') {
-      let scanObj =  await this.popupProvider.scan() || {};
+      let scanObj = await this.popupProvider.scan() || {};
       let scanData = scanObj["data"] || {};
-      let scannedContent  = scanData["scannedText"] || "";
+      let scannedContent = scanData["scannedText"] || "";
       this.checkValid(scannedContent);
       return;
     }
@@ -670,7 +674,10 @@ export class SearchPage implements OnInit {
     });
   }
 
+
+  //TODO
   discoverSubscribe(feedInfo: any) {
+    console.log('discoverSubscribe', feedInfo);
     let feedUrl = feedInfo['url'];
     let feedsUrlHash = feedInfo['feedsUrlHash'];
     let followers = feedInfo['followers'];

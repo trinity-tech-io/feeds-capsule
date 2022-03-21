@@ -15,6 +15,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IntentService } from 'src/app/services/IntentService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 import _ from 'lodash';
 
@@ -50,6 +51,8 @@ export class FeedinfoPage implements OnInit {
   public channelOwner: string = '';
   public type: string = '';
   public serverDid: string = '';
+
+  public destDid: string = '';
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -64,7 +67,8 @@ export class FeedinfoPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private intentService: IntentService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
@@ -231,7 +235,10 @@ export class FeedinfoPage implements OnInit {
       return;
     }
 
-    this.feedsServiceApi.subscribeChannel(this.nodeId, Number(this.channelId));
+    // this.feedsServiceApi.subscribeChannel(this.nodeId, Number(this.channelId));
+
+    //TODO
+    // this.hiveVaultController.subscribeChannel();
   }
 
   unsubscribe() {
