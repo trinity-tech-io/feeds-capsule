@@ -5,6 +5,7 @@ import { Events } from 'src/app/services/events.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import SparkMD5 from 'spark-md5';
 import { UtilService } from 'src/app/services/utilService';
+import { Logger } from './logger';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -36,7 +37,7 @@ export class HiveVaultController {
           mData = mDatas[index];
         }
         console.log("mData ===== ", mData)
-        const mediaType = contents['mediaType'] 
+        const mediaType = contents['mediaType']
         // mediaDataV3
         const kind = mData['kind']
         const thumbnailPath = mData['thumbnailPath']
@@ -93,6 +94,38 @@ export class HiveVaultController {
   async downloadScripting(destDid: string, mediaPath: string) {
 
     return this.hiveVaultApi.downloadScripting(destDid, mediaPath)
+  }
+
+  getChannelInfoById() {
+
+  }
+
+  getPostListByChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      //目前暂时获取全部post，后续优化
+      const result = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId);
+      const postList = this.parsePostResult(result);
+      resolve(postList);
+    });
+  }
+
+  private parsePostResult(result: any): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const jsonResult = JSON.parse(result);
+        console.log('jsonResult', jsonResult);
+
+        // awaits finish
+        const postList = null;
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Parse post result error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getCommentByChannel() {
   }
 
   async publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string) {
@@ -168,4 +201,6 @@ export class HiveVaultController {
   getAllPostScripting() {
     // const postList = this.hiveVaultApi();
   }
+
+
 }

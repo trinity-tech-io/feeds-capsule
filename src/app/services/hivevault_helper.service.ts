@@ -26,6 +26,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_SUBSCRIPTION = "script_subscriptions_name";
 
     public static readonly SCRIPT_QUERY_POST_BY_CHANNEL = "script_query_post_by_channel";//all
+    public static readonly SCRIPT_QUERY_CHANNEL_INFO = "script_query_channel_info";
 
     public static readonly SCRIPT_SUBSCRIBE_CHANNEL = "script_subscribe_channel";
     public static readonly SCRIPT_UNSUBSCRIBE_CHANNEL = "script_unsubscribe_channel";
@@ -205,24 +206,33 @@ export class HiveVaultHelper {
         // let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.SCRIPT_SUBSCRIPTION, null, null)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CHANNEL, executable, condition, false)
+        console.log("registerGetChannelScripting ====== ")
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, condition, false)
     }
 
     private callQueryChannelInfo(destDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                const doc = { "channel_id": channelId }
-                const result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_SUBSCRIPTION, doc)
+                let result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, { "channel_id": channelId })
+                console.log("callChannel result ======= ", result)
                 resolve(result)
             } catch (error) {
-                Logger.error(TAG, 'callQueryChannelInfo error:', error)
+                Logger.error(TAG, 'callGetAllPostScripting error:', error)
                 reject(error)
             }
-        });
+        })
     }
 
     queryChannelInfo(destDid: string, channelId: string) {
-        return this.callQueryChannelInfo(destDid, channelId)
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.callQueryChannelInfo(destDid, channelId);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query channnel info error', error);
+                reject(error);
+            }
+        });
     }
     /** query channel info end*/
 
@@ -565,7 +575,7 @@ export class HiveVaultHelper {
             }
         });
     }
-    
+
     querySubscriptionInfoByChannelId(destDid: string, channelId: string): Promise<any> {
         return this.callQuerySubscriptionInfoByChannelId(destDid, channelId);
     }
