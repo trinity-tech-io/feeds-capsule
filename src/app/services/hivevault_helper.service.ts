@@ -25,7 +25,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_COMMENT = "script_comment_name";
     public static readonly SCRIPT_SUBSCRIPTION = "script_subscriptions_name";
 
-    public static readonly SCRIPT_QUERY_POST_BY_CHANNEL = "script_query_post_by_channel";
+    public static readonly SCRIPT_QUERY_POST_BY_CHANNEL = "script_query_post_by_channel";//all
 
     public static readonly SCRIPT_SUBSCRIBE_CHANNEL = "script_subscribe_channel";
     public static readonly SCRIPT_UNSUBSCRIBE_CHANNEL = "script_unsubscribe_channel";
@@ -208,25 +208,21 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CHANNEL, executable, condition, false)
     }
 
-    private callQueryChannelInfo() {
+    private callQueryChannelInfo(destDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
-            //TODO
-        /*
-        {
-"context": {
-"target_did": "did:xxx",
-"target_app": "appDid" }
-"params": { "channel_id":"xxx"
-} }
-        */
+            try {
+                const doc = { "channel_id": channelId }
+                const result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_SUBSCRIPTION, doc)
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'callQueryChannelInfo error:', error)
+                reject(error)
+            }
         });
     }
 
     queryChannelInfo(destDid: string, channelId: string) {
-        return new Promise(async (resolve, reject) => {
-            //TODO
-            // this.callQueryChannelInfo();
-        });
+        return this.callQueryChannelInfo(destDid, channelId)
     }
     /** query channel info end*/
 
@@ -282,17 +278,14 @@ export class HiveVaultHelper {
     /** publish post end */
 
     /** update post start */
-    private updateDataToPostDB(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<UpdateResult> {
+    private updateDataToPostDB(postId: string, channelId: string, originPost: FeedsData.PostV3, updatedAt: number, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
-            const key = this.dataHelper.getKey("", Number(channelId), Number(postId), 0)
-            const post = this.dataHelper.getPost(key)
-            const updated_at = new Date().getTime().toString()
             const doc =
             {
                 "channel_id": channelId,
                 "post_id": postId,
-                "created_at": post.created_at,
-                "updated_at": updated_at,
+                "created_at": originPost.createdAt,
+                "updated_at": updatedAt,
                 "content": newContent,
                 "status": newStatus,
                 "memo": newMemo,
@@ -301,7 +294,7 @@ export class HiveVaultHelper {
             }
             const option = new UpdateOptions(false, true)
             try {
-                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, post, doc, option)
+                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, originPost, doc, option)
                 Logger.log(TAG, 'update post result', updateResult)
                 resolve(updateResult)
             } catch (error) {
@@ -313,9 +306,19 @@ export class HiveVaultHelper {
 
     private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            // TODO
-            // this.updateDataToPostDB
-        });
+            try {
+                const signinData = await this.dataHelper.getSigninData();
+                let userDid = signinData.did
+                const originPost = await this.dataHelper.getPostV3ById(userDid, postId)
+                const updated_at = UtilService.getCurrentTimeNum()
+                const result = this.updateDataToPostDB(postId, channelId, originPost, updated_at, newType, newTag, newContent, newMemo, newStatus)
+                Logger.log(TAG, 'update post result', result)
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'updatePostData error', error)
+                reject(error)
+            }
+        })
     }
 
     updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<any> {
@@ -324,10 +327,8 @@ export class HiveVaultHelper {
     /** update post end */
 
     /** delete post , Not use now */
-    private deleteDataFromPostDB(collectName: string, channelId: string, postId: string): Promise<void> {
+    private deleteDataFromPostDB(post: FeedsData.PostV3): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const key = this.dataHelper.getKey("", Number(channelId), Number(postId), 0)
-            const post = this.dataHelper.getPost(key)
             try {
                 this.hiveService.deleateOneDBData(HiveVaultHelper.TABLE_POSTS, post)
                 Logger.log(TAG, 'delete post result success')
@@ -340,15 +341,25 @@ export class HiveVaultHelper {
     }
 
     /** delete post start */
-    private deletePostData(): Promise<any> {
+    private deletePostData(postId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            //TODO
-            //this.updatePostData();
+            try {
+                const signinData = await this.dataHelper.getSigninData();
+                let userDid = signinData.did
+                const post = await this.dataHelper.getPostV3ById(userDid, postId)
+                const result = await this.deleteDataFromPostDB(post)
+                Logger.log(TAG, 'delete post result success')
+                resolve(result)
+            }
+            catch (error) {
+                Logger.error(TAG, 'deletePostData error', error)
+                reject(error)
+            }
         });
     }
 
-    deletePost(postId: string, channelId: string): Promise<any> {
-        return this.deletePostData();
+    deletePost(postId: string): Promise<any> {
+        return this.deletePostData(postId);
     }
     /** delete post end */
 
@@ -365,14 +376,21 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
     }
 
-    private callQueryPostById(destDid: string, postId: string): Promise<any> {
+    private callQueryPostById(destDid: string, channelId: string, postId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            //TODO
+            try {
+                const doc = { "channel_id": channelId, "post_id": postId }
+                const result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_SPECIFIED_POST, doc)
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'callQueryPostById error:', error)
+                reject(error)
+            }
         });
     }
 
-    queryPostById(destDid: string, postId: string) {
-        return this.callQueryPostById(destDid, postId);
+    queryPostById(destDid: string, channelId: string, postId: string) {
+        return this.callQueryPostById(destDid, channelId, postId);
     }
     /** query post data by id end*/
 
@@ -386,20 +404,20 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
     }
 
-    private callGetPostByChannelId(destDid: string, channelId: string) {
+    private callQueryPostByChannelId(destDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, { "channel_id": channelId })
                 resolve(result)
             } catch (error) {
-                Logger.error(TAG, 'callGetAllPostScripting error:', error)
+                Logger.error(TAG, 'callQueryPostByChannelId error:', error)
                 reject(error)
             }
         })
     }
 
     queryPostByChannelId(destDid: string, channelId: string): Promise<any> {
-        return this.callGetPostByChannelId(destDid, channelId);
+        return this.callQueryPostByChannelId(destDid, channelId);
     }
     /** query post data by channel id end */
 
@@ -412,6 +430,22 @@ export class HiveVaultHelper {
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
+    }
+    // TODO : 参数postId是否需要
+    private callQueryPostRangeOfTimeScripting(destDid: string, channelId: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(destDid, HiveVaultHelper.SCRIPT_SOMETIME_POST, { "channel_id": channelId })
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'callQueryPostByChannelId error:', error)
+                reject(error)
+            }
+        })
+    }
+
+    queryPostRangeOfTimeScripting(destDid: string, channelId: string): Promise<any> {
+        return this.callQueryPostRangeOfTimeScripting(destDid, channelId);
     }
     /** query post data range of time end */
 
@@ -531,6 +565,7 @@ export class HiveVaultHelper {
             }
         });
     }
+
     querySubscriptionInfoByChannelId(destDid: string, channelId: string): Promise<any> {
         return this.callQuerySubscriptionInfoByChannelId(destDid, channelId);
     }

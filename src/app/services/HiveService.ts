@@ -41,7 +41,6 @@ export class HiveService {
     private dataHelper: DataHelper,
     private events: Events,
   ) {
-    console.log("++++++ event = " + events);
     eventBus = events;
   }
 
@@ -200,7 +199,6 @@ export class HiveService {
         let userDid = (await this.dataHelper.getSigninData()).did
         let dbService = await this.getDatabaseService(userDid)
         let result = dbService.findMany(collectionName, filter)
-        console.log("findPostDB ======  ", result)
         resolve(result)
       } catch (error) {
         Logger.error(TAG, 'listPostDB error:', error)
@@ -243,9 +241,7 @@ export class HiveService {
 
   async downloadScripting(userDid: string, transaction_id: string) {
     try {
-      console.log("downloadScripting transaction_id ==== ", transaction_id)
       const scriptingService = await this.getScriptingService(userDid)
-      console.log("downloadScripting ==== ", scriptingService)
       return await scriptingService.downloadFile(transaction_id)
     } catch (error) {
       console.log("scriptingService.downloadFile error: ==== ", error)
@@ -255,7 +251,6 @@ export class HiveService {
   async downloadScriptingURL(userDid: string, avatarHiveURL: string) {
     try {
       const scriptingService = await this.getScriptingService(userDid)
-      console.log("scriptingServicev ==== ", scriptingService)
       // return await scriptingService.downloadScriptingURL(avatarHiveURL)
     } catch (error) {
       console.log("downloadScriptingURL  ===== ", error)
