@@ -24,6 +24,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
 
 @Component({
   selector: 'app-search',
@@ -453,48 +454,19 @@ export class SearchPage implements OnInit {
     }
   }
 
-  scanService() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-    this.handleJump('scanService');
-  }
+  async scanService() {
+    let scanObj = await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+    let scannedContent = scanData["scannedText"] || "";
 
-  async handleJump(clickType: string) {
-    if (clickType === 'scanService') {
-      let scanObj = await this.popupProvider.scan() || {};
-      let scanData = scanObj["data"] || {};
-      let scannedContent = scanData["scannedText"] || "";
-      this.checkValid(scannedContent);
-      return;
-    }
-  }
-
-  checkValid(result: string) {
-    if (result === "") {
-      return;
-    }
-    if (
-      result.length < 54 ||
-      !result.startsWith('feeds://') ||
-      !result.indexOf('did:elastos:')
-    ) {
+    const scanResult = ScannerHelper.parseScannerResult(scannedContent);
+    if (!scanResult || !scanResult.feedsUrl || !scanResult.code || scanResult.code == ScannerCode.INVALID_FORMAT) {
       this.native.toastWarn('AddServerPage.tipMsg');
       return;
     }
-
-    let splitStr = result.split('/');
-    if (splitStr.length != 5 || splitStr[4] == '') {
-      this.native.toastWarn('AddServerPage.tipMsg');
-      return;
-    }
-    this.feedService.addFeed(result, '', 0, '', '', '').then(isSuccess => {
-      if (isSuccess) {
-        this.native.pop();
-        return;
-      }
-    });
+    const feedsUrl = scanResult.feedsUrl;
+    const displayName = (await this.dataHelper.getSigninData()).name;
+    this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
   }
 
   loadData(events: any) {
