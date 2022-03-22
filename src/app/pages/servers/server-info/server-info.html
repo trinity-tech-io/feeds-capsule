@@ -48,7 +48,7 @@
       <ion-col
           size="2.5"
           class="left-col"
-          (click)="navTo(channel.nodeId, channel.id)"
+          (click)="navTo(channel.destDid, channel.channelId)"
         >
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{parseChannelAvatar(channel.avatar)}}>
@@ -57,7 +57,7 @@
         <ion-col
           size="9.5"
           class="middle-col"
-          (click)="navTo(channel.nodeId, channel.id)"
+          (click)="navTo(channel.destDid, channel.channelId)"
         >
           <ion-label>
             {{ channel.name }}

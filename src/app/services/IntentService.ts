@@ -349,7 +349,7 @@ export class IntentService {
     this.languageService.setCurLang(currentLang);
   }
 
-  async createShareLink(nodeId: string, channelId: number, postId: number): Promise<string> {
+  async createShareLink(nodeId: string, channelId: string, postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const server = this.dataHelper.getServer(nodeId);
@@ -357,7 +357,7 @@ export class IntentService {
         const address = server.carrierAddress;
         const serverDid = server.did;
 
-        const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
+        const key = this.dataHelper.getKey(nodeId, channelId, "0", 0);
         const channel = this.dataHelper.getChannel(key);
 
         const ownerName = channel.owner_name;
@@ -405,7 +405,7 @@ export class IntentService {
     });
   }
 
-  createSharePostTitle(nodeId: string, channelId: number, postId: number): string {
+  createSharePostTitle(nodeId: string, channelId: string, postId: string): string {
     const key = this.dataHelper.getKey(nodeId, channelId, postId, 0);
     const post = this.dataHelper.getPost(key);
     const content = post.content || null;
@@ -422,8 +422,8 @@ export class IntentService {
     return this.translate.instant("common.sharePasar");
   }
 
-  createShareChannelTitle(nodeId: string, channelId: number): string {
-    const key = this.dataHelper.getKey(nodeId, channelId, 0, 0);
+  createShareChannelTitle(nodeId: string, channelId: string): string {
+    const key = this.dataHelper.getKey(nodeId, channelId, "0", 0);
     const channel = this.dataHelper.getChannel(key);
 
     const channelName = channel.name || '';
@@ -469,7 +469,7 @@ export class IntentService {
     const serverList = this.dataHelper.getServerList();
     const isContain = serverList.some(server => server.nodeId == serverNodeId);
 
-    const nodeChannelId = this.dataHelper.getKey(serverNodeId, channelId, 0, 0,);
+    const nodeChannelId = this.dataHelper.getKey(serverNodeId, channelId, "0", 0,);
     const channel = this.dataHelper.getChannel(nodeChannelId);
 
     if (!isContain) {

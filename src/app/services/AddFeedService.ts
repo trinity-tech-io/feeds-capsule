@@ -192,7 +192,7 @@ export class AddFeedService {
     let keys: string[] = Object.keys(map) || [];
     for (let index = 0; index < keys.length; index++) {
       if (map[keys[index]] == undefined) continue;
-      if (map[keys[index]].feedId == 0) continue;
+      if (map[keys[index]].feedId == "") continue;
       if (map[keys[index]].nodeId == nodeId) result.push(map[keys[index]]);
     }
     return result;
@@ -232,7 +232,7 @@ export class AddFeedService {
       result = {
         did: tmp[0],
         carrierAddress: tmp[1],
-        feedId: 0,
+        feedId: "",
         feedName: 'Unknow',
         feedUrl: feedUrl,
         serverUrl: feedUrl,
@@ -241,18 +241,18 @@ export class AddFeedService {
 
     if ((tmp.length = 3)) {
       let mFeedName = 'Unknow';
-      let mFeedId = 0;
+      let mFeedId = "";
       if (tmp[2].indexOf('#') > 0) {
         let feedField = tmp[2].split('#');
         try {
-          mFeedId = Number(feedField[0]);
+          mFeedId = feedField[0];
         } catch (error) {
           Logger.error(TAG, 'Type convert error ', error);
         }
 
         mFeedName = decodeURIComponent(feedField[1]) || 'Unknow';
       } else {
-        mFeedId = Number(tmp[2]);
+        mFeedId = tmp[2];
       }
 
       let serverUrl = feedUrl.substring(0, feedUrl.lastIndexOf('/'));
@@ -292,7 +292,7 @@ export class AddFeedService {
   generateToBeAddedFeed(
     nodeId: string,
     carrierAddress: string,
-    feedId: number,
+    feedId: string,
     feedName: string,
     did: string,
     serverUrl: string,

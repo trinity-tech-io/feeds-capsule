@@ -188,19 +188,19 @@ declare namespace FeedsEvent {
 
   type getCommentData = {
     nodeId: string;
-    channelId: number;
-    postId: number;
+    channelId: string;
+    postId: string;
   };
 
   type unsubscribeData = {
     nodeId: string;
-    channelId: number;
+    channelId: string;
     channelName: string;
   };
 
   type SubscribeFinishData = {
     nodeId: string;
-    channelId: number;
+    channelId: string;
   };
 
   type FriendConnectionChangedData = {
@@ -219,10 +219,10 @@ declare namespace FeedsEvent {
   };
   type setBinaryFinishData = {
     nodeId: string;
-    feedId: number;
-    postId: number;
+    feedId: string;
+    postId: string;
     commentId: number;
-    tempId: number;
+    tempId: string;
   };
 
   type InnerStreamErrorData = {
@@ -281,8 +281,8 @@ declare namespace FeedsEvent {
 
   type DeclarePostData = {
     nodeId: string;
-    channelId: number;
-    postId: number;
+    channelId: string;
+    postId: string;
     tempId: number;
   };
 }

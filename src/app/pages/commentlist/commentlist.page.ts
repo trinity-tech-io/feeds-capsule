@@ -32,8 +32,8 @@ export class CommentlistPage implements OnInit {
   public connectionStatus: number = 1;
 
   public nodeId: string = '';
-  public channelId: number = 0;
-  public postId: number = 0;
+  public channelId: string = "";
+  public postId: string = "";
   public startIndex: number = 0;
   public pageNumber: number = 5;
   public totalData: any = [];
@@ -346,16 +346,16 @@ export class CommentlistPage implements OnInit {
   checkMyLike() {
     return this.feedService.checkMyLike(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
     );
   }
 
   checkLikedComment(commentId: number) {
     return this.feedService.checkLikedComment(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
       commentId,
     );
   }
@@ -374,8 +374,8 @@ export class CommentlistPage implements OnInit {
     if (this.checkMyLike()) {
       this.feedsServiceApi.postUnlike(
         this.nodeId,
-        Number(this.channelId),
-        Number(this.postId),
+        this.channelId,
+        this.postId,
         0,
       );
       return;
@@ -383,8 +383,8 @@ export class CommentlistPage implements OnInit {
 
     this.feedsServiceApi.postLike(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
       0,
     );
   }
@@ -403,8 +403,8 @@ export class CommentlistPage implements OnInit {
     if (this.checkLikedComment(commentId)) {
       this.feedsServiceApi.postUnlike(
         this.nodeId,
-        Number(this.channelId),
-        Number(this.postId),
+        this.channelId,
+        this.postId,
         commentId,
       );
       return;
@@ -412,8 +412,8 @@ export class CommentlistPage implements OnInit {
 
     this.feedsServiceApi.postLike(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
       commentId,
     );
   }
@@ -480,23 +480,12 @@ export class CommentlistPage implements OnInit {
     return status;
   }
 
-  checkChannelIsMine() {
-    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
-      return 0;
-
-    return 1;
-  }
-
-  navTo(nodeId: string, channelId: number) {
-    this.native.navigateForward(['/channels', nodeId, channelId], '');
-  }
-
   checkCommentIsMine(comment: any) {
     let commentId = comment.id;
     let isOwnComment = this.feedService.checkCommentIsMine(
       comment.nodeId,
-      Number(comment.channel_id),
-      Number(comment.post_id),
+      comment.channel_id,
+      comment.post_id,
       Number(comment.id),
     );
     this.isOwnComment[commentId] = isOwnComment;

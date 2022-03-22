@@ -679,7 +679,7 @@ export class MintnftPage implements OnInit {
       if (value) {
         isTipToast = true;
         let nodeId = key.split('_')[0];
-        let channelId = parseInt(key.split('_')[1]);
+        let channelId = key.split('_')[1];
         await this.sendPost(tokenId, nodeId, channelId);
       }
     }
@@ -689,7 +689,7 @@ export class MintnftPage implements OnInit {
     }
   }
 
-  async sendPost(tokenId: any, nodeId: string, channelId: number) {
+  async sendPost(tokenId: any, nodeId: string, channelId: string) {
     let tempPostId = this.feedService.generateTempPostId();
     this.publishPostThrowMsg(tokenId, nodeId, channelId, tempPostId);
   }
@@ -697,15 +697,15 @@ export class MintnftPage implements OnInit {
   async publishPostThrowMsg(
     tokenId: any,
     nodeId: string,
-    channelId: number,
-    tempPostId: number,
+    channelId: string,
+    tempPostId: string,
   ) {
     let imgSize = this.thumbnail.length;
     if (imgSize > this.throwMsgTransDataLimit) {
       this.transDataChannel = FeedsData.TransDataChannel.SESSION;
       let memo: FeedsData.SessionMemoData = {
         feedId: channelId,
-        postId: 0,
+        postId: "",
         commentId: 0,
         tempId: tempPostId,
       };

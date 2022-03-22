@@ -98,7 +98,7 @@ export class GalleriachannelPage implements OnInit {
       this.tippingAddress["elaMain"] = "";
     }
 
-    this.channel = this.feedService.getChannelFromId(this.nodeId, Number(this.channelId));
+    this.channel = this.feedService.getChannelFromId(this.nodeId, this.channelId);
     this.nftName = this.channel["name"];
     this.nftDescription = this.channel["introduction"];
     let galleriachannelAvatar = document.getElementById("galleriachannelAvatar") || null;

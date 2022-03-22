@@ -1062,7 +1062,7 @@ export class FeedService {
     return false;
   }
 
-  getFeedNameById(nodeId: string, channelId: number): string {
+  getFeedNameById(nodeId: string, channelId: string): string {
     let feedName = this.translate.instant('common.unknown');
     let channel = this.getChannelFromId(nodeId, channelId);
     if (channel != undefined) {
@@ -1372,8 +1372,8 @@ export class FeedService {
 
   ////handle push
   handleNewPostNotification(nodeId: string, params: any) {
-    let channel_id: number = params.channel_id;
-    let id: number = params.id;
+    let channel_id: string = params.channel_id;
+    let id: string = params.id;
     let contentBin: any = params.content;
     let created_at: number = params.created_at;
     let updateAt: number = params.updated_at || created_at;
@@ -1422,8 +1422,8 @@ export class FeedService {
   }
 
   async handleNewCommentNotification(nodeId: string, params: any) {
-    let channelId: number = params.channel_id;
-    let postId: number = params.post_id;
+    let channelId: string = params.channel_id;
+    let postId: string = params.post_id;
     let commentId: number = params.id;
     let referCommentId: number = params.comment_id;
     let contentBin: any = params.content;
@@ -1483,20 +1483,20 @@ export class FeedService {
 
     this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
 
-    let lastCommentUpdateKey = this.getPostId(nodeId, channelId, 0);
+    let lastCommentUpdateKey = this.getPostId(nodeId, channelId, "0");
     this.updateLastCommentUpdate(
       lastCommentUpdateKey,
       nodeId,
       channelId,
-      0,
+      "0",
       updatedAt,
     );
   }
 
   processNewComment(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     referCommentId: number,
     userName: string,
@@ -1528,8 +1528,8 @@ export class FeedService {
       let ncpId = this.getPostId(nodeId, channelId, postId);
       this.updateLastCommentUpdate(ncpId, nodeId, channelId, postId, updatedAt);
 
-      let ncId = this.getPostId(nodeId, channelId, 0);
-      this.updateLastCommentUpdate(ncpId, nodeId, channelId, 0, updatedAt);
+      let ncId = this.getPostId(nodeId, channelId, "0");
+      this.updateLastCommentUpdate(ncpId, nodeId, channelId, "0", updatedAt);
 
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
 
@@ -1549,8 +1549,8 @@ export class FeedService {
 
   updateCommentMap(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     referCommentId: number,
     userName: string,
@@ -1593,8 +1593,8 @@ export class FeedService {
 
   generateNotification(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     userName: string,
     behavior: FeedsData.Behavior,
@@ -1625,8 +1625,8 @@ export class FeedService {
 
   handleNewLikesNotification(nodeId: string, params: any) {
     let comment_id: number = params.comment_id;
-    let channel_id: number = params.channel_id;
-    let post_id: number = params.post_id;
+    let channel_id: string = params.channel_id;
+    let post_id: string = params.post_id;
     let totalCount: number = params.total_count;
     let user_name: string = params.user_name;
 
@@ -1697,7 +1697,7 @@ export class FeedService {
     this.generateNotification(
       nodeId,
       channel_id,
-      0,
+      "0",
       0,
       user_name,
       FeedsData.Behavior.follow,
@@ -1729,7 +1729,7 @@ export class FeedService {
     let status: number = params.status || 0;
     Logger.log(TAG, 'Receive result from feedinfo_update, status is ', status);
 
-    let channel_id = 0
+    let channel_id = "0"
     let created_at = 0
     let updated_at = 0
     // let name = ""
@@ -1791,8 +1791,8 @@ export class FeedService {
   }
 
   handleNewPostUpdate(nodeId: string, params: any) {
-    let channelId: number = params.channel_id;
-    let postId: number = params.id;
+    let channelId: string = params.channel_id;
+    let postId: string = params.id;
     let status: FeedsData.PostCommentStatus =
       params.status || FeedsData.PostCommentStatus.available;
     let contentBin: any = params.content;
@@ -2020,8 +2020,8 @@ export class FeedService {
       return;
     }
 
-    let tempId = 0;
-    if (memo != null && memo != undefined) tempId = memo.tempId;
+    let tempId = "0";
+    if (memo != null && memo != undefined) tempId = memo.tempId.toString();
     this.processPublishPostSuccess(
       nodeId,
       request.channel_id,
@@ -2033,10 +2033,10 @@ export class FeedService {
 
   processPublishPostSuccess(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     contentBin: any,
-    tempId: number,
+    tempId: string,
   ) {
     let contentStr = this.serializeDataService.decodeData(contentBin);
     let content = this.feedsServiceApi.parseContent(nodeId, channelId, postId, 0, contentStr);
@@ -2093,17 +2093,17 @@ export class FeedService {
   }
 
   cachePost(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
     contentBin: any,
     tempId: number,
   ) {
     let contentStr = this.serializeDataService.decodeData(contentBin);
-    let content = this.feedsServiceApi.parseContent(nodeId, channelId, postId, 0, contentStr);
+    let content = this.feedsServiceApi.parseContent(destDid, channelId, postId, 0, contentStr);
 
     let post: FeedsData.Post = {
-      nodeId: nodeId,
+      nodeId: destDid,
       channel_id: channelId,
       id: postId,
       content: content,
@@ -2115,7 +2115,7 @@ export class FeedService {
     };
 
     let declarePostData: FeedsEvent.DeclarePostData = {
-      nodeId: nodeId,
+      nodeId: destDid,
       channelId: channelId,
       postId: postId,
       tempId: tempId,
@@ -2172,8 +2172,8 @@ export class FeedService {
   }
 
   handlePostLikeResult(nodeId: string, request: any, error: any) {
-    let channel_id: number = request.requestParams.channel_id;
-    let post_id: number = request.requestParams.post_id;
+    let channel_id: string = request.requestParams.channel_id;
+    let post_id: string = request.requestParams.post_id;
     let comment_id: number = request.requestParams.comment_id;
 
     if (
@@ -2218,8 +2218,8 @@ export class FeedService {
   }
 
   handlePostUnLikeResult(nodeId: string, request: any, error: any) {
-    let channel_id: number = request.requestParams.channel_id;
-    let post_id: number = request.requestParams.post_id;
+    let channel_id: string = request.requestParams.channel_id;
+    let post_id: string = request.requestParams.post_id;
     let comment_id: number = request.requestParams.comment_id;
     if (
       error != null &&
@@ -2258,7 +2258,7 @@ export class FeedService {
 
     let result = responseResult.channels;
     for (let index = 0; index < result.length; index++) {
-      let id: number = result[index].id;
+      let id: string = result[index].id;
       let name: string = result[index].name;
       let introduction: string = result[index].introduction;
       let subscribers: number = result[index].subscribers;
@@ -2268,7 +2268,7 @@ export class FeedService {
 
       let nodeChannelId = this.getChannelId(nodeId, id);
 
-      let channel_id = 0
+      let channel_id = "0"
       let created_at = 0
       let updated_at = 0
       // let name = ""
@@ -2347,7 +2347,7 @@ export class FeedService {
       let status = result[index].status;
       Logger.log(TAG, 'Receive result from get_channels RPC,status is ', status);
 
-      let channel_id = 0
+      let channel_id = '0'
       let created_at = 0
       let updated_at = 0
       let name = result[index].name
@@ -2472,7 +2472,7 @@ export class FeedService {
       let nodeChannelId = this.getChannelId(nodeId, channelId);
       let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
-      let channel_id = 0
+      let channel_id = '0'
       let created_at = 0
       let updated_at = 0
       // let introduction = ""
@@ -2732,12 +2732,12 @@ export class FeedService {
     if (result.length == 0) {
       this.generateSyncCommentStatus(nodeId, reqFeedsId, reqPostId, true, 0);
     }
-    if (!this.checkSyncCommentStatus(nodeId, reqFeedsId, 0)) {
+    if (!this.checkSyncCommentStatus(nodeId, reqFeedsId, "0")) {
       this.updateCommentsWithTime(
         nodeId,
         reqFeedsId,
         reqPostId,
-        this.getSyncCommentLastUpdate(nodeId, reqFeedsId, 0) - 1,
+        this.getSyncCommentLastUpdate(nodeId, reqFeedsId, "0") - 1,
         0,
         2,
       );
@@ -2928,7 +2928,7 @@ export class FeedService {
     this.updateData(nodeId);
   }
 
-  doSubscribeChannelError(nodeId: string, channelId: number) {
+  doSubscribeChannelError(nodeId: string, channelId: string) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
@@ -2950,7 +2950,7 @@ export class FeedService {
     );
   }
 
-  doUnsubscribeChannelError(nodeId: string, channelId: number) {
+  doUnsubscribeChannelError(nodeId: string, channelId: string) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
@@ -2971,8 +2971,8 @@ export class FeedService {
 
   doPostLikeError(
     nodeId: string,
-    channel_id: number,
-    post_id: number,
+    channel_id: string,
+    post_id: string,
     comment_id: number,
   ) {
     let key = this.getPostId(nodeId, channel_id, post_id);
@@ -3023,12 +3023,12 @@ export class FeedService {
 
 
   doPostUnLikeError(
-    nodeId: string,
-    channel_id: number,
-    post_id: number,
+    destDid: string,
+    channel_id: string,
+    post_id: string,
     comment_id: number,
   ) {
-    let key = this.getPostId(nodeId, channel_id, post_id);
+    let key = this.getPostId(destDid, channel_id, post_id);
 
     if (comment_id == 0) {
       let originPost = this.dataHelper.getPost(key);
@@ -3036,7 +3036,7 @@ export class FeedService {
       this.dataHelper.updatePost(key, originPost);
 
       let likesObj = this.dataHelper.generateLikes(
-        nodeId,
+        destDid,
         channel_id,
         post_id,
         0,
@@ -3050,14 +3050,14 @@ export class FeedService {
       eventBus.publish(FeedsEvent.PublishType.postDataUpdate);
     } else {
       let originComment = this.dataHelper.getComment(
-        nodeId,
+        destDid,
         channel_id,
         post_id,
         comment_id,
       );
       originComment.likes = originComment.likes + 1;
       this.dataHelper.updateComment(
-        nodeId,
+        destDid,
         channel_id,
         post_id,
         comment_id,
@@ -3065,13 +3065,13 @@ export class FeedService {
       );
 
       let commentKey = this.getLikeCommentId(
-        nodeId,
+        destDid,
         channel_id,
         post_id,
         comment_id,
       );
       let likedComment = this.dataHelper.generatedLikedComment(
-        nodeId,
+        destDid,
         channel_id,
         post_id,
         comment_id,
@@ -3142,7 +3142,7 @@ export class FeedService {
     this.storeService.remove(FeedsData.PersistenceKey.myChannelsMap);
   }
 
-  getChannelFromId(nodeId: string, id: number): FeedsData.Channels {
+  getChannelFromId(nodeId: string, id: string): FeedsData.Channels {
     let nodeChannelId = this.getChannelId(nodeId, id);
     console.log("getChannelFromId " + nodeChannelId);
     return this.dataHelper.getChannel(id.toString());
@@ -3156,43 +3156,43 @@ export class FeedService {
   }
 
   getPostFromId(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
   ): FeedsData.Post {
-    let key = this.getPostId(nodeId, channelId, postId);
+    let key = this.getPostId(destDid, channelId, postId);
     return this.dataHelper.getPost(key);
   }
 
   getCommentFromId(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Comment {
-    return this.dataHelper.getComment(nodeId, channelId, postId, commentId);
+    return this.dataHelper.getComment(destDid, channelId, postId, commentId);
   }
 
   getCommentList(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
   ): FeedsData.Comment[] {
     return this.dataHelper.getCommentList(nodeId, channelId, postId);
   }
 
   getCaptainCommentList(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
   ): FeedsData.Comment[] {
     return this.dataHelper.getCaptainCommentList(nodeId, feedId, postId);
   }
 
   getReplayCommentList(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Comment[] {
     return this.dataHelper.getReplayCommentList(
@@ -3207,33 +3207,33 @@ export class FeedService {
     return await this.dataHelper.getPostV3List();
   }
 
-  getChannelId(nodeId: string, channelId: number) {
-    return this.getKey(nodeId, channelId, 0, 0);
+  getChannelId(destDid: string, channelId: string) {
+    return this.getKey(destDid, channelId, "0", 0);
   }
 
-  getPostId(nodeId: string, channelId: number, postId: number): string {
+  getPostId(nodeId: string, channelId: string, postId: string): string {
     return this.getKey(nodeId, channelId, postId, 0);
   }
 
   getCommentId(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
-    return this.getKey(nodeId, channelId, postId, commentId);
+    return this.getKey(destDid, channelId, postId, commentId);
   }
 
   getLikeCommentId(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
-    return this.getKey(nodeId, channelId, postId, commentId);
+    return this.getKey(destDid, channelId, postId, commentId);
   }
 
-  getPostListFromChannel(nodeId: string, channelId: number) {
+  getPostListFromChannel(nodeId: string, channelId: string) {
     return this.dataHelper.getPostListFromChannel(nodeId, channelId);
   }
 
@@ -3243,7 +3243,7 @@ export class FeedService {
 
   updatePostWithTime(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     upper_bound: number,
     lower_bound: number,
     maxCount: number,
@@ -3265,7 +3265,7 @@ export class FeedService {
 
   updateMultiCommentsWithTime(
     nodeId: string,
-    feedsId: number,
+    feedsId: string,
     upper_bound: number,
     lower_bound: number,
     max_counts: number,
@@ -3273,7 +3273,7 @@ export class FeedService {
     this.feedsServiceApi.getMultiComments(
       nodeId,
       feedsId,
-      0,
+      "0",
       Communication.field.last_update,
       upper_bound,
       lower_bound,
@@ -3283,8 +3283,8 @@ export class FeedService {
 
   updateCommentsWithTime(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     upper_bound: number,
     lower_bound: number,
     max_counts: number,
@@ -3301,24 +3301,25 @@ export class FeedService {
     );
   }
 
-  updatePost(nodeId: string, feedsId: number) {
+  updatePost(nodeId: string, feedsId: string) {
     let nodeChannelId = this.getChannelId(nodeId, feedsId);
     let lastPostTime = this.dataHelper.getLastPostUpdateTime(nodeChannelId);
     this.updatePostWithTime(nodeId, feedsId, 0, lastPostTime, 0);
   }
 
-  updatePostWithId(nodeId: string, feedsId: number, from: number, to: number) {
+  updatePostWithId(nodeId: string, feedsId: string, from: number, to: number) {
     this.feedsServiceApi.getPost(nodeId, feedsId, Communication.field.id, to, from, 1, '');
   }
 
-  updatePostFromId(nodeId: string, feedsId: number) {
+  updatePostFromId(nodeId: string, feedsId: string) {
     let to = this.checkLoadPostId(nodeId, feedsId);
     if (to > 1) this.updatePostWithId(nodeId, feedsId, to, 0);
   }
 
-  checkLoadPostId(nodeId: string, feedsId: number): number {
+  checkLoadPostId(nodeId: string, feedsId: string): number {
     let feedsList = this.getPostListFromChannel(nodeId, feedsId);
-    return feedsList[feedsList.length - 1].id;
+    let id  = parseInt(feedsList[feedsList.length - 1].id);
+    return id;
   }
 
   updateSubscribedFeed() {
@@ -3349,13 +3350,13 @@ export class FeedService {
     );
   }
 
-  updateMultiComment(nodeId: string, feedsId: number) {
-    let ncpId = this.getPostId(nodeId, feedsId, 0);
+  updateMultiComment(nodeId: string, feedsId: string) {
+    let ncpId = this.getPostId(nodeId, feedsId, "0");
     let lastCommentTime = this.dataHelper.getLastCommentUpdateTime(ncpId);
     this.updateMultiCommentsWithTime(nodeId, feedsId, 0, lastCommentTime, 0);
   }
 
-  updateComment(nodeId: string, channelId: number, postId: number) {
+  updateComment(nodeId: string, channelId: string, postId: string) {
     let ncpId = this.getPostId(nodeId, channelId, postId);
     let lastCommentTime = this.dataHelper.getLastCommentUpdateTime(ncpId);
     this.updateCommentsWithTime(
@@ -3379,7 +3380,7 @@ export class FeedService {
     return list;
   }
 
-  checkFeedsIsSubscribed(nodeId: string, feedId: number): boolean {
+  checkFeedsIsSubscribed(nodeId: string, feedId: string): boolean {
     let nodeChannelId = this.getChannelId(nodeId, feedId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
     if (originChannel == null) return false;
@@ -3827,30 +3828,30 @@ export class FeedService {
       );
 
       // if(this.checkChannelIsMine(nodeId,channelId)){
-      let lastCommentUpdateKey = this.getPostId(nodeId, channelId, 0);
+      let lastCommentUpdateKey = this.getPostId(nodeId, channelId, "0");
       this.updateLastCommentUpdate(
         lastCommentUpdateKey,
         nodeId,
         channelId,
-        0,
+        "0",
         updatedAt,
       );
       // }
 
-      if (!this.checkSyncCommentStatus(nodeId, channelId, 0)) {
-        this.generateSyncCommentStatus(nodeId, channelId, 0, false, updatedAt);
+      if (!this.checkSyncCommentStatus(nodeId, channelId, "0")) {
+        this.generateSyncCommentStatus(nodeId, channelId, "0", false, updatedAt);
       }
     }
 
     let reqFeedsId = requestParams.channel_id;
     if (result.length == 0) {
-      this.generateSyncCommentStatus(nodeId, reqFeedsId, 0, true, 0);
+      this.generateSyncCommentStatus(nodeId, reqFeedsId, "0", true, 0);
     }
-    if (!this.checkSyncCommentStatus(nodeId, reqFeedsId, 0)) {
+    if (!this.checkSyncCommentStatus(nodeId, reqFeedsId, "0")) {
       this.updateMultiCommentsWithTime(
         nodeId,
         reqFeedsId,
-        this.getSyncCommentLastUpdate(nodeId, reqFeedsId, 0) - 1,
+        this.getSyncCommentLastUpdate(nodeId, reqFeedsId, "0") - 1,
         0,
         2,
       );
@@ -3879,7 +3880,7 @@ export class FeedService {
   // 更新每个频道的订阅人数
   updateLocalSubscribesCount(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     subscribesCount: number,
   ) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
@@ -3926,8 +3927,8 @@ export class FeedService {
 
   checkLikesAndCommentsCount(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     likesCount: number,
     commentsCount: number,
   ) {
@@ -4176,27 +4177,27 @@ export class FeedService {
     // }
   }
 
-  updateCommentData(nodeId: string, feedsId: number) {
+  updateCommentData(nodeId: string, feedsId: string) {
     if (this.feedsServiceApi.getServerVersionCodeByNodeId(nodeId) < Config.newCommentVersion) {
       let postList = this.getPostListFromChannel(nodeId, feedsId);
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
         let post: FeedsData.Post = postList[postIndex];
-        let postId: number = post.id;
+        let postId: string = post.id;
         this.updateComment(nodeId, feedsId, postId);
       }
     }
   }
 
-  syncMultiComment(nodeId: string, feedsId: number) {
-    if (!this.checkSyncCommentStatus(nodeId, feedsId, 0)) {
-      let lastUpdate = this.getSyncCommentLastUpdate(nodeId, feedsId, 0) - 1;
+  syncMultiComment(nodeId: string, feedsId: string) {
+    if (!this.checkSyncCommentStatus(nodeId, feedsId, "0")) {
+      let lastUpdate = this.getSyncCommentLastUpdate(nodeId, feedsId, "0") - 1;
       if (lastUpdate < 0) lastUpdate = 0;
       this.updateMultiCommentsWithTime(nodeId, feedsId, lastUpdate, 0, 2);
     } else {
       this.updateMultiComment(nodeId, feedsId);
     }
   }
-  syncCommentOld(nodeId: string, feedsId: number, postId: number) {
+  syncCommentOld(nodeId: string, feedsId: string, postId: string) {
     if (!this.checkSyncCommentStatus(nodeId, feedsId, postId)) {
       let lastUpdate =
         this.getSyncCommentLastUpdate(nodeId, feedsId, postId) - 1;
@@ -4207,20 +4208,20 @@ export class FeedService {
     }
   }
 
-  syncComment(nodeId: string, feedsId: number) {
+  syncComment(nodeId: string, feedsId: string) {
     if (this.feedsServiceApi.getServerVersionCodeByNodeId(nodeId) >= Config.newCommentVersion) {
       this.syncMultiComment(nodeId, feedsId);
     } else {
       let postList = this.getPostListFromChannel(nodeId, feedsId);
       for (let postIndex = 0; postIndex < postList.length; postIndex++) {
         const post: FeedsData.Post = postList[postIndex];
-        let postId: number = post.id;
+        let postId: string = post.id;
         this.syncCommentOld(nodeId, feedsId, postId);
       }
     }
   }
 
-  syncPost(nodeId: string, feedsId: number) {
+  syncPost(nodeId: string, feedsId: string) {
     if (!this.checkSyncPostStatus(nodeId, feedsId)) {
       let lastUpdate = this.getSyncPostLastUpdate(nodeId, feedsId) - 1;
       if (lastUpdate < 0) lastUpdate = 0;
@@ -4402,20 +4403,20 @@ export class FeedService {
     return this.dataHelper.getLikedComment(nodeChannelPostCommentId);
   }
 
-  checkMyLike(nodeId: string, channelId: number, postId: number): boolean {
-    let key = this.getKey(nodeId, channelId, postId, 0);
+  checkMyLike(destDid: string, channelId: string, postId: string): boolean {
+    let key = this.getKey(destDid, channelId, postId, 0);
     if (this.getLikeFromId(key) == null || this.getLikeFromId(key) == undefined)
       return false;
     return true;
   }
 
   checkLikedComment(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): boolean {
-    let key = this.getKey(nodeId, channelId, postId, commentId);
+    let key = this.getKey(destDid, channelId, postId, commentId);
     if (
       this.getLikedCommentFromId(key) == null ||
       this.getLikedCommentFromId(key) == undefined
@@ -4498,36 +4499,36 @@ export class FeedService {
     });
   }
 
-  removeLastPostUpdate(nodeId: string, channelId: number) {
+  removeLastPostUpdate(nodeId: string, channelId: string) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     this.dataHelper.deleteLastPostUpdate(nodeChannelId);
   }
 
-  removeLastCommentUpdate(nodeId: string, channelId: number, postId: number) {
+  removeLastCommentUpdate(nodeId: string, channelId: string, postId: string) {
     let ncpId = this.getPostId(nodeId, channelId, postId);
     this.dataHelper.deleteLastComment(ncpId);
   }
 
-  removeLikeById(nodeId: string, channelId: number, postId: number) {
+  removeLikeById(nodeId: string, channelId: string, postId: string) {
     let key = this.getKey(nodeId, channelId, postId, 0);
     this.dataHelper.deleteLikes(key);
   }
 
-  removeCommentById(nodeId: string, channelId: number, postId: number) {
+  removeCommentById(nodeId: string, channelId: string, postId: string) {
     this.dataHelper.deleteCommentFromPost(nodeId, channelId, postId);
   }
 
-  removePostById(nodeId: string, channelId: number, postId: number) {
+  removePostById(nodeId: string, channelId: string, postId: string) {
     let key = this.getPostId(nodeId, channelId, postId);
     this.dataHelper.deletePost(key);
   }
 
-  removeChannelById(nodeId: string, channelId: number) {
+  removeChannelById(nodeId: string, channelId: string) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     this.dataHelper.deleteChannel(nodeChannelId);
   }
 
-  removeUnreadStatueById(nodeId: string, channelId: number) {
+  removeUnreadStatueById(nodeId: string, channelId: string) {
     let nodeChannelId = this.getChannelId(nodeId, channelId);
     this.dataHelper.deleteUnread(nodeChannelId);
   }
@@ -4666,7 +4667,7 @@ export class FeedService {
     }
   }
 
-  checkChannelIsMine(nodeId: string, channelId: number): boolean {
+  checkChannelIsMine(nodeId: string, channelId: string): boolean {
     let channel = this.getChannelFromId(nodeId, channelId);
     if (
       channel == null ||
@@ -4679,8 +4680,8 @@ export class FeedService {
 
   checkCommentIsMine(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): boolean {
     let comment = this.dataHelper.getComment(
@@ -4809,7 +4810,7 @@ export class FeedService {
     );
   }
 
-  refreshPostById(nodeId: string, channelId: number, postId: number) {
+  refreshPostById(nodeId: string, channelId: string, postId: string) {
     let memo = {
       action: FeedsData.RequestAction.refreshPostDetail,
     };
@@ -4944,8 +4945,8 @@ export class FeedService {
     key: string,
     value: any,
     mediaType: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
     memo: FeedsData.SessionMemoData,
   ) {
@@ -5087,8 +5088,8 @@ export class FeedService {
 
   getTextKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -5097,8 +5098,8 @@ export class FeedService {
 
   getImageKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -5107,8 +5108,8 @@ export class FeedService {
 
   getImageThumbnailKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -5121,8 +5122,8 @@ export class FeedService {
 
   getVideoKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -5133,8 +5134,8 @@ export class FeedService {
 
   getVideoThumbKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -5147,8 +5148,8 @@ export class FeedService {
 
   getKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
     return this.dataHelper.getKey(nodeId, channelId, postId, commentId);
@@ -5156,13 +5157,13 @@ export class FeedService {
 
   sendData(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
     videoData: any,
     imgData: any,
-    tempId: number,
+    tempId: string,
   ) {
     let memo: FeedsData.SessionMemoData = {
       feedId: channelId,
@@ -5201,13 +5202,13 @@ export class FeedService {
 
   sendDataFromMsg(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
     videoData: any,
     imgData: any,
-    tempId: number,
+    tempId: string,
   ) {
     if (videoData != '') {
       let key = this.getVideoKey(nodeId, channelId, postId, commentId, index);
@@ -5273,8 +5274,8 @@ export class FeedService {
 
   getContentFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Content {
     if (commentId == 0) {
@@ -5291,8 +5292,8 @@ export class FeedService {
 
   getImgThumbsKeyFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.ImageThumbKey[] {
     let content = this.getContentFromId(nodeId, channelId, postId, commentId);
@@ -5304,8 +5305,8 @@ export class FeedService {
 
   getImgThumbKeyFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ): FeedsData.ImageThumbKey {
@@ -5318,8 +5319,8 @@ export class FeedService {
 
   getImgThumbKeyStrFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ): string {
@@ -5336,8 +5337,8 @@ export class FeedService {
 
   getVideoThumbKeyFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.VideoThumbKey {
     let content = this.getContentFromId(nodeId, channelId, postId, commentId);
@@ -5348,8 +5349,8 @@ export class FeedService {
 
   getVideoThumbStrFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
     let mVideoThumbKey = this.getVideoThumbKeyFromId(
@@ -5365,8 +5366,8 @@ export class FeedService {
 
   getVideoDurationFromId(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): number {
     let mVideoThumbKey = this.getVideoThumbKeyFromId(
@@ -5382,8 +5383,8 @@ export class FeedService {
 
   getContentVersion(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
     let content = this.getContentFromId(nodeId, channelId, postId, commentId);
@@ -5396,8 +5397,8 @@ export class FeedService {
 
   getContentDataSize(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
     mediaType: FeedsData.MediaType,
@@ -5544,8 +5545,8 @@ export class FeedService {
 
   removeMediaData(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ) {
     let imgThumbs = this.getImgThumbsKeyFromId(
@@ -5680,7 +5681,7 @@ export class FeedService {
   updateLastPostUpdate(
     key: string,
     nodeId: string,
-    channelId: number,
+    channelId: string,
     updatedAt: number,
   ) {
     let lastPostUpdate = this.dataHelper.getLastPostUpdate(key);
@@ -5729,8 +5730,8 @@ export class FeedService {
   updateLastCommentUpdate(
     key: string,
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     updatedAt: number,
   ) {
     let lastCommentUpdate = this.dataHelper.getLastCommentUpdate(key);
@@ -5790,8 +5791,8 @@ export class FeedService {
 
   processGetBinary(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
     mediaType: FeedsData.MediaType,
@@ -6377,14 +6378,14 @@ export class FeedService {
     );
   }
 
-  getSyncPostLastUpdate(nodeId: string, feedsId: number): number {
+  getSyncPostLastUpdate(nodeId: string, feedsId: string): number {
     let ncId = this.getChannelId(nodeId, feedsId);
     return this.dataHelper.getSyncPostStatusLastUpdateTime(ncId);
   }
 
   generateSyncPostStatus(
     nodeId: string,
-    feedsId: number,
+    feedsId: string,
     isSyncFinish: boolean,
     lastUpdate: number,
   ) {
@@ -6398,15 +6399,15 @@ export class FeedService {
     this.dataHelper.updateSyncPostStatus(ncId, syncPostStatus);
   }
 
-  checkSyncPostStatus(nodeId: string, feedsId: number): boolean {
+  checkSyncPostStatus(nodeId: string, feedsId: string): boolean {
     let ncId = this.getChannelId(nodeId, feedsId);
     return this.dataHelper.isSyncPostFinish(ncId);
   }
 
   getSyncCommentLastUpdate(
     nodeId: string,
-    feedsId: number,
-    postId: number,
+    feedsId: string,
+    postId: string,
   ): number {
     let ncpId = this.getPostId(nodeId, feedsId, postId);
     return this.dataHelper.getSyncCommentLastUpdateTime(ncpId);
@@ -6414,8 +6415,8 @@ export class FeedService {
 
   generateSyncCommentStatus(
     nodeId: string,
-    feedsId: number,
-    postId: number,
+    feedsId: string,
+    postId: string,
     isSyncFinish: boolean,
     lastUpdate: number,
   ) {
@@ -6432,8 +6433,8 @@ export class FeedService {
 
   checkSyncCommentStatus(
     nodeId: string,
-    feedsId: number,
-    postId: number,
+    feedsId: string,
+    postId: string,
   ): boolean {
     let ncpId = this.getPostId(nodeId, feedsId, postId);
     return this.dataHelper.isSyncCommnetFinish(ncpId);
@@ -6464,7 +6465,7 @@ export class FeedService {
     return this.dataHelper.generateLastTempIdData();
   }
 
-  deleteTempPostId(id: number) {
+  deleteTempPostId(id: string) {
     this.dataHelper.deleteTempIdData(id);
   }
 
@@ -6484,7 +6485,7 @@ export class FeedService {
     );
   }
 
-  sendMediaData(nodeId: string, feedId: number, tempId: number) {
+  sendMediaData(nodeId: string, feedId: string, tempId: string) {
     let key = this.getPostId(nodeId, feedId, tempId);
     let tempData = this.dataHelper.getTempData(key);
     let transDataChannel = tempData.transDataChannel;
@@ -6598,8 +6599,8 @@ export class FeedService {
         let memo: FeedsData.SessionMemoData = innerStreamErrorData.memo;
 
         if (memo == null || memo == undefined) return;
-        let feedId = memo.feedId || 0;
-        let tempId = memo.tempId || 0;
+        let feedId = memo.feedId || "0";
+        let tempId = memo.tempId || "0";
 
         let tempKey = this.getPostId(nodeId, feedId, tempId);
         let post: FeedsData.Post = this.dataHelper.getPost(tempKey);
@@ -6611,7 +6612,7 @@ export class FeedService {
     );
   }
 
-  setBinaryFinish(nodeId: string, feedId: number, tempId: number) {
+  setBinaryFinish(nodeId: string, feedId: string, tempId: string) {
     let key = this.getPostId(nodeId, feedId, tempId);
     let tempData = this.dataHelper.getTempData(key);
     if (tempData == null || tempData == undefined) return;
@@ -6625,7 +6626,7 @@ export class FeedService {
     );
   }
 
-  republishOnePost(nodeId: string, feedId: number, tempId: number) {
+  republishOnePost(nodeId: string, feedId: string, tempId: string) {
     let key = this.getPostId(nodeId, feedId, tempId);
     let tempData = this.dataHelper.getTempData(key);
     this.processRepublishPost(tempData);

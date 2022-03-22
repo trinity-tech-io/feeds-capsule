@@ -209,9 +209,9 @@ export class NotificationPage {
         this.navToChannel(nodeId, channelId);
     }
   }
-  navToChannel(nodeId: string, channelId: number) {
+  navToChannel(destDid: string, channelId: string) {
     this.removeEvent();
-    this.native.navigateForward(['/channels', nodeId, channelId], '');
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   navToPostDetail(nodeId: string, channelId: number, postId: number) {

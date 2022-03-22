@@ -9,8 +9,8 @@ export class FeedsUtil {
 
   public getKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
     return this.dataHelper.getKey(nodeId, channelId, postId, commentId);
@@ -18,21 +18,21 @@ export class FeedsUtil {
 
   public getChannelId(
     nodeId: string,
-    channelId: number) {
-    return this.getKey(nodeId, channelId, 0, 0);
+    channelId: string) {
+    return this.getKey(nodeId, channelId, "0", 0);
   }
 
   public getPostId(
     nodeId: string,
-    channelId: number,
-    postId: number): string {
+    channelId: string,
+    postId: string): string {
     return this.getKey(nodeId, channelId, postId, 0);
   }
 
   public getTextKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -41,8 +41,8 @@ export class FeedsUtil {
 
   public getImageKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -51,8 +51,8 @@ export class FeedsUtil {
 
   public getImageThumbnailKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -65,8 +65,8 @@ export class FeedsUtil {
 
   public getVideoKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {
@@ -77,8 +77,8 @@ export class FeedsUtil {
 
   public getVideoThumbKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     index: number,
   ) {

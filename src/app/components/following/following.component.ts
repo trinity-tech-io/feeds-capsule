@@ -26,7 +26,7 @@ export class FollowingComponent implements OnInit {
     return UtilService.moreNanme(name);
   }
 
-  navTo(nodeId: string, channelId: number) {
+  navTo(nodeId: string, channelId: string) {
     this.read(nodeId, channelId);
     this.toFollowPage.emit({
       nodeId: nodeId,
@@ -39,12 +39,12 @@ export class FollowingComponent implements OnInit {
     return this.feedService.parseChannelAvatar(avatar);
   }
 
-  checkUnreadNumber(nodeId: string, channelId: number): number {
+  checkUnreadNumber(nodeId: string, channelId: string): number {
     let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     return this.feedService.getUnreadNumber(nodeChannelId);
   }
 
-  read(nodeId: string, channelId: number) {
+  read(nodeId: string, channelId: string) {
     let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     this.feedService.readChannel(nodeChannelId);
   }

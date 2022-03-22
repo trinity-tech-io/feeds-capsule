@@ -490,8 +490,8 @@ export class ServerInfoPage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  navTo(nodeId: string, channelId: number) {
-    this.native.navigateForward(['/channels', nodeId, channelId], '');
+  navTo(destDid: string, channelId: string) {
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   copytext(text: any) {

@@ -239,7 +239,7 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.search);
   }
 
-  subscribe(nodeId: string, id: number) {
+  subscribe(nodeId: string, id: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -353,9 +353,9 @@ export class SearchPage implements OnInit {
     //}, 2000);
   }
 
-  navTo(nodeId: string, channelId: number) {
+  navTo(destDid: string, channelId: string) {
     this.removeSubscribe();
-    this.native.navigateForward(['/channels', nodeId, channelId], '');
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   parseChannelAvatar(avatar: string): string {
@@ -731,7 +731,7 @@ export class SearchPage implements OnInit {
     return _.find(discoverfeeds, feed) || '';
   }
 
-  getChannelOwner(nodeId: string, channelId: number) {
+  getChannelOwner(nodeId: string, channelId: string) {
     let channel = this.feedService.getChannelFromId(nodeId, channelId) || {};
     let ownerName: string = channel['owner_name'] || '';
     if (ownerName === '') {
@@ -740,7 +740,7 @@ export class SearchPage implements OnInit {
     return '@' + ownerName;
   }
 
-  getChannelDes(nodeId: string, channelId: number) {
+  getChannelDes(nodeId: string, channelId: string) {
     let channel = this.feedService.getChannelFromId(nodeId, channelId) || {};
     let channelDes: string = channel['introduction'] || '';
     if (channelDes === '') {

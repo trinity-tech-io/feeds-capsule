@@ -42,7 +42,7 @@ export class MigrateDataService {
   }
 
   //API
-  syncPostData(channelId: number): Promise<string> {
+  syncPostData(channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       console.log('Do syncPostData ============ ');
       await this.handlePostData();
@@ -51,7 +51,7 @@ export class MigrateDataService {
   }
 
   //API
-  syncCommentData(channelId: number, postId: number): Promise<string> {
+  syncCommentData(channelId: string, postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       console.log('Do syncCommentData ============ ');
       await this.handleCommentData();
@@ -70,7 +70,7 @@ export class MigrateDataService {
   }
 
   //Inner method
-  private getPostData(channelId: number) {
+  private getPostData(channelId: string) {
     try {
       const memo = { callbackMethod: FeedsData.CallbackMethod.SyncFeedsServiceData };
       this.feedsServiceApi.getPost(this.bindServer.nodeId, channelId, Communication.field.id, 0, 0, 0, memo);
@@ -80,7 +80,7 @@ export class MigrateDataService {
   }
 
   //Inner method
-  private getCommentData(channelId: number, postId: number) {
+  private getCommentData(channelId: string, postId: string) {
     try {
       const memo = { callbackMethod: FeedsData.CallbackMethod.SyncFeedsServiceData };
       this.feedsServiceApi.getComments(this.bindServer.nodeId, channelId, postId, Communication.field.id, 0, 0, 0, false, memo);

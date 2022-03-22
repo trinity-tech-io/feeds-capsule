@@ -403,8 +403,8 @@ export class UtilService {
     page: string,
     type: string,
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
   ) {
     return page + '-' + type + '-' + nodeId + '-' + feedId + '-' + postId;
   }

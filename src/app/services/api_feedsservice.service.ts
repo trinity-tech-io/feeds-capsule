@@ -55,7 +55,7 @@ export class FeedsServiceApi {
     );
   }
 
-  publishPost(nodeId: string, channelId: number, content: any, tempId: number) {
+  publishPost(nodeId: string, channelId: string, content: any, tempId: string) {
     if (!this.hasAccessToken(nodeId)) return;
 
     this.prepareTempPost(nodeId, channelId, tempId, content);
@@ -74,10 +74,10 @@ export class FeedsServiceApi {
 
   declarePost(
     nodeId: string,
-    channelId: number,
+    channelId:string,
     content: any,
     withNotify: boolean,
-    tempId: number,
+    tempId: string,
     transDataChannel: FeedsData.TransDataChannel,
     imageData: string,
     videoData: string,
@@ -127,9 +127,9 @@ export class FeedsServiceApi {
 
   notifyPost(
     nodeId: string,
-    channelId: number,
-    postId: number,
-    tempId: number,
+    channelId: string,
+    postId: string,
+    tempId: string,
   ) {
     if (!this.hasAccessToken(nodeId)) return;
     let accessToken: FeedsData.AccessToken =
@@ -167,8 +167,8 @@ export class FeedsServiceApi {
 
   postLike(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ) {
     if (!this.hasAccessToken(nodeId)) return;
@@ -190,8 +190,8 @@ export class FeedsServiceApi {
 
   postUnlike(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ) {
     if (!this.hasAccessToken(nodeId)) return;
@@ -255,7 +255,7 @@ export class FeedsServiceApi {
     );
   }
 
-  getChannelDetail(nodeId: string, id: number) {
+  getChannelDetail(nodeId: string, id: string) {
     if (!this.hasAccessToken(nodeId)) return;
     let accessToken: FeedsData.AccessToken =
       this.dataHelper.getAccessToken(nodeId) || null;
@@ -290,7 +290,7 @@ export class FeedsServiceApi {
 
   getPost(
     nodeId: string,
-    channel_id: number,
+    channel_id: string,
     by: Communication.field,
     upper_bound: number,
     lower_bound: number,
@@ -315,8 +315,8 @@ export class FeedsServiceApi {
 
   getComments(
     nodeId: string,
-    channel_id: number,
-    post_id: number,
+    channel_id: string,
+    post_id: string,
     by: Communication.field,
     upper_bound: number,
     lower_bound: number,
@@ -353,7 +353,7 @@ export class FeedsServiceApi {
     );
   }
 
-  subscribeChannel(nodeId: string, id: number) {
+  subscribeChannel(nodeId: string, id: string) {
     if (!this.hasAccessToken(nodeId)) return;
 
     let proof: string = 'NA';
@@ -374,7 +374,7 @@ export class FeedsServiceApi {
     this.doSubscribeChannelFinish(nodeId, id);
   }
 
-  unsubscribeChannel(nodeId: string, id: number) {
+  unsubscribeChannel(nodeId: string, id: string) {
     if (!this.hasAccessToken(nodeId)) return;
 
     let accessToken: FeedsData.AccessToken =
@@ -422,7 +422,7 @@ export class FeedsServiceApi {
     );
   }
 
-  editPost(nodeId: string, channelId: number, postId: number, content: any) {
+  editPost(nodeId: string, channelId: string, postId: string, content: any) {
     if (!this.hasAccessToken(nodeId)) return;
 
     let accessToken: FeedsData.AccessToken =
@@ -524,10 +524,10 @@ export class FeedsServiceApi {
     nodeId: string,
     key: string,
     content: any,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
-    tempId: number,
+    tempId: string,
   ) {
     if (!this.hasAccessToken(nodeId)) return;
 
@@ -574,8 +574,8 @@ export class FeedsServiceApi {
 
   getMultiComments(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     by: Communication.field,
     upperBound: number,
     lowerBound: number,
@@ -711,8 +711,8 @@ export class FeedsServiceApi {
 
   prepareTempPost(
     nodeId: string,
-    feedId: number,
-    tempId: number,
+    feedId: string,
+    tempId: string,
     contentText: string,
   ) {
 
@@ -736,7 +736,7 @@ export class FeedsServiceApi {
     let tempData = this.dataHelper.generateTempData(
       nodeId,
       feedId,
-      0,
+      "0",
       0,
       contentHash,
       FeedsData.SendingStatus.normal,
@@ -753,8 +753,8 @@ export class FeedsServiceApi {
 
   parseContent(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     content: any,
   ): FeedsData.Content {
@@ -788,8 +788,8 @@ export class FeedsServiceApi {
 
   parseContentV2(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     contentObj: any,
   ): FeedsData.Content {
@@ -864,8 +864,8 @@ export class FeedsServiceApi {
 
   parseContentV1(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     contentObj: any,
   ): FeedsData.Content {
@@ -942,8 +942,8 @@ export class FeedsServiceApi {
 
   parseContentV0(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     contentObj: any,
   ): FeedsData.Content {
@@ -1008,8 +1008,8 @@ export class FeedsServiceApi {
 
   prepareTempMediaPost(
     nodeId: string,
-    feedId: number,
-    tempId: number,
+    feedId: string,
+    tempId: string,
     commentId: number,
     contentReal: any,
     transDataChannel: FeedsData.TransDataChannel,
@@ -1037,7 +1037,7 @@ export class FeedsServiceApi {
     let tempData = this.dataHelper.generateTempData(
       nodeId,
       feedId,
-      0,
+      "0",
       0,
       contentHash,
       FeedsData.SendingStatus.needDeclearPost,
@@ -1053,8 +1053,8 @@ export class FeedsServiceApi {
 
   doPostLikeFinish(
     nodeId: string,
-    channel_id: number,
-    post_id: number,
+    channel_id: string,
+    post_id: string,
     comment_id: number,
   ) {
     let key = this.feedsUtil.getPostId(nodeId, channel_id, post_id);
@@ -1112,8 +1112,8 @@ export class FeedsServiceApi {
 
   doPostUnLikeFinish(
     nodeId: string,
-    channel_id: number,
-    post_id: number,
+    channel_id: string,
+    post_id: string,
     comment_id: number,
   ) {
     let key = this.feedsUtil.getPostId(nodeId, channel_id, post_id);
@@ -1160,7 +1160,7 @@ export class FeedsServiceApi {
     }
   }
 
-  doSubscribeChannelFinish(nodeId: string, channelId: number) {
+  doSubscribeChannelFinish(nodeId: string, channelId: string) {
     let nodeChannelId = this.feedsUtil.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 
@@ -1185,7 +1185,7 @@ export class FeedsServiceApi {
     );
   }
 
-  doUnsubscribeChannelFinish(nodeId: string, channelId: number) {
+  doUnsubscribeChannelFinish(nodeId: string, channelId: string) {
     let nodeChannelId = this.feedsUtil.getChannelId(nodeId, channelId);
     let originChannel = this.dataHelper.getChannel(nodeChannelId);
 

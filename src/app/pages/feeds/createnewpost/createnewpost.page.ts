@@ -49,7 +49,7 @@ export class CreatenewpostPage implements OnInit {
   public imgUrl: string = '';
   public nodeId: string = '';
   public channelIdV3: string = '';
-  public channelId: number = 0;
+  public channelId: string = "0";
 
   public posterImg: any = '';
   public flieUri: string = '';
@@ -302,7 +302,7 @@ export class CreatenewpostPage implements OnInit {
     this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, TAG)
   }
 
-  async publishPostThrowMsg(tempPostId: number) {
+  async publishPostThrowMsg(tempPostId: string) {
     let videoSize = this.flieUri.length;
     let imgSize = this.imgUrl.length;
 
@@ -314,7 +314,7 @@ export class CreatenewpostPage implements OnInit {
       this.transDataChannel = FeedsData.TransDataChannel.SESSION;
       let memo: FeedsData.SessionMemoData = {
         feedId: this.channelId,
-        postId: 0,
+        postId: "0",
         commentId: 0,
         tempId: tempPostId,
       };

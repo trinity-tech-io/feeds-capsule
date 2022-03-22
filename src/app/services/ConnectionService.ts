@@ -60,10 +60,10 @@ export class ConnectionService {
   publishPost(
     serverName: string,
     nodeId: string,
-    channelId: number,
+    channelId: string,
     content: any,
     accessToken: FeedsData.AccessToken,
-    tempId: number,
+    tempId: string,
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
@@ -109,11 +109,11 @@ export class ConnectionService {
   declarePost(
     serverName: string,
     nodeId: string,
-    channelId: number,
+    channelId: string,
     content: any,
     withNotify: boolean,
     accessToken: FeedsData.AccessToken,
-    tempId: number,
+    tempId: string,
     thumbnails: any,
     hashId: string,
     proof: string,
@@ -157,10 +157,10 @@ export class ConnectionService {
   notifyPost(
     serverName: string,
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     accessToken: FeedsData.AccessToken,
-    tempId: number,
+    tempId: string,
   ) {
     if (accessToken == null || accessToken == undefined) return;
     let memo = {
@@ -233,8 +233,8 @@ export class ConnectionService {
   postLike(
     serverName: string,
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     accessToken: FeedsData.AccessToken,
   ) {
@@ -267,8 +267,8 @@ export class ConnectionService {
   postUnlike(
     serverName: string,
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
     accessToken: FeedsData.AccessToken,
   ) {
@@ -367,7 +367,7 @@ export class ConnectionService {
   getChannelDetail(
     serverName: string,
     nodeId: string,
-    id: number,
+    id: string,
     accessToken: FeedsData.AccessToken,
     memo: any = ''
   ) {
@@ -430,7 +430,7 @@ export class ConnectionService {
   getPost(
     serverName: string,
     nodeId: string,
-    channel_id: number,
+    channel_id: string,
     by: Communication.field,
     upper_bound: number,
     lower_bound: number,
@@ -467,8 +467,8 @@ export class ConnectionService {
   getComments(
     serverName: string,
     nodeId: string,
-    channel_id: number,
-    post_id: number,
+    channel_id: string,
+    post_id: string,
     by: Communication.field,
     upper_bound: number,
     lower_bound: number,
@@ -533,7 +533,7 @@ export class ConnectionService {
   subscribeChannel(
     serverName: string,
     nodeId: string,
-    id: number,
+    id: string,
     proof: string,
     accessToken: FeedsData.AccessToken,
   ) {
@@ -562,7 +562,7 @@ export class ConnectionService {
   unsubscribeChannel(
     serverName: string,
     nodeId: string,
-    id: number,
+    id: string,
     accessToken: FeedsData.AccessToken,
   ) {
     if (accessToken == null || accessToken == undefined) return;
@@ -768,8 +768,8 @@ export class ConnectionService {
   editPost(
     serverName: string,
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     content: any,
     accessToken: FeedsData.AccessToken,
   ) {
@@ -1077,8 +1077,8 @@ export class ConnectionService {
   getMultiComments(
     serverName: string,
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     by: Communication.field,
     upperBound: number,
     lowerBound: number,

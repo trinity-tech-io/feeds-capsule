@@ -353,4 +353,3 @@ export class HiveService {
     return new InsertOptions(false, true);
   }
 }
-

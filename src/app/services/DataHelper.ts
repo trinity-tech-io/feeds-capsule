@@ -325,8 +325,8 @@ export class DataHelper {
 
   generatePost(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     content: any,
     comments: number,
     likes: number,
@@ -368,7 +368,7 @@ export class DataHelper {
       let nodeChannelId = this.getKey(
         this.postMap[keys[index]].nodeId,
         this.postMap[keys[index]].channel_id,
-        0,
+        "0",
         0,
       );
       let feed = this.getChannel(nodeChannelId);
@@ -380,7 +380,7 @@ export class DataHelper {
     return list;
   }
 
-  getPostListFromChannel(nodeId: string, channelId: number) {
+  getPostListFromChannel(nodeId: string, channelId: string) {
     let list: FeedsData.Post[] = [];
     let keys: string[] = Object.keys(this.postMap);
     // localPostList = [];
@@ -433,8 +433,8 @@ export class DataHelper {
 
   getComment(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Comment {
     if (
@@ -456,8 +456,8 @@ export class DataHelper {
 
   updateComment(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
     comment: FeedsData.Comment,
   ) {
@@ -510,7 +510,7 @@ export class DataHelper {
     this.saveData(FeedsData.PersistenceKey.commentsMap, this.commentsMap);
   }
 
-  deleteCommentFromPost(nodeId: string, feedId: number, postId: number) {
+  deleteCommentFromPost(nodeId: string, feedId: string, postId: string) {
     if (this.commentsMap == null || this.commentsMap == undefined)
       this.commentsMap = {};
     if (
@@ -530,8 +530,8 @@ export class DataHelper {
 
   getCommentList(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
   ): FeedsData.Comment[] {
     if (
       this.commentsMap == null ||
@@ -565,16 +565,16 @@ export class DataHelper {
 
   getCaptainCommentList(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
   ): FeedsData.Comment[] {
     return this.getSpecifiedCommentList(nodeId, feedId, postId, 0);
   }
 
   getReplayCommentList(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Comment[] {
     return this.getSpecifiedCommentList(nodeId, feedId, postId, commentId);
@@ -582,8 +582,8 @@ export class DataHelper {
 
   getSpecifiedCommentList(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Comment[] {
     let list: FeedsData.Comment[] = [];
@@ -783,13 +783,13 @@ export class DataHelper {
   }
 
   generateLikes(
-    nodeId: string,
-    feedId: number,
-    postId: number,
+    destDid: string,
+    feedId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.Likes {
     return {
-      nodeId: nodeId,
+      nodeId: destDid,
       channelId: feedId,
       postId: postId,
       commentId: commentId,
@@ -875,8 +875,8 @@ export class DataHelper {
 
   generatedLikedComment(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
   ): FeedsData.LikedComment {
     return {
@@ -1042,8 +1042,8 @@ export class DataHelper {
 
   generateLastCommentUpdate(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     updateTime: number,
   ): FeedsData.CommentUpdateTime {
     return {
@@ -1234,7 +1234,7 @@ export class DataHelper {
 
   generateLastPostUpdate(
     nodeId: string,
-    feedId: number,
+    feedId: string,
     updateTime: number,
   ): FeedsData.PostUpdateTime {
     return {
@@ -1748,8 +1748,8 @@ export class DataHelper {
 
   generateSyncCommentStatus(
     nodeId: string,
-    feedsId: number,
-    postId: number,
+    feedsId: string,
+    postId: string,
     isSyncFinish: boolean,
     lastUpdate: number,
   ): FeedsData.SyncCommentStatus {
@@ -1838,7 +1838,7 @@ export class DataHelper {
 
   generateSyncPostStatus(
     nodeId: string,
-    feedId: number,
+    feedId: string,
     isSyncFinish: boolean,
     lastUpdate: number,
   ): FeedsData.SyncPostStatus {
@@ -2174,10 +2174,11 @@ export class DataHelper {
     return list;
   }
 
-  deleteTempIdData(id: number) {
+  deleteTempIdData(id: string) {
     if (this.tempIdDataList == null || this.tempIdDataList == undefined)
       this.tempIdDataList = [];
-    let index = this.tempIdDataList.indexOf(id);
+    let ids = parseInt(id);
+    let index = this.tempIdDataList.indexOf(ids);
     this.tempIdDataList.splice(index, 1);
     this.saveData(FeedsData.PersistenceKey.tempIdDataList, this.tempIdDataList);
   }
@@ -2196,11 +2197,11 @@ export class DataHelper {
     return list[0];
   }
 
-  generateLastTempIdData(): number {
+  generateLastTempIdData(): string {
     let tempId = this.getLastTempIdData();
     let id = tempId + 1;
     this.appendTempIdData(id);
-    return id;
+    return id.toString();
   }
 
   ////tempDataMap
@@ -2227,15 +2228,15 @@ export class DataHelper {
 
   generateTempData(
     nodeId: string,
-    feedId: number,
-    postId: number,
+    feedId: string,
+    postId: string,
     commentId: number,
     dataHash: string,
     sendingType: FeedsData.SendingStatus,
     transDataChannel: FeedsData.TransDataChannel,
     videoData: string,
     imageData: string,
-    tempPostId: number,
+    tempPostId: string,
     tempCommentId: number,
     content: any,
   ): FeedsData.TempData {
@@ -2293,8 +2294,8 @@ export class DataHelper {
   ////
   getKey(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     commentId: number,
   ): string {
     return nodeId + '-' + channelId + '-' + postId + '-' + commentId;

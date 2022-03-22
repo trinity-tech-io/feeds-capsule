@@ -30,8 +30,8 @@ export class EditCommentPage implements OnInit {
   public newComment: string = '';
   public oldNewComment: string = '';
   public nodeId: string = '';
-  public channelId: number = 0;
-  public postId: number = 0;
+  public channelId: string = "";
+  public postId: string = "";
   public commentById: Number = 0;
   public commentId: Number = 0;
   public imgUrl: string = '';

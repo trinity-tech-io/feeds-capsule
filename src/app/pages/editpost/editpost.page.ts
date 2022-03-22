@@ -45,8 +45,8 @@ export class EditPostPage implements OnInit {
   public oldNewPost: string = '';
   public imgUrl: string = '';
   public nodeId: string = '';
-  public channelId: number = 0;
-  public postId: number = 0;
+  public channelId: string = '';
+  public postId: string = '';
 
   public posterImg: any = '';
   public flieUri: string = '';
@@ -177,7 +177,7 @@ export class EditPostPage implements OnInit {
               0,
               this.flieUri,
               this.imgUrl,
-              0,
+              '',
             );
           }
         });

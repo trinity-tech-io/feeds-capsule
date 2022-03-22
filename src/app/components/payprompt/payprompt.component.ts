@@ -20,7 +20,7 @@ export class PaypromptComponent implements OnInit {
   public disableMemo: boolean = false;
   public isAdvancedSetting: boolean = false;
   public nodeId: string = '';
-  public channelId: number = null;
+  public channelId: string = null;
   public channelAvatar: string = '';
   public channelName: string = '';
   private confirmdialog: any = null;
@@ -38,7 +38,7 @@ export class PaypromptComponent implements OnInit {
   ngOnInit() {
     this.nodeId = this.navParams.get('nodeId') || '';
     if (this.nodeId != '') {
-      this.channelId = this.navParams.get('channelId') || 0;
+      this.channelId = this.navParams.get('channelId') || "0";
       let channel = this.feedService.getChannelFromId(
         this.nodeId,
         this.channelId,

@@ -333,8 +333,8 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      channel_id: number;
-      post_id: number;
+      channel_id: string;
+      post_id: string;
       comment_id: number | null;
       proof: string;
     };
@@ -352,8 +352,8 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      channel_id: number;
-      post_id: number;
+      channel_id: string;
+      post_id: string;
       comment_id: number | 0;
     };
   };
@@ -459,7 +459,7 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      id: number;
+      id: string;
     };
   };
   type get_channel_detail_response = {
@@ -623,8 +623,8 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      channel_id: number;
-      post_id: number;
+      channel_id: string;
+      post_id: string;
       by: field;
       upper_bound: number | null;
       lower_bound: number | null;
@@ -685,7 +685,7 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      id: number;
+      id: string;
       proof: string;
     };
   };
@@ -718,7 +718,7 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      id: number;
+      id: string;
     };
   };
 
@@ -1019,8 +1019,8 @@ declare module Communication {
     id: jsonrpc_id;
     params: {
       access_token: string;
-      channel_id: number; //channel_id
-      post_id: number; //post_id
+      channel_id: string; //channel_id
+      post_id: string; //post_id
       by: field; //id
       upper_bound: number;
       lower_bound: number;

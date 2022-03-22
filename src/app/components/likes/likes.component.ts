@@ -85,7 +85,7 @@ export class LikesComponent implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  like(nodeId: string, channelId: number, postId: number) {
+  like(nodeId: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -97,11 +97,11 @@ export class LikesComponent implements OnInit {
     }
 
     if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(nodeId, Number(channelId), Number(postId), 0);
+      this.feedsServiceApi.postUnlike(nodeId, channelId, postId, 0);
       return;
     }
 
-    this.feedsServiceApi.postLike(nodeId, Number(channelId), Number(postId), 0);
+    this.feedsServiceApi.postLike(nodeId, channelId, postId, 0);
   }
 
   getContentText(content: string): string {
@@ -158,7 +158,7 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  checkMyLike(nodeId: string, channelId: number, postId: number) {
+  checkMyLike(nodeId: string, channelId: string, postId: string) {
     return this.feedService.checkMyLike(nodeId, channelId, postId);
   }
 
@@ -300,7 +300,7 @@ export class LikesComponent implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(nodeId: string, channelId: number, postId: number) {
+  clickDashang(nodeId: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;

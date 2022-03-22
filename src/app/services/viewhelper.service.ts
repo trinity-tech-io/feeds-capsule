@@ -26,8 +26,8 @@ export class ViewHelper {
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private popoverController: PopoverController,
-    private theme:ThemeService
-  ) {}
+    private theme: ThemeService
+  ) { }
 
   async openViewer(
     titleBar: TitleBarComponent,
@@ -61,7 +61,7 @@ export class ViewHelper {
     });
 
     modal.onWillDismiss().then(() => {
-      document.removeEventListener('click', event => this.testClick(modal,event), false);
+      document.removeEventListener('click', event => this.testClick(modal, event), false);
       this.titleBarService.setTitle(
         titleBar,
         this.translate.instant(oldNameKey),
@@ -73,14 +73,14 @@ export class ViewHelper {
       ) {
         this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
       }
-      isOwer  = isOwer || false;
+      isOwer = isOwer || false;
       if (isOwer) {
-        if(!this.theme.darkMode){
-          this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dot.ico");
-        }else{
-          this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dark/dot.ico");
+        if (!this.theme.darkMode) {
+          this.titleBarService.setTitleBarMoreMemu(titleBar, "channelRightMenu", "assets/icon/dot.ico");
+        } else {
+          this.titleBarService.setTitleBarMoreMemu(titleBar, "channelRightMenu", "assets/icon/dark/dot.ico");
         }
-      }else{
+      } else {
         this.titleBarService.addRight(titleBar);
       }
     });
@@ -91,33 +91,33 @@ export class ViewHelper {
       const viewerModal: any = el.querySelector("ion-viewer-modal");
       //add nft log
       isNft = isNft || "";
-      if(isNft != ""){
+      if (isNft != "") {
         let sheet1 = document.createElement('img');
-        sheet1.setAttribute('src',"/assets/images/bidfeedslogo.svg");
+        sheet1.setAttribute('src', "/assets/images/bidfeedslogo.svg");
         sheet1.setAttribute('style', 'display:block;width:90px;height:90px;top:calc(50% - 45px);left: calc(50% - 45px);z-index:10000;position:fixed;');
         viewerModal.appendChild(sheet1);
       }
 
       //removeChild
       let sheet = document.createElement('img');
-      if(this.theme.darkMode){
-        sheet.setAttribute('src',"assets/images/darkmode/bigguanbi.svg");
-      }else{
-        sheet.setAttribute('src',"assets/images/bigguanbi.svg");
+      if (this.theme.darkMode) {
+        sheet.setAttribute('src', "assets/images/darkmode/bigguanbi.svg");
+      } else {
+        sheet.setAttribute('src', "assets/images/bigguanbi.svg");
       }
       sheet.setAttribute('style', 'display:block;width:32px;height:32px;left:10px;top:10px;z-index:10000;position:fixed;');
-      sheet.addEventListener('click', event => this.testClick(modal,event),false);
+      sheet.addEventListener('click', event => this.testClick(modal, event), false);
       viewerModal.appendChild(sheet);
-      el.addEventListener('click', event => this.hide(modal,event),false);
+      el.addEventListener('click', event => this.hide(modal, event), false);
     });
   }
 
-  testClick(modal: any,e:any) {
+  testClick(modal: any, e: any) {
     modal.dismiss();
     e.stopPropagation();
 
   }
-  hide(modal: any,e:any) {
+  hide(modal: any, e: any) {
     modal.dismiss();
     e.stopPropagation();
   }
@@ -147,16 +147,16 @@ export class ViewHelper {
         titleBar,
         this.translate.instant(oldNameKey),
       );
-      if(page === "discoverfeedinfo"){
+      if (page === "discoverfeedinfo") {
         return;
       }
       this.titleBarService.setTitleBarBackKeyShown(titleBar, true);
       if (page === 'feedinfo') {
         if (isOwner) {
-          if(!this.theme.darkMode){
-            this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dot.ico");
-          }else{
-            this.titleBarService.setTitleBarMoreMemu(titleBar,"channelRightMenu","assets/icon/dark/dot.ico");
+          if (!this.theme.darkMode) {
+            this.titleBarService.setTitleBarMoreMemu(titleBar, "channelRightMenu", "assets/icon/dot.ico");
+          } else {
+            this.titleBarService.setTitleBarMoreMemu(titleBar, "channelRightMenu", "assets/icon/dark/dot.ico");
           }
         }
         return;
@@ -181,14 +181,14 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showPayPrompt(nodeId: string, channelId: number, elaAddress: string,amount?: any,memo?: any) {
+  async showPayPrompt(nodeId: string, channelId: number, elaAddress: string, amount?: any, memo?: any) {
     let amountData = amount || "";
     let memoData = memo || "";
     let popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
       component: PaypromptComponent,
-      backdropDismiss:false,
+      backdropDismiss: false,
       componentProps: {
         title: this.translate.instant('ChannelsPage.tip'),
         elaAddress: elaAddress,
@@ -213,22 +213,6 @@ export class ViewHelper {
         title: this.translate.instant(title),
         assItem: assItem,
         menuType: type,
-        },
-    });
-    popover.onWillDismiss().then(() => {
-      Logger.log(TAG, 'Promote dismiss');
-      popover = null;
-    });
-    return await popover.present();
-  }
-
-  async showGuideDialog(pageName?:string){
-    let popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass: 'PaypromptComponent',
-      component: GuidedialogComponent,
-      componentProps: {
-        pageName:pageName
       },
     });
     popover.onWillDismiss().then(() => {
@@ -238,14 +222,30 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showPublisherDialog(pageName?:string){
+  async showGuideDialog(pageName?: string) {
+    let popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'PaypromptComponent',
+      component: GuidedialogComponent,
+      componentProps: {
+        pageName: pageName
+      },
+    });
+    popover.onWillDismiss().then(() => {
+      Logger.log(TAG, 'Promote dismiss');
+      popover = null;
+    });
+    return await popover.present();
+  }
+
+  async showPublisherDialog(pageName?: string) {
 
     let popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
       component: PublisherdialogComponent,
       componentProps: {
-        pageName:pageName
+        pageName: pageName
       },
     });
     popover.onWillDismiss().then(() => {
@@ -259,11 +259,11 @@ export class ViewHelper {
     let popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'genericPopup',
-      component:NfttransferdialogComponent,
+      component: NfttransferdialogComponent,
       componentProps: {
         title: this.translate.instant(title),
         assItem: assItem
-        },
+      },
     });
     popover.onWillDismiss().then(() => {
       Logger.log(TAG, 'Promote dismiss');

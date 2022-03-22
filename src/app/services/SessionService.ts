@@ -745,9 +745,9 @@ function parseResponse(response: any) {
   cacheData[nodeId].method = method;
 
   let memo = request.memo;
-  let tempId = 0;
-  let feedId = 0;
-  let postId = 0;
+  let tempId = "0";
+  let feedId = "0";
+  let postId = "0";
   let commentId = 0;
   if (memo != null || memo != undefined) {
     feedId = memo.feedId;

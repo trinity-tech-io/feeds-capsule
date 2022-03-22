@@ -16,8 +16,8 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 @Injectable()
 export class MenuService {
   public nodeId: string = '';
-  public channelId: number = 0;
-  public postId: number = 0;
+  public channelId: string = "0";
+  public postId: string = "0";
   public commentId: number = 0;
   public saleOrderId: any = '';
   public assItem: any = {};
@@ -49,9 +49,9 @@ export class MenuService {
 
   async showChannelMenu(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     channelName: string,
-    postId: number,
+    postId: string,
   ) {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -114,9 +114,9 @@ export class MenuService {
 
   async showShareMenu(
     nodeId?: string,
-    channelId?: number,
+    channelId?: string,
     channelName?: string,
-    postId?: number,
+    postId?: string,
   ) {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -201,7 +201,7 @@ export class MenuService {
 
   async showUnsubscribeMenu(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     channelName: string,
   ) {
     this.postDetail = await this.actionSheetController.create({
@@ -238,7 +238,7 @@ export class MenuService {
     await this.postDetail.present();
   }
 
-  async showUnsubscribeMenuWithoutName(nodeId: string, channelId: number) {
+  async showUnsubscribeMenuWithoutName(nodeId: string, channelId: string) {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
@@ -292,9 +292,9 @@ export class MenuService {
 
   async showPostDetailMenu(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     channelName: string,
-    postId: number,
+    postId: string,
   ) {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -362,9 +362,9 @@ export class MenuService {
 
   async showHomeMenu(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     channelName: string,
-    postId: number,
+    postId: string,
   ) {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -446,9 +446,9 @@ export class MenuService {
 
   async handlePostDetailMenun(
     nodeId: string,
-    channelId: number,
+    channelId: string,
     channelName: string,
-    postId: number,
+    postId: string,
     clickName: string,
   ) {
     this.nodeId = nodeId;

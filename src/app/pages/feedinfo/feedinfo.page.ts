@@ -29,7 +29,7 @@ export class FeedinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
   public nodeId: string = '';
-  public channelId: number = 0;
+  public channelId: string = '';
   public name: string = '';
   public des: string = '';
   public channelAvatar = '';
@@ -173,7 +173,7 @@ export class FeedinfoPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.search);
   }
 
-  checkFollowStatus(nodeId: string, channelId: number) {
+  checkFollowStatus(nodeId: string, channelId: string) {
     let channelsMap = this.feedService.getChannelsMap();
     let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     if (
@@ -244,7 +244,7 @@ export class FeedinfoPage implements OnInit {
   unsubscribe() {
     this.menuService.showUnsubscribeMenuWithoutName(
       this.nodeId,
-      Number(this.channelId),
+      this.channelId,
     );
   }
 

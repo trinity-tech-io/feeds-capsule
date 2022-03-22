@@ -48,8 +48,8 @@ export class PostdetailPage implements OnInit {
   public captainCommentList: any = [];
 
   public nodeId: string = '';
-  public channelId: number = 0;
-  public postId: number = 0;
+  public channelId: string = "0";
+  public postId: string = "";
   public startIndex: number = 0;
   public pageNumber: number = 5;
   public totalData: any = [];
@@ -703,16 +703,16 @@ export class PostdetailPage implements OnInit {
   checkMyLike() {
     return this.feedService.checkMyLike(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
     );
   }
 
   checkLikedComment(commentId: number) {
     return this.feedService.checkLikedComment(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
       commentId,
     );
   }
@@ -731,8 +731,8 @@ export class PostdetailPage implements OnInit {
     if (this.checkMyLike()) {
       this.feedsServiceApi.postUnlike(
         this.nodeId,
-        Number(this.channelId),
-        Number(this.postId),
+        this.channelId,
+        this.postId,
         0,
       );
       return;
@@ -740,8 +740,8 @@ export class PostdetailPage implements OnInit {
 
     this.feedsServiceApi.postLike(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
       0,
     );
   }
@@ -760,8 +760,8 @@ export class PostdetailPage implements OnInit {
     if (this.checkLikedComment(commentId)) {
       this.feedsServiceApi.postUnlike(
         this.nodeId,
-        Number(this.channelId),
-        Number(this.postId),
+        this.channelId,
+        this.postId,
         commentId,
       );
       return;
@@ -769,8 +769,8 @@ export class PostdetailPage implements OnInit {
 
     this.feedsServiceApi.postLike(
       this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
+      this.channelId,
+      this.postId,
       commentId,
     );
   }
@@ -786,14 +786,14 @@ export class PostdetailPage implements OnInit {
     if (isMine === 0 && this.postStatus != 1) {
       this.menuService.showPostDetailMenu(
         this.nodeId,
-        Number(this.channelId),
+        this.channelId,
         this.channelName,
         this.postId,
       );
     } else {
       this.menuService.showShareMenu(
         this.nodeId,
-        Number(this.channelId),
+        this.channelId,
         this.channelName,
         this.postId,
       );
@@ -1073,16 +1073,16 @@ export class PostdetailPage implements OnInit {
     return 1;
   }
 
-  navTo(nodeId: string, channelId: number) {
-    this.native.navigateForward(['/channels', nodeId, channelId], '');
+  navTo(destDid: string, channelId: string) {
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   checkCommentIsMine(comment: any) {
     let commentId = comment.id;
     let isOwnComment = this.feedService.checkCommentIsMine(
       comment.nodeId,
-      Number(comment.channel_id),
-      Number(comment.post_id),
+      comment.channel_id,
+      comment.post_id,
       Number(comment.id),
     );
     this.isOwnComment[commentId] = isOwnComment;
@@ -1470,7 +1470,7 @@ export class PostdetailPage implements OnInit {
       },
     });
   }
-  retry(nodeId: string, feedId: number, postId: number) {
+  retry(nodeId: string, feedId: string, postId: string) {
     this.feedService.republishOnePost(nodeId, feedId, postId);
   }
 }

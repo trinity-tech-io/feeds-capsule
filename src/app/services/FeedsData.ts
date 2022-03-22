@@ -240,23 +240,23 @@ declare namespace FeedsData {
   };
 
   type SessionMemoData = {
-    feedId: number;
-    postId: number;
+    feedId: string;
+    postId: string;
     commentId: number;
-    tempId: number;
+    tempId: string;
   };
 
   type TempData = {
     nodeId: string;
-    feedId: number;
-    tempPostId: number;
+    feedId: string;
+    tempPostId: string;
     tempCommentId: number;
     dataHash: string;
     status: SendingStatus;
     transDataChannel: TransDataChannel;
     videoData: string;
     imageData: string;
-    postId: number;
+    postId: string;
     commentId: number;
     content: any;
   };
@@ -353,7 +353,7 @@ declare namespace FeedsData {
   type FeedUrl = {
     did: string;
     carrierAddress: string;
-    feedId: number;
+    feedId: string;
     feedName: string;
     feedUrl: string;
     serverUrl: string;
@@ -363,7 +363,7 @@ declare namespace FeedsData {
     nodeId: string;
     did: string;
     carrierAddress: string;
-    feedId: number;
+    feedId: string;
     feedName: string;
     feedUrl: string;
     serverUrl: string;
@@ -383,7 +383,7 @@ declare namespace FeedsData {
     commentsMapV3 = 'commentsMapV3',
     likeMapV3 = 'likeMapV3',
 
-    
+
     ///////////////////////////////
     signInData = 'signInData',
     lastSignInData = 'lastSignInData',
@@ -448,8 +448,8 @@ declare namespace FeedsData {
 
   type Likes = {
     nodeId: string;
-    channelId: number;
-    postId: number;
+    channelId: string;
+    postId: string;
     commentId: number;
   };
 
@@ -471,8 +471,8 @@ declare namespace FeedsData {
 
   type Details = {
     nodeId: string;
-    channelId: number;
-    postId: number;
+    channelId: string;
+    postId: string;
     commentId: number;
   };
 
@@ -488,7 +488,7 @@ declare namespace FeedsData {
 
   type PostUpdateTime = {
     nodeId: string;
-    channelId: number;
+    channelId: string;
     time: number;
   };
 
@@ -499,8 +499,8 @@ declare namespace FeedsData {
 
   type CommentUpdateTime = {
     nodeId: string;
-    channelId: number;
-    postId: number;
+    channelId: string;
+    postId: string;
     time: number;
   };
 
@@ -530,7 +530,7 @@ declare namespace FeedsData {
   };
 
   type Channels = {
-    channel_id: number;
+    channel_id: string;
     created_at: number;
     updated_at: number;
     name: string;
@@ -541,7 +541,7 @@ declare namespace FeedsData {
 
     // 旧
     nodeId: string;
-    id: number;
+    id: string;
     // name: string;
     // introduction: string;
     owner_name: string;
@@ -555,8 +555,8 @@ declare namespace FeedsData {
 
   type Comment = {
     nodeId: string;
-    channel_id: number;
-    post_id: number;
+    channel_id: string;
+    post_id: string;
     id: number;
     comment_id: number | 0;
     user_name: string;
@@ -570,8 +570,8 @@ declare namespace FeedsData {
 
   type LikedComment = {
     nodeId: string;
-    channel_id: number;
-    post_id: number;
+    channel_id: string;
+    post_id: string;
     id: number;
   };
 
@@ -585,15 +585,15 @@ declare namespace FeedsData {
     // created_at: number;
     // update_at: number;
     // content: FeedsData.Content;
-    // status: number; // 2除删已 1改修已 0通普 
+    // status: number; // 2除删已 1改修已 0通普
     // memo: number;
     // type: number;
     // tag: number;
 
     // 旧
     nodeId: string;
-    channel_id: number;
-    id: number;
+    channel_id: string;
+    id: string;
     content: FeedsData.Content;
     comments: number;
     likes: number;
@@ -625,15 +625,15 @@ declare namespace FeedsData {
 
   type SyncPostStatus = {
     nodeId: string;
-    feedsId: number;
+    feedsId: string;
     isSyncFinish: boolean;
     lastUpdate: number;
   };
 
   type SyncCommentStatus = {
     nodeId: string;
-    feedsId: number;
-    postId: number;
+    feedsId: string;
+    postId: string;
     isSyncFinish: boolean;
     lastUpdate: number;
   };
@@ -983,7 +983,7 @@ declare namespace FeedsData {
     memo: string
   }
 
-  // 新添加 
+  // 新添加
   type originMediaDataV3 = {
     size: number,
     type: string,

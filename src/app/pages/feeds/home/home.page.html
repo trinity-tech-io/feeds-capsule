@@ -59,17 +59,17 @@
       id={{post.destDid}}-{{post.postId}}-{{post.channelId}}-{{post.content.mediaType}}>
       <ion-row class="post-row">
         <ion-col class="img-col" size="2">
-          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.nodeId, post.channel_id,post.id)">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.destDid,post.channelId,post.postId)">
             <img src={{parseAvatar(post.destDid,post.channelId)}}>
             <div class="feed-source-card-status">
-              <div class="offline" [class.online]="nodeStatus[post.nodeId] == 0"></div>
+              <div class="offline" [class.online]="nodeStatus[post.destDid] == 0"></div>
             </div>
           </div>
         </ion-col>
         <ion-col class="content-col" size="10">
           <ion-row class="top-row">
             <ion-col class="left-col" size="11">
-              <ion-label (click)="navTo(post.nodeId, post.channel_id,post.id)">
+              <ion-label (click)="navTo(post.destDid, post.channelId, post.postId)">
                 {{ getChannelName(post.postId, post.channelId, post.destDid) }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
@@ -84,26 +84,26 @@
 
           <h2 *ngIf="post.status!='1'">
             <div *ngIf="getPostContentTextSize(post.content.content)<=maxTextSize"
-              (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
+              (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content.content) | html"></pre>
             </div>
             <div *ngIf="getPostContentTextSize(post.content.content)>maxTextSize"
-              (click)="navToPostDetail(post.nodeId, post.channel_id, post.id,$event)">
+              (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentShortText(post) | html"></pre>
               <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
             </div>
           </h2>
-          <h2 (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)" *ngIf="post.post_status===1">
+          <h2 (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" *ngIf="post.status===1">
             <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
           </h2>
 
           <div *ngIf="post.status!=1&&post.content.mediaType ===1" id={{post.destDid}}-{{post.postId}}-{{post.channeld}}rpostimg
             style="width: 100%">
-            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channeld, post.postId)"></span>
 
           <div style="position:relative;">
             <app-percentageloading
-            *ngIf="isImgPercentageLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+            *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
             [ngStyle]="imgloadingStyleObj"
             [percent]="imgPercent"
             [rotateNum]="imgRotateNum"
@@ -111,32 +111,32 @@
             </app-percentageloading>
 
           <app-roundloading
-          *ngIf="isImgLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+          *ngIf="isImgLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
           [ngStyle]="imgloadingStyleObj"
           >
           </app-roundloading>
             <img
-            id ={{post.destDid}}-{{post.postId}}-{{post.channelId}}postimg
+            id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimg
             class="post-img"
             src="assets/images/loading.png"
             style="width: 100%;"
-            (click)="showBigImage(post.nodeId,post.channel_id,post.id)">
+            (click)="showBigImage(post.destDid,post.channelId,post.postId)">
             <img src="./assets/images/avatar.svg" class="avatarImg"
-              id={{post.destDid}}-{{post.postId}}-{{post.channeld}}homebidAvatar />
+              id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebidAvatar />
             <img src="./assets/images/videoTypeIcon.svg" class="avatarImg"
-              id={{post.destDid}}-{{post.postId}}-{{post.channeld}}homebidVideo />
+              id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebidVideo />
             <img src="./assets/images/bidfeedslogo.svg" class="bidLogoImg"
-              id={{post.destDid}}-{{post.postId}}-{{post.channeld}}homebidfeedslogo />
-            <div class="buyContainer" id={{post.destDid}}-{{post.postId}}-{{post.channeld}}homebuy>
+              id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebidfeedslogo />
+            <div class="buyContainer" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebuy>
                <ion-row>
                  <ion-col size="8" class="pricecol">
                   <span class="price" [class.darkPrice]="theme.darkMode"
-                    id={{post.destDid}}-{{post.postId}}-{{post.channeld}}homeNftPrice></span><img
+                    id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homeNftPrice></span><img
                     style="vertical-align:middle;margin-left:4px;
                   " src="assets/images/purpleblue.svg"/>
                   <div class="quantity" [class.darkQuantity]="theme.darkMode">{{"common.quantity"|translate}}: <span
-                      id={{post.destDid}}-{{post.postId}}-{{post.channeld}}homeNftQuantity></span>/<span
-                      id={{post.nodeId}}-{{post.channel_id}}-{{post.id}}homeMaxNftQuantity></span></div>
+                      id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homeNftQuantity></span>/<span
+                      id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homeMaxNftQuantity></span></div>
                  </ion-col>
                  <ion-col size="4">
                   <ion-button (click)="buy(post)">
@@ -145,21 +145,21 @@
                  </ion-col>
               </ion-row>
             </div>
-            <span class="topostdetailimg" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+            <span class="topostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
           </div>
           </div>
 
-          <div *ngIf="post.post_status!=1&&post.content.mediaType ===2"
-            id={{post.destDid}}-{{post.postId}}-{{post.channeld}}vgplayer style="width: 100%;position:relative;">
+          <div *ngIf="post.status!=1&&post.content.mediaType ===2"
+            id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
 
             <app-roundloading
-            *ngIf="isVideoLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+            *ngIf="isVideoLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
             [ngStyle]="videoloadingStyleObj"
             >
             </app-roundloading>
 
             <app-percentageloading
-            *ngIf="isVideoPercentageLoading[post.nodeId+'-'+post.channel_id+'-'+post.id]"
+            *ngIf="isVideoPercentageLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
             [ngStyle]="videoloadingStyleObj"
             [percent]="videoPercent"
             [rotateNum]="videoRotateNum"
@@ -167,36 +167,35 @@
             </app-percentageloading>
 
               <div style="width:100%;height:200px;display:inline-block;">
-                <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+                <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channeld, post.postId)"></span>
                 <vg-player>
-                  <vg-overlay-play id={{post.destDid}}-{{post.postId}}-{{post.channeld}}vgoverlayplayhome></vg-overlay-play>
-                  <vg-controls id={{post.destDid}}-{{post.postId}}-{{post.channeld}}vgcontrolshome style="display: none;">
-                    <img class="vgfullscreen" id={{post.destDid}}-{{post.postId}}-{{post.channeld}}vgfullscreenhome
-                      src="assets/images/fullscreen.svg" />
+                  <vg-overlay-play id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
+                  <vg-controls id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgcontrolshome style="display: none;">
+                    <img class="vgfullscreen" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgfullscreenhome
+                      src="assets/images/fullscreen.svg"/>
                   </vg-controls>
 
-              <video #media [vgMedia]="media" id={{post.destDid}}-{{post.postId}}-{{post.channeld}}video
+              <video #media [vgMedia]="media" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}video
               poster="assets/images/loading.png"
               playsinline webkit-playsinline>
-              <source type="video/mp4" id={{post.destDid}}-{{post.postId}}-{{post.channeld}}source>
+              <source type="video/mp4" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}source>
               </video>
               </vg-player>
              </div>
-             <span class="topostdetailvideo" (click)="navToPostDetail(post.nodeId, post.channel_id, post.id)"></span>
+             <span class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channeld, post.postId)"></span>
             </div>
-
           <ion-row class="bottom-row">
-            <ion-col size="2.25" (click)="like(post.nodeId, post.channel_id, post.id)">
-              <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
-              <img [src]="checkMyLike(post.nodeId, post.channel_id, post.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-              <ion-label [class.liked]="checkMyLike(post.nodeId, post.channel_id, post.id)">{{ post.likes }}</ion-label>
+            <ion-col size="2.25" (click)="like(post.destDid, post.channelId, post.postId)">
+              <img [src]="checkMyLike(post.destDid, post.channelId, post.postId) ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+              <img [src]="checkMyLike(post.destDid, post.channelId, post.postId) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+              <ion-label [class.liked]="checkMyLike(post.destDid, post.channelId, post.postId)">{{ post.likes }}</ion-label>
             </ion-col>
-            <ion-col size="2.25" (click)="showComment(post.nodeId, post.channel_id, post.id)">
+            <ion-col size="2.25" (click)="showComment(post.destDid, post.channeld, post.postId)">
               <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
               <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
               <ion-label>{{ post.comments }}</ion-label>
             </ion-col>
-            <ion-col (click)="clickDashang(post.nodeId, post.channel_id, post.id)" *ngIf="isAndroid">
+            <ion-col (click)="clickDashang(post.destDid, post.channeld, post.postId)" *ngIf="isAndroid">
               <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
               <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
 
@@ -208,7 +207,7 @@
             </ion-col>
           </ion-row>
 
-         <ion-row *ngIf="post.post_status === 12" class="bottom-row">
+         <ion-row *ngIf="post.status === 12" class="bottom-row">
             <ion-col size="2.25">
             </ion-col>
             <ion-col size="2.25">
@@ -289,7 +288,7 @@
 <app-comment
   *ngIf="!hideComment"
   [postId]="postId"
-  [nodeId]="nodeId "
+  [nodeId]="nodeId"
   [channelId]="channelId"
   [channelAvatar]="channelAvatar"
   [channelName]="channelName"

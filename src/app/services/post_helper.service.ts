@@ -149,7 +149,7 @@ export class PostHelperService {
             }
           }
         }
-        // TODO Video data 
+        // TODO Video data
 
         if (videoData) {
           const videoBlob = this.base64ToBlob(videoData.video);
@@ -237,7 +237,7 @@ export class PostHelperService {
             }
           }
         }
-        // TODO Video data 
+        // TODO Video data
 
         if (videoData) {
           const videoBlob = this.base64ToBlob(videoData.video);

@@ -70,9 +70,9 @@ export class HomePage implements OnInit {
   public hideComment = true;
 
   // For comment component
-  public postId = null;
-  public nodeId = null;
-  public channelId = null;
+  public postId: string = '';
+  public destDid: string = '';
+  public channelId: string = '';
   public channelAvatar = null;
   public channelName = null;
   public onlineStatus = null;
@@ -782,7 +782,7 @@ export class HomePage implements OnInit {
 
   ionViewWillUnload() { }
 
-  getChannel(nodeId: string, channelId: number): any {
+  getChannel(nodeId: string, channelId: string): any {
     return this.feedService.getChannelFromId(nodeId, channelId);
   }
   // 新增
@@ -823,41 +823,41 @@ export class HomePage implements OnInit {
   ngOnInit() {
   }
 
-  like(nodeId: string, channelId: number, postId: number) {
+  like(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
+    if (this.checkServerStatus(destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
 
-    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    let post = this.feedService.getPostFromId(destDid, channelId, postId);
     if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(nodeId, Number(channelId), Number(postId), 0);
+    if (this.checkMyLike(destDid, channelId, postId)) {
+      this.feedsServiceApi.postUnlike(destDid,channelId,postId, 0);
       return;
     }
 
-    this.feedsServiceApi.postLike(nodeId, Number(channelId), Number(postId), 0);
+    this.feedsServiceApi.postLike(destDid, channelId, postId, 0);
   }
 
-  navTo(nodeId: string, channelId: number, postId: number) {
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+  navTo(destDid: string, channelId: string, postId: number) {
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.clearData();
-    this.native.getNavCtrl().navigateForward(['/channels', nodeId, channelId]);
+    this.native.navigateForward(['/channels', destDid, channelId],"");
   }
 
   navToPostDetail(
-    nodeId: string,
-    channelId: number,
-    postId: number,
+    destDid: string,
+    channelId: string,
+    postId: string,
     event?: any,
   ) {
-    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    let post = this.feedService.getPostFromId(destDid, channelId, postId);
     if (!this.feedService.checkPostIsAvalible(post)) return;
 
     if (this.isPress) {
@@ -874,15 +874,15 @@ export class HomePage implements OnInit {
         return;
       }
     }
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.clearData();
     this.native
       .getNavCtrl()
-      .navigateForward(['/postdetail', nodeId, channelId, postId]);
+      .navigateForward(['/postdetail', destDid, channelId, postId]);
   }
 
-  checkMyLike(nodeId: string, channelId: number, postId: number) {
-    return this.feedService.checkMyLike(nodeId, channelId, postId);
+  checkMyLike(destDid: string, channelId: string, postId: string) {
+    return this.feedService.checkMyLike(destDid, channelId, postId);
   }
 
   exploreFeeds() {
@@ -930,30 +930,30 @@ export class HomePage implements OnInit {
     return obj.content;
   }
 
-  menuMore(post: FeedsData.Post) {
-    if (!this.feedService.checkPostIsAvalible(post)) return;
+  menuMore(post: FeedsData.PostV3) {
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    let channel = this.getChannel(post.nodeId, post.channel_id);
-    if (channel == null || channel == undefined) return;
-    let channelName = channel.name;
-    this.pauseAllVideo();
+    // let channel = this.getChannel(post.nodeId, post.channel_id);
+    // if (channel == null || channel == undefined) return;
+    // let channelName = channel.name;
+    // this.pauseAllVideo();
 
-    let isMine = this.checkChannelIsMine(post.nodeId, post.channel_id);
-    if (isMine === 0 && post.post_status != 1) {
-      this.menuService.showHomeMenu(
-        post.nodeId,
-        Number(post.channel_id),
-        channelName,
-        Number(post.id),
-      );
-    } else {
-      this.menuService.showChannelMenu(
-        post.nodeId,
-        Number(post.channel_id),
-        channelName,
-        Number(post.id),
-      );
-    }
+    // let isMine = this.checkChannelIsMine(post.nodeId, post.channel_id);
+    // if (isMine === 0 && post.post_status != 1) {
+    //   this.menuService.showHomeMenu(
+    //     post.nodeId,
+    //     Number(post.channel_id),
+    //     channelName,
+    //     Number(post.id),
+    //   );
+    // } else {
+    //   this.menuService.showChannelMenu(
+    //     post.nodeId,
+    //     Number(post.channel_id),
+    //     channelName,
+    //     Number(post.id),
+    //   );
+    // }
   }
 
   getChannelName(postId: string, channelId: string, destDid: string) {
@@ -1120,7 +1120,7 @@ export class HomePage implements OnInit {
   }
 
   checkChannelIsMine(nodeId: string, channelId: number) {
-    if (this.feedService.checkChannelIsMine(nodeId, channelId)) return 0;
+    // if (this.feedService.checkChannelIsMine(nodeId, channelId)) return 0;
 
     return 1;
   }
@@ -1152,9 +1152,9 @@ export class HomePage implements OnInit {
   }
 
   hideComponent(event) {
-    this.postId = null;
-    this.channelId = null;
-    this.nodeId = null;
+    this.postId = "";
+    this.channelId = "";
+    this.destDid = "";
     this.channelAvatar = null;
     this.channelName = null;
     this.onlineStatus = null;
@@ -1171,12 +1171,11 @@ export class HomePage implements OnInit {
         let arr = srcId.split('-');
         let destDid = arr[0];
         let postId = arr[1];
-        let channel_id = arr[2];
+        let channelId = arr[2];
         let mediaType = arr[3];
-        // let id = nodeId + '-' + channelId + '-' + postId;
         //postImg
         if (mediaType === '1') {
-          this.handlePsotImg(destDid, postId, channel_id, postgridindex);
+          this.handlePostImg(destDid, postId,channelId, postgridindex);
         }
         if (mediaType === '2') {
           //video
@@ -1207,11 +1206,11 @@ export class HomePage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  showBigImage(nodeId: string, channelId: number, postId: number) {
+  showBigImage(destDid: string, channelId: string, postId: string) {
     this.pauseAllVideo();
     this.zone.run(() => {
 
-      let imagesId = nodeId + '-' + channelId + '-' + postId + 'postimg';
+      let imagesId = destDid + '-' + channelId + '-' + postId + 'postimg';
       let imagesObj = document.getElementById(imagesId);
       let imagesWidth = imagesObj.clientWidth;
       let imagesHeight = imagesObj.clientHeight;
@@ -1220,28 +1219,28 @@ export class HomePage implements OnInit {
         (imagesWidth - this.roundWidth) / 2 + 'px';
       this.imgloadingStyleObj['top'] =
         (imagesHeight - this.roundWidth) / 2 + 'px';
-      this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
+      this.imgCurKey = destDid + '-' + channelId + '-' + postId;
       this.isImgLoading[this.imgCurKey] = true;
 
       let contentVersion = this.feedService.getContentVersion(
-        nodeId,
+        destDid,
         channelId,
         postId,
         0,
       );
       let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-        nodeId,
+        destDid,
         channelId,
         postId,
         0,
         0,
       );
-      let key = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
+      let key = this.feedService.getImageKey(destDid, channelId, postId, 0, 0);
       if (contentVersion == '0') {
         key = thumbkey;
       }
 
-      const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+      const content: FeedsData.Content = this.feedService.getContentFromId(destDid, channelId, postId, 0);
       if (content.version == '2.0') {
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
@@ -1270,7 +1269,7 @@ export class HomePage implements OnInit {
           let post =
             _.find(this.postList, item => {
               return (
-                item.nodeId === nodeId &&
+                item.nodeId === destDid &&
                 item.channel_id === channelId &&
                 item.id === postId
               );
@@ -1290,7 +1289,7 @@ export class HomePage implements OnInit {
         } else {
           let post = _.find(this.postList, post => {
             return (
-              post.nodeId === nodeId &&
+              post.nodeId === destDid &&
               post.channel_id == channelId &&
               post.id == postId
             );
@@ -1299,7 +1298,7 @@ export class HomePage implements OnInit {
             this.isImgLoading[this.imgCurKey] = false;
             return;
           }
-          if (this.checkServerStatus(nodeId) != 0) {
+          if (this.checkServerStatus(destDid) != 0) {
             this.isImgLoading[this.imgCurKey] = false;
             this.native.toastWarn('common.connectionError1');
             return;
@@ -1311,10 +1310,10 @@ export class HomePage implements OnInit {
             return;
           }
 
-          this.imgDownStatusKey = nodeId + '-' + channelId + '-' + postId;
+          this.imgDownStatusKey = destDid + '-' + channelId + '-' + postId;
           this.cachedMediaType = 'img';
           this.feedService.processGetBinary(
-            nodeId,
+            destDid,
             channelId,
             postId,
             0,
@@ -1327,7 +1326,7 @@ export class HomePage implements OnInit {
                 this.imgDownStatus[this.imgDownStatusKey] = '1';
                 this.isImgLoading[this.imgDownStatusKey] = false;
                 this.isImgPercentageLoading[this.imgDownStatusKey] = true;
-                this.curNodeId = nodeId;
+                this.curNodeId = destDid;
                 return;
               }
 
@@ -1349,262 +1348,76 @@ export class HomePage implements OnInit {
     });
   }
 
-  async handlePsotImg(destDid: string, postId: string, channelId: string, rowindex: number) {
+  async handlePostImg(destDid: string, postId: string, channelId: string, rowindex: number) {
     // 13 存在 12不存在
 
-    let id = destDid + '-' + postId + '-' + channelId;
-
+    let id = destDid + '-' + channelId + '-' + postId;
     let isload = this.isLoadimage[id] || '';
     let rpostimg = document.getElementById(id + 'rpostimg');
     let postImage = document.getElementById(id + 'postimg');
 
-    let post = await this.dataHelper.getPostV3ById(destDid, postId);
-    let mediaDatas = post.content.mediaData;
+    // let post = await this.dataHelper.getPostV3ById(destDid, postId);
+    // let mediaDatas = post.content.mediaData;
 
-    const elements = mediaDatas[0];
+    // const elements = mediaDatas[0];
 
-    let target = postImage.getAttribute('src');
-    if (target != 'assets/images/loading.png') {
-      return;
-    }
-
-    this.hiveVaultController.downloadScripting(destDid, elements.thumbnailPath)
-      .then((value) => {
-        let thumbImage = value || "";
-        console.log("handlePsotImg  thumbImage ====== ", thumbImage);
-        postImage.setAttribute('src', thumbImage);
-      })
-      .catch(() => {
-        //TODO
-      });
-
-
-    // try {
-    //   if (
-    //     id != '' &&
-    //     postImage.getBoundingClientRect().top >= -100 &&
-    //     postImage.getBoundingClientRect().top <= this.clientHeight
-    //   ) {
-    //     if (isload === '') {
-    //       this.isLoadimage[id] = '11';
-    //       let arr = srcId.split('-');
-    //       let nodeId = arr[0];
-    //       let channelId: any = arr[1];
-    //       let postId: any = arr[2];
-
-    //       let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
-    //       let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-    //         nodeId,
-    //         channelId,
-    //         postId,
-    //         0,
-    //         0,
-    //       );
-    //       let nftOrdeId = this.isNftOrderId(
-    //         nodeId,
-    //         parseInt(channelId),
-    //         parseInt(postId),
-    //       );
-    //       let priceDes = '';
-    //       let nftQuantity = '';
-    //       let nftType = "";
-    //       if (nftOrdeId != '') {
-    //         // let nftOrder = await this.handlePrice(nftOrdeId);
-    //         let nftOrder = await this.nftContractHelperService.getOrderInfo(nftOrdeId);
-    //         let price = '';
-    //         if (nftOrder != null) {
-    //           nftQuantity = String(nftOrder.amount);
-    //           price = String(nftOrder.price);
-    //         }
-    //         if (price != '') {
-    //           priceDes =
-    //             this.nftContractControllerService.transFromWei(
-    //               price.toString(),
-    //             ) + ' ELA';
-    //         }
-    //       }
-    //       let contentVersion = this.feedService.getContentVersion(
-    //         nodeId,
-    //         channelId,
-    //         postId,
-    //         0,
-    //       );
-
-    //       if (contentVersion == '0') {
-    //         imageKey = thumbkey;
-    //       }
-
-    //       const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-    //       console.log("handlePsotImg ++++ 3");
-
-    //       if (content.version == '3.0') {
-    //         postImage.setAttribute('src', './assets/icon/reserve.svg');
-    //         const mediaDatas = content.mediaDatas;
-    //         if (mediaDatas && mediaDatas.length > 0) {
-    //           const elements = mediaDatas[0];
-    //           console.log("handlePsotImg ++++ 4");
-    //           this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-    //             .then((value) => {
-    //               let thumbImage = value || "";
-    //               postImage.setAttribute('src', thumbImage);
-
-    //               // if (thumbImage != '') {
-    //               //   this.isLoadimage[id] = '13';
-
-    //               //   if (nftOrdeId != '' && priceDes != '') {
-    //               //     let imagesWidth = postImage.clientWidth;
-    //               //     let homebidfeedslogo = document.getElementById(
-    //               //       id + 'homebidfeedslogo'
-    //               //     );
-    //               //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-    //               //     homebidfeedslogo.style.display = 'block';
-
-    //               //     let homebuy = document.getElementById(id + 'homebuy');
-    //               //     let homeNftPrice = document.getElementById(
-    //               //       id + 'homeNftPrice'
-    //               //     );
-    //               //     let homeNftQuantity = document.getElementById(
-    //               //       id + 'homeNftQuantity'
-    //               //     );
-    //               //     let homeMaxNftQuantity = document.getElementById(
-    //               //       id + 'homeMaxNftQuantity'
-    //               //     );
-    //               //     homeNftPrice.innerText = priceDes;
-    //               //     homeNftQuantity.innerText = nftQuantity;
-    //               //     homeMaxNftQuantity.innerText = nftQuantity;
-    //               //     homebuy.style.display = 'block';
-    //               //   }
-    //               //   rpostimg.style.display = 'block';
-    //               // } else {
-    //               //   this.isLoadimage[id] = '12';
-    //               //   rpostimg.style.display = 'none';
-    //               // }
-    //             })
-    //             .catch(() => {
-    //               //TODO
-    //             });
-    //         }
-    //         return;
-    //       }
-
-    //       this.feedService
-    //         .getData(imageKey)
-    //         .then(imagedata => {
-    //           let realImage = imagedata || '';
-    //           if (realImage != '') {
-    //             this.isLoadimage[id] = '13';
-    //             postImage.setAttribute('src', realImage);
-    //             if (nftOrdeId != '' && priceDes != '') {
-    //               let imagesWidth = postImage.clientWidth;
-    //               if (this.nftImageType[nftOrdeId] === "avatar") {
-
-    //                 let homebidAvatar = document.getElementById(
-    //                   id + 'homebidAvatar'
-    //                 );
-    //                 homebidAvatar.style.display = 'block';
-    //               } else if (this.nftImageType[nftOrdeId] === "video") {
-    //                 let homebidVideo = document.getElementById(
-    //                   id + 'homebidVideo'
-    //                 );
-    //                 homebidVideo.style.display = 'block';
-    //               }
-    //               let homebidfeedslogo = document.getElementById(
-    //                 id + 'homebidfeedslogo'
-    //               );
-    //               homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-    //               homebidfeedslogo.style.display = 'block';
-
-    //               let homebuy = document.getElementById(id + 'homebuy');
-    //               let homeNftPrice = document.getElementById(
-    //                 id + 'homeNftPrice'
-    //               );
-    //               let homeNftQuantity = document.getElementById(
-    //                 id + 'homeNftQuantity'
-    //               );
-    //               let homeMaxNftQuantity = document.getElementById(
-    //                 id + 'homeMaxNftQuantity'
-    //               );
-    //               homeNftPrice.innerText = priceDes;
-    //               homeNftQuantity.innerText = nftQuantity;
-    //               homeMaxNftQuantity.innerText = nftQuantity;
-    //               homebuy.style.display = 'block';
-    //             }
-
-    //             rpostimg.style.display = 'block';
-    //           } else {
-
-    //             this.feedService.getData(thumbkey).then((thumbImagedata) => {
-    //               let thumbImage = thumbImagedata || "";
-    //               if (thumbImage != '') {
-    //                 this.isLoadimage[id] = '13';
-    //                 postImage.setAttribute('src', thumbImagedata);
-    //                 if (nftOrdeId != '' && priceDes != '') {
-    //                   let imagesWidth = postImage.clientWidth;
-    //                   if (this.nftImageType[nftOrdeId] === "avatar") {
-
-    //                     let homebidAvatar = document.getElementById(
-    //                       id + 'homebidAvatar'
-    //                     );
-    //                     homebidAvatar.style.display = 'block';
-    //                   } else if (this.nftImageType[nftOrdeId] === "video") {
-    //                     let homebidVideo = document.getElementById(
-    //                       id + 'homebidVideo'
-    //                     );
-    //                     homebidVideo.style.display = 'block';
-    //                   }
-    //                   let homebidfeedslogo = document.getElementById(
-    //                     id + 'homebidfeedslogo'
-    //                   );
-    //                   homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-    //                   homebidfeedslogo.style.display = 'block';
-
-    //                   let homebuy = document.getElementById(id + 'homebuy');
-    //                   let homeNftPrice = document.getElementById(
-    //                     id + 'homeNftPrice'
-    //                   );
-    //                   let homeNftQuantity = document.getElementById(
-    //                     id + 'homeNftQuantity'
-    //                   );
-    //                   let homeMaxNftQuantity = document.getElementById(
-    //                     id + 'homeMaxNftQuantity'
-    //                   );
-    //                   homeNftPrice.innerText = priceDes;
-    //                   homeNftQuantity.innerText = nftQuantity;
-    //                   homeMaxNftQuantity.innerText = nftQuantity;
-    //                   homebuy.style.display = 'block';
-    //                 }
-    //                 rpostimg.style.display = 'block';
-    //               } else {
-    //                 this.isLoadimage[id] = '12';
-    //                 rpostimg.style.display = 'none';
-    //               }
-    //             }).catch(() => {
-    //               rpostimg.style.display = 'none';
-    //             })
-    //           }
-    //         })
-    //         .catch(reason => {
-    //           rpostimg.style.display = 'none';
-    //           Logger.error(TAG,
-    //             "Excute 'handlePsotImg' in home page is error , get image data error, error msg is ",
-    //             reason
-    //           );
-    //         });
-    //     }
-    //   } else {
-    //     let postImageSrc = postImage.getAttribute('src') || '';
-    //     if (
-    //       postImage.getBoundingClientRect().top < -100 &&
-    //       this.isLoadimage[id] === '13' &&
-    //       postImageSrc != ''
-    //     ) {
-    //       this.isLoadimage[id] = '';
-    //       postImage.setAttribute('src', 'assets/images/loading.png');
-    //     }
-    //   }
-    // } catch (error) {
-    //   this.isLoadimage[id] = '';
+    // let target = postImage.getAttribute('src');
+    // if (target != 'assets/images/loading.png') {
+    //   return;
     // }
+
+    // this.hiveVaultController.downloadScripting(destDid, elements.thumbnailPath)
+    //   .then((value) => {
+    //     let thumbImage = value || "";
+    //     console.log("handlePsotImg  thumbImage ====== ", thumbImage);
+    //     postImage.setAttribute('src', thumbImage);
+    //   })
+    //   .catch(() => {
+    //     //TODO
+    //   });
+
+
+    try {
+      if (
+        id != '' &&
+        postImage.getBoundingClientRect().top >= -100 &&
+        postImage.getBoundingClientRect().top <= this.clientHeight
+      ) {
+        if (isload === '') {
+          this.isLoadimage[id] = '11';
+          //取得缩略图
+        let post = await this.dataHelper.getPostV3ById(destDid, postId);
+        let mediaDatas = post.content.mediaData;
+        let elements = mediaDatas[0];
+        postImage.setAttribute('src', './assets/icon/reserve.svg');
+        this.hiveVaultController.downloadScripting(destDid, elements.thumbnailPath)
+        .then((value) => {
+        let thumbImage = value || "";
+        if(thumbImage != null){
+          postImage.setAttribute('src', thumbImage);
+          this.isLoadimage[id] = '13';
+        }else{
+          rpostimg.style.display = 'none';
+          this.isLoadimage[id] = '12';
+        }
+        })
+        .catch(() => {
+        //TODO
+        });}
+        } else {
+        let postImageSrc = postImage.getAttribute('src') || '';
+        if (
+          postImage.getBoundingClientRect().top < -100 &&
+          this.isLoadimage[id] === '13' &&
+          postImageSrc != ''
+        ) {
+          this.isLoadimage[id] = '';
+          postImage.setAttribute('src', 'assets/images/loading.png');
+        }
+      }
+    } catch (error) {
+      this.isLoadimage[id] = '';
+    }
   }
 
   hanldVideo(id: string, srcId: string, rowindex: number) {
@@ -2130,7 +1943,7 @@ export class HomePage implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(nodeId: string, channelId: number, postId: number) {
+  clickDashang(nodeId: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -2146,7 +1959,7 @@ export class HomePage implements OnInit {
     this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress);
   }
 
-  retry(nodeId: string, feedId: number, postId: number) {
+  retry(nodeId: string, feedId: string, postId: string) {
     this.feedService.republishOnePost(nodeId, feedId, postId);
   }
 

@@ -192,7 +192,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     let feedUrl = this.feedInfo['url'];
     let channelId = feedUrl.split('/')[4];
     let feedName = this.feedInfo['name'];
-    this.menuService.showUnsubscribeMenu(nodeId, Number(channelId), feedName);
+    this.menuService.showUnsubscribeMenu(nodeId, channelId, feedName);
   }
 
   getChannelStatus(item: any) {

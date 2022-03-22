@@ -196,7 +196,7 @@ export class SubscriptionsPage implements OnInit {
         //share channel
         await this.native.showLoading("common.generateSharingLink");
         try {
-          const sharedLink = await this.intentService.createShareLink(nodeId, feedId, 0);
+          const sharedLink = await this.intentService.createShareLink(nodeId, feedId, "0");
           this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId), sharedLink);
         } catch (error) {
         }
@@ -226,7 +226,7 @@ export class SubscriptionsPage implements OnInit {
     }
   }
 
-  clickAvatar(nodeId: string, feedId: number) {
+  clickAvatar(nodeId: string, feedId: string) {
     let feed = this.feedService.getChannelFromId(nodeId, feedId);
     let followStatus = this.checkFollowStatus(nodeId, feedId);
     let feedName = feed.name;
@@ -257,7 +257,7 @@ export class SubscriptionsPage implements OnInit {
     this.native.navigateForward(['/feedinfo'], '');
   }
 
-  checkFollowStatus(nodeId: string, channelId: number) {
+  checkFollowStatus(nodeId: string, channelId: string) {
     let channelsMap = this.feedService.getChannelsMap();
     let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     if (

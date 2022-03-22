@@ -1933,7 +1933,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  clickAvatar(nodeId: string, feedId: number) {
+  clickAvatar(nodeId: string, feedId: string) {
     let feed = this.feedService.getChannelFromId(nodeId, feedId);
     let followStatus = this.checkFollowStatus(nodeId, feedId);
     let feedName = feed.name;
@@ -1964,7 +1964,7 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(['/feedinfo'], '');
   }
 
-  checkFollowStatus(nodeId: string, channelId: number) {
+  checkFollowStatus(nodeId: string, channelId: string) {
     let channelsMap = this.feedService.getChannelsMap();
     let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     if (

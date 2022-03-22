@@ -8,7 +8,6 @@ import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import SparkMD5 from 'spark-md5';
-import { FileHelperService } from 'src/app/services/FileHelperService';
 
 const TAG = 'HiveVaultHelper';
 
@@ -1113,7 +1112,7 @@ export class HiveVaultHelper {
                 await this.hiveService.uploadScriptWithBlob(remoteName, data);
                 const scriptName = hash
                 await this.registerFileDownloadScripting(scriptName);
-                let avatarHiveURL = scriptName + "@" + remoteName // 
+                let avatarHiveURL = scriptName + "@" + remoteName //
                 Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
                 resolve(avatarHiveURL);
             } catch (error) {
@@ -1179,5 +1178,3 @@ export class HiveVaultHelper {
         });
     }
 }
-
-// export default { HiveVaultHelper }

@@ -33,7 +33,7 @@ export class FeedspreferencesPage implements OnInit {
   public connectionStatus = 1;
   public hideDeletedPosts: boolean = true;
   public nodeId: string = '';
-  public feedId: number = 0;
+  public feedId: string = "0";
   public feedPublicStatus = {};
   public curFeedPublicStatus: boolean = false;
   public popover: any = null;

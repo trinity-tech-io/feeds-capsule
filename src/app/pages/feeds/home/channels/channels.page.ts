@@ -49,7 +49,7 @@ export class ChannelsPage implements OnInit {
   public postList: any = [];
 
   public nodeId: string = '';
-  public channelId: number = 0;
+  public channelId: string = "0";
 
   public followStatus: boolean = false;
 
@@ -122,6 +122,7 @@ export class ChannelsPage implements OnInit {
   public nftAssetList: any = [];
 
   private destDid = '';
+  private ownerDid: string = "";
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -153,7 +154,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    this.feedsServiceApi.subscribeChannel(this.nodeId, Number(this.channelId));
+    this.feedsServiceApi.subscribeChannel(this.nodeId, this.channelId);
   }
 
   tip() {
@@ -186,7 +187,7 @@ export class ChannelsPage implements OnInit {
 
     this.menuService.showUnsubscribeMenuWithoutName(
       this.nodeId,
-      Number(this.channelId),
+      this.channelId,
     );
   }
 
@@ -279,12 +280,13 @@ export class ChannelsPage implements OnInit {
 
     this.checkFollowStatus(this.nodeId, this.channelId);
     if (channel == null || channel == undefined) return;
-
     this.channelName = channel.name;
     this.updatedTime = channel.last_update || 0;
     this.channelOwner = channel.owner_name;
     this.channelDesc = channel.introduction;
     this.channelSubscribes = channel.subscribers;
+    this.ownerDid = channel.owner_did;
+    console.log("channel.owner_did ====" + this.ownerDid);
     console.log("channel.avatar ====" + channel.avatar);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
   }
@@ -600,7 +602,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  like(nodeId: string, channelId: number, postId: number) {
+  like(nodeId: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -615,14 +617,14 @@ export class ChannelsPage implements OnInit {
     if (!this.feedService.checkPostIsAvalible(post)) return;
 
     if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(nodeId, Number(channelId), Number(postId), 0);
+      this.feedsServiceApi.postUnlike(nodeId, channelId, postId, 0);
       return;
     }
 
-    this.feedsServiceApi.postLike(nodeId, Number(channelId), Number(postId), 0);
+    this.feedsServiceApi.postLike(nodeId, channelId, postId, 0);
   }
 
-  getChannel(nodeId: string, channelId: number): any {
+  getChannel(nodeId: string, channelId: string): any {
     let channel = this.feedService.getChannelFromId(nodeId, channelId) || '';
     if (channel === '') {
       return '';
@@ -662,8 +664,8 @@ export class ChannelsPage implements OnInit {
 
   navToPostDetail(
     nodeId: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     event?: any,
   ) {
     let post = this.feedService.getPostFromId(nodeId, channelId, postId);
@@ -689,11 +691,11 @@ export class ChannelsPage implements OnInit {
       .navigateForward(['/postdetail', nodeId, channelId, postId]);
   }
 
-  checkMyLike(nodeId: string, channelId: number, postId: number) {
+  checkMyLike(nodeId: string, channelId: string, postId: string) {
     return this.feedService.checkMyLike(nodeId, channelId, postId);
   }
 
-  checkFollowStatus(nodeId: string, channelId: number) {
+  checkFollowStatus(nodeId: string, channelId: string) {
     let channelsMap = this.feedService.getChannelsMap();
     let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
     if (
@@ -739,14 +741,14 @@ export class ChannelsPage implements OnInit {
     if (isMine === 0 && post.post_status != 1) {
       this.menuService.showPostDetailMenu(
         post.nodeId,
-        Number(post.channel_id),
+        post.channel_id,
         this.channelName,
         post.id,
       );
     } else {
       this.menuService.showShareMenu(
         post.nodeId,
-        Number(post.channel_id),
+        post.channel_id,
         this.channelName,
         post.id,
       );
@@ -820,7 +822,7 @@ export class ChannelsPage implements OnInit {
     }, int);
   }
 
-  showComment(nodeId: string, channelId: number, postId: number) {
+  showComment(nodeId: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -1140,7 +1142,7 @@ export class ChannelsPage implements OnInit {
     }, 0);
   }
 
-  showBigImage(nodeId: string, channelId: number, postId: number) {
+  showBigImage(nodeId: string, channelId: string, postId: string) {
     this.pauseAllVideo();
     this.zone.run(() => {
       let imagesId = nodeId + '-' + channelId + '-' + postId + 'postimgchannel';
@@ -1610,7 +1612,8 @@ export class ChannelsPage implements OnInit {
       followStatus: this.followStatus,
       channelSubscribes: this.channelSubscribes,
       updatedTime: this.updatedTime,
-      channelOwner: this.channelOwner
+      channelOwner: this.channelOwner,
+      ownerDid: this.ownerDid
     });
     this.native.navigateForward(['/feedinfo'], '');
   }
@@ -1628,7 +1631,7 @@ export class ChannelsPage implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(nodeId: string, channelId: number, postId: number) {
+  clickDashang(nodeId: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -1644,7 +1647,7 @@ export class ChannelsPage implements OnInit {
     this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress);
   }
 
-  retry(nodeId: string, feedId: number, postId: number) {
+  retry(nodeId: string, feedId: string, postId: string) {
     this.feedService.republishOnePost(nodeId, feedId, postId);
   }
 }

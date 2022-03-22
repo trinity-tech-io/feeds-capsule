@@ -32,8 +32,6 @@ export class CreatenewfeedPage implements OnInit {
   public connectionStatus = 1;
   public channelAvatar = '';
   public avatar = '';
-  public selectedServer: any = null;
-  public selectedChannelSource: string = 'Select channel source';
   public curFeedPublicStatus: boolean = true;
   public developerMode: boolean = false;
   public isHelp: boolean = false;
@@ -62,19 +60,15 @@ export class CreatenewfeedPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("create channle ====== ")
   }
 
   ionViewWillEnter() {
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
     this.developerMode = this.feedService.getDeveloperMode();
-    this.selectedServer = this.feedService.getBindingServer();
-    this.selectedChannelSource = this.selectedServer.did;
     this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
@@ -104,7 +98,6 @@ export class CreatenewfeedPage implements OnInit {
             }
           })
           .then(() => {
-            console.log("1 ====================")
             this.uploadChannel(name, desc)
             // carrirer 发送创建频道
             // this.feedService.createTopic(
@@ -249,20 +242,13 @@ export class CreatenewfeedPage implements OnInit {
 
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
-    // if (this.selectedServer == null) {
-    //   this.native.toast_trans('CreatenewfeedPage.tipMsg3');
-    //   return;
-    // }
-
     let checkRes = this.feedService.checkValueValid(name.value);
     if (checkRes) {
       this.native.toast_trans('CreatenewfeedPage.nameContainInvalidChars');
       return;
     }
 
-    // this.createDialog(name.value, desc.value);
-    console.log(" name.value ====== ", name.value)
-    await this.uploadChannel(name.value, desc.value)
+    await this.uploadChannel(name.value, desc.value);
   }
 
   async uploadChannel(name: string, desc: string) {
@@ -282,7 +268,7 @@ export class CreatenewfeedPage implements OnInit {
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
       localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
-      this.native.hideLoading()
+      this.native.hideLoading();
       console.log("create channel error =========", JSON.stringify(error))
       this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
     }
@@ -340,15 +326,6 @@ export class CreatenewfeedPage implements OnInit {
     let boundingClientRect = target.getBoundingClientRect();
     this.arrowBoxStyle['top'] = boundingClientRect.top - 16.5 + 'px';
     this.isHelp = !this.isHelp;
-  }
-
-  copyChannelSource() {
-    this.native
-      .copyClipboard(this.selectedChannelSource)
-      .then(() => {
-        this.native.toast_trans('common.textcopied');
-      })
-      .catch(() => { });
   }
 
   handleAvatar() {
