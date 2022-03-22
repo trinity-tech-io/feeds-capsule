@@ -9,6 +9,7 @@ const carrierPath: string = '/carrier/';
 // const nftPath: string = 'nft'
 const orderPath: string = '/data/';
 const postDataPath: string = '/postData/';
+const v3DataPath: string = '/v3Data/';
 const tokenJsonPath: string = '/tokenJson/';
 @Injectable()
 export class FileHelperService {
@@ -56,6 +57,24 @@ export class FileHelperService {
         let orderDirEntry = await this.fileService.getDirectory(
           rootDirEntry,
           orderPath,
+          true
+        );
+
+        let fileEntry = await this.fileService.getFile(orderDirEntry, fileName, true);
+        resolve(fileEntry);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getV3Entry(fileName: string): Promise<FileEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let rootDirEntry = await this.fileService.resolveLocalFileSystemURL();
+        let orderDirEntry = await this.fileService.getDirectory(
+          rootDirEntry,
+          v3DataPath,
           true
         );
 
@@ -186,6 +205,49 @@ export class FileHelperService {
     });
   }
 
+  getV3Data(fileUrl: string, fileName: string, type: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileEntry = await this.getV3Entry(fileName);
+
+        const base64Type: string = this.transType(type);
+        const fileBlob = await this.getBlobFromCacheFile(fileEntry);
+        if (fileBlob.size > 0) {
+          const result = await this.transBlobToBase64(fileBlob);
+          let finalresult = result;
+          if (result.startsWith('data:null;base64,'))
+            finalresult = result.replace("data:null;base64,", base64Type);
+
+          if (result.startsWith('unsafe:data:*/*;base64,'))
+            finalresult = result.replace("unsafe:data:*/*", base64Type);
+
+          if (result.startsWith('data:*/*;base64,'))
+            finalresult = result.replace("data:*/*;base64,", base64Type);
+          Logger.log(TAG, "Get data from local");
+          resolve(finalresult);
+          return;
+        }
+        resolve('');
+      } catch (error) {
+        Logger.error(TAG, 'ResolveCacheData error', error);
+        reject(error);
+      }
+    });
+  }
+
+  saveV3Data(fileName: string, data: Blob | string): Promise<FileEntry> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileEntry = await this.getV3Entry(fileName);
+        const newEntry = await this.writeCacheFileData(fileEntry, data);
+        resolve(newEntry);
+      } catch (error) {
+        Logger.error(TAG, 'Save v3 data error', error);
+        reject(error);
+      }
+    });
+  }
+
   getData(fileUrl: string, type: string, fileEntry: FileEntry): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -289,7 +351,7 @@ export class FileHelperService {
       case "gif":
         return "data:image/gif;base64,";
       case "svg+xml":
-         return "data:image/svg+xml;base64,";
+        return "data:image/svg+xml;base64,";
       default:
         return "data:image/png;base64,";
     }

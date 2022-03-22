@@ -8,6 +8,8 @@ import { UtilService } from 'src/app/services/utilService';
 import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
 import { Config } from './config';
+import { FileHelperService } from './FileHelperService';
+
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -18,7 +20,7 @@ export class HiveVaultController {
   constructor(private hiveVaultApi: HiveVaultApi,
     private dataHelper: DataHelper,
     private postHelperService: PostHelperService,
-
+    private fileHelperService: FileHelperService
   ) {
   }
 
@@ -207,5 +209,31 @@ export class HiveVaultController {
   getAllPostScripting() {
     // const postList = this.hiveVaultApi();
   }
+
+
+  getV3Data(destDid: string, remotePath: string, fileName: string, type: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.fileHelperService.getV3Data(remotePath, fileName, type);
+        if (result && result != '') {
+          resolve(result);
+          return;
+        }
+
+        if (result == '') {
+          const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
+          await this.fileHelperService.saveV3Data(remotePath, fileName);
+          resolve(downloadResult);
+          return;
+        }
+
+        resolve('')
+      } catch (error) {
+        Logger.error(TAG, 'Get data error', error);
+        reject(error);
+      }
+    });
+  }
+
 
 }
