@@ -7,6 +7,7 @@ import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable
 import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
 import SparkMD5 from 'spark-md5';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 const TAG = 'HiveVaultHelper';
 
@@ -49,6 +50,7 @@ export class HiveVaultHelper {
     constructor(
         private hiveService: HiveService,
         private dataHelper: DataHelper,
+        private fileHelperService: FileHelperService
     ) {
     }
 
@@ -1095,28 +1097,8 @@ export class HiveVaultHelper {
         });
     }
 
-    downloadEssAvatar(): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                // 检测本地是否存在
-                let userDid = (await this.dataHelper.getSigninData()).did
-                const loadKey = userDid + "_ess_avatar"
-                let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
-                if (essavatar) {
-                    resolve(essavatar);
-                    return
-                }
-
-                const rawImage = await this.downloadEssAvatarData(userDid);
-
-                const savekey = userDid + "_ess_avatar"
-                this.dataHelper.saveUserAvatar(savekey, rawImage)
-                resolve(rawImage);
-            }
-            catch (error) {
-                Logger.error(TAG, "Download Ess Avatar error: ", error);
-            }
-        });
+    downloadEssAvatar(destDid: string): Promise<any> {
+        return this.downloadEssAvatarData(destDid)
     }
     /** download essential avatar end */
 
@@ -1141,35 +1123,8 @@ export class HiveVaultHelper {
         });
     }
 
-    downloadCustomeAvatar(remotePath: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                // 检测本地是否存在
-                let userDid = (await this.dataHelper.getSigninData()).did
-                let avatar = await this.dataHelper.loadUserAvatar(userDid);
-
-                if (avatar) {
-                    resolve(avatar);
-                    return;
-                }
-
-                let self = this
-                let imgstr = ''
-                try {
-                    var dataBuffer = await this.hiveService.downloadFile(userDid, remotePath)
-                    // dataBuffer = dataBuffer.slice(1, -1)
-                    imgstr = dataBuffer.toString()
-                    self.dataHelper.saveUserAvatar(userDid, imgstr);
-                    resolve(imgstr);
-                } catch (error) {
-                    Logger.error(TAG, 'Download custom avatar error: ', JSON.stringify(error))
-                    reject(error);
-                }
-            } catch (error) {
-                Logger.error(TAG, 'Download error', error);
-                reject(error);
-            }
-        });
+    downloadFile(destDid: string, remotePath: string) {
+        return this.hiveService.downloadFile(destDid, remotePath)
     }
 
     /** helper */

@@ -94,12 +94,12 @@ export class HiveVaultController {
   }
 
   async downloadScripting(destDid: string, mediaPath: string) {
-
     return this.hiveVaultApi.downloadScripting(destDid, mediaPath)
   }
 
   getChannelInfoById() {
     return new Promise(async (resolve, reject) => {
+
     });
   }
 
@@ -125,12 +125,10 @@ export class HiveVaultController {
     let medaType = FeedsData.MediaType.noMeida
     if (imagesBase64[0].length > 0) {
       medaType = FeedsData.MediaType.containsImg
-
     } else if (videoData.video.length > 0) {
       medaType = FeedsData.MediaType.containsVideo
     }
     const content = await this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
-
     return await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
   }
 
@@ -196,6 +194,58 @@ export class HiveVaultController {
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
+      }
+    });
+  }
+
+  downloadCustomeAvatar(remotePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // 检测本地是否存在
+        let userDid = (await this.dataHelper.getSigninData()).did
+        let avatar = await this.dataHelper.loadUserAvatar(userDid);
+        if (avatar) {
+          resolve(avatar);
+          return;
+        }
+        let self = this
+        let imgstr = ''
+        try {
+          var dataBuffer = await this.hiveVaultApi.downloadCustomeAvatar(userDid, remotePath)
+          // dataBuffer = dataBuffer.slice(1, -1)
+          imgstr = dataBuffer.toString()
+          self.dataHelper.saveUserAvatar(userDid, imgstr);
+          resolve(imgstr);
+        } catch (error) {
+          Logger.error(TAG, 'Download custom avatar error: ', JSON.stringify(error))
+          reject(error);
+        }
+      } catch (error) {
+        Logger.error(TAG, 'downloadCustomeAvatar error', error);
+        reject(error);
+      }
+    });
+  }
+
+  downloadEssAvatar(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // 检测本地是否存在
+        let userDid = (await this.dataHelper.getSigninData()).did
+        const loadKey = userDid + "_ess_avatar"
+        let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
+        if (essavatar) {
+          resolve(essavatar);
+          return
+        }
+        const rawImage = await this.hiveVaultApi.downloadEssAvatar(userDid);
+        const savekey = userDid + "_ess_avatar"
+        this.dataHelper.saveUserAvatar(savekey, rawImage)
+        resolve(rawImage);
+      }
+      catch (error) {
+        reject(error)
+        Logger.error(TAG, "Download Ess Avatar error: ", error);
       }
     });
   }
