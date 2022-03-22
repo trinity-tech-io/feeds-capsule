@@ -1123,10 +1123,12 @@ export class HiveVaultHelper {
     uploadMediaData(data: any): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                const hash = SparkMD5.hash(data)
-                // const randomDataId = UtilService.getCurrentTimeNum();
+
+                const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
+                const hash = SparkMD5.hash(dataBase64)
+
                 const remoteName = 'feeds/data/' + hash;
-                await this.hiveService.uploadCustomeAvatar(remoteName, data);
+                await this.hiveService.uploadScriptWithBlob(remoteName, data);
                 const scriptName = hash
                 await this.registerFileDownloadScripting(scriptName);
                 let avatarHiveURL = scriptName + "@" + remoteName // 

@@ -154,7 +154,7 @@ export class EditprofileimagePage implements OnInit {
   async saveAvatar() {
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveService.uploadCustomeAvatar("custome", this.avatar)
+      await this.hiveService.uploadScriptWithString("custome", this.avatar)
       this.native.hideLoading()
       this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
       this.native.pop();
