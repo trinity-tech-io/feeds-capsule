@@ -251,6 +251,7 @@ export class FileHelperService {
     });
   }
 
+
   getData(fileUrl: string, type: string, fileEntry: FileEntry): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {

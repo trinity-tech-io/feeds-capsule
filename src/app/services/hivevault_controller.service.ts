@@ -9,6 +9,7 @@ import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
 import { Config } from './config';
 import { FileHelperService } from './FileHelperService';
+import { Logger } from './logger';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -273,7 +274,7 @@ export class HiveVaultController {
 
         if (result == '') {
           const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
-          await this.fileHelperService.saveV3Data(remotePath, fileName);
+          await this.fileHelperService.saveV3Data(fileName, downloadResult);
           resolve(downloadResult);
           return;
         }

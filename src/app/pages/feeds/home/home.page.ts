@@ -1175,6 +1175,7 @@ export class HomePage implements OnInit {
         let mediaType = arr[3];
         //postImg
         if (mediaType === '1') {
+          console.log("======mediaType=========",mediaType);
           this.handlePostImg(destDid, postId,channelId, postgridindex);
         }
         if (mediaType === '2') {
@@ -1362,7 +1363,8 @@ export class HomePage implements OnInit {
         postImage.getBoundingClientRect().top >= -100 &&
         postImage.getBoundingClientRect().top <= this.clientHeight
       ){
-       if(isload != ""){
+       console.log("======id=======",id);
+       if(isload === ""){
             //首先取缩略图key
           this.isImgLoading[id] = "11";
           postImage.setAttribute('src', 'assets/images/loading.png');
@@ -1371,16 +1373,19 @@ export class HomePage implements OnInit {
           const elements = mediaDatas[0];
           let thumbnailKey = elements.thumbnailPath;
           let type = elements.type;
-
-          this.postHelperService.getPostDataV3(destDid,thumbnailKey,type,this.hiveVaultController)
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileName:string = "thumbnail-"+thumbnailKey.split("@")[0];
+          this.hiveVaultController.getV3Data(destDid,thumbnailKey,fileName,type)
           .then((cacheResult)=>{
             console.log("======destDid=======",destDid);
-            console.log("======destDid=======",destDid);
+            console.log("======thumbnailKey=======",thumbnailKey);
 
             thumbnailKey
             let thumbImage = cacheResult || "";
             if(thumbImage != ""){
-              postImage.setAttribute('src', thumbImage);
+              this.zone.run(()=>{
+                postImage.setAttribute('src', thumbImage);
+              });
               this.isLoadimage[id] = '13';
             }else{
               rpostimg.style.display = 'none';

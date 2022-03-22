@@ -616,20 +616,6 @@ export class PostHelperService {
     });
   }
 
-  getPostDataV3(destDid: string,thumbnailKey: string, type: string,hiveVaultController: any): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        //const fetchUrl = name;
-        const result = await this.fileHelperService.getPostDataV3(destDid,thumbnailKey, type,hiveVaultController);
-        resolve(result);
-      } catch (error) {
-        const errorMsg = 'Get post data error';
-        Logger.error(TAG, errorMsg, error);
-        reject(error);
-      }
-    });
-  }
-
   base64ToBlob(base64Data: string): Blob {
     if (!base64Data && base64Data == '') {
       Logger.error('Base64 data to blob error, input is null');
