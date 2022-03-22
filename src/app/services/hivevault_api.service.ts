@@ -119,18 +119,17 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.removeLike(userDid, channelId, postId, commentId);
   }
 
-
   /** Download data */
   downloadScripting(destDid: string, avatarHiveURL: string): Promise<any> {
     return this.hiveVaultHelper.downloadScripting(destDid, avatarHiveURL)
   }
 
-  downloadCustomeAvatar(remoteHiveUrlPath: string): Promise<any> {
-    return this.hiveVaultHelper.downloadCustomeAvatar(remoteHiveUrlPath);
+  downloadCustomeAvatar(destDid: string, remoteHiveUrlPath: string): Promise<any> {
+    return this.hiveVaultHelper.downloadFile(destDid, remoteHiveUrlPath);
   }
 
-  downloadEssAvatar(): Promise<any> {
-    return this.hiveVaultHelper.downloadEssAvatar();
+  downloadEssAvatar(destDid: string): Promise<any> {
+    return this.hiveVaultHelper.downloadEssAvatar(destDid);
   }
 
   uploadMediaData(data: any): Promise<string> {

@@ -27,6 +27,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 let TAG: string = 'app-component';
 
@@ -87,6 +88,7 @@ export class MyApp {
     private viewHelper: ViewHelper,
     private keyboard: Keyboard,
     private hiveVaultApi: HiveVaultApi,
+    private hiveVaultController: HiveVaultController,
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -683,10 +685,10 @@ export class MyApp {
   }
 
   async downloadCustomeAvatar() {
-    await this.hiveVaultApi.downloadCustomeAvatar("custome")
+    await this.hiveVaultController.downloadCustomeAvatar("custome")
   }
   async downloadEssAvatar() {
-    await this.hiveVaultApi.downloadEssAvatar()
+    await this.hiveVaultController.downloadEssAvatar()
   }
 
 }
