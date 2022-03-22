@@ -15,6 +15,7 @@ import { VideoService } from './video.service';
 import { stringify } from 'querystring';
 import { Events } from 'src/app/services/events.service';
 
+import { FileHelperService } from 'src/app/services/FileHelperService';
 let TAG: string = 'Feeds-HiveService';
 
 let eventBus: Events = null;
@@ -261,11 +262,45 @@ export class HiveService {
     const fileService = await this.getFilesService(userDid)
     return await fileService.download(remotePath)
   }
-  async uploadCustomeAvatar(remotePath: string, img: any) {
+
+  async getUploadDataFromScript(transactionId: string, img: any) {
+    try {
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const scriptingService = await this.getScriptingService(userDid)
+      return scriptingService.uploadFile(transactionId, img)
+    }
+    catch (error) {
+      Logger.error(TAG, "Upload custome avatar error: ", error);
+    }
+  }
+
+  async uploadDataFromScript(transactionId: string, img: any) {
+    try {
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const scriptingService = await this.getScriptingService(userDid)
+      return scriptingService.uploadFile(transactionId, img)
+    }
+    catch (error) {
+      Logger.error(TAG, "Upload custome avatar error: ", error);
+    }
+  }
+
+  async uploadScriptWithBlob(remotePath: string, img: Blob) {
     try {
       let userDid = (await this.dataHelper.getSigninData()).did
       const fileService = await this.getFilesService(userDid)
-      await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
+      return await fileService.upload(remotePath, img)
+    }
+    catch (error) {
+      Logger.error(TAG, "Upload script blob error: ", error);
+    }
+  }
+
+  async uploadScriptWithString(remotePath: string, img: any) {
+    try {
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const fileService = await this.getFilesService(userDid)
+      return await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
     }
     catch (error) {
       Logger.error(TAG, "Upload custome avatar error: ", error);
