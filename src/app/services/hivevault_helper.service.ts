@@ -6,6 +6,7 @@ import { DataHelper } from './DataHelper';
 import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
 import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 import SparkMD5 from 'spark-md5';
 
 const TAG = 'HiveVaultHelper';
@@ -49,6 +50,7 @@ export class HiveVaultHelper {
     constructor(
         private hiveService: HiveService,
         private dataHelper: DataHelper,
+        private fileHelperService: FileHelperService
     ) {
     }
 
@@ -1123,7 +1125,6 @@ export class HiveVaultHelper {
     uploadMediaData(data: any): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-
                 const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
                 const hash = SparkMD5.hash(dataBase64)
 

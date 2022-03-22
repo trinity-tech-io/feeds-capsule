@@ -26,7 +26,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService';
 import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { HiveVaultApi } from 'src/app/services/api_hivevault.service';
+import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 
 let TAG: string = 'app-component';
 
