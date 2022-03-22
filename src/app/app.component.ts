@@ -119,7 +119,7 @@ export class MyApp {
 
     this.events.subscribe(FeedsEvent.PublishType.openPayPrompt, (obj) => {
       let nodeId: string = obj.nodeId;
-      let channelId: number = obj.channelId;
+      let channelId: string = obj.channelId;
       let elaAddress: string = obj.elaAddress;
       let amount: string = obj.amount;
       let memo: string = obj.memo;

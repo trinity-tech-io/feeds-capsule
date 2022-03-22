@@ -9,7 +9,6 @@ import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
 import { Config } from './config';
 import { FileHelperService } from './FileHelperService';
-import { Logger } from './logger';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;

@@ -181,7 +181,7 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showPayPrompt(nodeId: string, channelId: number, elaAddress: string, amount?: any, memo?: any) {
+  async showPayPrompt(nodeId: string, channelId: string, elaAddress: string, amount?: any, memo?: any) {
     let amountData = amount || "";
     let memoData = memo || "";
     let popover = await this.popoverController.create({
