@@ -10,7 +10,6 @@ import { HiveVaultResultParse } from './hivevault_resultparse.service';
 import { Config } from './config';
 import { FileHelperService } from './FileHelperService';
 
-
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
 
@@ -27,6 +26,7 @@ export class HiveVaultController {
   //获得订阅的channel列表
   async getHomePostContent() {
     const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+    console.log("=====subscribedChannels=======", subscribedChannels);
     subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
       const channelId = item.channelId
       const destDid = item.destDid
@@ -74,7 +74,7 @@ export class HiveVaultController {
           content: postContent,
           mediaType: mediaType
         }
-        // 存储post 
+        // 存储post
         let post: FeedsData.PostV3 = {
           destDid: destDid,
           postId: item.post_id,
@@ -127,10 +127,12 @@ export class HiveVaultController {
     let medaType = FeedsData.MediaType.noMeida
     if (imagesBase64[0].length > 0) {
       medaType = FeedsData.MediaType.containsImg
-    } else if (videoData.video.length > 0) {
+
+    } else if (videoData) {
       medaType = FeedsData.MediaType.containsVideo
     }
-    const content = await this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
+    const content = this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
+
     return await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
   }
 
@@ -260,7 +262,6 @@ export class HiveVaultController {
     // const postList = this.hiveVaultApi();
   }
 
-
   getV3Data(destDid: string, remotePath: string, fileName: string, type: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -284,6 +285,4 @@ export class HiveVaultController {
       }
     });
   }
-
-
 }

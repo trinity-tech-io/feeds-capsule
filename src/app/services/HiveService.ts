@@ -286,6 +286,8 @@ export class HiveService {
   }
 
   async uploadScriptWithBlob(remotePath: string, img: Blob) {
+    console.log("=======remotePath========",remotePath);
+    console.log("=======img========",img);
     try {
       let userDid = (await this.dataHelper.getSigninData()).did
       const fileService = await this.getFilesService(userDid)

@@ -32,7 +32,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import _ from 'lodash';
+import _, { result } from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { HttpService } from '../../../services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
@@ -202,10 +202,10 @@ export class HomePage implements OnInit {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
-    const result = await this.hiveVaultController.getHomePostContent()
+    const result = await this.hiveVaultController.getHomePostContent();
     this.totalData = await this.sortPostList();
 
-    console.log("this totalData" + this.totalData);
+    console.log("===this totalData=="+JSON.stringify(this.totalData));
 
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -1356,55 +1356,41 @@ export class HomePage implements OnInit {
     let rpostimg = document.getElementById(id + 'rpostimg');
     let postImage = document.getElementById(id + 'postimg');
 
-    // let post = await this.dataHelper.getPostV3ById(destDid, postId);
-    // let mediaDatas = post.content.mediaData;
-
-    // const elements = mediaDatas[0];
-
-    // let target = postImage.getAttribute('src');
-    // if (target != 'assets/images/loading.png') {
-    //   return;
-    // }
-
-    // this.hiveVaultController.downloadScripting(destDid, elements.thumbnailPath)
-    //   .then((value) => {
-    //     let thumbImage = value || "";
-    //     console.log("handlePsotImg  thumbImage ====== ", thumbImage);
-    //     postImage.setAttribute('src', thumbImage);
-    //   })
-    //   .catch(() => {
-    //     //TODO
-    //   });
-
-
-    try {
+    try{
       if (
         id != '' &&
         postImage.getBoundingClientRect().top >= -100 &&
         postImage.getBoundingClientRect().top <= this.clientHeight
-      ) {
-        if (isload === '') {
-          this.isLoadimage[id] = '11';
-          //取得缩略图
-        let post = await this.dataHelper.getPostV3ById(destDid, postId);
-        let mediaDatas = post.content.mediaData;
-        let elements = mediaDatas[0];
-        postImage.setAttribute('src', './assets/icon/reserve.svg');
-        this.hiveVaultController.downloadScripting(destDid, elements.thumbnailPath)
-        .then((value) => {
-        let thumbImage = value || "";
-        if(thumbImage != null){
-          postImage.setAttribute('src', thumbImage);
-          this.isLoadimage[id] = '13';
-        }else{
-          rpostimg.style.display = 'none';
-          this.isLoadimage[id] = '12';
-        }
-        })
-        .catch(() => {
-        //TODO
-        });}
-        } else {
+      ){
+       if(isload != ""){
+            //首先取缩略图key
+          this.isImgLoading[id] = "11";
+          postImage.setAttribute('src', 'assets/images/loading.png');
+          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
+          let thumbnailKey = elements.thumbnailPath;
+          let type = elements.type;
+
+          this.postHelperService.getPostDataV3(destDid,thumbnailKey,type,this.hiveVaultController)
+          .then((cacheResult)=>{
+            console.log("======destDid=======",destDid);
+            console.log("======destDid=======",destDid);
+
+            thumbnailKey
+            let thumbImage = cacheResult || "";
+            if(thumbImage != ""){
+              postImage.setAttribute('src', thumbImage);
+              this.isLoadimage[id] = '13';
+            }else{
+              rpostimg.style.display = 'none';
+              this.isLoadimage[id] = '';
+            }
+          }).catch(()=>{
+            this.isLoadimage[id] = '';
+          })
+       }
+      }else{
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
           postImage.getBoundingClientRect().top < -100 &&
@@ -1415,9 +1401,10 @@ export class HomePage implements OnInit {
           postImage.setAttribute('src', 'assets/images/loading.png');
         }
       }
-    } catch (error) {
+    }catch(err){
       this.isLoadimage[id] = '';
     }
+
   }
 
   hanldVideo(id: string, srcId: string, rowindex: number) {
@@ -2058,7 +2045,7 @@ export class HomePage implements OnInit {
     this.refreshPasarGridVisibleareaImage();
   }
 
-  create() {
+ async create() {
     // if (this.feedService.getConnectionStatus() != 0) {
     //   this.native.toastWarn('common.connectionError');
     //   return;
@@ -2087,12 +2074,17 @@ export class HomePage implements OnInit {
     this.pauseAllVideo();
     this.clearData();
 
-    if (this.feedService.getMyChannelList().length === 0) {
+    const channels = await this.feedService.getHiveMyChannelList()
+    console.log("create post channels ======== ", channels)
+    if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
       return;
     }
 
-    let currentFeed = this.feedService.getCurrentFeed();
+    let currentFeed = channels[0];
+    console.log("create post currentFeed ======== ", currentFeed)
+    this.feedService.setCurrentFeed(currentFeed);
+
     if (currentFeed === null) {
       let myFeed = this.feedService.getMyChannelList()[0];
       let currentFeed = {

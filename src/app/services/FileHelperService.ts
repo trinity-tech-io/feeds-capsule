@@ -13,7 +13,10 @@ const v3DataPath: string = '/v3Data/';
 const tokenJsonPath: string = '/tokenJson/';
 @Injectable()
 export class FileHelperService {
-  constructor(private fileService: FileService, private dataHelper: DataHelper) { }
+  constructor(
+    private fileService: FileService,
+    private dataHelper: DataHelper,
+  ) { }
 
   moveCarrierData(oldName: string, newName: string): Promise<Entry> {
     return new Promise(async (resolve, reject) => {
