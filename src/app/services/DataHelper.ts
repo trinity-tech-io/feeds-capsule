@@ -2858,11 +2858,12 @@ export class DataHelper {
   //// New data type
   // subscribedChannelV3 本地存储订阅列表
   async addSubscribedChannelV3(destDid: string, channelId: string) {
-    let subscribedChanne: FeedsData.SubscribedChannelV3 = {
+    let subscribedChannel: FeedsData.SubscribedChannelV3 = {
       destDid: destDid,
       channelId: channelId
     }
-    this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChanne
+
+    this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChannel
     await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
   }
 

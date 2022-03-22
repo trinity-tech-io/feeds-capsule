@@ -488,7 +488,7 @@ export class HiveVaultHelper {
         });
     }
 
-    private callSubscribeScripting(userDid: string, channelId: string, userDisplayName: string) {
+    private callSubscribeScripting(userDid: string, channelId: string, userDisplayName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -505,7 +505,7 @@ export class HiveVaultHelper {
         })
     }
 
-    subscribeChannel(userDid: string, channelId: string, displayName: string) {
+    subscribeChannel(userDid: string, channelId: string, displayName: string): Promise<any> {
         return this.callSubscribeScripting(userDid, channelId, displayName);
     }
     /** subscribe channel end */

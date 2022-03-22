@@ -61,7 +61,7 @@ export class HiveVaultApi {
   }
 
   /** Suscription */
-  subscribeChannel(destDid: string, channelId: string, displayName: string) {
+  subscribeChannel(destDid: string, channelId: string, displayName: string): Promise<any> {
     return this.hiveVaultHelper.subscribeChannel(destDid, channelId, displayName);
   }
 
