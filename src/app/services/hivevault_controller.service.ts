@@ -7,6 +7,7 @@ import SparkMD5 from 'spark-md5';
 import { UtilService } from 'src/app/services/utilService';
 import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
+import { Config } from './config';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -116,8 +117,6 @@ export class HiveVaultController {
     });
   }
 
-
-
   getCommentByChannel() {
   }
 
@@ -181,10 +180,24 @@ export class HiveVaultController {
     });
   }
 
-  async subscribeChannel(destDid: string, channelId: string, userDisplayName: string) {
-    const result = await this.hiveVaultApi.subscribeChannel(destDid, channelId, userDisplayName)
-    await this.dataHelper.addSubscribedChannelV3(destDid, channelId) // 存储这个
-    return result
+  subscribeChannel(destDid: string, channelId: string, userDisplayName: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.subscribeChannel(destDid, channelId, userDisplayName);
+        await this.dataHelper.addSubscribedChannelV3(destDid, channelId) // 存储这个
+
+        if (result) {
+          resolve('SUCCESS');
+        } else {
+          const errorMsg = 'Subscribe channel error, destDid is' + destDid + 'channelId is' + channelId;
+          Logger.error(TAG, errorMsg);
+          reject(errorMsg);
+        }
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
   }
 
   handlePostResult(result: any): FeedsData.PostV3[] {
