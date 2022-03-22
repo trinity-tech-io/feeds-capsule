@@ -6,6 +6,7 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import SparkMD5 from 'spark-md5';
 import { UtilService } from 'src/app/services/utilService';
 import { Logger } from './logger';
+import { HiveVaultResultParse } from './hivevault_resultparse.service';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -97,33 +98,25 @@ export class HiveVaultController {
   }
 
   getChannelInfoById() {
-
-  }
-
-  getPostListByChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
-      //目前暂时获取全部post，后续优化
-      const result = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId);
-      const postList = this.parsePostResult(result);
-      resolve(postList);
     });
   }
 
-  private parsePostResult(result: any): Promise<FeedsData.PostV3> {
+  getPostListByChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const jsonResult = JSON.parse(result);
-        console.log('jsonResult', jsonResult);
-
-        // awaits finish
-        const postList = null;
+        //目前暂时获取全部post，后续优化
+        const result = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId);
+        const postList = HiveVaultResultParse.parsePostResult(destDid, result);
         resolve(postList);
       } catch (error) {
-        Logger.error(TAG, 'Parse post result error', error);
+        Logger.error(TAG, error);
         reject(error);
       }
     });
   }
+
+
 
   getCommentByChannel() {
   }
@@ -201,6 +194,5 @@ export class HiveVaultController {
   getAllPostScripting() {
     // const postList = this.hiveVaultApi();
   }
-
 
 }

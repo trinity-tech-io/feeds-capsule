@@ -8,6 +8,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger, LogLevel } from 'src/app/services/logger';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-hive-interface-test',
@@ -29,7 +30,8 @@ export class HiveInterfaceTestPage implements OnInit {
     private feedService: FeedService,
     private zone: NgZone,
     private dataHelper: DataHelper,
-    private hiveVaultApi: HiveVaultApi
+    private hiveVaultApi: HiveVaultApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
@@ -71,7 +73,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   queryChannelInfo() {
-    this.hiveVaultApi.queryChannelInfo(this.destDid, 'channelId01');
+    this.hiveVaultApi.queryChannelInfo(this.destDid, 'b434c0d62c83ccdf1ecaabf831894f87b086c58bd2f4711d889ae832056d9c7d');
   }
 
   // post
@@ -93,7 +95,8 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   queryPostByChannelId() {
-    this.hiveVaultApi.queryPostByChannelId(this.destDid, 'channelId01');
+    // this.hiveVaultApi.queryPostByChannelId(this.destDid, 'channelId01');
+    this.hiveVaultController.getPostListByChannel(this.destDid, 'channelId01');
     alert('queryPostByChannelId');
   }
 
