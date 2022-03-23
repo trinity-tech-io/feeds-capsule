@@ -265,7 +265,7 @@ export class HiveVaultController {
   getV3Data(destDid: string, remotePath: string, fileName: string, type: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.fileHelperService.getV3Data(remotePath, fileName, type);
+        const result = await this.fileHelperService.getV3Data(fileName, type);
         if (result && result != '') {
           resolve(result);
           return;

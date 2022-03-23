@@ -9,6 +9,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger, LogLevel } from 'src/app/services/logger';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { FileHelperService } from 'src/app/services/FileHelperService';
+
 
 @Component({
   selector: 'app-hive-interface-test',
@@ -31,7 +33,8 @@ export class HiveInterfaceTestPage implements OnInit {
     private zone: NgZone,
     private dataHelper: DataHelper,
     private hiveVaultApi: HiveVaultApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private fileHelperService: FileHelperService
   ) { }
 
   ngOnInit() {
@@ -205,5 +208,30 @@ export class HiveInterfaceTestPage implements OnInit {
 
   syncSelfPost() {
     this.hiveVaultController.syncSelfPost();
+  }
+
+  downloadData() {
+    // this.hiveVaultController.getV3Data('','');
+
+
+  }
+
+  async writeData() {
+    const fileName = 'testFile';
+    const data = '1234567890';
+    await this.fileHelperService.saveV3Data(fileName, data);
+  }
+
+  async readData() {
+    const fileName = 'testFile';
+    const type = '';
+    const result = await this.fileHelperService.getV3Data(fileName, type);
+    if (result && result != '') {
+      console.log('read from local fileName', fileName);
+      console.log('read from local type', type);
+      console.log('read from local result', result);
+      console.log('read from local result length', result.length);
+      return;
+    }
   }
 }

@@ -208,26 +208,14 @@ export class FileHelperService {
     });
   }
 
-  getV3Data(fileUrl: string, fileName: string, type: string): Promise<string> {
+  getV3Data(fileName: string, type: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const fileEntry = await this.getV3Entry(fileName);
-
-        const base64Type: string = this.transType(type);
         const fileBlob = await this.getBlobFromCacheFile(fileEntry);
         if (fileBlob.size > 0) {
-          const result = await this.transBlobToBase64(fileBlob);
-          let finalresult = result;
-          if (result.startsWith('data:null;base64,'))
-            finalresult = result.replace("data:null;base64,", base64Type);
-
-          if (result.startsWith('unsafe:data:*/*;base64,'))
-            finalresult = result.replace("unsafe:data:*/*", base64Type);
-
-          if (result.startsWith('data:*/*;base64,'))
-            finalresult = result.replace("data:*/*;base64,", base64Type);
-          Logger.log(TAG, "Get data from local");
-          resolve(finalresult);
+          const result = await this.transBlobToText(fileBlob);
+          resolve(result);
           return;
         }
         resolve('');
