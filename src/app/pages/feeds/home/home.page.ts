@@ -14,7 +14,7 @@ import {
   IonRefresher
 } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService } from 'src/app/services/FeedService';
+import { FeedService, SignInData } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
 import { FeedsPage } from '../feeds.page';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -896,11 +896,11 @@ export class HomePage implements OnInit {
     let channel = this.dataHelper.channelsMapV3[key];
 
     if (channel == null || channel == undefined) return '';
-    return this.dataHelper.channelsMapV3[key].avatar;
+      return this.dataHelper.channelsMapV3[key].avatar;
 
     // let channel = this.getChannelV3(nodeId, channelId);
     // if (channel == null || channel == undefined) return '';
-    // return this.feedService.parseChannelAvatar(channel.avatar);
+    //return this.feedService.parseChannelAvatar(channel.avatar);
   }
 
   handleDisplayTime(createTime: number) {
@@ -931,32 +931,29 @@ export class HomePage implements OnInit {
   }
 
   menuMore(post: FeedsData.PostV3) {
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    // let channel = this.getChannel(post.nodeId, post.channel_id);
-    // if (channel == null || channel == undefined) return;
-    // let channelName = channel.name;
-    // this.pauseAllVideo();
-
-    // let isMine = this.checkChannelIsMine(post.nodeId, post.channel_id);
-    // if (isMine === 0 && post.post_status != 1) {
-    //   this.menuService.showHomeMenu(
-    //     post.nodeId,
-    //     Number(post.channel_id),
-    //     channelName,
-    //     Number(post.id),
-    //   );
-    // } else {
-    //   this.menuService.showChannelMenu(
-    //     post.nodeId,
-    //     Number(post.channel_id),
-    //     channelName,
-    //     Number(post.id),
-    //   );
-    // }
+    let destDid = post.destDid;
+    let signInData: SignInData = this.feedService.getSignInData() || null;
+    let ownerDid = signInData.did || "";
+    let channelName = this.getChannelName(post.destDid,post.channelId);
+    if(ownerDid != null &&  ownerDid === destDid){//自己的post
+        this.menuService.showHomeMenu(
+        post.destDid,
+        post.channelId,
+        channelName,
+        post.postId,
+        );
+    }else{//别人的post
+        this.menuService.showChannelMenu(
+        post.destDid,
+        post.channelId,
+        channelName,
+        post.postId,
+        );
+    }
   }
 
-  getChannelName(postId: string, channelId: string, destDid: string) {
+  getChannelName(destDid: string, channelId: string) {
     const key = UtilService.getKey(destDid, channelId);
     return this.dataHelper.channelsMapV3[key].name;
   }

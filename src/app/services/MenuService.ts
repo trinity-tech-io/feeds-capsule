@@ -48,7 +48,7 @@ export class MenuService {
   ) { }
 
   async showChannelMenu(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     channelName: string,
     postId: string,
@@ -61,7 +61,7 @@ export class MenuService {
           icon: 'share',
           handler: async () => {
             let post =
-              this.feedService.getPostFromId(nodeId, channelId, postId) || null;
+              this.feedService.getPostFromId(destDid, channelId, postId) || null;
             let postContent = '';
             if (post != null) {
               postContent = this.feedsServiceApi.parsePostContentText(post.content);
@@ -70,9 +70,9 @@ export class MenuService {
             this.postDetail.dismiss()
             await this.native.showLoading("common.generateSharingLink");
             try {
-              const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
+              const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId);
               this.intentService
-                .share(this.intentService.createSharePostTitle(nodeId, channelId, postId), sharedLink);
+                .share(this.intentService.createSharePostTitle(destDid, channelId, postId), sharedLink);
             } catch (error) {
             }
             this.native.hideLoading();
@@ -88,7 +88,7 @@ export class MenuService {
               return;
             }
 
-            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
           },
         },
         {
@@ -361,7 +361,7 @@ export class MenuService {
   }
 
   async showHomeMenu(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     channelName: string,
     postId: string,
@@ -375,7 +375,7 @@ export class MenuService {
           icon: 'share',
           handler: () => {
             this.handlePostDetailMenun(
-              nodeId,
+              destDid,
               channelId,
               channelName,
               postId,
@@ -388,7 +388,7 @@ export class MenuService {
           icon: 'create',
           handler: () => {
             this.handlePostDetailMenun(
-              nodeId,
+              destDid,
               channelId,
               channelName,
               postId,
@@ -402,7 +402,7 @@ export class MenuService {
           icon: 'trash',
           handler: () => {
             this.handlePostDetailMenun(
-              nodeId,
+              destDid,
               channelId,
               channelName,
               postId,
@@ -420,7 +420,7 @@ export class MenuService {
               return;
             }
 
-            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
           },
         },
         {

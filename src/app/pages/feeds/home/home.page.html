@@ -70,7 +70,7 @@
           <ion-row class="top-row">
             <ion-col class="left-col" size="11">
               <ion-label (click)="navTo(post.destDid, post.channelId, post.postId)">
-                {{ getChannelName(post.postId, post.channelId, post.destDid) }}
+                {{ getChannelName(post.destDid, post.channelId) }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
             </ion-col>
