@@ -56,7 +56,7 @@
     <div  *ngFor="let post of postList let i=index" >
     <ion-grid class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
-      id={{post.destDid}}-{{post.postId}}-{{post.channelId}}-{{post.content.mediaType}}>
+      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
       <ion-row class="post-row">
         <ion-col class="img-col" size="2">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.destDid,post.channelId,post.postId)">
@@ -97,7 +97,7 @@
             <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
           </h2>
 
-          <div *ngIf="post.status!='1'&&post.content.mediaType ===1" id={{post.destDid}}-{{post.postId}}-{{post.channelId}}rpostimg
+          <div *ngIf="post.status!='1'&&post.content.mediaType ===1" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}rpostimg
             style="width: 100%">
             <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
 

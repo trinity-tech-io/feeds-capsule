@@ -262,16 +262,22 @@ export class HiveVaultController {
     // const postList = this.hiveVaultApi();
   }
 
-  getV3Data(destDid: string, remotePath: string, fileName: string, type: string): Promise<string> {
+  getV3Data(destDid: string, remotePath: string, fileName: string, type: string,isDownload?: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        isDownload = isDownload || '';
         const result = await this.fileHelperService.getV3Data(fileName, type);
         if (result && result != '') {
           resolve(result);
           return;
         }
 
-        if (result == '') {
+        if(result == '' && isDownload != ''){
+          resolve('');
+          return;
+        }
+
+        if (result == '' && isDownload === '') {
           const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
           await this.fileHelperService.saveV3Data(fileName, downloadResult);
           resolve(downloadResult);
