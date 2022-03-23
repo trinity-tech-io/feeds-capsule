@@ -241,10 +241,12 @@ export class PostdetailPage implements OnInit {
 
  async initPostContent() {
     let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
+    console.log("=====post======",post);
     this.postStatus = post.status || "0";
     this.mediaType = post.content.mediaType;
     this.postContent = post.content;
     this.updatedTime = post.updatedAt;
+    console.log("====this.updatedTime=====",this.updatedTime);
     this.likesNum = this.getPostLike(post);
     this.commentsNum = this.getPostComments(post);
     // this.likesNum = post.likes;
