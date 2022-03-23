@@ -23,7 +23,7 @@ export class CommentComponent implements OnInit {
   @Input() public channelAvatar = '';
   @Input() public channelName = '';
 
-  @Input() public nodeId = '';
+  @Input() public destDid = '';
   @Input() public channelId = 0;
   @Input() public postId = 0;
   @Input() public commentId = 0;
@@ -80,7 +80,7 @@ export class CommentComponent implements OnInit {
 
   publishComment() {
     this.feedsServiceApi.postComment(
-      this.nodeId,
+      this.destDid,
       Number(this.channelId),
       Number(this.postId),
       this.commentId,

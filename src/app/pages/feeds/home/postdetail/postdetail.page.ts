@@ -18,6 +18,7 @@ import { Logger } from 'src/app/services/logger';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -137,6 +138,7 @@ export class PostdetailPage implements OnInit {
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController
 
   ) { }
 
@@ -240,20 +242,16 @@ export class PostdetailPage implements OnInit {
   }
 
  async initPostContent() {
-    let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
-    console.log("=====post======",post);
+    let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
     this.postStatus = post.status || "0";
     this.mediaType = post.content.mediaType;
-    this.postContent = post.content;
+    this.postContent = post.content.content;
     this.updatedTime = post.updatedAt;
-    console.log("====this.updatedTime=====",this.updatedTime);
     this.likesNum = this.getPostLike(post);
     this.commentsNum = this.getPostComments(post);
-    // this.likesNum = post.likes;
-    // this.commentsNum = post.comments;
-    // if (this.mediaType === FeedsData.MediaType.containsImg) {
-    //   this.getImage(this.postContent);
-    // }
+    if (this.mediaType === FeedsData.MediaType.containsImg) {
+        this.getImage(post);
+    }
     // if (this.mediaType === FeedsData.MediaType.containsVideo) {
     //   if (this.postContent.version == '2.0') {
     //     this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
@@ -366,7 +364,7 @@ export class PostdetailPage implements OnInit {
           this.destDid,
           this.postId,
         ) || null;
-        this.postContent = post.content;
+        this.postContent = post.content.content;
         this.updatedTime = post.updatedAt;
         this.likesNum = this.getPostLike(post);
         this.commentsNum = this.getPostComments(post);
@@ -688,10 +686,10 @@ export class PostdetailPage implements OnInit {
       this.commentName = comment.user_name;
       this.commentAvatar = './assets/images/default-contact.svg';
     }
-    if (this.checkServerStatus(this.destDid) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // if (this.checkServerStatus(this.destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
@@ -778,7 +776,7 @@ export class PostdetailPage implements OnInit {
   }
 
   handleUpdateDate(updatedTime: number) {
-    let updateDate = new Date(updatedTime * 1000);
+    let updateDate = new Date(updatedTime);
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
   }
 
@@ -925,76 +923,92 @@ export class PostdetailPage implements OnInit {
     this.nodeStatus[this.destDid] = status;
   }
 
-  getImage(content: FeedsData.Content) {
-    if (content.version == '2.0') {
+  getImage(post: FeedsData.PostV3) {
       this.postImage = './assets/icon/reserve.svg';//set Reserve Image
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-          .then((value) => {
-            this.postImage = value;
-          })
-          .catch(() => {
-            //TODO
-          });
-      }
-      return;
-    }
+      let mediaDatas = post.content.mediaData;
+      const elements = mediaDatas[0];
+      let thumbnailKey = elements.thumbnailPath;
+      let type = elements.type;
+      //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+      let fileName:string = "thumbnail-"+thumbnailKey.split("@")[0];
+      this.hiveVaultController.getV3Data(this.destDid,thumbnailKey,fileName,type)
+      .then((cacheResult)=>{
+        let thumbImage = cacheResult || "";
+        if(thumbImage != ""){
+         this.postImage = thumbImage;
+        }
+      }).catch(()=>{
+      })
 
-    let imageKey = this.feedService.getImageKey(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      0,
-      0,
-    );
+    // if (content.version == '2.0') {
+    //   this.postImage = './assets/icon/reserve.svg';//set Reserve Image
+    //   const mediaDatas = content.mediaDatas;
+    //   if (mediaDatas && mediaDatas.length > 0) {
+    //     const elements = mediaDatas[0];
+    //     this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+    //       .then((value) => {
+    //         this.postImage = value;
+    //       })
+    //       .catch(() => {
+    //         //TODO
+    //       });
+    //   }
+    //   return;
+    // }
 
-    let thumbkey =
-      this.feedService.getImgThumbKeyStrFromId(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        0,
-        0,
-      ) || '';
+    // let imageKey = this.feedService.getImageKey(
+    //   this.destDid,
+    //   this.channelId,
+    //   this.postId,
+    //   0,
+    //   0,
+    // );
 
-    let contentVersion = this.feedService.getContentVersion(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      0,
-    );
+    // let thumbkey =
+    //   this.feedService.getImgThumbKeyStrFromId(
+    //     this.destDid,
+    //     this.channelId,
+    //     this.postId,
+    //     0,
+    //     0,
+    //   ) || '';
 
-    if (contentVersion == '0') {
-      imageKey = thumbkey;
-    }
-    if (imageKey != '') {
-      this.feedService
-        .getData(imageKey)
-        .then(image => {
-          let realImage = image || '';
-          if (realImage != "") {
-            this.postImage = realImage;
-          } else {
-            this.feedService.getData(thumbkey).then((thumbImagedata) => {
-              let thumbImage = thumbImagedata || '';
-              this.postImage = thumbImage;
-            }).catch(reason => {
-              Logger.log(TAG,
-                "Excute 'getImage' in post page is error , get image data error, error msg is ",
-                reason
-              );
-            })
-          }
-        })
-        .catch(reason => {
-          Logger.log(TAG,
-            "Excute 'getImage' in post page is error , get image data error, error msg is ",
-            reason
-          );
-        });
-    }
+    // let contentVersion = this.feedService.getContentVersion(
+    //   this.destDid,
+    //   this.channelId,
+    //   this.postId,
+    //   0,
+    // );
+
+    // if (contentVersion == '0') {
+    //   imageKey = thumbkey;
+    // }
+    // if (imageKey != '') {
+    //   this.feedService
+    //     .getData(imageKey)
+    //     .then(image => {
+    //       let realImage = image || '';
+    //       if (realImage != "") {
+    //         this.postImage = realImage;
+    //       } else {
+    //         this.feedService.getData(thumbkey).then((thumbImagedata) => {
+    //           let thumbImage = thumbImagedata || '';
+    //           this.postImage = thumbImage;
+    //         }).catch(reason => {
+    //           Logger.log(TAG,
+    //             "Excute 'getImage' in post page is error , get image data error, error msg is ",
+    //             reason
+    //           );
+    //         })
+    //       }
+    //     })
+    //     .catch(reason => {
+    //       Logger.log(TAG,
+    //         "Excute 'getImage' in post page is error , get image data error, error msg is ",
+    //         reason
+    //       );
+    //     });
+    // }
   }
 
   doRefresh(event: any) {

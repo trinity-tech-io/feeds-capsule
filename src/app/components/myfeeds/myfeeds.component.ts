@@ -6,7 +6,6 @@ import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
 import { HiveService } from '../../services/HiveService'
-import { from } from 'rxjs';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -42,9 +41,9 @@ export class MyfeedsComponent implements OnInit {
     this.checkDid();
   }
 
-  navTo(nodeId: string, channelId: number) {
+  navTo(destDid: string, channelId: number) {
     this.toFeedPage.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       page: '/channels',
     });
@@ -54,9 +53,9 @@ export class MyfeedsComponent implements OnInit {
     return this.feedService.parseChannelAvatar(avatar);
   }
 
-  menuMore(nodeId: string, channelId: number, channelName: string) {
+  menuMore(destDid: string, channelId: number, channelName: string) {
     this.fromChild.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       channelName: channelName,
       postId: 0,
@@ -64,9 +63,9 @@ export class MyfeedsComponent implements OnInit {
     });
   }
 
-  handleClientNumber(nodeId) {
-    console.log("nodeId ====== ", nodeId)
-    return this.feedService.getServerStatisticsNumber(nodeId);
+  handleClientNumber(destDid: string) {
+    console.log("destDid ====== ", destDid)
+    return 0;
   }
 
   pressName(channelName: string) {

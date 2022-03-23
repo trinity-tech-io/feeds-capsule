@@ -59,8 +59,8 @@ export class LikesComponent implements OnInit {
     this.styleObj.width = screen.width - 105 + 'px';
   }
 
-  channelName(nodeId, channelId) {
-    let channel = this.getChannel(nodeId, channelId) || '';
+  channelName(destDid: string, channelId: string) {
+    let channel = this.getChannel(destDid, channelId) || '';
     if (channel === '') {
       return '';
     } else {
@@ -77,31 +77,31 @@ export class LikesComponent implements OnInit {
     }
   }
 
-  getChannel(nodeId, channelId): any {
-    return this.feedService.getChannelFromId(nodeId, channelId) || '';
+  getChannel(destDid: string, channelId: string): any {
+    return this.feedService.getChannelFromId(destDid, channelId) || '';
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
+  checkServerStatus(destDid: string) {
+    return this.feedService.getServerStatusFromId(destDid);
   }
 
-  like(nodeId: string, channelId: string, postId: string) {
+  like(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
+    // if (this.checkServerStatus(destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
+
+    if (this.checkMyLike(destDid, channelId, postId)) {
+      this.feedsServiceApi.postUnlike(destDid, channelId, postId, 0);
       return;
     }
 
-    if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(nodeId, channelId, postId, 0);
-      return;
-    }
-
-    this.feedsServiceApi.postLike(nodeId, channelId, postId, 0);
+    this.feedsServiceApi.postLike(destDid, channelId, postId, 0);
   }
 
   getContentText(content: string): string {
@@ -109,7 +109,7 @@ export class LikesComponent implements OnInit {
   }
 
   getContentShortText(post: any): string {
-    let content = post.content;
+    let content = post.content.content;
     let text = this.feedsServiceApi.parsePostContentText(content) || '';
     return text.substring(0, 180) + '...';
   }
@@ -120,17 +120,17 @@ export class LikesComponent implements OnInit {
     return size;
   }
 
-  navTo(nodeId: string, channelId: number, postId: number) {
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+  navTo(destDid: string, channelId: number, postId: number) {
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.toPage.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       page: '/channels',
     });
   }
 
   navToPostDetail(
-    nodeId: string,
+    destDid: string,
     channelId: number,
     postId: number,
     event?: any,
@@ -149,22 +149,22 @@ export class LikesComponent implements OnInit {
         return;
       }
     }
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.toPage.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       postId: postId,
       page: '/postdetail',
     });
   }
 
-  checkMyLike(nodeId: string, channelId: string, postId: string) {
-    return this.feedService.checkMyLike(nodeId, channelId, postId);
+  checkMyLike(destDid: string, channelId: string, postId: string) {
+    return this.feedService.checkMyLike(destDid, channelId, postId);
   }
 
-  parseAvatar(nodeId: string, channelId: number): string {
+  parseAvatar(destDid: string, channelId: string): string {
     return this.feedService.parseChannelAvatar(
-      this.getChannel(nodeId, channelId).avatar || '',
+      this.getChannel(destDid, channelId).avatar || '',
     );
   }
 
@@ -194,10 +194,10 @@ export class LikesComponent implements OnInit {
     return obj.content;
   }
 
-  menuMore(nodeId: string, channelId: number, postId: number) {
-    let channelName = this.getChannel(nodeId, channelId).name;
+  menuMore(destDid: string, channelId: string, postId: string) {
+    let channelName = this.getChannel(destDid, channelId).name;
     this.fromChild.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       channelName: channelName,
       postId: postId,
@@ -205,8 +205,8 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  pressName(nodeId: string, channelId: string) {
-    let channel = this.getChannel(nodeId, channelId) || '';
+  pressName(destDid: string, channelId: string) {
+    let channel = this.getChannel(destDid, channelId) || '';
     if (channel != '') {
       let name = channel['name'] || '';
       if (name != '' && name.length > 15) {
@@ -215,8 +215,8 @@ export class LikesComponent implements OnInit {
     }
   }
 
-  pressOwerName(nodeId: string, channelId: string) {
-    let channel = this.getChannel(nodeId, channelId) || '';
+  pressOwerName(destDid: string, channelId: string) {
+    let channel = this.getChannel(destDid, channelId) || '';
     if (channel != '') {
       let name = channel['owner_name'] || '';
       if (name != '' && name.length > 15) {
@@ -225,30 +225,30 @@ export class LikesComponent implements OnInit {
     }
   }
 
-  showComment(nodeId: string, channelId: number, postId: number) {
+  showComment(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // if (this.checkServerStatus(destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
     this.commentParams.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       postId: postId,
-      onlineStatus: this.nodeStatus[nodeId],
-      channelAvatar: this.parseAvatar(nodeId, channelId),
-      channelName: this.channelName(nodeId, channelId),
+      onlineStatus: this.nodeStatus[destDid],
+      channelAvatar: this.parseAvatar(destDid, channelId),
+      channelName: this.channelName(destDid, channelId),
     });
   }
 
-  showBigImage(nodeId: string, channelId: number, postId: number) {
+  showBigImage(destDid: string, channelId: number, postId: number) {
     this.clickImage.emit({
-      nodeId: nodeId,
+      destDid: destDid,
       channelId: channelId,
       postId: postId,
       tabType: 'mylike',
@@ -300,19 +300,19 @@ export class LikesComponent implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(nodeId: string, channelId: string, postId: string) {
+  clickDashang(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || {};
-    let elaAddress = server['elaAddress'] || null;
-    if (elaAddress == null) {
+    let channel :any = this.feedService.getChannelFromIdV3(destDid,channelId);
+    let tippingAddress = channel.tipping_address || "";
+    if (tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;
     }
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress);
   }
 }

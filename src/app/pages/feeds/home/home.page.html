@@ -97,24 +97,24 @@
             <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
           </h2>
 
-          <div *ngIf="post.status!='1'&&post.content.mediaType ===1" id={{post.destDid}}-{{post.postId}}-{{post.channeld}}rpostimg
+          <div *ngIf="post.status!='1'&&post.content.mediaType ===1" id={{post.destDid}}-{{post.postId}}-{{post.channelId}}rpostimg
             style="width: 100%">
-            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channeld, post.postId)"></span>
+            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
 
           <div style="position:relative;">
             <app-percentageloading
-            *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
+            *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
             [ngStyle]="imgloadingStyleObj"
             [percent]="imgPercent"
             [rotateNum]="imgRotateNum"
             >
             </app-percentageloading>
 
-          <app-roundloading
-          *ngIf="isImgLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
+          <!-- <app-roundloading
+          *ngIf="isImgLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
           [ngStyle]="imgloadingStyleObj"
           >
-          </app-roundloading>
+          </app-roundloading> -->
             <img
             id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimg
             class="post-img"
@@ -122,21 +122,21 @@
             style="width: 100%;"
             (click)="showBigImage(post.destDid,post.channelId,post.postId)">
             <img src="./assets/images/avatar.svg" class="avatarImg"
-              id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebidAvatar />
+              id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidAvatar />
             <img src="./assets/images/videoTypeIcon.svg" class="avatarImg"
-              id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebidVideo />
+              id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidVideo />
             <img src="./assets/images/bidfeedslogo.svg" class="bidLogoImg"
-              id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebidfeedslogo />
-            <div class="buyContainer" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homebuy>
+              id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidfeedslogo />
+            <div class="buyContainer" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebuy>
                <ion-row>
                  <ion-col size="8" class="pricecol">
                   <span class="price" [class.darkPrice]="theme.darkMode"
-                    id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homeNftPrice></span><img
+                    id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeNftPrice></span><img
                     style="vertical-align:middle;margin-left:4px;
                   " src="assets/images/purpleblue.svg"/>
                   <div class="quantity" [class.darkQuantity]="theme.darkMode">{{"common.quantity"|translate}}: <span
-                      id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homeNftQuantity></span>/<span
-                      id={{post.destDid}}-{{post.channeld}}-{{post.postId}}homeMaxNftQuantity></span></div>
+                      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeNftQuantity></span>/<span
+                      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeMaxNftQuantity></span></div>
                  </ion-col>
                  <ion-col size="4">
                   <ion-button (click)="buy(post)">
@@ -150,16 +150,16 @@
           </div>
 
           <div *ngIf="post.status!='1'&&post.content.mediaType ===2"
-            id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
+            id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
 
             <app-roundloading
-            *ngIf="isVideoLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
+            *ngIf="isVideoLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
             [ngStyle]="videoloadingStyleObj"
             >
             </app-roundloading>
 
             <app-percentageloading
-            *ngIf="isVideoPercentageLoading[post.destDid+'-'+post.channeld+'-'+post.postId]"
+            *ngIf="isVideoPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
             [ngStyle]="videoloadingStyleObj"
             [percent]="videoPercent"
             [rotateNum]="videoRotateNum"
@@ -167,22 +167,22 @@
             </app-percentageloading>
 
               <div style="width:100%;height:200px;display:inline-block;">
-                <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channeld, post.postId)"></span>
+                <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
                 <vg-player>
-                  <vg-overlay-play id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
-                  <vg-controls id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgcontrolshome style="display: none;">
-                    <img class="vgfullscreen" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}vgfullscreenhome
+                  <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
+                  <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolshome style="display: none;">
+                    <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenhome
                       src="assets/images/fullscreen.svg"/>
                   </vg-controls>
 
-              <video #media [vgMedia]="media" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}video
+              <video #media [vgMedia]="media" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
               poster="assets/images/loading.png"
               playsinline webkit-playsinline>
-              <source type="video/mp4" id={{post.destDid}}-{{post.channeld}}-{{post.postId}}source>
+              <source type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}source>
               </video>
               </vg-player>
              </div>
-             <span class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channeld, post.postId)"></span>
+             <span class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
             </div>
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="like(post.destDid, post.channelId, post.postId)">
@@ -190,12 +190,12 @@
               <img [src]="checkMyLike(post.destDid, post.channelId, post.postId) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
               <ion-label [class.liked]="checkMyLike(post.destDid, post.channelId, post.postId)">{{ getPostLike(post) }}</ion-label>
             </ion-col>
-            <ion-col size="2.25" (click)="showComment(post.destDid, post.channeld, post.postId)">
+            <ion-col size="2.25" (click)="showComment(post.destDid, post.channelId, post.postId)">
               <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
               <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
               <ion-label>{{ getPostComments(post) }}</ion-label>
             </ion-col>
-            <ion-col (click)="clickDashang(post.destDid, post.channeld, post.postId)" *ngIf="isAndroid">
+            <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid">
               <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
               <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
 
@@ -288,7 +288,7 @@
 <app-comment
   *ngIf="!hideComment"
   [postId]="postId"
-  [nodeId]="nodeId"
+  [destDid]="destDid"
   [channelId]="channelId"
   [channelAvatar]="channelAvatar"
   [channelName]="channelName"

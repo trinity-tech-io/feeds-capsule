@@ -808,23 +808,23 @@ export class ChannelsPage implements OnInit {
     }, int);
   }
 
-  showComment(nodeId: string, channelId: string, postId: string) {
+  showComment(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // if (this.checkServerStatus(nodeId) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
-    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
-    if (!this.feedService.checkPostIsAvalible(post)) return;
+    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.postId = postId;
-    this.onlineStatus = this.nodeStatus[nodeId];
+    this.onlineStatus = this.nodeStatus[destDid];
     this.hideComment = false;
   }
 

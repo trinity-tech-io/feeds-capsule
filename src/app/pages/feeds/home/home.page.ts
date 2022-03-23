@@ -1141,7 +1141,7 @@ export class HomePage implements OnInit {
      this.destDid = destDid;
      this.channelAvatar = this.parseAvatar(destDid, channelId);
      this.channelName = this.getChannelName(destDid, channelId);
-    this.onlineStatus = this.nodeStatus[destDid];
+     this.onlineStatus = this.nodeStatus[destDid];
      this.hideComment = false;
   }
 
@@ -1169,7 +1169,6 @@ export class HomePage implements OnInit {
         let mediaType = arr[3];
         //postImg
         if (mediaType === '1') {
-          console.log("======mediaType=========",mediaType);
           this.handlePostImg(destDid, postId,channelId, postgridindex);
         }
         if (mediaType === '2') {

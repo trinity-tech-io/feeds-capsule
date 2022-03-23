@@ -103,9 +103,9 @@ export class ProfilePage implements OnInit {
 
   public isPreferences: boolean = false;
 
-  public shareNodeId: string = '';
+  public shareDestDid: string = '';
 
-  public shareFeedId: string = '';
+  public shareChannelId: string = '';
 
   /**
    * imgPercentageLoading
@@ -1627,20 +1627,20 @@ export class ProfilePage implements OnInit {
       this.isImgLoading[this.imgCurKey] = true;
 
       let contentVersion = this.feedService.getContentVersion(
-        item.nodeId,
+        item.destDid,
         item.channelId,
         item.postId,
         0,
       );
       let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-        item.nodeId,
+        item.destDid,
         item.channelId,
         item.postId,
         0,
         0,
       );
       let key = this.feedService.getImageKey(
-        item.nodeId,
+        item.destDid,
         item.channelId,
         item.postId,
         0,
@@ -1650,7 +1650,7 @@ export class ProfilePage implements OnInit {
         key = thumbkey;
       }
 
-      const content: FeedsData.Content = this.feedService.getContentFromId(item.nodeId, item.channelId, item.postId, 0);
+      const content: FeedsData.Content = this.feedService.getContentFromId(item.destDid, item.channelId, item.postId, 0);
       if (content.version == '2.0') {
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
@@ -1685,7 +1685,7 @@ export class ProfilePage implements OnInit {
             this.appService,
           );
         } else {
-          if (this.checkServerStatus(item.nodeId) != 0) {
+          if (this.checkServerStatus(item.destDid) != 0) {
             this.isImgLoading[this.imgCurKey] = false;
             this.native.toastWarn('common.connectionError1');
             return;
@@ -1697,7 +1697,7 @@ export class ProfilePage implements OnInit {
             return;
           }
           this.imgDownStatusKey =
-            item.nodeId + '-' + item.channelId + '-' + item.postId;
+            item.destDid+ '-' + item.channelId + '-' + item.postId;
           this.cachedMediaType = 'img';
           this.feedService.processGetBinary(
             item.nodeId,
@@ -1893,8 +1893,8 @@ export class ProfilePage implements OnInit {
         this.clearData();
         this.native.navigateForward(['feedspreferences'], {
           queryParams: {
-            nodeId: this.shareNodeId,
-            feedId: this.shareFeedId,
+            nodeId: this.shareDestDid,
+            feedId: this.shareChannelId,
           },
         });
         this.hideSharMenuComponent = false;
@@ -1907,19 +1907,19 @@ export class ProfilePage implements OnInit {
   }
 
   getQrCodeString(feed: any) {
-    let nodeId = feed['nodeId'];
-    this.shareNodeId = nodeId;
-    let serverInfo = this.feedsServiceApi.getServerbyNodeId(nodeId);
-    let feedsUrl = serverInfo['feedsUrl'] || null;
-    let feedId = feed['channelId'] || '';
-    this.shareFeedId = feedId;
-    feedsUrl = feedsUrl + '/' + feedId;
-    let feedsName = feed['channelName'] || '';
-    return feedsUrl + '#' + encodeURIComponent(feedsName);
+    let destDid = feed['destDid'];
+    this.shareDestDid = destDid;
+    let channelName = feed['channelName'] || '';
+    let channelId = feed['channelId'] || '';
+    this.shareChannelId = channelId;
+    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+    let ownerDid: string = signInData.did || "";
+    let qrcodeString = "feeds://v3/"+ownerDid+"/"+channelId+'/'+encodeURIComponent(channelName);
+    return qrcodeString;
   }
 
   toPage(eventParm: any) {
-    let nodeId = eventParm['nodeId'];
+    let destDid = eventParm['destDid'];
     let channelId = eventParm['channelId'];
     let postId = eventParm['postId'] || '';
     let page = eventParm['page'];
@@ -1927,9 +1927,9 @@ export class ProfilePage implements OnInit {
     if (postId != '') {
       this.native
         .getNavCtrl()
-        .navigateForward([page, nodeId, channelId, postId]);
+        .navigateForward([page, destDid, channelId, postId]);
     } else {
-      this.native.getNavCtrl().navigateForward([page, nodeId, channelId]);
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId]);
     }
   }
 
