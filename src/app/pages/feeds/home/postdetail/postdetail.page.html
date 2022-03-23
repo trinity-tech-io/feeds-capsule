@@ -22,19 +22,19 @@
     <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode">
       <ion-row class="top-row">
         <ion-col class="left-col" size="2.25">
-          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(nodeId, channelId)">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
             <img src={{channelAvatar}}>
-            <div class="offline" [class.online]="nodeStatus[nodeId] === 0"></div>
+            <div class="offline" [class.online]="nodeStatus[destDid] === 0"></div>
           </div>
         </ion-col>
-        <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(nodeId, channelId)" [style.touch-action]="'pan-y'">
+        <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
           <ion-label>
             {{ channelName }}
           </ion-label>
-          <p>@{{ channelOwner }}</p>
+          <!-- <p>@{{ channelOwner }}</p> -->
         </ion-col>
         <ion-col class="right-col" size="1.5">
-          <img *ngIf="postStatus!=1"
+          <img *ngIf="postStatus!='1'"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
             (click)="menuMore()"
           >
@@ -42,10 +42,10 @@
       </ion-row>
       <ion-row class="mid-row">
         <ion-col>
-          <h2 *ngIf="postStatus===1">
+          <h2 *ngIf="postStatus==='1'">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="postStatus!=1" (press)="pressContent(postContent)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
+          <h2 *ngIf="postStatus!='1'" (press)="pressContent(postContent)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
             <pre [ngStyle]="styleObj" [innerHTML]="getContentText(postContent) | html"></pre>
           </h2>
 
@@ -64,8 +64,8 @@
           >
           </app-roundloading>
             <img
-            id=postdetail-img-{{nodeId}}-{{channelId}}-{{postId}}
-            *ngIf="postStatus != 1&&mediaType===1&&postImage!= ''"
+            id=postdetail-img-{{destDid}}-{{channelId}}-{{postId}}
+            *ngIf="postStatus != '1'&&mediaType===1&&postImage!= ''"
             [src]="postImage"
             class="post-img"
             (click)="showBigImage()"
@@ -73,7 +73,7 @@
           </div>
 
           <!---video-->
-        <div *ngIf="postStatus != 1&&mediaType===2&&posterImg!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{nodeId}}-{{channelId}}-{{postId}}>
+        <div *ngIf="postStatus != '1'&&mediaType===2&&posterImg!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{destDid}}-{{channelId}}-{{postId}}>
 
           <app-roundloading
           *ngIf="isVideoLoading"
@@ -90,14 +90,14 @@
           </app-percentageloading>
 
         <vg-player>
-          <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
-          <vg-controls id={{nodeId+channelId+postId}}vgcontrolspostdetail style="display:none;">
-            <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
+          <vg-overlay-play id={{destDid+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
+          <vg-controls id={{destDid+channelId+postId}}vgcontrolspostdetail style="display:none;">
+            <img class="vgfullscreen" id={{destDid+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
             </vg-controls>
 
-            <video #media [vgMedia]="media" poster="assets/images/loading.png" id={{nodeId+channelId+postId}}postdetailvideo
+            <video #media [vgMedia]="media" poster="assets/images/loading.png" id={{destDid+channelId+postId}}postdetailvideo
               playsinline webkit-playsinline>
-              <source type="video/mp4" id={{nodeId+channelId+postId}}postdetailsource />
+              <source type="video/mp4" id={{destDid+channelId+postId}}postdetailsource />
               </video>
         </vg-player>
       </div>
@@ -122,12 +122,12 @@
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
         </ion-col>
         <ion-col>
-          <ion-label class="status" *ngIf="postStatus === 2">{{ 'common.edit' | translate}} </ion-label>
-          <ion-label class="status" *ngIf="postStatus === 11">{{ 'common.sending' | translate}} </ion-label>
-          <ion-label class="status" *ngIf="postStatus === 12">{{ 'common.sendFail' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === '2'">{{ 'common.edit' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === '11'">{{ 'common.sending' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === '12'">{{ 'common.sendFail' | translate}} </ion-label>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="postStatus === 12" class="bottom-row">
+      <ion-row *ngIf="postStatus === '12'" class="bottom-row">
           <ion-col size="2.25">
           </ion-col>
           <ion-col size="2.25">
@@ -136,13 +136,7 @@
           </ion-col>
           <ion-col>
               <ion-icon  style="right: 67px;top:0px;position:absolute; color: #7171bd;" name="refresh"></ion-icon>
-              <!-- <ion-label style="
-              position:absolute;
-              right: 1px;
-              font-size: 13px;
-              font-weight: 500;
-              color: #7171bd;" (click)="retry(nodeId, channelId, postId)">{{ "common.retry" | translate }} </ion-label> -->
-              <ion-button (click)="retry(nodeId, channelId, postId)" class="retrybutton">{{ "common.retry" | translate }}</ion-button>
+              <ion-button (click)="retry(destDid, channelId, postId)" class="retrybutton">{{ "common.retry" | translate }}</ion-button>
           </ion-col>
       </ion-row>
     </ion-grid>
@@ -219,7 +213,7 @@
 <app-comment
   *ngIf="!hideComment"
   [postId]="postId"
-  [nodeId]="nodeId "
+  [nodeId]="destDid"
   [channelId]="channelId"
   [commentId]="commentId"
   [channelAvatar]="commentAvatar"

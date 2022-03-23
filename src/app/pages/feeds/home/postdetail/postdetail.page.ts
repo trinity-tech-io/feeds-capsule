@@ -17,6 +17,7 @@ import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -40,14 +41,14 @@ export class PostdetailPage implements OnInit {
   public channelWName: string = '';
   public channelOwner: string = '';
   public channelWOwner: string = '';
-  public postContent: FeedsData.Content = null;
+  public postContent: FeedsData.postContentV3 = null;
   public updatedTime: number = 0;
   public likesNum: number = 0;
   public commentsNum: number = 0;
 
   public captainCommentList: any = [];
 
-  public nodeId: string = '';
+  public destDid: string = '';
   public channelId: string = "0";
   public postId: string = "";
   public startIndex: number = 0;
@@ -56,7 +57,7 @@ export class PostdetailPage implements OnInit {
 
   public popover: any;
 
-  public postStatus = 0;
+  public postStatus: string = "0";
   public styleObj: any = { width: '' };
   public dstyleObj: any = { width: '' };
 
@@ -134,18 +135,19 @@ export class PostdetailPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private postHelperService: PostHelperService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper,
+
   ) { }
 
-  initData(isInit: boolean) {
+  async initData(isInit: boolean) {
     let channel =
-      this.feedService.getChannelFromId(this.nodeId, this.channelId) || '';
-
+     await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || '';
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
-    this.channelWOwner = channel['owner_name'] || '';
-    this.channelOwner = UtilService.moreNanme(channel['owner_name'], 40);
+    // this.channelWOwner = channel['owner_name'] || '';
+    // this.channelOwner = UtilService.moreNanme(channel['owner_name'], 40);
 
     this.initPostContent();
     this.initnodeStatus();
@@ -182,7 +184,7 @@ export class PostdetailPage implements OnInit {
       let commentId = item.id;
       let replayCommentList =
         this.feedService.getReplayCommentList(
-          this.nodeId,
+          this.destDid,
           this.channelId,
           this.postId,
           commentId,
@@ -214,7 +216,7 @@ export class PostdetailPage implements OnInit {
   sortCommentList() {
     let captainCommentList =
       this.feedService.getCaptainCommentList(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
       ) || [];
@@ -230,64 +232,63 @@ export class PostdetailPage implements OnInit {
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
-      this.nodeId = data.nodeId;
+      console.log("====data====",data);
+      this.destDid = data.destDid;
       this.channelId = data.channelId;
       this.postId = data.postId;
     });
   }
 
-  initPostContent() {
-    let post = this.feedService.getPostFromId(
-      this.nodeId,
-      this.channelId,
-      this.postId,
-    );
-    this.postStatus = post.post_status || 0;
+ async initPostContent() {
+    let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
+    this.postStatus = post.status || "0";
     this.mediaType = post.content.mediaType;
     this.postContent = post.content;
-    this.updatedTime = post.updated_at;
-    this.likesNum = post.likes;
-    this.commentsNum = post.comments;
-    if (this.mediaType === FeedsData.MediaType.containsImg) {
-      this.getImage(this.postContent);
-    }
-    if (this.mediaType === FeedsData.MediaType.containsVideo) {
-      if (this.postContent.version == '2.0') {
-        this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
-        const mediaDatas = this.postContent.mediaDatas;
-        if (mediaDatas && mediaDatas.length > 0) {
-          const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-            .then((value) => {
-              this.posterImg = value;
-              let sid = setTimeout(() => {
-                let video: any =
-                  document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
-                video.setAttribute('poster', this.posterImg);
-                this.setFullScreen();
-                this.setOverPlay();
-                clearTimeout(sid);
-              }, 0);
-            }).catch(() => {
-              //TODO
-            });
-        }
-        return;
-      }
+    this.updatedTime = post.updatedAt;
+    this.likesNum = this.getPostLike(post);
+    this.commentsNum = this.getPostComments(post);
+    // this.likesNum = post.likes;
+    // this.commentsNum = post.comments;
+    // if (this.mediaType === FeedsData.MediaType.containsImg) {
+    //   this.getImage(this.postContent);
+    // }
+    // if (this.mediaType === FeedsData.MediaType.containsVideo) {
+    //   if (this.postContent.version == '2.0') {
+    //     this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
+    //     const mediaDatas = this.postContent.mediaDatas;
+    //     if (mediaDatas && mediaDatas.length > 0) {
+    //       const elements = mediaDatas[0];
+    //       this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
+    //         .then((value) => {
+    //           this.posterImg = value;
+    //           let sid = setTimeout(() => {
+    //             let video: any =
+    //               document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
+    //             video.setAttribute('poster', this.posterImg);
+    //             this.setFullScreen();
+    //             this.setOverPlay();
+    //             clearTimeout(sid);
+    //           }, 0);
+    //         }).catch(() => {
+    //           //TODO
+    //         });
+    //     }
+    //     return;
+    //   }
 
 
-      let key =
-        this.feedService.getVideoThumbStrFromId(
-          this.nodeId,
-          this.channelId,
-          this.postId,
-          0,
-        ) || '';
+    //   let key =
+    //     this.feedService.getVideoThumbStrFromId(
+    //       this.nodeId,
+    //       this.channelId,
+    //       this.postId,
+    //       0,
+    //     ) || '';
 
-      if (key != '') {
-        this.getVideoPoster(key, this.postContent);
-      }
-    }
+    //   if (key != '') {
+    //     this.getVideoPoster(key, this.postContent);
+    //   }
+    // }
   }
 
   ionViewWillEnter() {
@@ -301,7 +302,7 @@ export class PostdetailPage implements OnInit {
     this.dstyleObj.width = screen.width - 105 + 'px';
     this.initData(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.feedService.refreshPostById(this.nodeId, this.channelId, this.postId);
+    this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
@@ -334,7 +335,7 @@ export class PostdetailPage implements OnInit {
             postId
           );
           if (
-            nodeId == this.nodeId &&
+            nodeId == this.destDid &&
             channelId == this.channelId &&
             postId == this.postId
           ) {
@@ -359,15 +360,14 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, () => {
       this.zone.run(() => {
         Logger.log(TAG, 'Received refreshPostDetail event');
-        let post = this.feedService.getPostFromId(
-          this.nodeId,
-          this.channelId,
+        let post: any = this.feedService.getChannelFromIdV3(
+          this.destDid,
           this.postId,
-        );
+        ) || null;
         this.postContent = post.content;
-        this.updatedTime = post.updated_at;
-        this.likesNum = post.likes;
-        this.commentsNum = post.comments;
+        this.updatedTime = post.updatedAt;
+        this.likesNum = this.getPostLike(post);
+        this.commentsNum = this.getPostComments(post);
       });
     });
 
@@ -440,7 +440,7 @@ export class PostdetailPage implements OnInit {
             ', key is ',
             key
           );
-          if (this.nodeId != nodeId) {
+          if (this.destDid != nodeId) {
             return;
           }
           this.processGetBinaryResult(key, value);
@@ -462,7 +462,7 @@ export class PostdetailPage implements OnInit {
             key,
             TAG,
           );
-          if (this.nodeId != nodeId) {
+          if (this.destDid != nodeId) {
             return;
           }
           this.feedService.closeSession(nodeId);
@@ -478,7 +478,7 @@ export class PostdetailPage implements OnInit {
           let nodeId = streamErrorData.nodeId;
           let error = streamErrorData.error;
           Logger.log(TAG, 'Received streamError event, nodeId is ', nodeId);
-          if (this.nodeId != nodeId) {
+          if (this.destDid != nodeId) {
             return;
           }
           this.isImgLoading = false;
@@ -500,14 +500,14 @@ export class PostdetailPage implements OnInit {
           let nodeId = streamStateChangedData.nodeId;
           let state = streamStateChangedData.streamState;
           Logger.log(TAG, 'Received streamOnStateChangedCallback event, nodeId is ', nodeId);
-          if (this.nodeId != nodeId) {
+          if (this.destDid != nodeId) {
             return;
           }
           if (this.cacheGetBinaryRequestKey == '') return;
 
           if (state === FeedsData.StreamState.CONNECTED) {
             this.feedService.getBinary(
-              this.nodeId,
+              this.destDid,
               this.cacheGetBinaryRequestKey,
               this.cachedMediaType,
             );
@@ -523,7 +523,7 @@ export class PostdetailPage implements OnInit {
           let nodeId = streamProgressData.nodeId;
           let progress = streamProgressData.progress;
           Logger.log(TAG, 'Received streamProgress event, nodeId is ', nodeId);
-          if (this.nodeId != nodeId) {
+          if (this.destDid != nodeId) {
             return;
           }
 
@@ -569,7 +569,7 @@ export class PostdetailPage implements OnInit {
       this.isVideoPercentageLoading = false;
       this.isVideoLoading = false;
       this.videoDownStatus = '';
-      this.feedService.closeSession(this.nodeId);
+      this.feedService.closeSession(this.destDid);
       this.native.hideLoading();
       this.pauseVideo();
       this.hideFullScreen();
@@ -577,7 +577,7 @@ export class PostdetailPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.streamClosed, nodeId => {
       Logger.log(TAG, 'Received streamClosed event, nodeId is ', nodeId);
-      if (this.nodeId != nodeId) {
+      if (this.destDid != nodeId) {
         return;
       }
       this.isImgLoading = false;
@@ -586,7 +586,7 @@ export class PostdetailPage implements OnInit {
       this.isVideoPercentageLoading = false;
       this.isVideoLoading = false;
       this.videoDownStatus = '';
-      this.feedService.closeSession(this.nodeId);
+      this.feedService.closeSession(this.destDid);
       this.pauseVideo();
       this.hideFullScreen();
     });
@@ -648,7 +648,7 @@ export class PostdetailPage implements OnInit {
     // this.postImage = '';
     this.isFullContent = {};
     this.isOwnComment = {};
-    this.feedService.closeSession(this.nodeId);
+    this.feedService.closeSession(this.destDid);
     this.clearVideo();
     this.hideFullScreen();
   }
@@ -686,7 +686,7 @@ export class PostdetailPage implements OnInit {
       this.commentName = comment.user_name;
       this.commentAvatar = './assets/images/default-contact.svg';
     }
-    if (this.checkServerStatus(this.nodeId) != 0) {
+    if (this.checkServerStatus(this.destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
@@ -702,7 +702,7 @@ export class PostdetailPage implements OnInit {
 
   checkMyLike() {
     return this.feedService.checkMyLike(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
     );
@@ -710,7 +710,7 @@ export class PostdetailPage implements OnInit {
 
   checkLikedComment(commentId: number) {
     return this.feedService.checkLikedComment(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       commentId,
@@ -723,14 +723,14 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
+    if (this.checkServerStatus(this.destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
 
     if (this.checkMyLike()) {
       this.feedsServiceApi.postUnlike(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
@@ -739,7 +739,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.feedsServiceApi.postLike(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       0,
@@ -752,14 +752,14 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
+    if (this.checkServerStatus(this.destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
 
     if (this.checkLikedComment(commentId)) {
       this.feedsServiceApi.postUnlike(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         commentId,
@@ -768,7 +768,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.feedsServiceApi.postLike(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       commentId,
@@ -783,16 +783,16 @@ export class PostdetailPage implements OnInit {
   menuMore() {
     let isMine = this.checkChannelIsMine();
     this.pauseVideo();
-    if (isMine === 0 && this.postStatus != 1) {
+    if (isMine === 0 && this.postStatus != "1") {
       this.menuService.showPostDetailMenu(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.channelName,
         this.postId,
       );
     } else {
       this.menuService.showShareMenu(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.channelName,
         this.postId,
@@ -802,7 +802,7 @@ export class PostdetailPage implements OnInit {
 
   showBigImage() {
     this.zone.run(() => {
-      const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
+      const content: FeedsData.Content = this.feedService.getContentFromId(this.destDid, this.channelId, this.postId, 0);
       if (content.version == '2.0') {
         const mediaDatas = content.mediaDatas;
         if (mediaDatas && mediaDatas.length > 0) {
@@ -830,7 +830,7 @@ export class PostdetailPage implements OnInit {
       let imagesId = UtilService.gethtmlId(
         'postdetail',
         'img',
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
       );
@@ -844,20 +844,20 @@ export class PostdetailPage implements OnInit {
         (imagesHeight - this.roundWidth) / 2 + 8 + 'px';
       this.isImgLoading = true;
       let contentVersion = this.feedService.getContentVersion(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
       );
       let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
         0,
       );
       let key = this.feedService.getImageKey(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
@@ -883,7 +883,7 @@ export class PostdetailPage implements OnInit {
         } else {
           this.cachedMediaType = 'img';
           this.feedService.processGetBinary(
-            this.nodeId,
+            this.destDid,
             this.channelId,
             this.postId,
             0,
@@ -919,8 +919,8 @@ export class PostdetailPage implements OnInit {
   }
 
   initnodeStatus() {
-    let status = this.checkServerStatus(this.nodeId);
-    this.nodeStatus[this.nodeId] = status;
+    let status = this.checkServerStatus(this.destDid);
+    this.nodeStatus[this.destDid] = status;
   }
 
   getImage(content: FeedsData.Content) {
@@ -941,7 +941,7 @@ export class PostdetailPage implements OnInit {
     }
 
     let imageKey = this.feedService.getImageKey(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       0,
@@ -950,7 +950,7 @@ export class PostdetailPage implements OnInit {
 
     let thumbkey =
       this.feedService.getImgThumbKeyStrFromId(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
@@ -958,7 +958,7 @@ export class PostdetailPage implements OnInit {
       ) || '';
 
     let contentVersion = this.feedService.getContentVersion(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       0,
@@ -1067,9 +1067,15 @@ export class PostdetailPage implements OnInit {
   }
 
   checkChannelIsMine() {
-    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
-      return 0;
 
+    let signInData :FeedsData.SignInData = this.feedService.getSignInData() || null;
+    if(signInData === null){
+      return 0;
+    }
+    let ownerDid: string = signInData.did;
+    if(this.destDid != ownerDid){
+        return 0;
+    }
     return 1;
   }
 
@@ -1101,7 +1107,7 @@ export class PostdetailPage implements OnInit {
         if (image != '') {
           this.zone.run(() => {
             this.posterImg = imagedata;
-            let id = this.nodeId + this.channelId + this.postId;
+            let id = this.destDid + this.channelId + this.postId;
             let sid = setTimeout(() => {
               let video: any =
                 document.getElementById(id + 'postdetailvideo') || '';
@@ -1122,7 +1128,7 @@ export class PostdetailPage implements OnInit {
     let videoId = UtilService.gethtmlId(
       'postdetail',
       'video',
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
     );
@@ -1137,7 +1143,7 @@ export class PostdetailPage implements OnInit {
       (videoHeight - this.roundWidth) / 2 + 'px';
     this.isVideoLoading = true;
 
-    const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
+    const content: FeedsData.Content = this.feedService.getContentFromId(this.destDid, this.channelId, this.postId, 0);
     if (content.version == '2.0') {
       const mediaDatas = content.mediaDatas;
       if (mediaDatas && mediaDatas.length > 0) {
@@ -1166,7 +1172,7 @@ export class PostdetailPage implements OnInit {
         if (videoData == '') {
           this.cachedMediaType = 'video';
           this.feedService.processGetBinary(
-            this.nodeId,
+            this.destDid,
             this.channelId,
             this.postId,
             0,
@@ -1202,7 +1208,7 @@ export class PostdetailPage implements OnInit {
     this.isVideoLoading = false;
     this.isVideoPercentageLoading = false;
     this.videoDownStatus = '';
-    let id = this.nodeId + this.channelId + this.postId;
+    let id = this.destDid + this.channelId + this.postId;
     let source: any = document.getElementById(id + 'postdetailsource') || '';
     source.setAttribute('src', videodata);
     let video: any = document.getElementById(id + 'postdetailvideo') || '';
@@ -1231,8 +1237,8 @@ export class PostdetailPage implements OnInit {
   }
 
   pauseVideo() {
-    if (this.postStatus != 1 && this.mediaType === 2) {
-      let id = this.nodeId + this.channelId + this.postId;
+    if (this.postStatus != "1" && this.mediaType === 2) {
+      let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       if (!video.paused) {
         //判断是否处于暂停状态
@@ -1242,10 +1248,10 @@ export class PostdetailPage implements OnInit {
   }
 
   clearVideo() {
-    if (this.postStatus != 1 && this.mediaType === 2) {
+    if (this.postStatus != "1" && this.mediaType === 2) {
       this.posterImg = '';
       this.videoObj = '';
-      let id = this.nodeId + this.channelId + this.postId;
+      let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       if (video != '') {
       }
@@ -1260,7 +1266,7 @@ export class PostdetailPage implements OnInit {
   }
 
   setFullScreen() {
-    let id = this.nodeId + this.channelId + this.postId;
+    let id = this.destDid + this.channelId + this.postId;
     let vgfullscreen: any =
       document.getElementById(id + 'vgfullscreenpostdetail') || '';
     if (vgfullscreen != '') {
@@ -1288,13 +1294,13 @@ export class PostdetailPage implements OnInit {
   }
 
   setOverPlay() {
-    let id = this.nodeId + this.channelId + this.postId;
+    let id = this.destDid + this.channelId + this.postId;
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplaypostdetail') || '';
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
-          if (this.checkServerStatus(this.nodeId) != 0) {
+          if (this.checkServerStatus(this.destDid) != 0) {
             this.pauseVideo();
             this.native.toastWarn('common.connectionError1');
             return;
@@ -1306,7 +1312,7 @@ export class PostdetailPage implements OnInit {
           if (sourceSrc != '') return;
 
           let key = this.feedService.getVideoKey(
-            this.nodeId,
+            this.destDid,
             this.channelId,
             this.postId,
             0,
@@ -1320,7 +1326,7 @@ export class PostdetailPage implements OnInit {
 
   handleTotal() {
     let post = this.feedService.getPostFromId(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
     );
@@ -1433,15 +1439,15 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || {};
-    let elaAddress = server['elaAddress'] || null;
+    let channel :any = this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let tippingAddress = channel.tipping_address || "";
 
-    if (elaAddress == null) {
+    if (tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;
     }
     this.pauseVideo();
-    this.viewHelper.showPayPrompt(this.nodeId, this.channelId, elaAddress);
+    this.viewHelper.showPayPrompt(this.destDid, this.channelId,tippingAddress);
   }
 
   clickComment(comment: any, event?: any) {
@@ -1462,7 +1468,7 @@ export class PostdetailPage implements OnInit {
     let commentId: number = comment.id;
     this.native.navigateForward(['commentlist'], {
       queryParams: {
-        nodeId: this.nodeId,
+        nodeId: this.destDid,
         channelId: this.channelId,
         postId: this.postId,
         commentId: commentId,
@@ -1470,7 +1476,15 @@ export class PostdetailPage implements OnInit {
       },
     });
   }
-  retry(nodeId: string, feedId: string, postId: string) {
-    this.feedService.republishOnePost(nodeId, feedId, postId);
+  retry(destDid: string, channelId: string, postId: string) {
+    this.feedService.republishOnePost(destDid, destDid, postId);
+  }
+
+  getPostLike(post: FeedsData.PostV3){
+    return 0;
+  }
+
+  getPostComments(post: FeedsData.PostV3){
+  return 0;
   }
 }

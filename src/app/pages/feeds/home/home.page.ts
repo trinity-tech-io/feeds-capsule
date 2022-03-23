@@ -934,6 +934,9 @@ export class HomePage implements OnInit {
 
     let destDid = post.destDid;
     let signInData: SignInData = this.feedService.getSignInData() || null;
+    if(signInData === null){
+      return;
+    }
     let ownerDid = signInData.did || "";
     let channelName = this.getChannelName(post.destDid,post.channelId);
     if(ownerDid != null &&  ownerDid === destDid){//自己的post
@@ -1116,36 +1119,30 @@ export class HomePage implements OnInit {
     }, int);
   }
 
-  checkChannelIsMine(nodeId: string, channelId: number) {
-    // if (this.feedService.checkChannelIsMine(nodeId, channelId)) return 0;
 
-    return 1;
-  }
-
-  showComment(nodeId: string, channelId: number, postId: number) {
+  showComment(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // if (this.checkServerStatus(destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
     // let post = this.feedService.getPostFromId(nodeId, channelId, postId);
     // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    // this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
 
-    // this.postId = postId;
-    // this.channelId = channelId;
-    // this.nodeId = nodeId;
-    // // this.channelAvatar = this.parseAvatar(nodeId, channelId);
-    // console.log("his.getChannelName(nodeId, channel");
-    // this.channelName = this.getChannelName(nodeId, channelId);
-    // this.onlineStatus = this.nodeStatus[nodeId];
-    // this.hideComment = false;
+     this.postId = postId;
+     this.channelId = channelId;
+     this.destDid = destDid;
+     this.channelAvatar = this.parseAvatar(destDid, channelId);
+     this.channelName = this.getChannelName(destDid, channelId);
+    this.onlineStatus = this.nodeStatus[destDid];
+     this.hideComment = false;
   }
 
   hideComponent(event) {
