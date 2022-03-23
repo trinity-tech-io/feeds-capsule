@@ -48,7 +48,7 @@ export class ChannelsPage implements OnInit {
   public channelSubscribes: number = 0;
   public postList: any = [];
 
-  public nodeId: string = '';
+  public : string = '';
   public channelId: string = "0";
 
   public followStatus: boolean = false;
@@ -123,6 +123,7 @@ export class ChannelsPage implements OnInit {
 
   private destDid = '';
   private ownerDid: string = "";
+  private tippingAddress: string = "";
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -149,12 +150,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    this.feedsServiceApi.subscribeChannel(this.nodeId, this.channelId);
+    this.feedsServiceApi.subscribeChannel(this.destDid, this.channelId);
   }
 
   tip() {
@@ -163,15 +159,13 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || {};
-    let elaAddress = server['elaAddress'] || null;
-    if (elaAddress == null) {
+    if (this.tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;
     }
 
     this.pauseAllVideo();
-    this.viewHelper.showPayPrompt(this.nodeId, this.channelId, elaAddress);
+    this.viewHelper.showPayPrompt(this.destDid, this.channelId, this.tippingAddress);
   }
 
   async unsubscribe() {
@@ -180,43 +174,37 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
     this.menuService.showUnsubscribeMenuWithoutName(
-      this.nodeId,
+      this.destDid,
       this.channelId,
     );
   }
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
-      // this.nodeId = data.nodeId;
+      console.log("======destDid======",data);
       this.destDid = data.destDid;
       this.channelId = data.channelId;
     });
   }
 
-  init() {
+ async init() {
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.initnodeStatus(this.nodeId);
-    this.initChannelData();
+    await this.initChannelData();
     this.initRefresh();
-    this.initStatus(this.postList);
+    //this.initStatus(this.postList);
   }
 
-  initStatus(arr: any) {
-    for (let index = 0; index < arr.length; index++) {
-      let nodeId = arr[index]['nodeId'];
-      this.initnodeStatus(nodeId);
-    }
-  }
+  // initStatus(arr: any) {
+  //   for (let index = 0; index < arr.length; index++) {
+  //     let nodeId = arr[index]['nodeId'];
+  //     this.initnodeStatus(nodeId);
+  //   }
+  // }
 
   sortChannelList() {
     let channelList =
-      this.feedService.getPostListFromChannel(this.nodeId, this.channelId) ||
+      this.feedService.getPostListFromChannel(this.destDid, this.channelId) ||
       [];
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
@@ -268,28 +256,26 @@ export class ChannelsPage implements OnInit {
     this.refreshImage();
   }
 
-  initChannelData() {
-    let channel = this.feedService.getChannelFromId(
-      this.nodeId,
-      this.channelId,
-    );
-    console.log("this.nodeId " + this.nodeId);
-    console.log("this.channelId " + this.channelId);
+ async initChannelData() {
+    let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    console.log("====channel===",channel);
+    console.log("this.channelId== " + this.channelId);
+    console.log("this.nodeId==" + this.destDid);
 
     console.log("channel.avatar ==== 1" + channel);
 
-    this.checkFollowStatus(this.nodeId, this.channelId);
+    this.checkFollowStatus(this.destDid, this.channelId);
     if (channel == null || channel == undefined) return;
     this.channelName = channel.name;
-    this.updatedTime = channel.last_update || 0;
+    this.updatedTime = channel.updatedAt || 0;
     this.channelOwner = channel.owner_name;
-    this.channelDesc = channel.introduction;
-    this.channelSubscribes = channel.subscribers;
-    this.ownerDid = channel.owner_did;
-    console.log("channel.owner_did ====" + this.ownerDid);
+    this.channelDesc = channel.intro;
+    //this.channelSubscribes = channel.subscribers;
+    this.tippingAddress = channel.tipping_address;
     console.log("channel.avatar ====" + channel.avatar);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
   }
+
   ionViewWillEnter() {
     console.log("ionViewWillEnter 11111");
 
@@ -316,7 +302,7 @@ export class ChannelsPage implements OnInit {
         this.zone.run(() => {
           let nodeId = subscribeFinishData.nodeId;
           let channelId = subscribeFinishData.channelId;
-          this.checkFollowStatus(this.nodeId, this.channelId);
+          this.checkFollowStatus(this.destDid, this.channelId);
         });
       },
     );
@@ -325,7 +311,7 @@ export class ChannelsPage implements OnInit {
       FeedsEvent.PublishType.unsubscribeFinish,
       (unsubscribeData: FeedsEvent.unsubscribeData) => {
         this.zone.run(() => {
-          this.checkFollowStatus(this.nodeId, this.channelId);
+          this.checkFollowStatus(this.destDid, this.channelId);
           this.native.setRootRouter(['/tabs/home']);
         });
       },
@@ -769,7 +755,7 @@ export class ChannelsPage implements OnInit {
       this.images = {};
       this.startIndex = 0;
       this.init();
-      this.initStatus(this.postList);
+      //this.initStatus(this.postList);
       event.target.complete();
       this.refreshImage();
       clearTimeout(sId);
@@ -786,7 +772,7 @@ export class ChannelsPage implements OnInit {
         );
         this.startIndex++;
         this.zone.run(() => {
-          this.initStatus(arr);
+          //this.initStatus(arr);
           this.postList = this.postList.concat(arr);
           this.refreshImage();
         });
@@ -797,7 +783,7 @@ export class ChannelsPage implements OnInit {
           this.totalData.length,
         );
         this.zone.run(() => {
-          this.initStatus(arr);
+          //this.initStatus(arr);
           this.postList = this.postList.concat(arr);
         });
         this.infiniteScroll.disabled = true;
@@ -809,7 +795,7 @@ export class ChannelsPage implements OnInit {
   }
 
   checkChannelIsMine() {
-    if (this.feedService.checkChannelIsMine(this.nodeId, this.channelId))
+    if (this.feedService.checkChannelIsMine(this.destDid, this.channelId))
       return 0;
 
     return 1;
@@ -1519,10 +1505,10 @@ export class ChannelsPage implements OnInit {
       this.imgRotateNum['transform'] = 'rotate(0deg)';
       this.cacheGetBinaryRequestKey = '';
       let arrKey = key.split('-');
-      let nodeId = arrKey[0];
+      let destDid = arrKey[0];
       let channelId = arrKey[1];
       let postId = arrKey[2];
-      let id = nodeId + "-" + channelId + "-" + postId;
+      let id = destDid + "-" + channelId + "-" + postId;
       let postImage = document.getElementById(id + 'postimgchannel') || null;
       if (postImage != null) {
         postImage.setAttribute('src', value);
@@ -1542,10 +1528,10 @@ export class ChannelsPage implements OnInit {
       this.videoPercent = 0;
       this.videoRotateNum['transform'] = 'rotate(0deg)';
       let arr = this.cacheGetBinaryRequestKey.split('-');
-      let nodeId = arr[0];
+      let destDid = arr[0];
       let channelId: any = arr[1];
       let postId: any = arr[2];
-      let id = nodeId + '-' + channelId + '-' + postId;
+      let id = destDid + '-' + channelId + '-' + postId;
       this.cacheGetBinaryRequestKey = '';
       this.loadVideo(id, value);
     }
@@ -1603,9 +1589,10 @@ export class ChannelsPage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(this.channelAvatar);
     }
-
+    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+    let ownerDid: string = signInData.did || "";
     this.feedService.setChannelInfo({
-      nodeId: this.nodeId,
+      destDid: this.destDid,
       channelId: this.channelId,
       name: this.channelName,
       des: this.channelDesc,
@@ -1613,7 +1600,8 @@ export class ChannelsPage implements OnInit {
       channelSubscribes: this.channelSubscribes,
       updatedTime: this.updatedTime,
       channelOwner: this.channelOwner,
-      ownerDid: this.ownerDid
+      ownerDid: ownerDid,
+      tippingAddress: this.tippingAddress
     });
     this.native.navigateForward(['/feedinfo'], '');
   }
@@ -1631,23 +1619,29 @@ export class ChannelsPage implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(nodeId: string, channelId: string, postId: string) {
+  clickDashang(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || {};
-    let elaAddress = server['elaAddress'] || null;
-    if (elaAddress == null) {
+    if (this.tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;
     }
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    this.viewHelper.showPayPrompt(destDid, channelId, this.tippingAddress);
   }
 
-  retry(nodeId: string, feedId: string, postId: string) {
-    this.feedService.republishOnePost(nodeId, feedId, postId);
+  retry(destDid: string, channelId: string, postId: string) {
+    this.feedService.republishOnePost(destDid, channelId, postId);
+  }
+
+  getPostLike(post: FeedsData.PostV3){
+    return 0;
+  }
+
+  getPostComments(post: FeedsData.PostV3){
+  return 0;
   }
 }

@@ -262,12 +262,13 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(channelAvatar);
     }
-    let nodeId = this.feedInfo['nodeId'];
+    let destDid = this.feedInfo['nodeId'];
     let feedUrl = this.feedInfo['url'];
     let channelId = feedUrl.split('/')[4];
     this.feedService.setChannelInfo({
+      ownerDid: this.feedInfo['ownerDid'],
       did: this.feedInfo['did'],
-      nodeId:nodeId,
+      destDid:destDid,
       channelId:channelId,
       name: this.feedInfo['name'],
       des: this.feedInfo['description'],

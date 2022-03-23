@@ -69,12 +69,12 @@ const routes: Routes = [
   },
 
   {
-    path: 'channels/:nodeId/:channelId',
+    path: 'channels/:destDid/:channelId',
     loadChildren:
       './pages/feeds/home/channels/channels.module#ChannelsPageModule',
   },
   {
-    path: 'postdetail/:nodeId/:channelId/:postId',
+    path: 'postdetail/:destDid/:channelId/:postId',
     loadChildren:
       './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule',
   },

@@ -238,7 +238,7 @@ export class MenuService {
     await this.postDetail.present();
   }
 
-  async showUnsubscribeMenuWithoutName(nodeId: string, channelId: string) {
+  async showUnsubscribeMenuWithoutName(destDid: string, channelId: string) {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
@@ -247,7 +247,7 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: () => {
-            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
+            this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
           },
         },
         {

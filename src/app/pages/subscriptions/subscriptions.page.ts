@@ -247,7 +247,7 @@ export class SubscriptionsPage implements OnInit {
     }
 
     this.feedService.setChannelInfo({
-      nodeId: nodeId,
+      destDid: nodeId,
       channelId: feedId,
       name: feedName,
       des: feedDesc,

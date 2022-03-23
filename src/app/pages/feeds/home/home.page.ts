@@ -851,14 +851,14 @@ export class HomePage implements OnInit {
     this.native.navigateForward(['/channels', destDid, channelId],"");
   }
 
-  navToPostDetail(
+ async navToPostDetail(
     destDid: string,
     channelId: string,
     postId: string,
     event?: any,
   ) {
-    let post = this.feedService.getPostFromId(destDid, channelId, postId);
-    if (!this.feedService.checkPostIsAvalible(post)) return;
+    //let post = await this.dataHelper.getPostV3ById(destDid, postId);;
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
     if (this.isPress) {
       this.isPress = false;
@@ -1932,24 +1932,24 @@ export class HomePage implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(nodeId: string, channelId: string, postId: string) {
+  clickDashang(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || {};
-    let elaAddress = server['elaAddress'] || null;
-    if (elaAddress == null) {
+    let channel :any = this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let tippingAddress = channel.tipping_address || "";
+    if (tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;
     }
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress);
   }
 
-  retry(nodeId: string, feedId: string, postId: string) {
-    this.feedService.republishOnePost(nodeId, feedId, postId);
+  retry(destDid: string, channelId: string, postId: string) {
+    this.feedService.republishOnePost(destDid, channelId, postId);
   }
 
   async buy(post: any) {
@@ -2580,6 +2580,14 @@ export class HomePage implements OnInit {
   navigateForwardBidPage(assetItem: FeedsData.NFTItem) {
     this.dataHelper.setBidPageAssetItem(assetItem);
     this.native.navigateForward(['bid'], { queryParams: assetItem });
+  }
+
+  getPostLike(post: FeedsData.PostV3){
+       return 0;
+  }
+
+  getPostComments(post: FeedsData.PostV3){
+    return 0;
   }
 }
 

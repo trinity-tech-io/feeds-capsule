@@ -28,7 +28,8 @@ import _ from 'lodash';
 export class FeedinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public nodeId: string = '';
+  public destDid: string = '';
+  private ownerDid: string = '';
   public channelId: string = '';
   public name: string = '';
   public des: string = '';
@@ -39,7 +40,7 @@ export class FeedinfoPage implements OnInit {
   public feedsUrl: string = null;
   public qrcodeString: string = null;
   public severVersion: string = '';
-  public elaAddress: string = '';
+  public tippingAddress: string = '';
   public developerMode: boolean = false;
   public channelSubscribes: number = 0;
   public followStatus: boolean = false;
@@ -51,8 +52,6 @@ export class FeedinfoPage implements OnInit {
   public channelOwner: string = '';
   public type: string = '';
   public serverDid: string = '';
-
-  public destDid: string = '';
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -81,32 +80,14 @@ export class FeedinfoPage implements OnInit {
     let channelInfo = _.cloneDeep(item);
     this.type = channelInfo['type'] || "";
     this.updatedTime = channelInfo['updatedTime'] || 0;
-    this.nodeId = channelInfo['nodeId'] || '';
+    this.destDid = channelInfo['destDid'] || '';
     this.channelId = channelInfo['channelId'] || '';
+    this.tippingAddress = channelInfo['tippingAddress'] || '';
     this.name = channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
-    this.serverInfo = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
-    let feedsUrl = "";
-    if (this.serverInfo != null) {
-      this.elaAddress =
-        this.serverInfo['elaAddress'] || 'common.emptyElaAddressDes';
-      this.serverDid = this.serverInfo['did'];
-      feedsUrl = this.serverInfo['feedsUrl'] || null;
-      this.feedsUrl = feedsUrl + '/' + this.channelId;
-      this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
-    } else {
-      this.serverDid = channelInfo["did"];
-      this.elaAddress = "common.emptyElaAddressDes";
-      this.feedsUrl = channelInfo["feedUrl"];
-      this.qrcodeString = this.feedsUrl + '#' + encodeURIComponent(this.name);
-    }
-
-    this.severVersion =
-      this.feedService.getServerVersionByNodeId(this.nodeId) ||
-      '<1.3.0(Outdated)';
-
+    this.ownerDid = channelInfo["ownerDid"] || "";
+    this.qrcodeString = "feeds://v3/"+this.ownerDid+"/"+this.channelId+'/'+encodeURIComponent(this.name);
     this.oldChannelAvatar = this.feedService.getProfileIamge();
-
     this.followStatus = channelInfo['followStatus'] || null;
     if (this.followStatus == null) this.followStatus = false;
 
@@ -193,10 +174,12 @@ export class FeedinfoPage implements OnInit {
       this.titleBar,
       this.translate.instant('FeedinfoPage.title'),
     );
-    this.isMine = this.feedService.checkChannelIsMine(
-      this.nodeId,
-      this.channelId,
-    );
+
+    if(this.destDid === this.ownerDid){
+      this.isMine = true;
+    }else{
+      this.isMine = false;
+    }
 
     if (this.isMine && this.type === "") {
       if (!this.theme.darkMode) {
@@ -221,11 +204,6 @@ export class FeedinfoPage implements OnInit {
       return;
     }
 
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
     this.native.go('/eidtchannel');
   }
 
@@ -243,40 +221,23 @@ export class FeedinfoPage implements OnInit {
 
   unsubscribe() {
     this.menuService.showUnsubscribeMenuWithoutName(
-      this.nodeId,
+      this.destDid,
       this.channelId,
     );
   }
 
-  async showPayPrompt(elaAddress: string) {
-    this.isShowPrompt = true;
-    this.popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass: 'PaypromptComponent',
-      component: PaypromptComponent,
-      backdropDismiss: false,
-      componentProps: {
-        title: this.translate.instant('ChannelsPage.tip'),
-        elaAddress: elaAddress,
-        defalutMemo: '',
-      },
-    });
-    this.popover.onWillDismiss().then(() => {
-      this.isShowPrompt = false;
-      this.popover = null;
-    });
-    return await this.popover.present();
-  }
-
   showPreviewQrcode(feedsUrl: string) {
+
     if (this.isPress) {
       this.isPress = false;
       return;
     }
-    let isOwner = this.feedService.checkChannelIsMine(
-      this.nodeId,
-      this.channelId,
-    );
+
+    let isOwner = false;
+    if(this.destDid === this.ownerDid){
+       isOwner = true;
+    }
+
     if (isOwner) {
       this.titleBarService.setIcon(
         this.titleBar,

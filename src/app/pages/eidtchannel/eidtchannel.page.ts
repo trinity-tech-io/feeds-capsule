@@ -132,7 +132,7 @@ export class EidtchannelPage implements OnInit {
 
   profileimage() {
     this.feedService.setChannelInfo({
-      nodeId: this.nodeId,
+      destDid: this.nodeId,
       channelId: this.channelId,
       name: this.name,
       des: this.des,
