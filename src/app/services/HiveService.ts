@@ -194,20 +194,6 @@ export class HiveService {
     })
   }
 
-  findPostDB(collectionName: string, filter: any): Promise<JSONObject[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let userDid = (await this.dataHelper.getSigninData()).did
-        let dbService = await this.getDatabaseService(userDid)
-        let result = dbService.findMany(collectionName, filter)
-        resolve(result)
-      } catch (error) {
-        Logger.error(TAG, 'listPostDB error:', error)
-        reject(error)
-      }
-    })
-  }
-
   async callScript(userDid: string, scriptName: string, document: any, callerDid: string, appid: string): Promise<any> {
     let scriptingService = await this.getScriptingService(userDid)
     let result = await scriptingService.callScript<any>(scriptName, document, callerDid, appid)
@@ -286,8 +272,8 @@ export class HiveService {
   }
 
   async uploadScriptWithBlob(remotePath: string, img: Blob) {
-    console.log("=======remotePath========",remotePath);
-    console.log("=======img========",img);
+    console.log("=======remotePath========", remotePath);
+    console.log("=======img========", img);
     try {
       let userDid = (await this.dataHelper.getSigninData()).did
       const fileService = await this.getFilesService(userDid)
@@ -351,6 +337,19 @@ export class HiveService {
     })
   }
 
+  queryDBData(collectionName: string, filter: any): Promise<JSONObject[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userDid = (await this.dataHelper.getSigninData()).did
+        const dbService = await this.getDatabaseService(userDid)
+        const result = dbService.findMany(collectionName, filter)
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'listPostDB error:', error)
+        reject(error)
+      }
+    })
+  }
   newInsertOptions() {
     return new InsertOptions(false, true);
   }

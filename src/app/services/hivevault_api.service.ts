@@ -135,4 +135,14 @@ export class HiveVaultApi {
   uploadMediaData(data: any): Promise<string> {
     return this.hiveVaultHelper.uploadMediaData(data);
   }
+
+  /** selfData */
+  querySelfChannels(): Promise<any> {
+    return this.hiveVaultHelper.querySelfChannels();
+  }
+
+  querySelfPosts(): Promise<any> {
+    return this.hiveVaultHelper.querySelfPosts();
+  }
+
 }

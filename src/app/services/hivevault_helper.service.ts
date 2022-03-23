@@ -1177,4 +1177,42 @@ export class HiveVaultHelper {
             }
         });
     }
+
+    /** query self channels start */
+    private queryChannelsFromDB(): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const filter = {};
+                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_CHANNELS, filter);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query channels from DB', error);
+                reject(error);
+            }
+        });
+    }
+
+    querySelfChannels(): Promise<any> {
+        return this.queryChannelsFromDB();
+    }
+    /** query self channels end */
+
+    /** query slef post start */
+    private queryPostsFromDB(): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const filter = {};
+                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_POSTS, filter);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query post from DB', error);
+                reject(error);
+            }
+        });
+    }
+
+    querySelfPosts(): Promise<any> {
+        return this.queryPostsFromDB();
+    }
+    /** query slef post end */
 }

@@ -285,4 +285,34 @@ export class HiveVaultController {
       }
     });
   }
+
+  syncSelfChannel() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const did = (await this.dataHelper.getSigninData()).did;
+        const channelsResult = await this.hiveVaultApi.querySelfChannels();
+        console.log('channelsResult', channelsResult);
+        const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
+        console.log('parseResult', parseResult);
+      } catch (error) {
+        Logger.error(TAG, 'Sync self channel', error);
+        reject(error);
+      }
+    });
+  }
+
+  syncSelfPost() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const did = (await this.dataHelper.getSigninData()).did;
+        const postResult = await this.hiveVaultApi.querySelfPosts();
+        console.log('postResult', postResult);
+        const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+        console.log('parseResult', parseResult);
+      } catch (error) {
+        Logger.error(TAG, 'Sync self post', error);
+        reject(error);
+      }
+    });
+  }
 }

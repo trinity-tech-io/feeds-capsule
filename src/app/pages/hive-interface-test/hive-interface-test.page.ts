@@ -198,4 +198,12 @@ export class HiveInterfaceTestPage implements OnInit {
   uploadMediaData() {
     alert('uploadMediaData');
   }
+
+  syncSelfChannel() {
+    this.hiveVaultController.syncSelfChannel();
+  }
+
+  syncSelfPost() {
+    this.hiveVaultController.syncSelfPost();
+  }
 }
