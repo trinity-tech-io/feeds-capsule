@@ -976,7 +976,7 @@ declare namespace FeedsData {
     createdAt: number,
     updatedAt: number,
     content: postContentV3,
-    status: string,
+    status: PostCommentStatus,
     type: string,
     tag: string,
     proof: string,
