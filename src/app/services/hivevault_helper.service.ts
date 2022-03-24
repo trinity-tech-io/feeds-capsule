@@ -208,13 +208,10 @@ export class HiveVaultHelper {
 
     /** query channel info start*/
     private registerQueryChannelInfoScripting(): Promise<void> {
-        let executablefilter = { "channel_id": "$params.channel_id" }
+        let executablefilter = { "channel_id": "$params.channel_id", "type": "public" }
         let options = { "projection": { "_id": false }, "limit": 100 }
-        // let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.SCRIPT_SUBSCRIPTION, null, null)
-        console.log("registerGetChannelScripting ====== ")
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, condition, false)
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
     }
 
     private callQueryChannelInfo(channelId: string, targetDid: string) {

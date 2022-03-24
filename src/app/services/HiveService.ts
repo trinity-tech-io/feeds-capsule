@@ -185,7 +185,7 @@ export class HiveService {
     })
   }
 
-  registerScript(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+  registerScript(scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
         let scriptingService = await this.getScriptingService()

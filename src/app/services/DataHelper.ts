@@ -2974,18 +2974,16 @@ export class DataHelper {
   }
 
   // 新加
-  getChannelV3List(): Promise<FeedsData.ChannelV3[]> {
+  loadMyChannelV3List(userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let list: FeedsData.ChannelV3[] = []
         this.channelsMapV3 = await this.loadData(FeedsData.PersistenceKey.channelsMapV3) || {}
         let keys: string[] = Object.keys(this.channelsMapV3)
-
         for (const key in keys) {
           let channel = this.channelsMapV3[keys[key]]
           if (channel == null) continue
-          // TODO是否添加其他判断条件
-          list.push(channel)
+          if (channel.destDid == userDid) list.push(channel)
         }
         resolve(list)
       } catch (error) {

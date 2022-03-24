@@ -25,23 +25,20 @@ export class HiveVaultController {
 
   //获得订阅的channel列表
   async getHomePostContent() {
-    // /*
     const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-    console.log("subscribedChannels ==== ", subscribedChannels)
     subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
-      console.log("item ==== ", item)
       const channelId = item.channelId
       const destDid = item.destDid
-      const channelInfo = await this.getChannelInfoById(destDid, channelId)
-      console.log("channelInfo ===== ", channelInfo)
-      const subscribedPost = await this.getPostListByChannel(destDid, channelId)
-      console.log("subscribedPost ===== ", subscribedPost)
+      const channelsInfo = await this.getChannelInfoById(channelId, destDid)
+      channelsInfo.forEach(async item => {
+        await this.dataHelper.updateChannelV3(item)
+      });
+      const subscribedPost = await this.getPostListByChannel(channelId, destDid)
       // TODO： 在这里存储是否合适
       subscribedPost.forEach(async item => {
         await this.dataHelper.addPostV3(item)
       })
     })
-    // */
   }
 
   getPostListByChannel(channelId: string, targetDid: string): Promise<FeedsData.PostV3[]> {
@@ -63,13 +60,11 @@ export class HiveVaultController {
     return this.hiveVaultApi.downloadScripting(mediaPath, targetDid)
   }
 
-  async getChannelInfoById(channelId: string, targetDid: string) {
+  async getChannelInfoById(channelId: string, targetDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(channelId, targetDid)
-        console.log("getChannelInfoById result ==== ", result)
         const channelInfoList = HiveVaultResultParse.parseChannelResult(result, targetDid);
-        console.log("getChannelInfoById ====== ", channelInfoList)
         resolve(channelInfoList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -104,6 +99,7 @@ export class HiveVaultController {
       } catch (error) {
         localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
       }
+      await this.hiveVaultApi.registeScripting()
     }
   }
 
@@ -134,12 +130,8 @@ export class HiveVaultController {
           proof: proof,
           memo: doc.memo,
         }
-        console.log("destDid ======== ", userDid)
-        console.log("channelId ======== ", channelId)
-
+        console.log("create channelId ==== ", channelId)
         await this.dataHelper.updateChannelV3(channelV3);
-        const channels = await this.dataHelper.loadChannelV3Map()
-        console.log("loadChannelV3Map ==== ", channels)
         resolve(channelV3.channelId)
       } catch (error) {
         reject(error)
@@ -151,7 +143,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.subscribeChannel(channelId, userDisplayName, targetDid);
-        await this.dataHelper.addSubscribedChannelV3(channelId, targetDid) // 存储这个
+        await this.dataHelper.addSubscribedChannelV3(targetDid, channelId) // 存储这个
 
         if (result) {
           resolve('SUCCESS');

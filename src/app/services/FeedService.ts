@@ -356,7 +356,8 @@ export class FeedService {
     // let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.CHANNEL
     // return this.dataHelper.getMyChannelList(channlesKey);
     // TODO 需要加载我的channel
-    return await this.dataHelper.getChannelV3List();
+    const userDid = (await this.dataHelper.getSigninData()).did
+    return await this.dataHelper.loadMyChannelV3List(userDid);
   }
   getUnreadNumber(nodeChannelId: string): number {
     return this.dataHelper.getUnreadNumber(nodeChannelId);
