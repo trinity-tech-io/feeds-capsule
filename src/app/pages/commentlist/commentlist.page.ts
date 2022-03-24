@@ -292,7 +292,6 @@ export class CommentlistPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.publish(FeedsEvent.PublishType.updateTab);
-    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
   }

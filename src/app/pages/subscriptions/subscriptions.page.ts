@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Events } from 'src/app/services/events.service';
-import { FeedService } from 'src/app/services/FeedService';
+import { FeedService, SignInData } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
@@ -173,20 +173,20 @@ export class SubscriptionsPage implements OnInit {
 
   async hideShareMenu(objParm: any) {
     let buttonType = objParm['buttonType'];
-    let nodeId = objParm['nodeId'];
-    let feedId = objParm['feedId'];
+    let destDid = objParm['destDid'];
+    let channelId = objParm['feedId'];
     switch (buttonType) {
       case 'unfollow':
         if (this.feedService.getConnectionStatus() != 0) {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        if (this.checkServerStatus(nodeId) != 0) {
+        if (this.checkServerStatus(destDid) != 0) {
           this.native.toastWarn('common.connectionError1');
           return;
         }
 
-        this.feedsServiceApi.unsubscribeChannel(nodeId, feedId);
+        this.feedsServiceApi.unsubscribeChannel(destDid,channelId);
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
         break;
@@ -196,14 +196,17 @@ export class SubscriptionsPage implements OnInit {
         //share channel
         await this.native.showLoading("common.generateSharingLink");
         try {
-          const sharedLink = await this.intentService.createShareLink(nodeId, feedId, "0");
-          this.intentService.share(this.intentService.createShareChannelTitle(nodeId, feedId), sharedLink);
+          let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId) || null;
+          let signInData: SignInData = this.feedService.getSignInData() || null;
+          let ownerDid = signInData.did || "";
+          const sharedLink = await this.intentService.createShareLink(destDid,channelId, "0",ownerDid,channel);
+          this.intentService.share(this.intentService.createShareChannelTitle(destDid, channelId), sharedLink);
         } catch (error) {
         }
         this.native.hideLoading();
         break;
       case 'info':
-        this.clickAvatar(nodeId, feedId);
+        this.clickAvatar(destDid, channelId);
         break;
       case 'preferences':
         if (this.feedService.getConnectionStatus() != 0) {

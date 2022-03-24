@@ -3070,7 +3070,6 @@ export class DataHelper {
       try {
         let list: FeedsData.PostV3[] = []
         this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
-        console.log("=====this.postMapV3=======",this.postMapV3);
         let keys: string[] = Object.keys(this.postMapV3)
 
         for (const key in keys) {

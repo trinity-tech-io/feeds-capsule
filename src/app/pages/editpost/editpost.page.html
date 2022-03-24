@@ -7,7 +7,7 @@
         <ion-col size="2.5" class="left-col">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{channelAvatar}}>
-            <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
+            <div class="offline" [class.online]="nodeStatus[destDid] == 0"></div>
           </div>
         </ion-col>
         <ion-col size="9" class="middle-col">
@@ -30,16 +30,16 @@
       <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="removeVideo()"/>
       </div> -->
       <vg-player>
-        <vg-overlay-play id={{nodeId+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>
-        <vg-buffering id={{nodeId+channelId+postId}}vgbufferingeditpost></vg-buffering>
+        <vg-overlay-play id={{destDid+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>
+        <vg-buffering id={{destDid+channelId+postId}}vgbufferingeditpost></vg-buffering>
 
-        <vg-controls id={{nodeId+channelId+postId}}vgcontrolseditpost style="display: none;">
-            <img class="vgfullscreen" id={{nodeId+channelId+postId}}vgfullscreeneditpost src="assets/images/fullscreen.svg"/>
+        <vg-controls id={{destDid+channelId+postId}}vgcontrolseditpost style="display: none;">
+            <img class="vgfullscreen" id={{destDid+channelId+postId}}vgfullscreeneditpost src="assets/images/fullscreen.svg"/>
         </vg-controls>
 
-    <video #media [vgMedia]="media" id={{nodeId+channelId+postId}}videoeditpost
+    <video #media [vgMedia]="media" id={{destDid+channelId+postId}}videoeditpost
     playsinline webkit-playsinline>
-    <source  [type]="videotype" id={{nodeId+channelId+postId}}sourceeditpost>
+    <source  [type]="videotype" id={{destDid+channelId+postId}}sourceeditpost>
     </video>
     </vg-player>
     </div>

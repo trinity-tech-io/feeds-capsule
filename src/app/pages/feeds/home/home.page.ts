@@ -349,7 +349,6 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.clearHomeEvent, () => {
       this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
       this.events.unsubscribe(FeedsEvent.PublishType.createpost);
-      this.events.unsubscribe(FeedsEvent.PublishType.addBinaryEvevnt);
       this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
       this.clearData();
@@ -405,25 +404,7 @@ export class HomePage implements OnInit {
     this.addCommonEvents();
 
     this.addBinaryEvevnt();
-    this.events.subscribe(FeedsEvent.PublishType.addBinaryEvevnt, () => {
-      // if (this.tabType === 'pasar') {
-      //   this.pasarList = this.nftPersistenceHelper.getPasarList();
-      //   this.pasarList = _.sortBy(this.pasarList, (item: any) => {
-      //     return -Number(item.createTime);
-      //   });
-      //   this.searchPasar = _.cloneDeep(this.pasarList);
-      // }
-      this.addCommonEvents();
-      this.addBinaryEvevnt();
-    });
 
-    // this.events.subscribe(FeedsEvent.PublishType.nftUpdateList, obj => {
-
-    //   this.zone.run(async () => {
-    //     const list = this.dataHelper.getPasarItemList();
-    //     // await this.refreshPasarList();
-    //   });
-    // });
   }
 
   addCommonEvents() {
@@ -538,119 +519,6 @@ export class HomePage implements OnInit {
   }
 
   addBinaryEvevnt() {
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinaryResponse,
-      () => {
-        this.zone.run(() => { });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.getBinaryFinish,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinarySuccess,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let nodeId = getBinaryData.nodeId;
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          this.curNodeId = '';
-          this.feedService.closeSession(nodeId);
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-          this.isImgLoading[this.imgDownStatusKey] = false;
-          this.imgDownStatus[this.imgDownStatusKey] = '';
-
-          this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-          this.isVideoLoading[this.videoDownStatusKey] = false;
-          this.videoDownStatus[this.videoDownStatusKey] = '';
-
-          this.pauseAllVideo();
-          this.feedService.handleSessionError(nodeId, error);
-          this.curNodeId = '';
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamProgress,
-      (streamProgressData: FeedsEvent.StreamProgressData) => {
-        this.zone.run(() => {
-          let progress = streamProgressData.progress;
-          if (
-            this.cachedMediaType === 'video' &&
-            this.videoDownStatus[this.videoDownStatusKey] === '1'
-          ) {
-            this.videoPercent = progress;
-            if (progress < 100) {
-              this.videoRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.videoRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-            return;
-          }
-
-          if (
-            this.cachedMediaType === 'img' &&
-            this.imgDownStatus[this.imgDownStatusKey] === '1'
-          ) {
-            this.imgPercent = progress;
-            if (progress < 100) {
-              this.imgRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.imgRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-          }
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-      (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
-        this.zone.run(() => {
-          let nodeId = streamStateChangedData.nodeId;
-          let state = streamStateChangedData.streamState;
-
-          if (this.cacheGetBinaryRequestKey == '') return;
-
-          if (state === FeedsData.StreamState.CONNECTED) {
-            this.feedService.getBinary(
-              nodeId,
-              this.cacheGetBinaryRequestKey,
-              this.cachedMediaType,
-            );
-          }
-        });
-      },
-    );
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       this.isImgPercentageLoading[this.imgDownStatusKey] = false;
@@ -666,23 +534,6 @@ export class HomePage implements OnInit {
       if (this.curNodeId != '') {
         this.feedService.closeSession(this.curNodeId);
         this.curNodeId = '';
-      }
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.streamClosed, nodeId => {
-      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-      this.isImgLoading[this.imgDownStatusKey] = false;
-      this.imgDownStatus[this.imgDownStatusKey] = '';
-
-      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-      this.isVideoLoading[this.videoDownStatusKey] = false;
-      this.videoDownStatus[this.videoDownStatusKey] = '';
-
-      let mNodeId = nodeId || '';
-      this.pauseAllVideo();
-      this.curNodeId = '';
-      if (mNodeId != '') {
-        this.feedService.closeSession(mNodeId);
       }
     });
   }
@@ -724,17 +575,6 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
-
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-    this.events.unsubscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-    );
-    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
-
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
@@ -774,7 +614,6 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.addBinaryEvevnt);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
   }
 
@@ -1364,7 +1203,7 @@ export class HomePage implements OnInit {
             .catch(reason => {
               rpostimg.style.display = 'none';
               Logger.error(TAG,
-                "Excute 'handlePsotImg' in home page is error , get image data error, error msg is ",
+                "Excute 'handlePostImg' in home page is error , get image data error, error msg is ",
                 reason
               );
             });
@@ -1405,7 +1244,6 @@ export class HomePage implements OnInit {
           //vgplayer.style.display = "none";
           let arr = srcId.split('-');
           let destDid = arr[0];
-          let channelId: string = arr[1];
           let postId: string = arr[2];
 
           let post = await this.dataHelper.getPostV3ById(destDid, postId);
@@ -1413,14 +1251,14 @@ export class HomePage implements OnInit {
           const elements = mediaDatas[0];
 
           //缩略图
-          let thumbnailKey = elements.thumbnailPath;
+          let videoThumbnailKey = elements.thumbnailPath;
           //原图
           //let imageKey = elements.originMediaPath;
           let type = elements.type;
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-          let fileName: string = "poster-" + thumbnailKey.split("@")[0];
+          let fileName: string = "poster-" + videoThumbnailKey.split("@")[0];
           this.hiveVaultController
-            .getV3Data(destDid, thumbnailKey, fileName, type)
+            .getV3Data(destDid, videoThumbnailKey, fileName, type)
             .then(imagedata => {
               let image = imagedata || '';
               if (image != '') {
@@ -1429,7 +1267,7 @@ export class HomePage implements OnInit {
 
                 //video.
                 this.setFullScreen(id);
-                this.setOverPlay(id, srcId);
+                this.setOverPlay(id, srcId,post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
                 video.style.display = 'none';
@@ -1579,7 +1417,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  setOverPlay(id: string, srcId: string) {
+  setOverPlay(id: string, srcId: string,post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
     let source: any = document.getElementById(id + 'source') || '';
@@ -1588,14 +1426,14 @@ export class HomePage implements OnInit {
         this.zone.run(() => {
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
-            this.getVideo(id, srcId);
+            this.getVideo(id,srcId,post);
           }
         });
       };
     }
   }
 
-  getVideo(id: string, srcId: string) {
+  getVideo(id: string, srcId: string,post: FeedsData.PostV3) {
     let arr = srcId.split('-');
     let nodeId = arr[0];
     let channelId: any = arr[1];
@@ -1613,50 +1451,24 @@ export class HomePage implements OnInit {
     this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
-    const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-    if (content.version == '2.0') {
-      // video.setAttribute('src', './assets/icon/reserve.svg');
-
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-        // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-          .then((value) => {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.loadVideo(id, value);
-          })
-          .catch(() => {
-            //TODO
-          });
-      }
-      return;
-    }
-
-    let key = this.feedService.getVideoKey(nodeId, channelId, postId, 0, 0);
-    this.feedService.getData(key).then((videoResult: string) => {
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let originKey = elements.originMediaPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "origin-"+originKey.split("@")[0];
+    this.hiveVaultController
+      .getV3Data(this.destDid, originKey, fileName, type,"false")
+    .then((videoResult: string) => {
       this.zone.run(() => {
         let videodata = videoResult || '';
         if (videodata == '') {
-          let post = _.find(this.postList, post => {
-            return (
-              post.nodeId === nodeId &&
-              post.channel_id == channelId &&
-              post.id == postId
-            );
-          });
-          if (!this.feedService.checkPostIsAvalible(post)) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            return;
-          }
 
-          if (this.checkServerStatus(nodeId) != 0) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            this.native.toastWarn('common.connectionError1');
-            return;
-          }
+          // if (!this.feedService.checkPostIsAvalible(post)) {
+          //   this.isVideoLoading[this.videoCurKey] = false;
+          //   this.pauseVideo(id);
+          //   return;
+          // }
 
           if (this.isExitDown()) {
             this.isVideoLoading[this.videoCurKey] = false;
@@ -1666,43 +1478,33 @@ export class HomePage implements OnInit {
           }
           this.videoDownStatusKey = nodeId + '-' + channelId + '-' + postId;
 
-          this.cachedMediaType = 'video';
-          this.feedService.processGetBinary(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-            FeedsData.MediaType.containsVideo,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.videoDownStatus[this.videoDownStatusKey] = '1';
-                this.isVideoLoading[this.videoDownStatusKey] = false;
-                this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
-                this.curNodeId = nodeId;
-                return;
-              }
+          this.videoDownStatus[this.videoDownStatusKey] = '1';
+          this.isVideoLoading[this.videoDownStatusKey] = true;
+          this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
 
-              if (transDataChannel == FeedsData.TransDataChannel.MESSAGE) {
-                this.videoDownStatus[this.videoDownStatusKey] = '0';
-                this.curNodeId = '';
-                return;
+          this.hiveVaultController
+          .getV3Data(this.destDid, originKey, fileName, type)
+           .then((downVideoResult: string)=>{
+            let downVideodata = downVideoResult || '';
+              if(downVideodata != ''){
+                this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoCurKey] = false;
+                this.loadVideo(id, videodata);
               }
-            },
-            err => {
+           }).catch((err)=>{
               this.videoDownStatus[this.videoDownStatusKey] = '';
               this.isVideoLoading[this.videoDownStatusKey] = false;
               this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
               this.pauseVideo(id);
-            },
-          );
+           });
           return;
         }
         this.isVideoLoading[this.videoCurKey] = false;
         this.loadVideo(id, videodata);
       });
+    }).catch((err)=>{
+      this.videoDownStatus[this.videoDownStatusKey] = '';
+      this.isVideoLoading[this.videoCurKey] = false;
     });
   }
 

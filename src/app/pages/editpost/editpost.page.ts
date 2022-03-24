@@ -25,6 +25,8 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 let TAG: string = 'Feeds-editpost';
 @Component({
@@ -44,7 +46,7 @@ export class EditPostPage implements OnInit {
   public newPost: string = '';
   public oldNewPost: string = '';
   public imgUrl: string = '';
-  public nodeId: string = '';
+  public destDid: string = '';
   public channelId: string = '';
   public postId: string = '';
 
@@ -65,6 +67,8 @@ export class EditPostPage implements OnInit {
   private transDataChannel: FeedsData.TransDataChannel =
     FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal: any = '';
+  private postData: FeedsData.PostV3 = null;
+  public mediaType: FeedsData.MediaType;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -82,13 +86,15 @@ export class EditPostPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private postHelperService: PostHelperService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe(data => {
       let item = _.cloneDeep(data);
-      this.nodeId = item['nodeId'] || '';
+      this.destDid = item['destDid'] || '';
       this.channelId = item['channelId'] || '';
       this.postId = item['postId'] || '';
     });
@@ -144,77 +150,6 @@ export class EditPostPage implements OnInit {
       });
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          this.feedService.handleSessionError(nodeId, error);
-          this.pauseVideo();
-          this.native.hideLoading();
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-      (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
-        this.zone.run(() => {
-          let state = streamStateChangedData.streamState;
-          let nodeId = streamStateChangedData.nodeId;
-          if (state != FeedsData.StreamState.CONNECTED) return;
-
-          if (
-            this.editState == FeedsData.EditState.TextImageChange ||
-            this.editState == FeedsData.EditState.TextVideoChange
-          ) {
-            this.feedService.sendData(
-              this.nodeId,
-              this.channelId,
-              this.postId,
-              0,
-              0,
-              this.flieUri,
-              this.imgUrl,
-              '',
-            );
-          }
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.setBinaryFinish,
-      (setBinaryFinishData: FeedsEvent.setBinaryFinishData) => {
-        this.zone.run(() => {
-          this.processSetBinaryResult();
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamSetBinarySuccess,
-      (setBinaryFinishData: FeedsEvent.setBinaryFinishData) => {
-        this.zone.run(() => {
-          let nodeId = setBinaryFinishData.nodeId;
-          this.feedService.closeSession(nodeId);
-          this.processSetBinaryResult();
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamSetBinaryError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          this.feedService.closeSession(nodeId);
-          this.native.hideLoading();
-        });
-      },
-    );
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       this.pauseVideo();
@@ -240,22 +175,12 @@ export class EditPostPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostSuccess);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.setBinaryFinish);
-
-    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinarySuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamSetBinaryError);
-    this.events.unsubscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-    );
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
 
     this.imgUrl = '';
     this.native.hideLoading();
     this.hideFullScreen();
     this.removeVideo();
-    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
-    this.feedService.closeSession(this.nodeId);
   }
 
   newPostTextArea() {
@@ -264,7 +189,7 @@ export class EditPostPage implements OnInit {
 
   pauseVideo() {
     if (this.posterImg != '') {
-      let id = this.nodeId + this.channelId + this.postId;
+      let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'videoeditpost') || '';
       if (!video.paused) {
         //判断是否处于暂停状态
@@ -288,10 +213,10 @@ export class EditPostPage implements OnInit {
   post() {
 
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+    // if (this.checkServerStatus(this.destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
     let newPost = this.native.iGetInnerText(this.newPost);
     if (newPost === '' && this.imgUrl === '' && this.flieUri === '') {
@@ -326,7 +251,7 @@ export class EditPostPage implements OnInit {
     if (this.newPost != this.oldNewPost && this.imgUrl != '') {
       this.editState = FeedsData.EditState.TextChange;
       let size = this.feedService.getContentDataSize(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
@@ -348,7 +273,7 @@ export class EditPostPage implements OnInit {
     if (this.newPost != this.oldNewPost && this.posterImg != '') {
       this.editState = FeedsData.EditState.TextChange;
       let size = this.feedService.getContentDataSize(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
@@ -408,7 +333,7 @@ export class EditPostPage implements OnInit {
 
   publishEditedPost(content: any) {
     this.feedsServiceApi.editPost(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       content,
@@ -445,90 +370,68 @@ export class EditPostPage implements OnInit {
     );
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
+  checkServerStatus(destDid: string) {
+    return this.feedService.getServerStatusFromId(destDid);
   }
 
   initnodeStatus() {
-    let status = this.checkServerStatus(this.nodeId);
-    this.nodeStatus[this.nodeId] = status;
+    let status = this.checkServerStatus(this.destDid);
+    this.nodeStatus[this.destDid] = status;
   }
 
   pressName(channelName: string) {
     this.viewHelper.createTip(channelName);
   }
 
-  getImage(content: FeedsData.Content) {
-    if (content.version == '2.0') {
-      this.imgUrl = './assets/icon/reserve.svg';//set Reserve Image
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-          .then((value) => {
-            this.imgUrl = value || '';
-          })
-          .catch(() => {
-            //TODO
-          });
+  getImage(post: FeedsData.PostV3) {
+    this.imgUrl = './assets/icon/reserve.svg';//set Reserve Image
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let thumbnailKey = elements.thumbnailPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "thumbnail-"+thumbnailKey.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid,thumbnailKey,fileName,type)
+    .then((cacheResult)=>{
+      let thumbImage = cacheResult || "";
+      if(thumbImage != ""){
+        this.imgUrl  = thumbImage;
       }
-      return;
-    }
-
-    let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-      this.nodeId,
-      this.channelId,
-      this.postId,
-      0,
-      0,
-    );
-    this.feedService
-      .getData(thumbkey)
-      .then(image => {
-        this.imgUrl = image || '';
-      })
-      .catch(reason => {
-        Logger.error(TAG, "Excute 'getImage' in editpost page is error,error msg is ", reason);
-      });
-  }
+    }).catch(()=>{
+    })
+}
 
   getContent() {
+
     let post = this.feedService.getPostFromId(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
     );
-    let postContent = post.content;
+    let postContent = this.postData.content.content;
     this.oldNewPost = this.feedsServiceApi.parsePostContentText(postContent) || '';
     this.newPost = this.feedsServiceApi.parsePostContentText(postContent) || '';
   }
 
-  initData() {
-    let channel =
-      this.feedService.getChannelFromId(this.nodeId, this.channelId) || {};
-
+ async initData() {
+    let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
-    let post: FeedsData.Post = this.feedService.getPostFromId(
-      this.nodeId,
-      this.channelId,
-      this.postId,
-    );
-    if (post.content.mediaType === 1) {
+
+    let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
+    this.postData = post;
+    this.mediaType = post.content.mediaType;
+
+    if (this.mediaType === FeedsData.MediaType.containsImg) {
       this.isShowVideo = false;
-      this.getImage(post.content);
+      this.getImage(post);
     }
 
-    if (post.content.mediaType === 2) {
+    if (this.mediaType === FeedsData.MediaType.containsVideo) {
       this.isShowVideo = true;
-      if (post.content.version == '2.0') {
-        this.duration = post.content.mediaDatas[0].duration;
-      } else {
-        this.duration = post.content['videoThumbKey']['duration'];
-      }
-
-      this.initVideo(post.content);
+      this.duration =  post.content.mediaData[0].duration;
+      this.initVideo(post);
     }
 
     this.getContent();
@@ -606,7 +509,7 @@ export class EditPostPage implements OnInit {
                     }
                     this.isShowVideo = true;
                     let sid = setTimeout(() => {
-                      let id = this.nodeId + this.channelId + this.nodeId;
+                      let id = this.destDid + this.channelId + this.destDid;
                       this.setFullScreen(id);
                       clearTimeout(sid);
                     }, 20);
@@ -696,48 +599,24 @@ export class EditPostPage implements OnInit {
     return filesize > 10;
   }
 
-  initVideo(content: FeedsData.Content) {
-    if (content.version == '2.0') {
-      this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-          .then((value) => {
-            if (value != '') {
-              this.zone.run(() => {
-                this.posterImg = value;
-                let id = this.nodeId + this.channelId + this.postId;
-                let sid = setTimeout(() => {
-                  let video = document.getElementById(id + 'videoeditpost');
-                  video.setAttribute('poster', this.posterImg);
-                  this.setFullScreen(id);
-                  this.setOverPlay(id);
-                  clearTimeout(sid);
-                }, 0);
-              });
-            }
-          })
-          .catch(() => {
-            //TODO
-          });
-      }
-      return;
-    }
+  initVideo(post: FeedsData.PostV3) {
+    this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let thumbnailKey = elements.thumbnailPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "poster-"+thumbnailKey.split("@")[0];
 
-    let key = this.feedService.getVideoThumbStrFromId(
-      this.nodeId,
-      this.channelId,
-      this.postId,
-      0,
-    );
-    this.feedService.getData(key).then((idata: string) => {
+    this.hiveVaultController
+    .getV3Data(this.destDid, thumbnailKey, fileName, type)
+    .then((idata: string) => {
       let imgageData: string = idata || '';
       if (imgageData != '') {
         this.zone.run(() => {
           this.isShowVideo = true;
           this.posterImg = imgageData;
-          let id = this.nodeId + this.channelId + this.postId;
+          let id = this.destDid + this.channelId + this.postId;
           let sid = setTimeout(() => {
             let video = document.getElementById(id + 'videoeditpost');
             video.setAttribute('poster', imgageData);
@@ -757,7 +636,7 @@ export class EditPostPage implements OnInit {
     this.totalProgress = 0;
     this.posterImg = '';
     this.flieUri = '';
-    let id = this.nodeId + this.channelId + this.postId;
+    let id = this.destDid + this.channelId + this.postId;
     let video: any = document.getElementById(id + 'videoeditpost') || '';
     if (video != '') {
       video.removeAttribute('poster');
@@ -812,43 +691,25 @@ export class EditPostPage implements OnInit {
             document.getElementById(id + 'sourceeditpost') || '';
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
-            let key = this.feedService.getVideoKey(
-              this.nodeId,
-              this.channelId,
-              this.postId,
-              0,
-              0,
-            );
-            this.getVideo(key);
+              this.getVideo();
           }
         });
       };
     }
   }
 
-  getVideo(key: string) {
-    Logger.log(TAG, 'Video key is', key);
-    const content: FeedsData.Content = this.feedService.getContentFromId(this.nodeId, this.channelId, this.postId, 0);
-    if (content.version == '2.0') {
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-          .then((value) => {
-            this.loadVideo(value);
-          })
-          .catch(() => {
-            //TODO
-          });
-        // this.loadVideo('https://ipfs0.trinity-feeds.app/ipfs/' + elements.originMediaCid);
-        // this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-        //   this.loadVideo(value);
-        // });
-      }
-      return;
-    }
+  getVideo() {
 
-    this.feedService.getData(key).then((videodata: string) => {
+    let mediaDatas = this.postData.content.mediaData;
+    const elements = mediaDatas[0];
+    let originKey = elements.originMediaPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "origin-"+originKey.split("@")[0];
+
+    this.hiveVaultController
+      .getV3Data(this.destDid, originKey, fileName, type)
+    .then((videodata: string) => {
       this.zone.run(() => {
         let videoData = videodata || '';
         this.flieUri = videoData;
@@ -858,7 +719,7 @@ export class EditPostPage implements OnInit {
   }
 
   loadVideo(videoData: string) {
-    let id = this.nodeId + this.channelId + this.postId;
+    let id = this.destDid + this.channelId + this.postId;
     let source: any = document.getElementById(id + 'sourceeditpost') || '';
     source.setAttribute('src', videoData);
     let vgbuffering: any = document.getElementById(id + 'vgbufferingeditpost');

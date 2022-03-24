@@ -38,7 +38,6 @@ declare namespace FeedsEvent {
     notification = 'feeds:notification',
 
     updateTab = 'update:tab',
-    addBinaryEvevnt = 'addBinaryEvevnt',
     tabSendPost = 'feeds:tabsendpost',
     hideOfflineFeeds = 'feeds:hideOfflineFeeds',
     hideUnFollowFeeds = 'feeds:hideUnFollowFeeds',
@@ -55,23 +54,20 @@ declare namespace FeedsEvent {
     owner_declared = 'feeds:owner_declared',
     updateCredentialFinish = 'feeds:updateCredentialFinish',
 
-    setBinaryFinish = 'feeds:setBinaryFinish',
-    getBinaryFinish = 'feeds:getBinaryFinish',
+    //setBinaryFinish = 'feeds:setBinaryFinish',
+    //getBinaryFinish = 'feeds:getBinaryFinish',
     resolveDidSucess = 'feeds:resolveDidSucess',
     resolveDidError = 'feeds:resolveDidError',
     issue_credential = 'feeds:issue_credential',
     signinSuccess = 'feeds:signinSuccess',
 
     ////////
-    streamOnStateChangedCallback = 'stream:onStateChangedCallback',
-    streamError = 'stream:error',
-    streamGetBinarySuccess = 'stream:getBinarySuccess',
-    streamGetBinaryResponse = 'stream:getBinaryResponse',
-    streamSetBinarySuccess = 'stream:setBinarySuccess',
-    streamProgress = 'stream:progress',
-    streamClosed = 'stream:closed',
-    streamSetBinaryError = 'stream:setBinaryError',
-    streamGetBinaryError = 'stream:getBinaryError',
+    //streamOnStateChangedCallback = 'stream:onStateChangedCallback',
+    //streamError = 'stream:error',
+    //streamProgress = 'stream:progress',
+    //streamClosed = 'stream:closed',
+   // streamSetBinaryError = 'stream:setBinaryError',
+    //streamGetBinaryError = 'stream:getBinaryError',
 
     ////////
     ownFeedListChanged = 'feeds:ownFeedListChanged  ',

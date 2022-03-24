@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService, Avatar } from 'src/app/services/FeedService';
+import { FeedService, Avatar, SignInData } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
@@ -41,88 +41,116 @@ export class ProfilePage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
 
-  // likeList = [{
-  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-  //   "postId": "2b97793e71d6eb253e3a50c2f0f568e796d28992f260bca48f89d1690478058b",
-  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-  //   "createdAt": 1647955924595,
-  //   "updatedAt": 1647955924595,
-  //   "content": {
-  //     "version": "3.0",
-  //     "mediaData": [{
-  //       "kind": "image",
-  //       "originMediaPath": "12b7b2b9528156173b5a0975e6cd95ea@feeds/data/12b7b2b9528156173b5a0975e6cd95ea",
-  //       "type": "0",
-  //       "size": 565223,
-  //       "thumbnailPath": "ae20729c36af8cef069c08c512eae4f0@feeds/data/ae20729c36af8cef069c08c512eae4f0",
-  //       "duration": 0,
-  //       "imageIndex": 0,
-  //       "additionalInfo": {},
-  //       "memo": {}
-  //     }],
-  //     "content": "trdggg23",
-  //     "mediaType": 1
-  //   },
-  //   "status": 0,
-  //   "type": "public",
-  //   "tag": "Feeds-createpost",
-  //   "proof": "",
-  //   "memo": ""
-  // }, {
-  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-  //   "postId": "a179ad85a2c5d91ea1be6247d637c2a5c514736326621ee176eebb2345d7845d",
-  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-  //   "createdAt": 1648053871439,
-  //   "updatedAt": 1648053871439,
-  //   "content": {
-  //     "version": "3.0",
-  //     "mediaData": [{
-  //       "kind": "image",
-  //       "originMediaPath": "32606ee020db9d1c1cf8ab9603e3b2c1@feeds/data/32606ee020db9d1c1cf8ab9603e3b2c1",
-  //       "type": "0",
-  //       "size": 634979,
-  //       "thumbnailPath": "79b0d365f7ed7b84abd532be52717717@feeds/data/79b0d365f7ed7b84abd532be52717717",
-  //       "duration": 0,
-  //       "imageIndex": 0,
-  //       "additionalInfo": {},
-  //       "memo": {}
-  //     }],
-  //     "content": "tesy133666",
-  //     "mediaType": 1
-  //   },
-  //   "status": 0,
-  //   "type": "public",
-  //   "tag": "Feeds-createpost",
-  //   "proof": "",
-  //   "memo": ""
-  // }, {
-  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-  //   "postId": "d763819fd243369c4de287457148547e1a43fe641b29f47f3281aac493d8bdc3",
-  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-  //   "createdAt": 1648054186048,
-  //   "updatedAt": 1648054186048,
-  //   "content": {
-  //     "version": "3.0",
-  //     "mediaData": [{
-  //       "kind": "image",
-  //       "originMediaPath": "1bc8b46c48c9871d6ac57cc105ec8364@feeds/data/1bc8b46c48c9871d6ac57cc105ec8364",
-  //       "type": "0",
-  //       "size": 116203,
-  //       "thumbnailPath": "821d062eac7d80d680bf0ca5f27d89f8@feeds/data/821d062eac7d80d680bf0ca5f27d89f8",
-  //       "duration": 0,
-  //       "imageIndex": 0,
-  //       "additionalInfo": {},
-  //       "memo": {}
-  //     }],
-  //     "content": "yhbbbbbbbbb",
-  //     "mediaType": 1
-  //   },
-  //   "status": 0,
-  //   "type": "public",
-  //   "tag": "Feeds-createpost",
-  //   "proof": "",
-  //   "memo": ""
-  // }];
+  public likeList = [{
+    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+    "postId": "2b97793e71d6eb253e3a50c2f0f568e796d28992f260bca48f89d1690478058b",
+    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+    "createdAt": 1647955924595,
+    "updatedAt": 1647955924595,
+    "content": {
+      "version": "3.0",
+      "mediaData": [{
+        "kind": "image",
+        "originMediaPath": "12b7b2b9528156173b5a0975e6cd95ea@feeds/data/12b7b2b9528156173b5a0975e6cd95ea",
+        "type": "0",
+        "size": 565223,
+        "thumbnailPath": "ae20729c36af8cef069c08c512eae4f0@feeds/data/ae20729c36af8cef069c08c512eae4f0",
+        "duration": 0,
+        "imageIndex": 0,
+        "additionalInfo": {},
+        "memo": {}
+      }],
+      "content": "trdggg23",
+      "mediaType": 1
+    },
+    "status": 0,
+    "type": "public",
+    "tag": "Feeds-createpost",
+    "proof": "",
+    "memo": ""
+  }, {
+    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+    "postId": "a179ad85a2c5d91ea1be6247d637c2a5c514736326621ee176eebb2345d7845d",
+    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+    "createdAt": 1648053871439,
+    "updatedAt": 1648053871439,
+    "content": {
+      "version": "3.0",
+      "mediaData": [{
+        "kind": "image",
+        "originMediaPath": "32606ee020db9d1c1cf8ab9603e3b2c1@feeds/data/32606ee020db9d1c1cf8ab9603e3b2c1",
+        "type": "0",
+        "size": 634979,
+        "thumbnailPath": "79b0d365f7ed7b84abd532be52717717@feeds/data/79b0d365f7ed7b84abd532be52717717",
+        "duration": 0,
+        "imageIndex": 0,
+        "additionalInfo": {},
+        "memo": {}
+      }],
+      "content": "tesy133666",
+      "mediaType": 1
+    },
+    "status": 0,
+    "type": "public",
+    "tag": "Feeds-createpost",
+    "proof": "",
+    "memo": ""
+  }, {
+    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+    "postId": "d763819fd243369c4de287457148547e1a43fe641b29f47f3281aac493d8bdc3",
+    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+    "createdAt": 1648054186048,
+    "updatedAt": 1648054186048,
+    "content": {
+      "version": "3.0",
+      "mediaData": [{
+        "kind": "image",
+        "originMediaPath": "1bc8b46c48c9871d6ac57cc105ec8364@feeds/data/1bc8b46c48c9871d6ac57cc105ec8364",
+        "type": "0",
+        "size": 116203,
+        "thumbnailPath": "821d062eac7d80d680bf0ca5f27d89f8@feeds/data/821d062eac7d80d680bf0ca5f27d89f8",
+        "duration": 0,
+        "imageIndex": 0,
+        "additionalInfo": {},
+        "memo": {}
+      }],
+      "content": "yhbbbbbbbbb",
+      "mediaType": 1
+    },
+    "status": 0,
+    "type": "public",
+    "tag": "Feeds-createpost",
+    "proof": "",
+    "memo": ""
+  },
+  {
+    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+    "postId": "c6f7347ce5c1c9c659f84eb180029d7e782dc24fc59ee48039cfab6c50cee9fa",
+    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+    "createdAt": 1648100775192,
+    "updatedAt": 1648100775192,
+    "content": {
+      "version": "3.0",
+      "mediaData": [{
+        "kind": "video",
+        "originMediaPath": "dfd40415a98266e540c1591429904982@feeds/data/dfd40415a98266e540c1591429904982",
+        "type": "2",
+        "size": 6879178,
+        "thumbnailPath": "6b34929dda14c9670913dfba56202c24@feeds/data/6b34929dda14c9670913dfba56202c24",
+        "duration": 9.365,
+        "imageIndex": 0,
+        "additionalInfo": {},
+        "memo": {}
+      }],
+      "content": "tesyuhhhhhhbvvv",
+      "mediaType": 2
+    },
+    "status": 0,
+    "type": "public",
+    "tag": "Feeds-createpost",
+    "proof": "",
+    "memo": ""
+  }];
 
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
@@ -131,7 +159,7 @@ export class ProfilePage implements OnInit {
   public totalLikeList = [];
   public startIndex: number = 0;
   public pageNumber: number = 5;
-  public likeList = []; //like page
+  //public likeList = []; //like page
   public connectionStatus = 1;
   public selectType: string = 'ProfilePage.myFeeds';
   public followers = 0;
@@ -344,7 +372,8 @@ export class ProfilePage implements OnInit {
   }
 
   sortLikeList() {
-    let likeList = this.feedService.getLikeList() || [];
+    //let likeList = this.feedService.getLikeList() || [];
+    let likeList = this.likeList;
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
@@ -557,120 +586,6 @@ export class ProfilePage implements OnInit {
       }
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinaryResponse,
-      () => {
-        this.zone.run(() => { });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.getBinaryFinish,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinarySuccess,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let nodeId = getBinaryData.nodeId;
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          this.feedService.closeSession(nodeId);
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinaryResponse,
-      () => {
-        this.zone.run(() => { });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          this.clearDownStatus();
-          this.feedService.handleSessionError(nodeId, error);
-          this.pauseAllVideo();
-          this.native.hideLoading();
-          this.curPostId = '';
-          this.curNodeId = '';
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamProgress,
-      (streamProgressData: FeedsEvent.StreamProgressData) => {
-        this.zone.run(() => {
-          let progress = streamProgressData.progress;
-          if (
-            this.cachedMediaType === 'video' &&
-            this.videoDownStatus[this.videoDownStatusKey] === '1'
-          ) {
-            this.videoPercent = progress;
-            if (progress < 100) {
-              this.videoRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.videoRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-            return;
-          }
-
-          if (
-            this.cachedMediaType === 'img' &&
-            this.imgDownStatus[this.imgDownStatusKey] === '1'
-          ) {
-            this.imgPercent = progress;
-            if (progress < 100) {
-              this.imgRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.imgRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-          }
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-      (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
-        this.zone.run(() => {
-          let nodeId = streamStateChangedData.nodeId;
-          let state = streamStateChangedData.streamState;
-          if (this.cacheGetBinaryRequestKey == '') return;
-
-          if (state === FeedsData.StreamState.CONNECTED) {
-            this.feedService.getBinary(
-              nodeId,
-              this.cacheGetBinaryRequestKey,
-              this.cachedMediaType,
-            );
-          }
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
@@ -725,23 +640,6 @@ export class ProfilePage implements OnInit {
       this.pauseAllVideo();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamClosed, nodeId => {
-      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-      this.isImgLoading[this.imgDownStatusKey] = false;
-      this.imgDownStatus[this.imgDownStatusKey] = '';
-
-      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-      this.isVideoLoading[this.videoDownStatusKey] = false;
-      this.videoDownStatus[this.videoDownStatusKey] = '';
-
-      let mNodeId = nodeId || '';
-      if (mNodeId != '') {
-        this.feedService.closeSession(mNodeId);
-      }
-      this.pauseAllVideo();
-      this.native.hideLoading();
-      this.curNodeId = '';
-    });
   }
 
   async ionViewWillEnter() {
@@ -799,14 +697,6 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
-
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-    this.events.unsubscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-    );
 
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
@@ -815,8 +705,6 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
@@ -1183,7 +1071,7 @@ export class ProfilePage implements OnInit {
         }
         if (mediaType === '2') {
           //video
-          //this.hanldVideo(id, srcId, postgridindex);
+          this.hanldVideo(id, srcId, postgridindex);
         }
       }
     }
@@ -1271,7 +1159,7 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
     }
   }
 
-  hanldVideo(id: string, srcId: string, rowindex: number) {
+  async hanldVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayerlike');
     let video: any = document.getElementById(id + 'videolike');
@@ -1289,79 +1177,28 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
           let arr = srcId.split('-');
-          let nodeId = arr[0];
-          let channelId: any = arr[1];
+          let destDid = arr[0];
           let postId: any = arr[2];
-          let key = this.feedService.getVideoThumbStrFromId(
-            nodeId,
-            channelId,
-            postId,
-            0,
-          );
+          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
 
-          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          if (content.version == '2.0') {
-            video.setAttribute('poster', './assets/icon/reserve.svg');
-            const mediaDatas = content.mediaDatas;
-            if (mediaDatas && mediaDatas.length > 0) {
-              const elements = mediaDatas[0];
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-                .then((value) => {
-                  let thumbImage = value || "";
-                  this.isLoadVideoiamge[id] = '13';
-                  video.setAttribute('poster', thumbImage);
-
-                  //video.
-                  this.setFullScreen(id);
-                  this.setOverPlay(id, srcId);
-                  // if (thumbImage != '') {
-                  //   this.isLoadimage[id] = '13';
-
-                  //   if (nftOrdeId != '' && priceDes != '') {
-                  //     let imagesWidth = postImage.clientWidth;
-                  //     let homebidfeedslogo = document.getElementById(
-                  //       id + 'homebidfeedslogo'
-                  //     );
-                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                  //     homebidfeedslogo.style.display = 'block';
-
-                  //     let homebuy = document.getElementById(id + 'homebuy');
-                  //     let homeNftPrice = document.getElementById(
-                  //       id + 'homeNftPrice'
-                  //     );
-                  //     let homeNftQuantity = document.getElementById(
-                  //       id + 'homeNftQuantity'
-                  //     );
-                  //     let homeMaxNftQuantity = document.getElementById(
-                  //       id + 'homeMaxNftQuantity'
-                  //     );
-                  //     homeNftPrice.innerText = priceDes;
-                  //     homeNftQuantity.innerText = nftQuantity;
-                  //     homeMaxNftQuantity.innerText = nftQuantity;
-                  //     homebuy.style.display = 'block';
-                  //   }
-                  //   rpostimg.style.display = 'block';
-                  // } else {
-                  //   this.isLoadimage[id] = '12';
-                  //   rpostimg.style.display = 'none';
-                  // }
-                })
-                .catch(() => {
-                  //TODO
-                });
-            }
-            return;
-          }
-
-          this.feedService
-            .getData(key)
+          //缩略图
+          let videoThumbnailKey = elements.thumbnailPath;
+          //原图
+          //let imageKey = elements.originMediaPath;
+          let type = elements.type;
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileName: string = "poster-" + videoThumbnailKey.split("@")[0];
+          this.hiveVaultController
+            .getV3Data(destDid, videoThumbnailKey, fileName, type)
             .then(imagedata => {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadVideoiamge[id] = '13';
                 video.setAttribute('poster', image);
                 this.setFullScreen(id);
-                this.setOverPlay(id, srcId);
+                this.setOverPlay(id, srcId,post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
                 video.style.display = 'none';
@@ -1485,7 +1322,7 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
     }
   }
 
-  setOverPlay(id: string, srcId: string) {
+  setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplaylike') || '';
     let source: any = document.getElementById(id + 'sourcelike') || '';
@@ -1495,20 +1332,20 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
         this.zone.run(() => {
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
-            this.getVideo(id, srcId);
+            this.getVideo(id, srcId, post);
           }
         });
       };
     }
   }
 
-  getVideo(id: string, srcId: string) {
+  getVideo(id: string, srcId: string, post: FeedsData.PostV3) {
     let arr = srcId.split('-');
-    let nodeId = arr[0];
+    let destDid = arr[0];
     let channelId: any = arr[1];
     let postId: any = arr[2];
 
-    let videoId = nodeId + '-' + channelId + '-' + postId + 'vgplayerlike';
+    let videoId = destDid + '-' + channelId + '-' + postId + 'vgplayerlike';
     let videoObj = document.getElementById(videoId);
     let videoWidth = videoObj.clientWidth;
     let videoHeight = videoObj.clientHeight;
@@ -1518,53 +1355,34 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
       (videoWidth - this.roundWidth) / 2 + 'px';
     this.videoloadingStyleObj['top'] =
       (videoHeight - this.roundWidth) / 2 + 'px';
-    this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
+    this.videoCurKey = destDid + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
-    const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-    if (content.version == '2.0') {
-      // video.setAttribute('src', './assets/icon/reserve.svg');
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-
-        // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-          .then((value) => {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.loadVideo(id, value);
-          })
-          .catch(() => {
-            //TODO
-          });
-      }
-      return;
-    }
-
-
-    let key = this.feedService.getVideoKey(nodeId, channelId, postId, 0, 0);
-    this.feedService.getData(key).then((videoResult: string) => {
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let originKey = elements.originMediaPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "origin-"+originKey.split("@")[0];
+    this.hiveVaultController
+      .getV3Data(destDid, originKey, fileName, type,"false")
+      .then((videoResult: string) => {
       this.zone.run(() => {
         let videodata = videoResult || '';
         if (videodata == '') {
-          let post = _.find(this.likeList, post => {
-            return (
-              post.nodeId === nodeId &&
-              post.channel_id == channelId &&
-              post.id == postId
-            );
-          });
-          if (!this.feedService.checkPostIsAvalible(post)) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            return;
-          }
-          if (this.checkServerStatus(nodeId) != 0) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            this.native.toastWarn('common.connectionError1');
-            return;
-          }
+
+          // if (!this.feedService.checkPostIsAvalible(post)) {
+          //   this.isVideoLoading[this.videoCurKey] = false;
+          //   this.pauseVideo(id);
+          //   return;
+          // }
+
+          // if (this.checkServerStatus(destDid) != 0) {
+          //   this.isVideoLoading[this.videoCurKey] = false;
+          //   this.pauseVideo(id);
+          //   this.native.toastWarn('common.connectionError1');
+          //   return;
+          // }
 
           if (this.isExitDown()) {
             this.isVideoLoading[this.videoCurKey] = false;
@@ -1573,42 +1391,34 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
             return;
           }
 
-          this.videoDownStatusKey = nodeId + '-' + channelId + '-' + postId;
-          this.cachedMediaType = 'video';
-          this.feedService.processGetBinary(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-            FeedsData.MediaType.containsVideo,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.videoDownStatus[this.videoDownStatusKey] = '1';
-                this.isVideoLoading[this.videoDownStatusKey] = false;
-                this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
-                this.curNodeId = nodeId;
-              } else {
-                this.videoDownStatus[this.videoDownStatusKey] = '0';
-                this.curNodeId = '';
+          this.videoDownStatusKey = destDid + '-' + channelId + '-' + postId;
+          this.videoDownStatus[this.videoDownStatusKey] = '1';
+          this.isVideoLoading[this.videoDownStatusKey] = true;
+          this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+
+          this.hiveVaultController
+          .getV3Data(destDid, originKey, fileName, type)
+           .then((downVideoResult: string)=>{
+            let downVideodata = downVideoResult || '';
+              if(downVideodata != ''){
+                this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoCurKey] = false;
+                this.loadVideo(id, videodata);
               }
-            },
-            err => {
+           }).catch((err)=>{
               this.videoDownStatus[this.videoDownStatusKey] = '';
               this.isVideoLoading[this.videoDownStatusKey] = false;
               this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-              this.videoRotateNum = {};
-              this.videoPercent = 0;
               this.pauseVideo(id);
-            },
-          );
+           });
           return;
         }
         this.isVideoLoading[this.videoCurKey] = false;
         this.loadVideo(id, videodata);
       });
+    }).catch((err)=>{
+      this.videoDownStatus[this.videoDownStatusKey] = '';
+      this.isVideoLoading[this.videoCurKey] = false;
     });
   }
 
@@ -1806,20 +1616,20 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
 
   async hideShareMenu(objParm: any) {
     let buttonType = objParm['buttonType'];
-    let nodeId = objParm['nodeId'];
-    let feedId = objParm['feedId'];
+    let destDid = objParm['destDid'];
+    let channelId = objParm['feedId'];
     switch (buttonType) {
       case 'unfollow':
         if (this.feedService.getConnectionStatus() != 0) {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        if (this.checkServerStatus(nodeId) != 0) {
+        if (this.checkServerStatus(destDid) != 0) {
           this.native.toastWarn('common.connectionError1');
           return;
         }
 
-        this.feedsServiceApi.unsubscribeChannel(nodeId, feedId);
+        this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
         break;
@@ -1827,14 +1637,17 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
         if (this.selectType === 'ProfilePage.myFeeds') {
           let content = this.getQrCodeString(this.curItem);
 
-          const myNodeId = this.curItem['nodeId'];
+          const myDestDid = this.curItem['destDid'];
           const myChannelId = this.curItem['channelId'];
           const myPostId = this.curItem['postId'] || 0;
           this.hideSharMenuComponent = false;
           await this.native.showLoading("common.generateSharingLink");
           try {
-            const sharedLink = await this.intentService.createShareLink(myNodeId, myChannelId, myPostId);
-            const title = this.intentService.createShareChannelTitle(myNodeId, myChannelId) || "";
+            let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(myDestDid,myChannelId) || null;
+            let signInData: SignInData = this.feedService.getSignInData() || null;
+            let ownerDid = signInData.did || "";
+            const sharedLink = await this.intentService.createShareLink(myDestDid, myChannelId, myPostId,ownerDid,channel);
+            const title = this.intentService.createShareChannelTitle(myDestDid, myChannelId) || "";
             this.intentService.share(title, sharedLink);
           } catch (error) {
           }
@@ -1843,22 +1656,24 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
           return;
         }
         if (this.selectType === 'ProfilePage.myLikes') {
-          nodeId = this.curItem['nodeId'];
-          feedId = this.curItem['channelId'];
+          destDid= this.curItem['destDid'];
+          channelId = this.curItem['channelId'];
           let postId = this.curItem['postId'];
-          let post =
-            this.feedService.getPostFromId(nodeId, feedId, postId) || null;
+          let post: any = await this.dataHelper.getPostV3ById(destDid,postId) || null;
+          let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId) || null;
+          let signInData: SignInData = this.feedService.getSignInData() || null;
+          let ownerDid = signInData.did || "";
           let postContent = '';
           if (post != null) {
-            postContent = this.feedsServiceApi.parsePostContentText(post.content);
+            postContent = post.content.content || "";
           }
 
           this.hideSharMenuComponent = false;
           await this.native.showLoading("common.generateSharingLink");
           try {
             //share post
-            const sharedLink = await this.intentService.createShareLink(nodeId, feedId, postId);
-            this.intentService.share(this.intentService.createSharePostTitle(nodeId, feedId, postId), sharedLink);
+            const sharedLink = await this.intentService.createShareLink(destDid,channelId, postId,ownerDid,channel);
+            this.intentService.share(this.intentService.createSharePostTitle(destDid,channelId, postId,postContent), sharedLink);
           } catch (error) {
           }
           this.native.hideLoading();
@@ -1869,7 +1684,7 @@ async handlePostImg(id: string, srcId: string, rowindex: number) {
         break;
       case 'info':
         this.clearData();
-        this.clickAvatar(nodeId, feedId);
+        this.clickAvatar(destDid, channelId);
         break;
       case 'preferences':
         if (this.feedService.getConnectionStatus() != 0) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { FeedService } from './FeedService';
+import { FeedService, SignInData } from './FeedService';
 import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { IntentService } from 'src/app/services/IntentService';
@@ -15,7 +15,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 @Injectable()
 export class MenuService {
-  public nodeId: string = '';
+  public destDid: string = '';
   public channelId: string = "0";
   public postId: string = "0";
   public commentId: number = 0;
@@ -60,19 +60,23 @@ export class MenuService {
           text: this.translate.instant('common.share'),
           icon: 'share',
           handler: async () => {
-            let post =
-              this.feedService.getPostFromId(destDid, channelId, postId) || null;
+            let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
+            let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid,this.channelId) || null;
+            let signInData: SignInData = this.feedService.getSignInData() || null;
+            let ownerDid = signInData.did || "";
             let postContent = '';
             if (post != null) {
-              postContent = this.feedsServiceApi.parsePostContentText(post.content);
+              postContent = post.content.content || "";
             }
-
-            this.postDetail.dismiss()
+            if(this.postDetail != null ){
+              this.postDetail.dismiss();
+              this.postDetail = null;
+            }
             await this.native.showLoading("common.generateSharingLink");
             try {
-              const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId);
+              const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId,ownerDid,channel);
               this.intentService
-                .share(this.intentService.createSharePostTitle(destDid, channelId, postId), sharedLink);
+                .share(this.intentService.createSharePostTitle(destDid, channelId, postId,postContent), sharedLink);
             } catch (error) {
             }
             this.native.hideLoading();
@@ -125,20 +129,24 @@ export class MenuService {
           text: this.translate.instant('common.share'),
           icon: 'share',
           handler: async () => {
-            let post =
-              this.feedService.getPostFromId(nodeId, channelId, postId) || null;
+            let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
+            let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid,this.channelId) || null;
+            let signInData: SignInData = this.feedService.getSignInData() || null;
+            let ownerDid = signInData.did || "";
             let postContent = '';
             if (post != null) {
-              postContent = this.feedsServiceApi.parsePostContentText(post.content);
+              postContent = post.content.content || "";
             }
-
-            this.postDetail.dismiss();
+            if(this.postDetail != null ){
+              this.postDetail.dismiss();
+              this.postDetail = null;
+            }
             //Share post
             await this.native.showLoading("common.generateSharingLink");
             try {
-              const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
+              const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId,ownerDid,channel);
               this.intentService
-                .share(this.intentService.createSharePostTitle(nodeId, channelId, postId), sharedLink);
+                .share(this.intentService.createSharePostTitle(nodeId, channelId, postId,postContent), sharedLink);
             } catch (error) {
             }
             this.native.hideLoading();
@@ -445,60 +453,65 @@ export class MenuService {
   }
 
   async handlePostDetailMenun(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     channelName: string,
     postId: string,
     clickName: string,
   ) {
-    this.nodeId = nodeId;
+    this.destDid = destDid;
     this.channelId = channelId;
     this.postId = postId;
-    let server = this.feedsServiceApi.getServerbyNodeId(nodeId);
 
     switch (clickName) {
       case 'editPost':
-        if (
-          !this.feedService.checkBindingServerVersion(() => {
-            this.feedService.hideAlertPopover();
-          })
-        )
-          return;
+        // if (
+        //   !this.feedService.checkBindingServerVersion(() => {
+        //     this.feedService.hideAlertPopover();
+        //   })
+        // )
+        //   return;
 
         this.native.go('/editpost', {
-          nodeId: nodeId,
+          destDid: destDid,
           channelId: channelId,
           postId: postId,
           channelName: channelName,
         });
         break;
       case 'sharepost':
-        let post =
-          this.feedService.getPostFromId(nodeId, channelId, postId) || null;
+
+        let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
+        let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid,this.channelId) || null;
+        let signInData: SignInData = this.feedService.getSignInData() || null;
+        let ownerDid = signInData.did || "";
         let postContent = '';
         if (post != null) {
-          postContent = this.feedsServiceApi.parsePostContentText(post.content);
+          postContent = post.content.content || "";
         }
 
         //home share post
-        this.postDetail.dismiss();
+        if(this.postDetail != null){
+          this.postDetail.dismiss();
+          this.postDetail = null;
+        }
         await this.native.showLoading("common.generateSharingLink");
         try {
-          const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId);
+          const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId,ownerDid,channel);
           this.intentService
-            .share(this.intentService.createSharePostTitle(nodeId, channelId, postId), sharedLink);
+            .share(this.intentService.createSharePostTitle(destDid, channelId, postId,postContent), sharedLink);
         } catch (error) {
         }
         this.native.hideLoading();
 
         break;
       case 'removePost':
-        if (
-          !this.feedService.checkBindingServerVersion(() => {
-            this.feedService.hideAlertPopover();
-          })
-        )
-          return;
+        // if (
+        //   !this.feedService.checkBindingServerVersion(() => {
+        //     this.feedService.hideAlertPopover();
+        //   })
+        // )
+        //   return;
 
         this.popover = this.popupProvider.ionicConfirm(
           this,
@@ -596,7 +609,7 @@ export class MenuService {
   }
 
   async showCommentDetailMenu(comment: any) {
-    this.nodeId = comment['nodeId'];
+    this.destDid = comment['nodeId'];
     this.channelId = comment['channel_id'];
     this.postId = comment['post_id'];
     this.commentId = comment['id'];
@@ -686,7 +699,7 @@ export class MenuService {
   }
 
   async showReplyDetailMenu(reply: any) {
-    this.nodeId = reply['nodeId'];
+    this.destDid = reply['nodeId'];
     this.channelId = reply['channel_id'];
     this.postId = reply['post_id'];
     this.commentId = reply['id'];

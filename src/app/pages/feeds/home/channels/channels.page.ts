@@ -50,7 +50,6 @@ export class ChannelsPage implements OnInit {
   public channelSubscribes: number = 0;
   public postList: any = [];
 
-  public : string = '';
   public channelId: string = "0";
 
   public followStatus: boolean = false;
@@ -124,7 +123,6 @@ export class ChannelsPage implements OnInit {
   public nftAssetList: any = [];
 
   private destDid = '';
-  private ownerDid: string = "";
   private tippingAddress: string = "";
   constructor(
     private platform: Platform,
@@ -335,118 +333,6 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinaryResponse,
-      () => {
-        this.zone.run(() => { });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.getBinaryFinish,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinarySuccess,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let destDid = getBinaryData.nodeId;
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          this.processGetBinaryResult(key, value);
-          this.feedService.closeSession(destDid);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamProgress,
-      (streamProgressData: FeedsEvent.StreamProgressData) => {
-        this.zone.run(() => {
-          let progress = streamProgressData.progress;
-          if (
-            this.cachedMediaType === 'video' &&
-            this.videoDownStatus[this.videoDownStatusKey] === '1'
-          ) {
-            this.videoPercent = progress;
-            if (progress < 100) {
-              this.videoRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.videoRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-            return;
-          }
-
-          if (
-            this.cachedMediaType === 'img' &&
-            this.imgDownStatus[this.imgDownStatusKey] === '1'
-          ) {
-            this.imgPercent = progress;
-            if (progress < 100) {
-              this.imgRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.imgRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-          }
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let destDid = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-          this.isImgLoading[this.imgDownStatusKey] = false;
-          this.imgDownStatus[this.imgDownStatusKey] = '';
-
-          this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-          this.isVideoLoading[this.videoDownStatusKey] = false;
-          this.videoDownStatus[this.videoDownStatusKey] = '';
-
-          this.feedService.handleSessionError(destDid, error);
-          this.pauseAllVideo();
-          this.curNodeId = '';
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-      (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
-        this.zone.run(() => {
-          let nodeId = streamStateChangedData.nodeId;
-          let state = streamStateChangedData.streamState;
-          if (this.cacheGetBinaryRequestKey == '') return;
-
-          if (state === FeedsData.StreamState.CONNECTED) {
-            this.feedService.getBinary(
-              nodeId,
-              this.cacheGetBinaryRequestKey,
-              this.cachedMediaType,
-            );
-          }
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.zone.run(() => {
         this.native.hideLoading();
@@ -484,23 +370,6 @@ export class ChannelsPage implements OnInit {
       this.curNodeId = '';
       this.pauseAllVideo();
       this.hideFullScreen();
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.streamClosed, nodeId => {
-      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-      this.isImgLoading[this.imgDownStatusKey] = false;
-      this.imgDownStatus[this.imgDownStatusKey] = '';
-
-      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-      this.isVideoLoading[this.videoDownStatusKey] = false;
-      this.videoDownStatus[this.videoDownStatusKey] = '';
-
-      let mNodeId = nodeId || '';
-      if (mNodeId != '') {
-        this.feedService.closeSession(mNodeId);
-      }
-      this.pauseAllVideo();
-      this.curNodeId = '';
     });
 
     this.events.subscribe(
@@ -544,21 +413,11 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
-
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-    this.events.unsubscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-    );
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
     this.removeImages();
@@ -570,7 +429,6 @@ export class ChannelsPage implements OnInit {
     }
     this.curNodeId = '';
     this.events.publish(FeedsEvent.PublishType.updateTab);
-    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.search);
@@ -858,7 +716,7 @@ export class ChannelsPage implements OnInit {
         }
         if (mediaType === '2') {
           //video
-          //this.hanldVideo(id, srcId, postgridindex);
+          this.hanldVideo(id, srcId, postgridindex);
         }
       }
     }
@@ -946,7 +804,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  hanldVideo(id: string, srcId: string, rowindex: number) {
+ async hanldVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayerchannel');
     let video: any = document.getElementById(id + 'videochannel');
@@ -965,79 +823,29 @@ export class ChannelsPage implements OnInit {
           this.isLoadVideoiamge[id] = '11';
           let arr = srcId.split('-');
           let destDid = arr[0];
-          let channelId: any = arr[1];
           let postId: any = arr[2];
 
-          const content: FeedsData.Content = this.feedService.getContentFromId(destDid, channelId, postId, 0);
-          if (content.version == '2.0') {
-            video.setAttribute('poster', './assets/icon/reserve.svg');
-            const mediaDatas = content.mediaDatas;
-            if (mediaDatas && mediaDatas.length > 0) {
-              const elements = mediaDatas[0];
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-                .then((value) => {
-                  let thumbImage = value || "";
-                  this.isLoadVideoiamge[id] = '13';
-                  video.setAttribute('poster', thumbImage);
 
-                  //video.
-                  this.setFullScreen(id);
-                  this.setOverPlay(id, srcId);
-                  // if (thumbImage != '') {
-                  //   this.isLoadimage[id] = '13';
+          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
 
-                  //   if (nftOrdeId != '' && priceDes != '') {
-                  //     let imagesWidth = postImage.clientWidth;
-                  //     let homebidfeedslogo = document.getElementById(
-                  //       id + 'homebidfeedslogo'
-                  //     );
-                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                  //     homebidfeedslogo.style.display = 'block';
-
-                  //     let homebuy = document.getElementById(id + 'homebuy');
-                  //     let homeNftPrice = document.getElementById(
-                  //       id + 'homeNftPrice'
-                  //     );
-                  //     let homeNftQuantity = document.getElementById(
-                  //       id + 'homeNftQuantity'
-                  //     );
-                  //     let homeMaxNftQuantity = document.getElementById(
-                  //       id + 'homeMaxNftQuantity'
-                  //     );
-                  //     homeNftPrice.innerText = priceDes;
-                  //     homeNftQuantity.innerText = nftQuantity;
-                  //     homeMaxNftQuantity.innerText = nftQuantity;
-                  //     homebuy.style.display = 'block';
-                  //   }
-                  //   rpostimg.style.display = 'block';
-                  // } else {
-                  //   this.isLoadimage[id] = '12';
-                  //   rpostimg.style.display = 'none';
-                  // }
-                })
-                .catch(() => {
-                  //TODO
-                });
-            }
-            return;
-          }
-
-
-          let key = this.feedService.getVideoThumbStrFromId(
-            destDid,
-            channelId,
-            postId,
-            0,
-          );
-          this.feedService
-            .getData(key)
+          //缩略图
+          let videoThumbnailKey = elements.thumbnailPath;
+          //原图
+          //let imageKey = elements.originMediaPath;
+          let type = elements.type;
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileName: string = "poster-" + videoThumbnailKey.split("@")[0];
+          this.hiveVaultController
+            .getV3Data(destDid, videoThumbnailKey, fileName, type)
             .then(imagedata => {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadVideoiamge[id] = '13';
                 video.setAttribute('poster', image);
                 this.setFullScreen(id);
-                this.setOverPlay(id, srcId);
+                this.setOverPlay(id, srcId,post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
                 video.style.display = 'none';
@@ -1231,7 +1039,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  setOverPlay(id: string, srcId: string) {
+  setOverPlay(id: string, srcId: string,post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplaychannel') || '';
     let source: any = document.getElementById(id + 'sourcechannel') || '';
@@ -1241,14 +1049,14 @@ export class ChannelsPage implements OnInit {
         this.zone.run(() => {
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
-            this.getVideo(id, srcId);
+            this.getVideo(id,srcId,post);
           }
         });
       };
     }
   }
 
-  getVideo(id: string, srcId: string) {
+  getVideo(id: string, srcId: string,post: FeedsData.PostV3) {
     let arr = srcId.split('-');
     let destDid = arr[0];
     let channelId: any = arr[1];
@@ -1267,51 +1075,31 @@ export class ChannelsPage implements OnInit {
     this.videoCurKey = destDid + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
-    const content: FeedsData.Content = this.feedService.getContentFromId(destDid, channelId, postId, 0);
-    if (content.version == '2.0') {
-      // video.setAttribute('src', './assets/icon/reserve.svg');
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-
-        // this.loadVideo(id, 'http://ipfs.trinity-feeds.app/ipfs/' + elements.originMediaCid);
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-          .then((value) => {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.loadVideo(id, value);
-          })
-          .catch(() => {
-            //TODO
-          });
-      }
-      return;
-    }
-
-    let key = this.feedService.getVideoKey(destDid, channelId, postId, 0, 0);
-    this.feedService.getData(key).then((videoResult: string) => {
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let originKey = elements.originMediaPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "origin-"+originKey.split("@")[0];
+    this.hiveVaultController
+      .getV3Data(this.destDid, originKey, fileName, type,"false")
+    .then((videoResult: string) => {
       this.zone.run(() => {
         let videodata = videoResult || '';
         if (videodata == '') {
 
-          let post = _.find(this.postList, post => {
-            return (
-              post.destDid === destDid &&
-              post.channelId == channelId &&
-              post.postId == postId
-            );
-          });
-          if (!this.feedService.checkPostIsAvalible(post)) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            return;
-          }
+          // if (!this.feedService.checkPostIsAvalible(post)) {
+          //   this.isVideoLoading[this.videoCurKey] = false;
+          //   this.pauseVideo(id);
+          //   return;
+          // }
 
-          if (this.checkServerStatus(destDid) != 0) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            this.native.toastWarn('common.connectionError1');
-            return;
-          }
+          // if (this.checkServerStatus(destDid) != 0) {
+          //   this.isVideoLoading[this.videoCurKey] = false;
+          //   this.pauseVideo(id);
+          //   this.native.toastWarn('common.connectionError1');
+          //   return;
+          // }
 
           if (this.isExitDown()) {
             this.isVideoLoading[this.videoCurKey] = false;
@@ -1321,45 +1109,36 @@ export class ChannelsPage implements OnInit {
           }
 
           this.videoDownStatusKey = destDid + '-' + channelId + '-' + postId;
-          this.cachedMediaType = 'video';
-          this.feedService.processGetBinary(
-            destDid,
-            channelId,
-            postId,
-            0,
-            0,
-            FeedsData.MediaType.containsVideo,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.videoDownStatus[this.videoDownStatusKey] = '1';
-                this.isVideoLoading[this.videoDownStatusKey] = false;
-                this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
-                this.curNodeId = destDid;
-                return;
-              }
+          this.videoDownStatus[this.videoDownStatusKey] = '1';
+          this.isVideoLoading[this.videoDownStatusKey] = true;
+          this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
 
-              if (transDataChannel == FeedsData.TransDataChannel.MESSAGE) {
-                this.videoDownStatus[this.videoDownStatusKey] = '0';
-                this.curNodeId = '';
-                return;
+          this.hiveVaultController
+          .getV3Data(this.destDid, originKey, fileName, type)
+           .then((downVideoResult: string)=>{
+            let downVideodata = downVideoResult || '';
+              if(downVideodata != ''){
+                this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoCurKey] = false;
+                this.loadVideo(id, videodata);
               }
-            },
-            err => {
+           }).catch((err)=>{
               this.videoDownStatus[this.videoDownStatusKey] = '';
               this.isVideoLoading[this.videoDownStatusKey] = false;
               this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
               this.pauseVideo(id);
-            },
-          );
+           });
           return;
         }
         this.isVideoLoading[this.videoCurKey] = false;
         this.loadVideo(id, videodata);
       });
+    }).catch((err)=>{
+      this.videoDownStatus[this.videoDownStatusKey] = '';
+      this.isVideoLoading[this.videoCurKey] = false;
     });
   }
+
 
   loadVideo(id: string, videodata: string) {
     let source: any = document.getElementById(id + 'sourcechannel') || '';

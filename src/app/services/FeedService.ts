@@ -3721,10 +3721,6 @@ export class FeedService {
       commentId: commentId,
       tempId: tempId,
     };
-    eventBus.publish(
-      FeedsEvent.PublishType.setBinaryFinish,
-      setBinaryFinishData,
-    );
   }
 
   handleGetBinaryResponse(nodeId, result, requestParams, error) {
@@ -3743,7 +3739,6 @@ export class FeedService {
         key: key,
         value: value,
       };
-      eventBus.publish(FeedsEvent.PublishType.getBinaryFinish, getBinaryData);
     });
   }
 
@@ -5055,7 +5050,6 @@ export class FeedService {
         nodeId: nodeId,
         error: this.createOfflineError(),
       };
-      eventBus.publish(FeedsEvent.PublishType.streamError, streamErrorData);
       return false;
     }
 
@@ -6564,18 +6558,6 @@ export class FeedService {
   }
 
   onReceivedSetBinaryFinish() {
-    this.events.subscribe(
-      FeedsEvent.PublishType.setBinaryFinish,
-      (setBinaryFinishData: FeedsEvent.setBinaryFinishData) => {
-        let nodeId = setBinaryFinishData.nodeId;
-        let feedId = setBinaryFinishData.feedId;
-        let postId = setBinaryFinishData.postId;
-        let commentId = setBinaryFinishData.commentId;
-        let tempId = setBinaryFinishData.tempId;
-        this.setBinaryFinish(nodeId, feedId, tempId);
-        this.sendPostDataWithMsg(nodeId);
-      },
-    );
 
     this.events.subscribe(
       FeedsEvent.PublishType.innerStreamSetBinaryFinish,

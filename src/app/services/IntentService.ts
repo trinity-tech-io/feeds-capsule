@@ -30,7 +30,7 @@ export class IntentService {
     private translate: TranslateService,
     private httpService: HttpService,
     private nftContractControllerService: NFTContractControllerService,
-    private nftContractHelperService: NFTContractHelperService,) { }
+    private nftContractHelperService: NFTContractHelperService) { }
 
   // scanQRCode(): Promise<string> {
   //   return this.scanService.scanBarcode();
@@ -349,28 +349,18 @@ export class IntentService {
     this.languageService.setCurLang(currentLang);
   }
 
-  async createShareLink(nodeId: string, channelId: string, postId: string): Promise<string> {
+  async createShareLink(destDid: string, channelId: string, postId: string,ownerDid: string,channel: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const server = this.dataHelper.getServer(nodeId);
 
-        const address = server.carrierAddress;
-        const serverDid = server.did;
 
-        const key = this.dataHelper.getKey(nodeId, channelId, "0", 0);
-        const channel = this.dataHelper.getChannel(key);
-
-        const ownerName = channel.owner_name;
-        const ownerDid = channel.owner_did;
         const channelName = channel.name;
-        const channelDesc = channel.introduction;
+        const channelDesc = channel.intro;
 
         let url = "https://feeds.trinity-feeds.app/feeds/"
-          + "?address=" + address
           + "&channelId=" + channelId
           + "&channelDesc=" + encodeURIComponent(channelDesc)
-          + "&ownerName=" + encodeURIComponent(ownerName)
-          + "&serverDid=" + encodeURIComponent(serverDid)
+          + "&destDid=" + encodeURIComponent(destDid)
           + "&channelName=" + encodeURIComponent(channelName)
           + "&ownerDid=" + encodeURIComponent(ownerDid)
           + "&postId=" + postId
@@ -405,16 +395,16 @@ export class IntentService {
     });
   }
 
-  createSharePostTitle(nodeId: string, channelId: string, postId: string): string {
-    const key = this.dataHelper.getKey(nodeId, channelId, postId, 0);
-    const post = this.dataHelper.getPost(key);
-    const content = post.content || null;
-    let text: string = content.text || '';
+  createSharePostTitle(destDid: string, channelId: string, postId: string,postText: string): string {
+    // const key = this.dataHelper.getKey(destDid, channelId, postId, 0);
+    // const post = this.dataHelper.getPost(key);
+    // const content = post.content || null;
+    // let text: string = content.text || '';
 
-    if (text.replace(/(^[\s\n\t]+|[\s\n\t]+$)/g, "") == '')
+    if (postText.replace(/(^[\s\n\t]+|[\s\n\t]+$)/g, "") == '')
       return this.translate.instant("common.sharesharingPost");
 
-    let brief: string = UtilService.briefText(text, 30);
+    let brief: string = UtilService.briefText(postText, 30);
     return brief + this.translate.instant("common.shareReadMore");
   }
 

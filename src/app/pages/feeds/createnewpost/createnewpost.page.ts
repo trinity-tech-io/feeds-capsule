@@ -178,30 +178,6 @@ export class CreatenewpostPage implements OnInit {
       });
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          this.feedService.closeSession(this.nodeId);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamProgress,
-      (streamProgressData: FeedsEvent.StreamProgressData) => {
-        this.zone.run(() => {
-          let nodeId = streamProgressData.nodeId;
-          let progress = streamProgressData.progress;
-          this.native.updateLoadingMsg(
-            this.translate.instant('common.uploading') + ' ' + progress + '%',
-          );
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       this.pauseVideo();
       this.hideFullScreen();
@@ -230,10 +206,9 @@ export class CreatenewpostPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
+
 
     this.hideFullScreen();
 
@@ -242,7 +217,6 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress = 0;
     this.totalProgress = 0;
     this.removeVideo();
-    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.search);

@@ -248,7 +248,6 @@ export class BidPage implements OnInit {
     this.event.publish(FeedsEvent.PublishType.search);
     this.event.publish(FeedsEvent.PublishType.notification);
     this.event.publish(FeedsEvent.PublishType.addProflieEvent);
-    this.event.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     if(this.isBuy){
       this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     }

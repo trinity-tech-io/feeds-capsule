@@ -132,7 +132,6 @@ export class GalleriachannelPage implements OnInit {
 
   ionViewWillLeave() {
     this.removeEvent();
-    this.event.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.event.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 

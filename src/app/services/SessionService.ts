@@ -147,10 +147,7 @@ export class SessionService {
                 nodeId: nodeId,
                 streamState: workedSessions[nodeId].StreamState,
               };
-              eventBus.publish(
-                FeedsEvent.PublishType.streamOnStateChangedCallback,
-                streamStateChangedData,
-              );
+
               eventBus.publish(
                 FeedsEvent.PublishType.innerStreamStateChanged,
                 streamStateChangedData,
@@ -685,10 +682,6 @@ function decodeBodyData(nodeId: string): boolean {
         key: key,
         value: value,
       };
-      eventBus.publish(
-        FeedsEvent.PublishType.streamGetBinarySuccess,
-        getBinaryData,
-      );
     });
   }
 
@@ -790,10 +783,7 @@ function parseResponse(response: any) {
       commentId: commentId,
       tempId: tempId,
     };
-    eventBus.publish(
-      FeedsEvent.PublishType.streamSetBinarySuccess,
-      setBinaryFinishData,
-    );
+
     let setBinaryData: FeedsEvent.setBinaryFinishData = {
       nodeId: nodeId,
       feedId: feedId,
@@ -807,13 +797,11 @@ function parseResponse(response: any) {
     );
   } else if (method == 'get_binary') {
     Logger.log(TAG, "Parse 'get_binary' data finish and publish events, nodeId is ", nodeId);
-    eventBus.publish(FeedsEvent.PublishType.streamGetBinaryResponse, nodeId);
   }
 }
 
 function publishCloseSession(nodeId: string) {
   isBusy = false;
-  eventBus.publish(FeedsEvent.PublishType.streamClosed, nodeId);
 }
 
 function queryRequest(responseId: number, result: any): any {
@@ -908,7 +896,6 @@ function publishError(
     nodeId: nodeId,
     error: error,
   };
-  eventBus.publish(FeedsEvent.PublishType.streamError, streamErrorData);
 
   let innerStreamErrorData: FeedsEvent.InnerStreamErrorData = {
     nodeId: nodeId,
@@ -932,10 +919,7 @@ function publishError(
       nodeId: nodeId,
       error: error,
     };
-    eventBus.publish(
-      FeedsEvent.PublishType.streamSetBinaryError,
-      streamErrorData,
-    );
+
     return;
   }
 
@@ -944,10 +928,7 @@ function publishError(
       nodeId: nodeId,
       error: error,
     };
-    eventBus.publish(
-      FeedsEvent.PublishType.streamGetBinaryError,
-      streamErrorData,
-    );
+
     return;
   }
 }
@@ -990,7 +971,6 @@ function publishProgress(
     method: method,
     key: key,
   };
-  eventBus.publish(FeedsEvent.PublishType.streamProgress, streamProgressData);
 }
 
 function decodeHeader(nodeId: string) {
@@ -1094,10 +1074,6 @@ function checkBody(nodeId: string, data: Uint8Array) {
           key: key,
           value: value,
         };
-        eventBus.publish(
-          FeedsEvent.PublishType.streamGetBinarySuccess,
-          getBinaryData,
-        );
       });
     }
 

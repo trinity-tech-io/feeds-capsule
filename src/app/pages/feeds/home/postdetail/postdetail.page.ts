@@ -120,6 +120,7 @@ export class PostdetailPage implements OnInit {
 
   public curComment: any = {};
   private maxCount: number = 0;
+  private post: FeedsData.PostV3 = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -243,6 +244,7 @@ export class PostdetailPage implements OnInit {
 
  async initPostContent() {
     let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
+    this.post = post;
     this.postStatus = post.status || 0;
     this.mediaType = post.content.mediaType;
     this.postContent = post.content.content;
@@ -252,43 +254,9 @@ export class PostdetailPage implements OnInit {
     if (this.mediaType === FeedsData.MediaType.containsImg) {
         this.getImage(post);
     }
-    // if (this.mediaType === FeedsData.MediaType.containsVideo) {
-    //   if (this.postContent.version == '2.0') {
-    //     this.posterImg = './assets/icon/reserve.svg';//set Reserve Image
-    //     const mediaDatas = this.postContent.mediaDatas;
-    //     if (mediaDatas && mediaDatas.length > 0) {
-    //       const elements = mediaDatas[0];
-    //       this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-    //         .then((value) => {
-    //           this.posterImg = value;
-    //           let sid = setTimeout(() => {
-    //             let video: any =
-    //               document.getElementById(this.nodeId + this.channelId + this.postId + 'postdetailvideo') || '';
-    //             video.setAttribute('poster', this.posterImg);
-    //             this.setFullScreen();
-    //             this.setOverPlay();
-    //             clearTimeout(sid);
-    //           }, 0);
-    //         }).catch(() => {
-    //           //TODO
-    //         });
-    //     }
-    //     return;
-    //   }
-
-
-    //   let key =
-    //     this.feedService.getVideoThumbStrFromId(
-    //       this.nodeId,
-    //       this.channelId,
-    //       this.postId,
-    //       0,
-    //     ) || '';
-
-    //   if (key != '') {
-    //     this.getVideoPoster(key, this.postContent);
-    //   }
-    // }
+    if (this.mediaType === FeedsData.MediaType.containsVideo) {
+        this.getVideoPoster(post);
+    }
   }
 
   ionViewWillEnter() {
@@ -418,149 +386,6 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinaryResponse,
-      () => {
-        this.zone.run(() => {
-          Logger.log(TAG, 'Received streamGetBinaryResponse event');
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.getBinaryFinish,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let nodeId = getBinaryData.nodeId;
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          Logger.log(TAG,
-            'Received getBinaryFinish event, nodeId is ',
-            nodeId,
-            ', key is ',
-            key
-          );
-          if (this.destDid != nodeId) {
-            return;
-          }
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamGetBinarySuccess,
-      (getBinaryData: FeedsEvent.GetBinaryData) => {
-        this.zone.run(() => {
-          let nodeId = getBinaryData.nodeId;
-          let key = getBinaryData.key;
-          let value = getBinaryData.value;
-          Logger.log(TAG,
-            'Received streamGetBinarySuccess event, nodeId is ' +
-            nodeId +
-            ', key is ' +
-            key,
-            TAG,
-          );
-          if (this.destDid != nodeId) {
-            return;
-          }
-          this.feedService.closeSession(nodeId);
-          this.processGetBinaryResult(key, value);
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamError,
-      (streamErrorData: FeedsEvent.StreamErrorData) => {
-        this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
-          let error = streamErrorData.error;
-          Logger.log(TAG, 'Received streamError event, nodeId is ', nodeId);
-          if (this.destDid != nodeId) {
-            return;
-          }
-          this.isImgLoading = false;
-          this.isImgPercentageLoading = false;
-          this.imgDownStatus = '';
-          this.isVideoLoading = false;
-          this.isVideoPercentageLoading = false;
-          this.videoDownStatus = '';
-          this.feedService.handleSessionError(nodeId, error);
-          this.pauseVideo();
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-      (streamStateChangedData: FeedsEvent.StreamStateChangedData) => {
-        this.zone.run(() => {
-          let nodeId = streamStateChangedData.nodeId;
-          let state = streamStateChangedData.streamState;
-          Logger.log(TAG, 'Received streamOnStateChangedCallback event, nodeId is ', nodeId);
-          if (this.destDid != nodeId) {
-            return;
-          }
-          if (this.cacheGetBinaryRequestKey == '') return;
-
-          if (state === FeedsData.StreamState.CONNECTED) {
-            this.feedService.getBinary(
-              this.destDid,
-              this.cacheGetBinaryRequestKey,
-              this.cachedMediaType,
-            );
-          }
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.streamProgress,
-      (streamProgressData: FeedsEvent.StreamProgressData) => {
-        this.zone.run(() => {
-          let nodeId = streamProgressData.nodeId;
-          let progress = streamProgressData.progress;
-          Logger.log(TAG, 'Received streamProgress event, nodeId is ', nodeId);
-          if (this.destDid != nodeId) {
-            return;
-          }
-
-          if (this.cachedMediaType === 'img' && this.imgDownStatus === '1') {
-            this.imgPercent = progress;
-            if (progress < 100) {
-              this.imgRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.imgRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-            return;
-          }
-
-          if (
-            this.cachedMediaType === 'video' &&
-            this.videoDownStatus === '1'
-          ) {
-            this.videoPercent = progress;
-            if (progress < 100) {
-              this.videoRotateNum['transform'] =
-                'rotate(' + (18 / 5) * progress + 'deg)';
-            } else {
-              if (progress === 100) {
-                this.videoRotateNum['transform'] =
-                  'rotate(' + (18 / 5) * progress + 'deg)';
-              }
-            }
-            return;
-          }
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       Logger.log(TAG, 'Received openRightMenu event');
       this.isImgLoading = false;
@@ -575,21 +400,6 @@ export class PostdetailPage implements OnInit {
       this.hideFullScreen();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.streamClosed, nodeId => {
-      Logger.log(TAG, 'Received streamClosed event, nodeId is ', nodeId);
-      if (this.destDid != nodeId) {
-        return;
-      }
-      this.isImgLoading = false;
-      this.isImgPercentageLoading = false;
-      this.imgDownStatus = '';
-      this.isVideoPercentageLoading = false;
-      this.isVideoLoading = false;
-      this.videoDownStatus = '';
-      this.feedService.closeSession(this.destDid);
-      this.pauseVideo();
-      this.hideFullScreen();
-    });
   }
 
   ionViewWillLeave() {
@@ -610,23 +420,13 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.getBinaryFinish);
 
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinaryResponse);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamGetBinarySuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamError);
-    this.events.unsubscribe(
-      FeedsEvent.PublishType.streamOnStateChangedCallback,
-    );
-    this.events.unsubscribe(FeedsEvent.PublishType.streamProgress);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.streamClosed);
     this.events.publish(FeedsEvent.PublishType.updateTab);
-    this.events.publish(FeedsEvent.PublishType.addBinaryEvevnt);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
@@ -1114,10 +914,17 @@ export class PostdetailPage implements OnInit {
     this.hideComment = true;
   }
 
-  getVideoPoster(id: string, content: FeedsData.Content) {
+  getVideoPoster(post: FeedsData.PostV3) {
     this.videoisShow = true;
-    this.feedService
-      .getData(id)
+    this.postImage = './assets/icon/reserve.svg';//set Reserve Image
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let thumbnailKey = elements.thumbnailPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "poster-"+thumbnailKey.split("@")[0];
+    this.hiveVaultController
+    .getV3Data(this.destDid, thumbnailKey, fileName, type)
       .then(imagedata => {
         let image = imagedata || '';
         if (image != '') {
@@ -1140,7 +947,7 @@ export class PostdetailPage implements OnInit {
       .catch(err => { });
   }
 
-  getVideo(key: string) {
+  getVideo() {
     let videoId = UtilService.gethtmlId(
       'postdetail',
       'video',
@@ -1159,64 +966,41 @@ export class PostdetailPage implements OnInit {
       (videoHeight - this.roundWidth) / 2 + 'px';
     this.isVideoLoading = true;
 
-    const content: FeedsData.Content = this.feedService.getContentFromId(this.destDid, this.channelId, this.postId, 0);
-    if (content.version == '2.0') {
-      const mediaDatas = content.mediaDatas;
-      if (mediaDatas && mediaDatas.length > 0) {
-        const elements = mediaDatas[0];
-        this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-          .then((value) => {
-            this.isVideoLoading = false;
-            this.loadVideo(value);
-          })
-          .catch(() => {
-            //TODO
-          });
-        // this.loadVideo('https://ipfs0.trinity-feeds.app/ipfs/' + elements.originMediaCid);
-        // this.postHelperService.getPostData(elements.originMediaCid, elements.type).then((value) => {
-        //   this.loadVideo(value);
-        // });
-      }
-      return;
-    }
+    let mediaDatas = this.post.content.mediaData;
+    const elements = mediaDatas[0];
+    let originKey = elements.originMediaPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName:string = "origin-"+originKey.split("@")[0];
 
-
-
-    this.feedService.getData(key).then((videodata: string) => {
+    this.hiveVaultController
+            .getV3Data(this.destDid, originKey, fileName, type,"false")
+    .then((videodata: string) => {
       this.zone.run(() => {
         let videoData = videodata || '';
-        if (videoData == '') {
-          this.cachedMediaType = 'video';
-          this.feedService.processGetBinary(
-            this.destDid,
-            this.channelId,
-            this.postId,
-            0,
-            0,
-            FeedsData.MediaType.containsVideo,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.videoDownStatus = '1';
-                this.isVideoLoading = false;
-                this.isVideoPercentageLoading = true;
-                return;
-              }
-              if (transDataChannel == FeedsData.TransDataChannel.MESSAGE) {
-                this.videoDownStatus = '0';
-                return;
-              }
-            },
-            err => {
-              this.pauseVideo();
-            },
-          );
-          return;
+        if(videoData === ''){
+        this.videoDownStatus = '1';
+        this.isVideoLoading = true;
+        this.isVideoPercentageLoading = false;
+         this.hiveVaultController.getV3Data(this.destDid, originKey, fileName, type)
+         .then((downVideodata)=>{
+          let downVideoData = downVideodata || '';
+          this.videoObj = downVideoData;
+          this.loadVideo(downVideoData);
+         }).catch((err)=>{
+          this.videoDownStatus = '';
+          this.isVideoPercentageLoading = false;
+          this.isVideoLoading = false;
+         });
+           return;
         }
         this.videoObj = videoData;
         this.loadVideo(videoData);
       });
+    }).catch((err)=>{
+      this.videoDownStatus = '';
+      this.isVideoPercentageLoading = false;
+      this.isVideoLoading = false;
     });
   }
 
@@ -1316,25 +1100,18 @@ export class PostdetailPage implements OnInit {
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
-          if (this.checkServerStatus(this.destDid) != 0) {
-            this.pauseVideo();
-            this.native.toastWarn('common.connectionError1');
-            return;
-          }
+          // if (this.checkServerStatus(this.destDid) != 0) {
+          //   this.pauseVideo();
+          //   this.native.toastWarn('common.connectionError1');
+          //   return;
+          // }
 
           let source: any =
             document.getElementById(id + 'postdetailsource') || '';
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc != '') return;
 
-          let key = this.feedService.getVideoKey(
-            this.destDid,
-            this.channelId,
-            this.postId,
-            0,
-            0,
-          );
-          this.getVideo(key);
+          this.getVideo();
         });
       };
     }
@@ -1504,3 +1281,4 @@ export class PostdetailPage implements OnInit {
   return 0;
   }
 }
+
