@@ -9,7 +9,7 @@ import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 // import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 import { } from '@elastosfoundation/hive-js-sdk'
-import { isEqual, isNil, reject } from 'lodash';
+import { isEqual, isNil, reject, values } from 'lodash';
 import { on } from 'process';
 import { VideoService } from './video.service';
 import { stringify } from 'querystring';
@@ -30,11 +30,11 @@ export class HiveService {
 
   public image = null
   public appinstanceDid: string
-  private avatarScriptNameMap: { [userDid: string]: string } = {}
-  private avatarParamMap: { [userDid: string]: string } = {}
-  private tarDIDMap: { [userDid: string]: string } = {}
-  private tarAppDIDMap: { [userDid: string]: string } = {}
-  private vaultMap: { [userDid: string]: VaultServices } = {}
+  private vault: VaultServices
+  private avatarScriptName: string
+  private tarDID: string
+  private tarAppDID: string
+  private avatarParam: string
 
   constructor(
     private standardAuthService: StandardAuthService,
@@ -95,16 +95,17 @@ export class HiveService {
     })
   }
 
-  async creatVault(userDid: string) {
+  async creatVault() {
     try {
+      const userDid = (await this.dataHelper.getSigninData()).did
       let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
       const userDID = DID.from(userDid)
       const context = await this.creatAppContext(appinstanceDocument, userDid)
       const userDIDDocument = await userDID.resolve()
       let provider = this.parseUserDIDDocument(userDid, userDIDDocument)
-      const vault = new VaultServices(context, provider)
-      this.vaultMap[userDid] = vault
-      Logger.log(TAG, 'Create vault ', userDid, vault);
+      this.vault = new VaultServices(context, provider)
+      Logger.log(TAG, 'Create vault ', userDid, this.vault)
+      return this.vault
     }
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
@@ -121,7 +122,7 @@ export class HiveService {
       const type = pro["type"]
       const prefix = "hive://"
       const avatarParam = data.substr(prefix.length)
-      this.avatarParamMap[userDid] = avatarParam
+      this.avatarParam = avatarParam
       const parts = avatarParam.split("/")
       if (parts.length < 2) // TODO 验证parts是否大于2个 ，否则 抛出异常
         throw "userDIDDocument 中缺少参数"
@@ -136,13 +137,13 @@ export class HiveService {
         throw "userDIDDocument 中缺少参数"
 
       const avatarScriptName = values[0]
-      this.avatarScriptNameMap[userDid] = avatarScriptName
+      this.avatarScriptName = avatarScriptName
       const paramStr = values[1]
       const scriptParam = JSON.parse(paramStr.substr(7))
       const tarDID = dids[0]
       const tarAppDID = dids[1]
-      this.tarDIDMap[userDid] = tarDID
-      this.tarAppDIDMap[userDid] = tarAppDID
+      this.tarDID = tarDID
+      this.tarAppDID = tarAppDID
     }
     const serviceDid = userDid + "#hivevault"
     const service = userDIDDocument.getService(serviceDid)
@@ -150,33 +151,31 @@ export class HiveService {
     return provider
   }
 
-  async getVault(userDid: string): VaultServices {
-    let vault = this.vaultMap[userDid]
-    if (vault == null) {
-      await this.creatVault(userDid)
+  async getVault(): VaultServices {
+    if (this.vault == null || this.vault == undefined) {
+      await this.creatVault()
     }
-    vault = this.vaultMap[userDid];
-    Logger.log(TAG, 'Get vault from', userDid, 'vault is', vault);
-    return vault;
+    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
+    return this.vault
   }
 
-  async getDatabaseService(userDid: string) {
-    return (await this.getVault(userDid)).getDatabaseService()
+  async getDatabaseService() {
+    return (await this.getVault()).getDatabaseService()
   }
 
-  async getScriptingService(userDid: string) {
-    return (await this.getVault(userDid)).getScriptingService()
+  async getScriptingService() {
+    return (await this.getVault()).getScriptingService()
   }
 
-  async getFilesService(userDid: string) {
-    return (await this.getVault(userDid)).getFilesService()
+  async getFilesService() {
+    return (await this.getVault()).getFilesService()
   }
 
   async createCollection(channelName: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
         let userDid = (await this.dataHelper.getSigninData()).did
-        const databaseService = await this.getDatabaseService(userDid)
+        const databaseService = await this.getDatabaseService()
         const result = await databaseService.createCollection(channelName);
         resolve(result)
       } catch (error) {
@@ -189,8 +188,7 @@ export class HiveService {
   registerScript(scriptName: string, executable: Executable, condition: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
-        let scriptingService = await this.getScriptingService(userDid)
+        let scriptingService = await this.getScriptingService()
         await scriptingService.registerScript(scriptName, executable,
           condition, allowAnonymousUser, allowAnonymousApp)
         resolve()
@@ -201,9 +199,9 @@ export class HiveService {
     })
   }
 
-  async callScript(userDid: string, scriptName: string, document: any, callerDid: string, appid: string): Promise<any> {
-    let scriptingService = await this.getScriptingService(userDid)
-    let result = await scriptingService.callScript<any>(scriptName, document, callerDid, appid)
+  async callScript(scriptName: string, document: any, targetDid: string, appid: string): Promise<any> {
+    let scriptingService = await this.getScriptingService()
+    let result = await scriptingService.callScript<any>(scriptName, document, targetDid, appid)
     return result
   }
 
@@ -211,21 +209,21 @@ export class HiveService {
     this.dataHelper.getMyChannelListWithHive(userDid)
   }
 
-  async uploadScriting(userDid: string, transactionId: string, data: string) {
-    const scriptingService = await this.getScriptingService(userDid)
+  async uploadScriting(transactionId: string, data: string) {
+    const scriptingService = await this.getScriptingService()
     return scriptingService.uploadFile(transactionId, data)
   }
 
-  async downloadEssAvatarTransactionId(userDid: string) {
+  async downloadEssAvatarTransactionId() {
     try {
-      const avatarParam = this.avatarParamMap[userDid]
+      const avatarParam = this.avatarParam
       if (avatarParam === null) {
         return
       }
-      const scriptingService = await this.getScriptingService(userDid)
-      const avatarScriptName = this.avatarScriptNameMap[userDid]
-      const tarDID = this.tarDIDMap[userDid]
-      const tarAppDID = this.tarAppDIDMap[userDid]
+      const scriptingService = await this.getScriptingService()
+      const avatarScriptName = this.avatarScriptName
+      const tarDID = this.tarDID
+      const tarAppDID = this.tarAppDID
       return await scriptingService.callScript(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
@@ -233,33 +231,32 @@ export class HiveService {
     }
   }
 
-  async downloadScripting(userDid: string, transaction_id: string) {
+  async downloadScripting(transaction_id: string) {
     try {
-      const scriptingService = await this.getScriptingService(userDid)
+      const scriptingService = await this.getScriptingService()
       return await scriptingService.downloadFile(transaction_id)
     } catch (error) {
       console.log("scriptingService.downloadFile error: ==== ", error)
     }
   }
 
-  async downloadScriptingURL(userDid: string, avatarHiveURL: string) {
+  async downloadScriptingURL(avatarHiveURL: string) {
     try {
-      const scriptingService = await this.getScriptingService(userDid)
+      const scriptingService = await this.getScriptingService()
       // return await scriptingService.downloadScriptingURL(avatarHiveURL)
     } catch (error) {
       console.log("downloadScriptingURL  ===== ", error)
     }
   }
 
-  async downloadFile(userDid: string, remotePath: string) {
-    const fileService = await this.getFilesService(userDid)
+  async downloadFile(remotePath: string) {
+    const fileService = await this.getFilesService()
     return await fileService.download(remotePath)
   }
 
   async getUploadDataFromScript(transactionId: string, img: any) {
     try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const scriptingService = await this.getScriptingService(userDid)
+      const scriptingService = await this.getScriptingService()
       return scriptingService.uploadFile(transactionId, img)
     }
     catch (error) {
@@ -269,8 +266,7 @@ export class HiveService {
 
   async uploadDataFromScript(transactionId: string, img: any) {
     try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const scriptingService = await this.getScriptingService(userDid)
+      const scriptingService = await this.getScriptingService()
       return scriptingService.uploadFile(transactionId, img)
     }
     catch (error) {
@@ -282,8 +278,7 @@ export class HiveService {
     console.log("=======remotePath========", remotePath);
     console.log("=======img========", img);
     try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const fileService = await this.getFilesService(userDid)
+      const fileService = await this.getFilesService()
       return await fileService.upload(remotePath, img)
     }
     catch (error) {
@@ -293,8 +288,7 @@ export class HiveService {
 
   async uploadScriptWithString(remotePath: string, img: any) {
     try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const fileService = await this.getFilesService(userDid)
+      const fileService = await this.getFilesService()
       return await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
     }
     catch (error) {
@@ -305,8 +299,7 @@ export class HiveService {
   insertDBData(collectName: string, doc: any,): Promise<InsertResult> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
-        const dbService = await this.getDatabaseService(userDid)
+        const dbService = await this.getDatabaseService()
         const insertResult = await dbService.insertOne(collectName, doc, new InsertOptions(false, true));
         resolve(insertResult)
       } catch (error) {
@@ -319,8 +312,7 @@ export class HiveService {
   updateOneDBData(collectName: string, origin: JSONObject, update: JSONObject, option: UpdateOptions): Promise<UpdateResult> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
-        const dbService = await this.getDatabaseService(userDid)
+        const dbService = await this.getDatabaseService()
         const result = await dbService.updateOne(collectName, origin, update, option)
         resolve(result)
       } catch (error) {
@@ -333,8 +325,7 @@ export class HiveService {
   deleateOneDBData(collectName: string, fillter: JSONObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
-        const dbService = await this.getDatabaseService(userDid)
+        const dbService = await this.getDatabaseService()
         await dbService.deleteOne(collectName, fillter)
         resolve()
       } catch (error) {
@@ -347,8 +338,7 @@ export class HiveService {
   queryDBData(collectionName: string, filter: any): Promise<JSONObject[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const userDid = (await this.dataHelper.getSigninData()).did
-        const dbService = await this.getDatabaseService(userDid)
+        const dbService = await this.getDatabaseService()
         const result = dbService.findMany(collectionName, filter)
         resolve(result)
       } catch (error) {

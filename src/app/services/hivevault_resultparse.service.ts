@@ -7,7 +7,7 @@ export class HiveVaultResultParse {
   /** parse post result start */
   // const posts = result.find_message.items;
   // const post = result;
-  public static parsePostResult(destDid: string, result: any): FeedsData.PostV3[] {
+  public static parsePostResult(result: any, targetDid: string): FeedsData.PostV3[] {
     try {
       /**
        * channel_id: "channelId01"
@@ -59,7 +59,7 @@ export class HiveVaultResultParse {
             }
             // PostV3
             const postResult: FeedsData.PostV3 = {
-              destDid: destDid,
+              destDid: targetDid,
               postId: post.post_id,
               channelId: post.channel_id,
               createdAt: post.created_at,
@@ -85,7 +85,7 @@ export class HiveVaultResultParse {
   /** parse channel result start */
   // const channels = result.find_message.items;
   // const channels = result
-  public static parseChannelResult(destDid: string, result: any): FeedsData.ChannelV3[] {
+  public static parseChannelResult(result: any, targetDid: string): FeedsData.ChannelV3[] {
     try {
       /**
        * avatar: "address"
@@ -105,12 +105,12 @@ export class HiveVaultResultParse {
 
       const channels = items;
       let parseResult = [];
-      console.log('result', channels);
+      console.log('parseChannelResult result ====== ', channels);
       if (channels) {
         channels.forEach(channel => {
           if (channel) {
             const channelResult: FeedsData.ChannelV3 = {
-              destDid: destDid,
+              destDid: targetDid,
               channelId: channel.channel_id,
 
               createdAt: channel.created_at,

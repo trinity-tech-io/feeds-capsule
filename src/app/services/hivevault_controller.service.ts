@@ -19,16 +19,21 @@ export class HiveVaultController {
   constructor(private hiveVaultApi: HiveVaultApi,
     private dataHelper: DataHelper,
     private postHelperService: PostHelperService,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
   ) {
   }
 
   //获得订阅的channel列表
   async getHomePostContent() {
+    // /*
     const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+    console.log("subscribedChannels ==== ", subscribedChannels)
     subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
+      console.log("item ==== ", item)
       const channelId = item.channelId
       const destDid = item.destDid
+      const channelInfo = await this.getChannelInfoById(destDid, channelId)
+      console.log("channelInfo ===== ", channelInfo)
       const subscribedPost = await this.getPostListByChannel(destDid, channelId)
       console.log("subscribedPost ===== ", subscribedPost)
       // TODO： 在这里存储是否合适
@@ -36,14 +41,15 @@ export class HiveVaultController {
         await this.dataHelper.addPostV3(item)
       })
     })
+    // */
   }
 
-  getPostListByChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
+  getPostListByChannel(channelId: string, targetDid: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         //目前暂时获取全部post，后续优化
-        const result = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId);
-        const postList = HiveVaultResultParse.parsePostResult(destDid, result);
+        const result = await this.hiveVaultApi.queryPostByChannelId(channelId, targetDid);
+        const postList = HiveVaultResultParse.parsePostResult(result, targetDid);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -53,16 +59,23 @@ export class HiveVaultController {
   }
 
 
-  async downloadScripting(destDid: string, mediaPath: string) {
-    return this.hiveVaultApi.downloadScripting(destDid, mediaPath)
+  async downloadScripting(mediaPath: string, targetDid: string) {
+    return this.hiveVaultApi.downloadScripting(mediaPath, targetDid)
   }
 
-  async getChannelInfoById(destDid: string, channelId: string) {
-    const info = await this.hiveVaultApi.queryChannelInfo(destDid, channelId)
-    console.log("getChannelInfoById ====== ", info)
-    // return new Promise(async (resolve, reject) => {
-
-    // });
+  async getChannelInfoById(channelId: string, targetDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryChannelInfo(channelId, targetDid)
+        console.log("getChannelInfoById result ==== ", result)
+        const channelInfoList = HiveVaultResultParse.parseChannelResult(result, targetDid);
+        console.log("getChannelInfoById ====== ", channelInfoList)
+        resolve(channelInfoList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
   }
 
   getCommentByChannel() {
@@ -87,14 +100,14 @@ export class HiveVaultController {
     if (isCreateAllCollections === '') {
       try {
         await this.hiveVaultApi.createAllCollections()
+        await this.hiveVaultApi.registeScripting()
       } catch (error) {
         localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
       }
-      await this.hiveVaultApi.registeScripting()
     }
   }
 
-  async createChannel(destDid: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<string> {
+  async createChannel(userDid: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
@@ -103,8 +116,11 @@ export class HiveVaultController {
         const channelId = doc['channel_id']
         const createdAt = doc['created_at']
         const updatedAt = doc['updated_at']
+        const category = doc['category']
+        const proof = doc['proof']
+
         let channelV3: FeedsData.ChannelV3 = {
-          destDid: destDid,
+          destDid: userDid,
           channelId: channelId,
           createdAt: createdAt,
           updatedAt: updatedAt,
@@ -114,10 +130,13 @@ export class HiveVaultController {
           type: type,
           tipping_address: tippingAddress,
           nft: nft,
-          category: "",
-          proof: "",
+          category: category,
+          proof: proof,
           memo: doc.memo,
         }
+        console.log("destDid ======== ", userDid)
+        console.log("channelId ======== ", channelId)
+
         await this.dataHelper.updateChannelV3(channelV3);
         const channels = await this.dataHelper.loadChannelV3Map()
         console.log("loadChannelV3Map ==== ", channels)
@@ -128,16 +147,16 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(destDid: string, channelId: string, userDisplayName: string): Promise<string> {
+  subscribeChannel(channelId: string, userDisplayName: string, targetDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.subscribeChannel(destDid, channelId, userDisplayName);
-        await this.dataHelper.addSubscribedChannelV3(destDid, channelId) // 存储这个
+        const result = await this.hiveVaultApi.subscribeChannel(channelId, userDisplayName, targetDid);
+        await this.dataHelper.addSubscribedChannelV3(channelId, targetDid) // 存储这个
 
         if (result) {
           resolve('SUCCESS');
         } else {
-          const errorMsg = 'Subscribe channel error, destDid is' + destDid + 'channelId is' + channelId;
+          const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;
           Logger.error(TAG, errorMsg);
           reject(errorMsg);
         }
@@ -161,7 +180,7 @@ export class HiveVaultController {
         let self = this
         let imgstr = ''
         try {
-          var dataBuffer = await this.hiveVaultApi.downloadCustomeAvatar(userDid, remotePath)
+          var dataBuffer = await this.hiveVaultApi.downloadCustomeAvatar(remotePath)
           // dataBuffer = dataBuffer.slice(1, -1)
           imgstr = dataBuffer.toString()
           self.dataHelper.saveUserAvatar(userDid, imgstr);
@@ -188,7 +207,7 @@ export class HiveVaultController {
           resolve(essavatar);
           return
         }
-        const rawImage = await this.hiveVaultApi.downloadEssAvatar(userDid);
+        const rawImage = await this.hiveVaultApi.downloadEssAvatar();
         const savekey = userDid + "_ess_avatar"
         this.dataHelper.saveUserAvatar(savekey, rawImage)
         resolve(rawImage);
@@ -224,7 +243,7 @@ export class HiveVaultController {
         }
 
         if (result == '' && isDownload === '') {
-          const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
+          const downloadResult = await this.hiveVaultApi.downloadScripting(remotePath, destDid);
           await this.fileHelperService.saveV3Data(fileName, downloadResult);
           resolve(downloadResult);
           return;

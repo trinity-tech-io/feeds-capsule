@@ -26,7 +26,7 @@ export class HiveVaultApi {
   }
 
   /** Channel */
-  createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<any> {
+  createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', category: string = '', proof: string = ''): Promise<any> {
     return this.hiveVaultHelper.createChannel(channelName, intro, avatarAddress, tippingAddress, type, nft);
   }
 
@@ -35,8 +35,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.updateChannel(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
   }
 
-  queryChannelInfo(destDid: string, channelId: string) {
-    return this.hiveVaultHelper.queryChannelInfo(destDid, channelId);
+  queryChannelInfo(channelId: string, targetDid: string) {
+    return this.hiveVaultHelper.queryChannelInfo(channelId, targetDid);
   }
 
   /** Post */
@@ -52,84 +52,84 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.deletePost(postId);
   }
 
-  queryPostByChannelId(destDid: string, channelId: string) {
-    return this.hiveVaultHelper.queryPostByChannelId(destDid, channelId);
+  queryPostByChannelId(channelId: string, targetDid: string) {
+    return this.hiveVaultHelper.queryPostByChannelId(channelId, targetDid);
   }
 
-  queryPostById(destDid: string, channelId: string, postId: string) {
-    return this.hiveVaultHelper.queryPostById(destDid, channelId, postId);
+  queryPostById(channelId: string, postId: string, targetDid: string) {
+    return this.hiveVaultHelper.queryPostById(channelId, postId, targetDid);
   }
 
   /** Suscription */
-  subscribeChannel(destDid: string, channelId: string, displayName: string): Promise<any> {
-    return this.hiveVaultHelper.subscribeChannel(destDid, channelId, displayName);
+  subscribeChannel(channelId: string, displayName: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.subscribeChannel(channelId, displayName, targetDid);
   }
 
-  unSubscribeChannel(destDid: string, channelId: string) {
-    return this.hiveVaultHelper.unsubscribeChannel(destDid, channelId);
+  unSubscribeChannel(channelId: string, targetDid: string) {
+    return this.hiveVaultHelper.unsubscribeChannel(channelId, targetDid);
   }
 
-  querySubscrptionInfoByChannelId(destDid: string, channelId: string) {
-    return this.hiveVaultHelper.querySubscriptionInfoByChannelId(destDid, channelId);
+  querySubscrptionInfoByChannelId(channelId: string, targetDid: string) {
+    return this.hiveVaultHelper.querySubscriptionInfoByChannelId(channelId, targetDid);
   }
 
-  querySubscriptionInfoByUserDID(destDid: string, userDid: string) {
-    return this.hiveVaultHelper.querySubscriptionByUserDID(destDid, userDid);
+  querySubscriptionInfoByUserDID(userDid: string, targetDid: string) {
+    return this.hiveVaultHelper.querySubscriptionByUserDID(userDid, targetDid);
   }
 
   /** Comment */
-  createComment(destDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<any> {
-    return this.hiveVaultHelper.createComment(destDid, channelId, postId, refcommentId, content);
+  createComment(channelId: string, postId: string, refcommentId: string, content: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.createComment(channelId, postId, refcommentId, content, targetDid);
   }
 
-  updateComment(destDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
-    return this.hiveVaultHelper.updateComment(destDid, channelId, postId, commentId, content);
+  updateComment(channelId: string, postId: string, commentId: string, content: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.updateComment(channelId, postId, commentId, content, targetDid);
   }
 
-  deleteComment(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.hiveVaultHelper.deleteComment(destDid, channelId, postId, commentId);
+  deleteComment(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.deleteComment(channelId, postId, commentId, targetDid);
   }
 
-  queryCommentByPostId(destDid: string, channelId: string, postId: string) {
-    return this.hiveVaultHelper.queryCommentByPostId(destDid, channelId, postId);
+  queryCommentByPostId(channelId: string, postId: string, targetDid: string) {
+    return this.hiveVaultHelper.queryCommentByPostId(channelId, postId, targetDid);
   }
 
-  queryCommentByID(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.hiveVaultHelper.queryCommentByID(destDid, channelId, postId, commentId);
+  queryCommentByID(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.queryCommentByID(channelId, postId, commentId, targetDid);
   }
 
   /** Like */
-  queryLikeByChannel(destDid: string, channelId: string): Promise<any> {
-    return this.hiveVaultHelper.queryLikeByChannel(destDid, channelId);
+  queryLikeByChannel(channelId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.queryLikeByChannel(channelId, targetDid);
   }
 
-  queryLikeById(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.hiveVaultHelper.queryLikeById(destDid, channelId, postId, commentId);
+  queryLikeById(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.queryLikeById(channelId, postId, commentId, targetDid);
   }
 
-  queryLikeByPost(destDid: string, channelId: string, postId: string): Promise<any> {
-    return this.hiveVaultHelper.queryLikeByPost(destDid, channelId, postId);
+  queryLikeByPost(channelId: string, postId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.queryLikeByPost(channelId, postId, targetDid);
   }
 
-  addLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.hiveVaultHelper.addLike(destDid, channelId, postId, commentId);
+  addLike(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.addLike(channelId, postId, commentId, targetDid);
   }
 
-  removeLike(userDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.hiveVaultHelper.removeLike(userDid, channelId, postId, commentId);
+  removeLike(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.removeLike(channelId, postId, commentId, targetDid);
   }
 
   /** Download data */
-  downloadScripting(destDid: string, avatarHiveURL: string): Promise<any> {
-    return this.hiveVaultHelper.downloadScripting(destDid, avatarHiveURL)
+  downloadScripting(avatarHiveURL: string, targetDid: string): Promise<any> {
+    return this.hiveVaultHelper.downloadScripting(avatarHiveURL, targetDid)
   }
 
-  downloadCustomeAvatar(destDid: string, remoteHiveUrlPath: string): Promise<any> {
-    return this.hiveVaultHelper.downloadFile(destDid, remoteHiveUrlPath);
+  downloadCustomeAvatar(remoteHiveUrlPath: string): Promise<any> {
+    return this.hiveVaultHelper.downloadFile(remoteHiveUrlPath);
   }
 
-  downloadEssAvatar(destDid: string): Promise<any> {
-    return this.hiveVaultHelper.downloadEssAvatar(destDid);
+  downloadEssAvatar(): Promise<any> {
+    return this.hiveVaultHelper.downloadEssAvatar();
   }
 
   uploadMediaData(data: any): Promise<string> {

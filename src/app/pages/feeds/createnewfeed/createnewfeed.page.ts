@@ -260,7 +260,7 @@ export class CreatenewfeedPage implements OnInit {
       let userDisplayName = signinData.name;
       await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
       const channelId = await this.hiveVaultController.createChannel(userDid, name, desc, this.avatar)
-      await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
+      await this.hiveVaultController.subscribeChannel(channelId, userDisplayName, userDid);
 
       this.native.hideLoading()
       this.native.pop()
