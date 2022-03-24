@@ -41,116 +41,116 @@ export class ProfilePage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
 
-  public likeList = [{
-    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-    "postId": "2b97793e71d6eb253e3a50c2f0f568e796d28992f260bca48f89d1690478058b",
-    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-    "createdAt": 1647955924595,
-    "updatedAt": 1647955924595,
-    "content": {
-      "version": "3.0",
-      "mediaData": [{
-        "kind": "image",
-        "originMediaPath": "12b7b2b9528156173b5a0975e6cd95ea@feeds/data/12b7b2b9528156173b5a0975e6cd95ea",
-        "type": "0",
-        "size": 565223,
-        "thumbnailPath": "ae20729c36af8cef069c08c512eae4f0@feeds/data/ae20729c36af8cef069c08c512eae4f0",
-        "duration": 0,
-        "imageIndex": 0,
-        "additionalInfo": {},
-        "memo": {}
-      }],
-      "content": "trdggg23",
-      "mediaType": 1
-    },
-    "status": 0,
-    "type": "public",
-    "tag": "Feeds-createpost",
-    "proof": "",
-    "memo": ""
-  }, {
-    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-    "postId": "a179ad85a2c5d91ea1be6247d637c2a5c514736326621ee176eebb2345d7845d",
-    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-    "createdAt": 1648053871439,
-    "updatedAt": 1648053871439,
-    "content": {
-      "version": "3.0",
-      "mediaData": [{
-        "kind": "image",
-        "originMediaPath": "32606ee020db9d1c1cf8ab9603e3b2c1@feeds/data/32606ee020db9d1c1cf8ab9603e3b2c1",
-        "type": "0",
-        "size": 634979,
-        "thumbnailPath": "79b0d365f7ed7b84abd532be52717717@feeds/data/79b0d365f7ed7b84abd532be52717717",
-        "duration": 0,
-        "imageIndex": 0,
-        "additionalInfo": {},
-        "memo": {}
-      }],
-      "content": "tesy133666",
-      "mediaType": 1
-    },
-    "status": 0,
-    "type": "public",
-    "tag": "Feeds-createpost",
-    "proof": "",
-    "memo": ""
-  }, {
-    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-    "postId": "d763819fd243369c4de287457148547e1a43fe641b29f47f3281aac493d8bdc3",
-    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-    "createdAt": 1648054186048,
-    "updatedAt": 1648054186048,
-    "content": {
-      "version": "3.0",
-      "mediaData": [{
-        "kind": "image",
-        "originMediaPath": "1bc8b46c48c9871d6ac57cc105ec8364@feeds/data/1bc8b46c48c9871d6ac57cc105ec8364",
-        "type": "0",
-        "size": 116203,
-        "thumbnailPath": "821d062eac7d80d680bf0ca5f27d89f8@feeds/data/821d062eac7d80d680bf0ca5f27d89f8",
-        "duration": 0,
-        "imageIndex": 0,
-        "additionalInfo": {},
-        "memo": {}
-      }],
-      "content": "yhbbbbbbbbb",
-      "mediaType": 1
-    },
-    "status": 0,
-    "type": "public",
-    "tag": "Feeds-createpost",
-    "proof": "",
-    "memo": ""
-  },
-  {
-    "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-    "postId": "c6f7347ce5c1c9c659f84eb180029d7e782dc24fc59ee48039cfab6c50cee9fa",
-    "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-    "createdAt": 1648100775192,
-    "updatedAt": 1648100775192,
-    "content": {
-      "version": "3.0",
-      "mediaData": [{
-        "kind": "video",
-        "originMediaPath": "dfd40415a98266e540c1591429904982@feeds/data/dfd40415a98266e540c1591429904982",
-        "type": "2",
-        "size": 6879178,
-        "thumbnailPath": "6b34929dda14c9670913dfba56202c24@feeds/data/6b34929dda14c9670913dfba56202c24",
-        "duration": 9.365,
-        "imageIndex": 0,
-        "additionalInfo": {},
-        "memo": {}
-      }],
-      "content": "tesyuhhhhhhbvvv",
-      "mediaType": 2
-    },
-    "status": 0,
-    "type": "public",
-    "tag": "Feeds-createpost",
-    "proof": "",
-    "memo": ""
-  }];
+  // public likeList = [{
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "2b97793e71d6eb253e3a50c2f0f568e796d28992f260bca48f89d1690478058b",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1647955924595,
+  //   "updatedAt": 1647955924595,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "image",
+  //       "originMediaPath": "12b7b2b9528156173b5a0975e6cd95ea@feeds/data/12b7b2b9528156173b5a0975e6cd95ea",
+  //       "type": "0",
+  //       "size": 565223,
+  //       "thumbnailPath": "ae20729c36af8cef069c08c512eae4f0@feeds/data/ae20729c36af8cef069c08c512eae4f0",
+  //       "duration": 0,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "trdggg23",
+  //     "mediaType": 1
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // }, {
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "a179ad85a2c5d91ea1be6247d637c2a5c514736326621ee176eebb2345d7845d",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1648053871439,
+  //   "updatedAt": 1648053871439,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "image",
+  //       "originMediaPath": "32606ee020db9d1c1cf8ab9603e3b2c1@feeds/data/32606ee020db9d1c1cf8ab9603e3b2c1",
+  //       "type": "0",
+  //       "size": 634979,
+  //       "thumbnailPath": "79b0d365f7ed7b84abd532be52717717@feeds/data/79b0d365f7ed7b84abd532be52717717",
+  //       "duration": 0,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "tesy133666",
+  //     "mediaType": 1
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // }, {
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "d763819fd243369c4de287457148547e1a43fe641b29f47f3281aac493d8bdc3",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1648054186048,
+  //   "updatedAt": 1648054186048,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "image",
+  //       "originMediaPath": "1bc8b46c48c9871d6ac57cc105ec8364@feeds/data/1bc8b46c48c9871d6ac57cc105ec8364",
+  //       "type": "0",
+  //       "size": 116203,
+  //       "thumbnailPath": "821d062eac7d80d680bf0ca5f27d89f8@feeds/data/821d062eac7d80d680bf0ca5f27d89f8",
+  //       "duration": 0,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "yhbbbbbbbbb",
+  //     "mediaType": 1
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // },
+  // {
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "c6f7347ce5c1c9c659f84eb180029d7e782dc24fc59ee48039cfab6c50cee9fa",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1648100775192,
+  //   "updatedAt": 1648100775192,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "video",
+  //       "originMediaPath": "dfd40415a98266e540c1591429904982@feeds/data/dfd40415a98266e540c1591429904982",
+  //       "type": "2",
+  //       "size": 6879178,
+  //       "thumbnailPath": "6b34929dda14c9670913dfba56202c24@feeds/data/6b34929dda14c9670913dfba56202c24",
+  //       "duration": 9.365,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "tesyuhhhhhhbvvv",
+  //     "mediaType": 2
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // }];
 
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
@@ -159,7 +159,7 @@ export class ProfilePage implements OnInit {
   public totalLikeList = [];
   public startIndex: number = 0;
   public pageNumber: number = 5;
-  //public likeList = []; //like page
+  public likeList = []; //like page
   public connectionStatus = 1;
   public selectType: string = 'ProfilePage.myFeeds';
   public followers = 0;
@@ -372,8 +372,8 @@ export class ProfilePage implements OnInit {
   }
 
   sortLikeList() {
-    //let likeList = this.feedService.getLikeList() || [];
-    let likeList = this.likeList;
+    let likeList = this.feedService.getLikeList() || [];
+    //let likeList = this.likeList;
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
