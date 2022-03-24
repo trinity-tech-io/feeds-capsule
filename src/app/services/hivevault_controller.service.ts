@@ -26,83 +26,16 @@ export class HiveVaultController {
   //获得订阅的channel列表
   async getHomePostContent() {
     const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-    console.log("=====subscribedChannels=======", subscribedChannels);
     subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
       const channelId = item.channelId
       const destDid = item.destDid
-
-      const subscribedPost = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId)
-      const items = subscribedPost["find_message"]["items"]
-      items.forEach(async item => {
-        const contents = JSON.parse(item['content'])
-        let mDatas = contents['mediaData'];
-        let mData = {}
-        for (let index = 0; index < mDatas.length; index++) {
-          mData = mDatas[index];
-        }
-        console.log("mData ===== ", mData)
-        const mediaType = contents['mediaType']
-        // mediaDataV3
-        const kind = mData['kind']
-        const thumbnailPath = mData['thumbnailPath']
-        const originMediaPath = mData['originMediaPath']
-        const type = mData['type']
-        const size = mData['size']
-        const duration = mData['duration']
-        const imageIndex = mData['imageIndex']
-        const additionalInfo = mData['additionalInfo']
-        const memo = mData['memo']
-
-        const version = contents['version']
-        const postContent = contents['content']
-        const mediaDataV3: FeedsData.mediaDataV3 = {
-          kind: kind,
-          originMediaPath: originMediaPath,
-          type: type,
-          size: size,
-          thumbnailPath: thumbnailPath,
-          duration: duration,
-          imageIndex: imageIndex,
-          additionalInfo: additionalInfo,
-          memo: memo
-        }
-        let mediaDatasV3: FeedsData.mediaDataV3[] = []
-        mediaDatasV3.push(mediaDataV3)
-        let content: FeedsData.postContentV3 = {
-          version: version,
-          mediaData: mediaDatasV3,
-          content: postContent,
-          mediaType: mediaType
-        }
-        // 存储post
-        let post: FeedsData.PostV3 = {
-          destDid: destDid,
-          postId: item.post_id,
-          channelId: item.channel_id,
-          createdAt: item.created_at,
-          updatedAt: item.updated_at,
-          content: content,
-          status: item.status,
-          type: item.type,
-          tag: item.tag,
-          proof: '',
-          memo: item.memo
-        }
-        await this.dataHelper.addPostV3(post)
-      });
-      // const getPost = await this.dataHelper.getPostV3List()
+      const subscribedPost = await this.getPostListByChannel(destDid, channelId)
+      console.log("subscribedPost ===== ", subscribedPost)
+      // TODO： 在这里存储是否合适
+      subscribedPost.forEach(async item => {
+        await this.dataHelper.addPostV3(item)
+      })
     })
-    //提前加载：TODO
-  }
-
-  async downloadScripting(destDid: string, mediaPath: string) {
-    return this.hiveVaultApi.downloadScripting(destDid, mediaPath)
-  }
-
-  getChannelInfoById() {
-    return new Promise(async (resolve, reject) => {
-
-    });
   }
 
   getPostListByChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
@@ -117,6 +50,19 @@ export class HiveVaultController {
         reject(error);
       }
     });
+  }
+
+
+  async downloadScripting(destDid: string, mediaPath: string) {
+    return this.hiveVaultApi.downloadScripting(destDid, mediaPath)
+  }
+
+  async getChannelInfoById(destDid: string, channelId: string) {
+    const info = await this.hiveVaultApi.queryChannelInfo(destDid, channelId)
+    console.log("getChannelInfoById ====== ", info)
+    // return new Promise(async (resolve, reject) => {
+
+    // });
   }
 
   getCommentByChannel() {

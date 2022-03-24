@@ -22,20 +22,49 @@ export class HiveVaultResultParse {
        * type: "public"
        * updated_at: 1647853515908
        */
+      const items = result["find_message"]["items"]
       const posts = result;
       let parseResult = [];
-      console.log('result', posts);
-      if (posts) {
-        posts.forEach(post => {
+      console.log('result ===== ', posts);
+      if (items) {
+        items.forEach(post => {
           if (post) {
+            const contents = JSON.parse(post['content'])
+            let mDatas = contents['mediaData'];
+            let mData = {}
+            for (let index = 0; index < mDatas.length; index++) {
+              mData = mDatas[index];
+            }
+            // mediaDataV3
+            const mediaDataV3: FeedsData.mediaDataV3 = {
+              kind: mData['kind'],
+              originMediaPath: mData['originMediaPath'],
+              type: mData['type'],
+              size: mData['size'],
+              thumbnailPath: mData['thumbnailPath'],
+              duration: mData['duration'],
+              imageIndex: mData['imageIndex'],
+              additionalInfo: mData['additionalInfo'],
+              memo: mData['memo']
+            }
+            let mediaDatasV3: FeedsData.mediaDataV3[] = []
+            mediaDatasV3.push(mediaDataV3)
+
+            // postContentV3
+            let content: FeedsData.postContentV3 = {
+              version: contents['version'],
+              mediaData: mediaDatasV3,
+              content: contents['content'],
+              mediaType: contents['mediaType']
+            }
+            // PostV3
             const postResult: FeedsData.PostV3 = {
               destDid: destDid,
               postId: post.post_id,
-
               channelId: post.channel_id,
               createdAt: post.created_at,
               updatedAt: post.updated_at,
-              content: post.content,
+              content: content,
               status: post.status,
               type: post.type,
               tag: post.tag,
