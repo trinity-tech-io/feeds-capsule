@@ -893,13 +893,8 @@ export class HomePage implements OnInit {
     const key = UtilService.getKey(destDid, channelId);
     let channel = this.dataHelper.channelsMapV3[key];
 
-<<<<<<< HEAD
-    if (channel == null || channel == undefined) return '';
-    return this.dataHelper.channelsMapV3[key].avatar;
-=======
     if (channel == null || channel == undefined) return './assets/icon/reserve.svg';
     return this.feedService.parseChannelAvatar(this.dataHelper.channelsMapV3[key].avatar);
->>>>>>> 733beff0 (update profile like page)
 
     // let channel = this.getChannelV3(nodeId, channelId);
     // if (channel == null || channel == undefined) return '';
