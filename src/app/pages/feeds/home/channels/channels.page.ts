@@ -721,7 +721,7 @@ export class ChannelsPage implements OnInit {
 
     this.pauseAllVideo();
     let isMine = this.checkChannelIsMine();
-    if (isMine === 0 && post.status != '1') {
+    if (isMine === 0 && post.status != 1) {
       this.menuService.showPostDetailMenu(
         post.destDid,
         post.channelId,

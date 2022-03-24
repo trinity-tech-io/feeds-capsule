@@ -243,7 +243,7 @@ export class PostdetailPage implements OnInit {
 
  async initPostContent() {
     let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
-    this.postStatus = post.status || "0";
+    this.postStatus = post.status || 0;
     this.mediaType = post.content.mediaType;
     this.postContent = post.content.content;
     this.updatedTime = post.updatedAt;

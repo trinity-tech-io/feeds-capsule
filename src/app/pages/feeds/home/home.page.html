@@ -75,14 +75,14 @@
               </ion-label>
             </ion-col>
             <img class="moremenuclick"
-              *ngIf="post.status!='1'"
+              *ngIf="post.status!=1"
               [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
               (click)="menuMore(post)"
             >
           </ion-row>
           <!-- <p>@{{ getChannelOwnerName(post.postId, post.channelId) }}</p> -->
 
-          <h2 *ngIf="post.status!='1'">
+          <h2 *ngIf="post.status!=1">
             <div *ngIf="getPostContentTextSize(post.content.content)<=maxTextSize"
               (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content.content) | html"></pre>
@@ -93,11 +93,11 @@
               <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
             </div>
           </h2>
-          <h2 (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" *ngIf="post.status==='1'">
+          <h2 (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" *ngIf="post.status===1">
             <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
           </h2>
 
-          <div *ngIf="post.status!='1'&&post.content.mediaType ===1" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}rpostimg
+          <div *ngIf="post.status!=1&&post.content.mediaType ===1" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}rpostimg
             style="width: 100%">
             <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
 
@@ -149,7 +149,7 @@
           </div>
           </div>
 
-          <div *ngIf="post.status!='1'&&post.content.mediaType ===2"
+          <div *ngIf="post.status!=1&&post.content.mediaType ===2"
             id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
 
             <app-roundloading
@@ -201,13 +201,13 @@
 
             </ion-col>
             <ion-col>
-              <ion-label class="status" *ngIf="post.status === '2'" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
-              <ion-label class="status" *ngIf="post.status === '11'" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
-              <ion-label class="status" *ngIf="post.status === '12'" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.status === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.status === 12" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
             </ion-col>
           </ion-row>
 
-         <ion-row *ngIf="post.status === '12'" class="bottom-row">
+         <ion-row *ngIf="post.status === 12" class="bottom-row">
             <ion-col size="2.25">
             </ion-col>
             <ion-col size="2.25">
