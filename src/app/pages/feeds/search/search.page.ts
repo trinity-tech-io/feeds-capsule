@@ -25,12 +25,15 @@ import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
+import { Logger } from 'src/app/services/logger';
 
+const TAG: string = 'SearchPage';
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss'],
 })
+
 export class SearchPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonRefresher, { static: true }) ionRefresher: IonRefresher;
@@ -458,9 +461,11 @@ export class SearchPage implements OnInit {
     let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
     let scannedContent = scanData["scannedText"] || "";
-
+    Logger.log(TAG, 'Scan content is', scannedContent);
     const scanResult = ScannerHelper.parseScannerResult(scannedContent);
-    if (!scanResult || !scanResult.feedsUrl || !scanResult.code || scanResult.code == ScannerCode.INVALID_FORMAT) {
+    Logger.log(TAG, 'Parse scan result is', scanResult);
+
+    if (!scanResult || !scanResult.feedsUrl || scanResult.code == ScannerCode.INVALID_FORMAT) {
       this.native.toastWarn('AddServerPage.tipMsg');
       return;
     }

@@ -51,7 +51,11 @@ export class HiveService {
         const currentNet = this.dataHelper.getDevelopNet().toLowerCase()
         HiveLogger.setDefaultLevel(HiveLogger.TRACE)
         DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
-        AppContext.setupResolver(currentNet, HiveService.RESOLVE_CACHE)
+        try {
+          AppContext.setupResolver(currentNet, HiveService.RESOLVE_CACHE)
+        } catch (error) {
+        }
+
         const rootDirEntry = await this.fileService.resolveLocalFileSystemURL()
         const path = rootDirEntry.fullPath
         // auth
@@ -100,6 +104,7 @@ export class HiveService {
       let provider = this.parseUserDIDDocument(userDid, userDIDDocument)
       const vault = new VaultServices(context, provider)
       this.vaultMap[userDid] = vault
+      Logger.log(TAG, 'Create vault ', userDid, vault);
     }
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
@@ -145,12 +150,14 @@ export class HiveService {
     return provider
   }
 
-  async getVault(userDid: string) {
+  async getVault(userDid: string): VaultServices {
     let vault = this.vaultMap[userDid]
     if (vault == null) {
       await this.creatVault(userDid)
     }
-    return this.vaultMap[userDid]
+    vault = this.vaultMap[userDid];
+    Logger.log(TAG, 'Get vault from', userDid, 'vault is', vault);
+    return vault;
   }
 
   async getDatabaseService(userDid: string) {
