@@ -1148,7 +1148,7 @@ export class HiveVaultHelper {
     uploadMediaDataWithBlob(blobData: Blob): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
+                const dataBase64 = await this.fileHelperService.transBlobToBase64(blobData)
                 const hash = SparkMD5.hash(dataBase64);
 
                 const remoteName = 'feeds/data/' + hash;
