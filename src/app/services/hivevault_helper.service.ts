@@ -6,8 +6,9 @@ import { DataHelper } from './DataHelper';
 import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
 import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
-import { FileHelperService } from 'src/app/services/FileHelperService';
+import { base64ImageToBuffer } from 'src/app/services/picture.helpers';
 import SparkMD5 from 'spark-md5';
+import { FileHelperService } from 'src/app/services/FileHelperService';
 
 const TAG = 'HiveVaultHelper';
 
@@ -1088,6 +1089,7 @@ export class HiveVaultHelper {
                 const result = await this.hiveService.downloadEssAvatarTransactionId(userDid)
                 const transaction_id = result["download"]["transaction_id"]
                 let dataBuffer = await this.hiveService.downloadScripting(userDid, transaction_id)
+                console.log("downloadEssAvatarData  dataBuffer ===== ", dataBuffer)
                 const rawImage = await rawImageToBase64DataUrl(dataBuffer)
                 resolve(rawImage);
             }
@@ -1115,6 +1117,47 @@ export class HiveVaultHelper {
                 let avatarHiveURL = scriptName + "@" + remoteName //
                 Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
                 resolve(avatarHiveURL);
+            } catch (error) {
+                console.log("uploadMediaData error:", error)
+                reject(error);
+            }
+        });
+    }
+    /*
+        uploadMediaDataWithBuffer(bufferString: string): Promise<string> {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    //const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
+                    const hash = SparkMD5.hash(bufferString);
+    
+                    const remoteName = 'feeds/data/' + hash;
+                    const bufferData = base64ImageToBuffer(bufferString)
+                    await this.hiveService.uploadScriptWithBuffer(remoteName, bufferData);
+                    const scriptName = hash
+                    await this.registerFileDownloadScripting(scriptName);
+                    let avatarHiveURL = scriptName + "@" + remoteName //
+                    Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
+                    resolve(avatarHiveURL);
+                } catch (error) {
+                    console.log("uploadMediaData error:", error)
+                    reject(error);
+                }
+            });
+        }
+    */
+    uploadMediaDataWithBlob(blobData: Blob): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
+                const hash = SparkMD5.hash(dataBase64);
+
+                const remoteName = 'feeds/data/' + hash;
+                await this.hiveService.uploadScriptWithBlob(remoteName, blobData);
+                const scriptName = hash
+                await this.registerFileDownloadScripting(scriptName);
+                let avatarHiveURL = scriptName + "@" + remoteName //
+                Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
+                resolve("TODO")
             } catch (error) {
                 console.log("uploadMediaData error:", error)
                 reject(error);
@@ -1161,6 +1204,12 @@ export class HiveVaultHelper {
         let dataBuffer = await this.hiveService.downloadScripting(userDid, transactionID)
         let jsonString = dataBuffer.toString();
         return jsonString
+    }
+
+    private async downloadScriptingDataWithBuffer(userDid: string, transactionID: string) {
+        let dataBuffer = await this.hiveService.downloadScripting(userDid, transactionID)
+        // let jsonString = dataBuffer.toString();
+        return dataBuffer
     }
 
     private callScript(userDid: string, scriptName: string, params: any): Promise<any> {
