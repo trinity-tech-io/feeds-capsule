@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import { conformsTo } from 'lodash';
 import { Logger } from './logger';
 
+const TAG: string = 'UtilService';
 @Injectable()
 export class UtilService {
 
@@ -764,5 +765,27 @@ export class UtilService {
 
   public static getKey(did: string, id: string) {
     return did + '#' + id;
+  }
+
+  private static arrayBuffer2Buffer(arrayBuffer: ArrayBuffer): Buffer {
+    const buffer = new Buffer(arrayBuffer.byteLength);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < buffer.length; ++i) {
+      buffer[i] = view[i];
+    }
+    return buffer;
+  }
+
+  public static blob2Buffer(blob: Blob): Promise<Buffer> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const blobArrayBuffer = await blob.arrayBuffer();
+        const buffer = UtilService.arrayBuffer2Buffer(blobArrayBuffer);
+        resolve(buffer);
+      } catch (error) {
+        Logger.error(TAG, 'blob to buffer error', error);
+        reject(error);
+      }
+    })
   }
 }
