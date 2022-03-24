@@ -101,7 +101,9 @@ export class HiveVaultResultParse {
        * type: "public"
        * updated_at: 1647859737317
        */
-      const channels = result;
+      const items = result["find_message"]["items"]
+
+      const channels = items;
       let parseResult = [];
       console.log('result', channels);
       if (channels) {
