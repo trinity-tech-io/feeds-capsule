@@ -23,6 +23,8 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -141,7 +143,10 @@ export class ChannelsPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private postHelperService: PostHelperService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController
+
   ) { }
 
   subscribe() {
@@ -197,26 +202,26 @@ export class ChannelsPage implements OnInit {
 
   // initStatus(arr: any) {
   //   for (let index = 0; index < arr.length; index++) {
-  //     let nodeId = arr[index]['nodeId'];
-  //     this.initnodeStatus(nodeId);
+  //     let destDid = arr[index]['destDid'];
+  //     this.initnodeStatus(destDid);
   //   }
   // }
 
-  sortChannelList() {
-    let channelList =
-      this.feedService.getPostListFromChannel(this.destDid, this.channelId) ||
-      [];
+ async sortChannelList() {
+    let postListByChannel =
+     await this.dataHelper.getPostListV3FromChannel(this.destDid,this.channelId);
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
-      channelList = _.filter(channelList, (item: any) => {
-        return item.post_status != 1;
+      postListByChannel = _.filter(postListByChannel, (item: any) => {
+        return item.status != 1;
       });
     }
-    return channelList;
+    return postListByChannel;
   }
 
-  initRefresh() {
-    this.totalData = this.sortChannelList();
+ async initRefresh() {
+    this.totalData = await this.sortChannelList();
+    console.log("======postListByChannel========",this.totalData);
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -260,7 +265,7 @@ export class ChannelsPage implements OnInit {
     let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     console.log("====channel===",channel);
     console.log("this.channelId== " + this.channelId);
-    console.log("this.nodeId==" + this.destDid);
+    console.log("this.destDid==" + this.destDid);
 
     console.log("channel.avatar ==== 1" + channel);
 
@@ -300,7 +305,7 @@ export class ChannelsPage implements OnInit {
       FeedsEvent.PublishType.subscribeFinish,
       (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
         this.zone.run(() => {
-          let nodeId = subscribeFinishData.nodeId;
+          let destDid = subscribeFinishData.nodeId;
           let channelId = subscribeFinishData.channelId;
           this.checkFollowStatus(this.destDid, this.channelId);
         });
@@ -352,11 +357,11 @@ export class ChannelsPage implements OnInit {
       FeedsEvent.PublishType.streamGetBinarySuccess,
       (getBinaryData: FeedsEvent.GetBinaryData) => {
         this.zone.run(() => {
-          let nodeId = getBinaryData.nodeId;
+          let destDid = getBinaryData.nodeId;
           let key = getBinaryData.key;
           let value = getBinaryData.value;
           this.processGetBinaryResult(key, value);
-          this.feedService.closeSession(nodeId);
+          this.feedService.closeSession(destDid);
         });
       },
     );
@@ -406,7 +411,7 @@ export class ChannelsPage implements OnInit {
       FeedsEvent.PublishType.streamError,
       (streamErrorData: FeedsEvent.StreamErrorData) => {
         this.zone.run(() => {
-          let nodeId = streamErrorData.nodeId;
+          let destDid = streamErrorData.nodeId;
           let error = streamErrorData.error;
           this.isImgPercentageLoading[this.imgDownStatusKey] = false;
           this.isImgLoading[this.imgDownStatusKey] = false;
@@ -416,7 +421,7 @@ export class ChannelsPage implements OnInit {
           this.isVideoLoading[this.videoDownStatusKey] = false;
           this.videoDownStatus[this.videoDownStatusKey] = '';
 
-          this.feedService.handleSessionError(nodeId, error);
+          this.feedService.handleSessionError(destDid, error);
           this.pauseAllVideo();
           this.curNodeId = '';
         });
@@ -588,35 +593,31 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  like(nodeId: string, channelId: string, postId: string) {
+  like(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
+    if (this.checkServerStatus(destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
 
-    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
+    let post = this.feedService.getPostFromId(destDid, channelId, postId);
     if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    if (this.checkMyLike(nodeId, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(nodeId, channelId, postId, 0);
+    if (this.checkMyLike(destDid, channelId, postId)) {
+      this.feedsServiceApi.postUnlike(destDid, channelId, postId, 0);
       return;
     }
 
-    this.feedsServiceApi.postLike(nodeId, channelId, postId, 0);
+    this.feedsServiceApi.postLike(destDid, channelId, postId, 0);
   }
 
-  getChannel(nodeId: string, channelId: string): any {
-    let channel = this.feedService.getChannelFromId(nodeId, channelId) || '';
-    if (channel === '') {
-      return '';
-    } else {
-      return UtilService.moreNanme(channel['name']);
-    }
+  getChannelName(destDid: string, channelId: string) {
+    const key = UtilService.getKey(destDid, channelId);
+    return this.dataHelper.channelsMapV3[key].name;
   }
 
   getContentText(content: string): string {
@@ -639,23 +640,18 @@ export class ChannelsPage implements OnInit {
     return size;
   }
 
-  getChannelOwnerName(nodeId, channelId) {
-    let channel = this.feedService.getChannelFromId(nodeId, channelId) || '';
-    if (channel === '') {
-      return '';
-    } else {
-      return UtilService.moreNanme(channel['owner_name'], 40);
-    }
+  getChannelOwnerName(destDid: string, channelId: string) {//todo
+
   }
 
   navToPostDetail(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     postId: string,
     event?: any,
   ) {
-    let post = this.feedService.getPostFromId(nodeId, channelId, postId);
-    if (!this.feedService.checkPostIsAvalible(post)) return;
+    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
     if (this.isPress) {
       this.isPress = false;
@@ -671,27 +667,28 @@ export class ChannelsPage implements OnInit {
         return;
       }
     }
-    this.pauseVideo(nodeId + '-' + channelId + '-' + postId);
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.native
       .getNavCtrl()
-      .navigateForward(['/postdetail', nodeId, channelId, postId]);
+      .navigateForward(['/postdetail', destDid, channelId, postId]);
   }
 
-  checkMyLike(nodeId: string, channelId: string, postId: string) {
-    return this.feedService.checkMyLike(nodeId, channelId, postId);
+  checkMyLike(destDid: string, channelId: string, postId: string) {
+    return this.feedService.checkMyLike(destDid, channelId, postId);
   }
 
-  checkFollowStatus(nodeId: string, channelId: string) {
-    let channelsMap = this.feedService.getChannelsMap();
-    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
-    if (
-      channelsMap[nodeChannelId] == undefined ||
-      !channelsMap[nodeChannelId].isSubscribed
-    ) {
-      this.followStatus = false;
-    } else {
-      this.followStatus = true;
-    }
+  checkFollowStatus(destDid: string, channelId: string) {
+    // let channelsMap = this.feedService.getChannelsMap();
+    // let nodeChannelId = this.feedService.getChannelId(destDid, channelId);
+    // if (
+    //   channelsMap[nodeChannelId] == undefined ||
+    //   !channelsMap[nodeChannelId].isSubscribed
+    // ) {
+    //   this.followStatus = false;
+    // } else {
+    //   this.followStatus = true;
+    // }
+     this.followStatus = true;
   }
   handleDisplayTime(createTime: number) {
     let obj = UtilService.handleDisplayTime(createTime);
@@ -719,35 +716,35 @@ export class ChannelsPage implements OnInit {
     return obj.content;
   }
 
-  menuMore(post: FeedsData.Post) {
-    if (!this.feedService.checkPostIsAvalible(post)) return;
+  menuMore(post: FeedsData.PostV3) {
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
     this.pauseAllVideo();
     let isMine = this.checkChannelIsMine();
-    if (isMine === 0 && post.post_status != 1) {
+    if (isMine === 0 && post.status != '1') {
       this.menuService.showPostDetailMenu(
-        post.nodeId,
-        post.channel_id,
+        post.destDid,
+        post.channelId,
         this.channelName,
-        post.id,
+        post.postId,
       );
     } else {
       this.menuService.showShareMenu(
-        post.nodeId,
-        post.channel_id,
+        post.destDid,
+        post.channelId,
         this.channelName,
-        post.id,
+        post.postId,
       );
     }
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
+  checkServerStatus(destDid: string) {
+    return this.feedService.getServerStatusFromId(destDid);
   }
 
-  initnodeStatus(nodeId: string) {
-    let status = this.checkServerStatus(nodeId);
-    this.nodeStatus[nodeId] = status;
+  initnodeStatus(destDid: string) {
+    let status = this.checkServerStatus(destDid);
+    this.nodeStatus[destDid] = status;
   }
 
   doRefresh(event: any) {
@@ -795,9 +792,14 @@ export class ChannelsPage implements OnInit {
   }
 
   checkChannelIsMine() {
-    if (this.feedService.checkChannelIsMine(this.destDid, this.channelId))
+    let signInData :FeedsData.SignInData = this.feedService.getSignInData() || null;
+    if(signInData === null){
       return 0;
-
+    }
+    let ownerDid: string = signInData.did;
+    if(this.destDid != ownerDid){
+        return 0;
+    }
     return 1;
   }
 
@@ -814,7 +816,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    // if (this.checkServerStatus(nodeId) != 0) {
+    // if (this.checkServerStatus(destDid) != 0) {
     //   this.native.toastWarn('common.connectionError1');
     //   return;
     // }
@@ -845,24 +847,24 @@ export class ChannelsPage implements OnInit {
       let srcId = postgridList[postgridindex].getAttribute('id') || '';
       if (srcId != '') {
         let arr = srcId.split('-');
-        let nodeId = arr[0];
+        let destDid = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
         let mediaType = arr[3];
-        let id = nodeId + '-' + channelId + '-' + postId;
+        let id = destDid + '-' + channelId + '-' + postId;
         //postImg
         if (mediaType === '1') {
-          this.handlePsotImg(id, srcId, postgridindex);
+          this.handlePostImg(id, srcId, postgridindex);
         }
         if (mediaType === '2') {
           //video
-          this.hanldVideo(id, srcId, postgridindex);
+          //this.hanldVideo(id, srcId, postgridindex);
         }
       }
     }
   }
 
-  handlePsotImg(id: string, srcId: string, rowindex: number) {
+ async handlePostImg(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || '';
     let rpostImage = document.getElementById(id + 'channelrow');
@@ -876,87 +878,34 @@ export class ChannelsPage implements OnInit {
         if (isload === '') {
           this.isLoadimage[id] = '11';
           let arr = srcId.split('-');
-          let nodeId = arr[0];
-          let channelId: any = arr[1];
-          let postId: any = arr[2];
-          let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
-          let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-          );
-          let contentVersion = this.feedService.getContentVersion(
-            nodeId,
-            channelId,
-            postId,
-            0,
-          );
 
-          if (contentVersion == '0') {
-            imageKey = thumbkey;
-          }
+          let destDid: string = arr[0];
+          let postId: string = arr[2];
 
-          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          if (content.version == '2.0') {
-            postImage.setAttribute('src', './assets/icon/reserve.svg');
-            const mediaDatas = content.mediaDatas;
-            if (mediaDatas && mediaDatas.length > 0) {
-              const elements = mediaDatas[0];
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-                .then((value) => {
-                  let thumbImage = value || "";
-                  postImage.setAttribute('src', thumbImage);
+          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
+          //缩略图
+          let thumbnailKey = elements.thumbnailPath;
+          //原图
+          let imageKey = elements.originMediaPath;
+          let type = elements.type;
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileOriginName:string = "origin-"+imageKey.split("@")[0];
+          let fileThumbnaiName:string = "thumbnail-"+thumbnailKey.split("@")[0];
 
-                  // if (thumbImage != '') {
-                  //   this.isLoadimage[id] = '13';
-
-                  //   if (nftOrdeId != '' && priceDes != '') {
-                  //     let imagesWidth = postImage.clientWidth;
-                  //     let homebidfeedslogo = document.getElementById(
-                  //       id + 'homebidfeedslogo'
-                  //     );
-                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                  //     homebidfeedslogo.style.display = 'block';
-
-                  //     let homebuy = document.getElementById(id + 'homebuy');
-                  //     let homeNftPrice = document.getElementById(
-                  //       id + 'homeNftPrice'
-                  //     );
-                  //     let homeNftQuantity = document.getElementById(
-                  //       id + 'homeNftQuantity'
-                  //     );
-                  //     let homeMaxNftQuantity = document.getElementById(
-                  //       id + 'homeMaxNftQuantity'
-                  //     );
-                  //     homeNftPrice.innerText = priceDes;
-                  //     homeNftQuantity.innerText = nftQuantity;
-                  //     homeMaxNftQuantity.innerText = nftQuantity;
-                  //     homebuy.style.display = 'block';
-                  //   }
-                  //   rpostimg.style.display = 'block';
-                  // } else {
-                  //   this.isLoadimage[id] = '12';
-                  //   rpostimg.style.display = 'none';
-                  // }
-                })
-                .catch(() => {
-                  //TODO
-                });
-            }
-            return;
-          }
-
-          this.feedService
-            .getData(imageKey)
+          //原图
+          this.hiveVaultController.
+          getV3Data(destDid,imageKey,fileOriginName,type,"false")
             .then(imagedata => {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.isLoadimage[id] = '13';
                 postImage.setAttribute('src', realImage);
               } else {
-                this.feedService.getData(thumbkey).then((thumbImagedata) => {
+                this.hiveVaultController.
+                getV3Data(destDid,thumbnailKey,fileThumbnaiName,type).
+                then((thumbImagedata) => {
                   let thumbImage = thumbImagedata || '';
                   if (thumbImage != '') {
                     this.isLoadimage[id] = '13';
@@ -1015,11 +964,11 @@ export class ChannelsPage implements OnInit {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
           let arr = srcId.split('-');
-          let nodeId = arr[0];
+          let destDid = arr[0];
           let channelId: any = arr[1];
           let postId: any = arr[2];
 
-          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+          const content: FeedsData.Content = this.feedService.getContentFromId(destDid, channelId, postId, 0);
           if (content.version == '2.0') {
             video.setAttribute('poster', './assets/icon/reserve.svg');
             const mediaDatas = content.mediaDatas;
@@ -1075,7 +1024,7 @@ export class ChannelsPage implements OnInit {
 
 
           let key = this.feedService.getVideoThumbStrFromId(
-            nodeId,
+            destDid,
             channelId,
             postId,
             0,
@@ -1128,10 +1077,10 @@ export class ChannelsPage implements OnInit {
     }, 0);
   }
 
-  showBigImage(nodeId: string, channelId: string, postId: string) {
+  showBigImage(destDid: string, channelId: string, postId: string) {
     this.pauseAllVideo();
-    this.zone.run(() => {
-      let imagesId = nodeId + '-' + channelId + '-' + postId + 'postimgchannel';
+    this.zone.run(async () => {
+      let imagesId = destDid + '-' + channelId + '-' + postId + 'postimgchannel';
       let imagesObj = document.getElementById(imagesId);
       let imagesWidth = imagesObj.clientWidth;
       let imagesHeight = imagesObj.clientHeight;
@@ -1140,52 +1089,21 @@ export class ChannelsPage implements OnInit {
         (imagesWidth - this.roundWidth) / 2 + 'px';
       this.imgloadingStyleObj['top'] =
         (imagesHeight - this.roundWidth) / 2 + 'px';
-      this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
+      this.imgCurKey = destDid + '-' + channelId + '-' + postId;
       this.isImgLoading[this.imgCurKey] = true;
 
-      const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-      if (content.version == '2.0') {
-        const mediaDatas = content.mediaDatas;
-        if (mediaDatas && mediaDatas.length > 0) {
-          const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-            .then((value) => {
-              this.imgCurKey = nodeId + '-' + channelId + '-' + postId;
-              this.isImgLoading[this.imgCurKey] = false;
-              this.imgDownStatusKey = nodeId + '-' + channelId + '-' + postId;
-              this.viewHelper.openViewer(
-                this.titleBar,
-                value,
-                'common.image',
-                'ChannelsPage.feeds',
-                this.appService,
-              );
-            })
-            .catch(() => {
-              //TODO
-            });
-        }
-        return;
-      }
-
-      let contentVersion = this.feedService.getContentVersion(
-        nodeId,
-        channelId,
-        postId,
-        0,
-      );
-      let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-        nodeId,
-        channelId,
-        postId,
-        0,
-        0,
-      );
-      let key = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
-      if (contentVersion == '0') {
-        key = thumbkey;
-      }
-      this.feedService.getData(key).then(realImg => {
+      let post = await this.dataHelper.getPostV3ById(destDid, postId);
+      let mediaDatas = post.content.mediaData;
+      const elements = mediaDatas[0];
+      //原图
+      let imageKey = elements.originMediaPath;
+      let type = elements.type;
+      //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+      let fileOriginName:string = "origin-"+imageKey.split("@")[0];
+      //原图
+      this.hiveVaultController
+      .getV3Data(destDid,imageKey,fileOriginName,type,"false")
+      .then(async realImg => {
         let img = realImg || '';
         if (img != '') {
           this.isImgLoading[this.imgCurKey] = false;
@@ -1198,49 +1116,39 @@ export class ChannelsPage implements OnInit {
             true
           );
         } else {
-          if (this.checkServerStatus(nodeId) != 0) {
-            this.isImgLoading[this.imgCurKey] = false;
-            this.native.toastWarn('common.connectionError1');
-            return;
-          }
 
           if (this.isExitDown()) {
             this.isImgLoading[this.imgCurKey] = false;
             this.openAlert();
             return;
           }
-          this.imgDownStatusKey = nodeId + '-' + channelId + '-' + postId;
-          this.cachedMediaType = 'img';
-          this.feedService.processGetBinary(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-            FeedsData.MediaType.containsImg,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.imgDownStatus[this.imgDownStatusKey] = '1';
-                this.isImgLoading[this.imgDownStatusKey] = false;
-                this.isImgPercentageLoading[this.imgDownStatusKey] = true;
-                return;
-              }
 
-              if (transDataChannel == FeedsData.TransDataChannel.MESSAGE) {
-                this.imgDownStatus[this.imgDownStatusKey] = '0';
-                this.curNodeId = '';
-                return;
-              }
-            },
-            err => {
-              this.isImgLoading[this.imgDownStatusKey] = false;
-              this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-              this.imgDownStatus[this.imgDownStatusKey] = '';
-              this.curNodeId = '';
-            },
-          );
+          this.imgDownStatusKey = destDid + '-' + channelId + '-' + postId;
+          this.imgDownStatus[this.imgDownStatusKey] = '1';
+          await this.native.showLoading('common.waitMoment');
+          this.hiveVaultController
+          .getV3Data(destDid,imageKey,fileOriginName,type)
+          .then(async realImg => {
+           let img = realImg || '';
+           this.native.hideLoading();
+           if (img != '') {
+             this.isImgLoading[this.imgCurKey] = false;
+             this.imgDownStatus[this.imgDownStatusKey] = '';
+             this.viewHelper.openViewer(
+               this.titleBar,
+               realImg,
+               'common.image',
+               'FeedsPage.tabTitle1',
+               this.appService,
+               false,
+               ''
+             );
+           }
+          }).catch(()=>{
+           this.isImgLoading[this.imgCurKey] = false;
+           this.imgDownStatus[this.imgDownStatusKey] = '';
+           this.native.hideLoading();
+          });
         }
       });
     });
@@ -1343,11 +1251,11 @@ export class ChannelsPage implements OnInit {
 
   getVideo(id: string, srcId: string) {
     let arr = srcId.split('-');
-    let nodeId = arr[0];
+    let destDid = arr[0];
     let channelId: any = arr[1];
     let postId: any = arr[2];
 
-    let videoId = nodeId + '-' + channelId + '-' + postId + 'vgplayerchannel';
+    let videoId = destDid + '-' + channelId + '-' + postId + 'vgplayerchannel';
     let videoObj = document.getElementById(videoId);
     let videoWidth = videoObj.clientWidth;
     let videoHeight = videoObj.clientHeight;
@@ -1357,10 +1265,10 @@ export class ChannelsPage implements OnInit {
       (videoWidth - this.roundWidth) / 2 + 'px';
     this.videoloadingStyleObj['top'] =
       (videoHeight - this.roundWidth) / 2 + 'px';
-    this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
+    this.videoCurKey = destDid + '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
-    const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
+    const content: FeedsData.Content = this.feedService.getContentFromId(destDid, channelId, postId, 0);
     if (content.version == '2.0') {
       // video.setAttribute('src', './assets/icon/reserve.svg');
       const mediaDatas = content.mediaDatas;
@@ -1380,7 +1288,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    let key = this.feedService.getVideoKey(nodeId, channelId, postId, 0, 0);
+    let key = this.feedService.getVideoKey(destDid, channelId, postId, 0, 0);
     this.feedService.getData(key).then((videoResult: string) => {
       this.zone.run(() => {
         let videodata = videoResult || '';
@@ -1388,9 +1296,9 @@ export class ChannelsPage implements OnInit {
 
           let post = _.find(this.postList, post => {
             return (
-              post.nodeId === nodeId &&
-              post.channel_id == channelId &&
-              post.id == postId
+              post.destDid === destDid &&
+              post.channelId == channelId &&
+              post.postId == postId
             );
           });
           if (!this.feedService.checkPostIsAvalible(post)) {
@@ -1399,7 +1307,7 @@ export class ChannelsPage implements OnInit {
             return;
           }
 
-          if (this.checkServerStatus(nodeId) != 0) {
+          if (this.checkServerStatus(destDid) != 0) {
             this.isVideoLoading[this.videoCurKey] = false;
             this.pauseVideo(id);
             this.native.toastWarn('common.connectionError1');
@@ -1413,10 +1321,10 @@ export class ChannelsPage implements OnInit {
             return;
           }
 
-          this.videoDownStatusKey = nodeId + '-' + channelId + '-' + postId;
+          this.videoDownStatusKey = destDid + '-' + channelId + '-' + postId;
           this.cachedMediaType = 'video';
           this.feedService.processGetBinary(
-            nodeId,
+            destDid,
             channelId,
             postId,
             0,
@@ -1429,7 +1337,7 @@ export class ChannelsPage implements OnInit {
                 this.videoDownStatus[this.videoDownStatusKey] = '1';
                 this.isVideoLoading[this.videoDownStatusKey] = false;
                 this.isVideoPercentageLoading[this.videoDownStatusKey] = true;
-                this.curNodeId = nodeId;
+                this.curNodeId = destDid;
                 return;
               }
 

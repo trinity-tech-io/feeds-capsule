@@ -89,21 +89,21 @@
           <ion-row class="top-row">
             <ion-col class="left-col" size="11" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
               <ion-label>
-                {{ getChannel(post.destDid, post.channelId) }}
+                {{ getChannelName(post.destDid, post.channelId) }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
             </ion-col>
             <img class="moremenuclick"
-            *ngIf="post.post_status != '1'"
+            *ngIf="post.status != 1"
               [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
               (click)="menuMore(post)"
             >
           </ion-row>
-          <p>@{{ getChannelOwnerName(post.destDid, post.channelId) }}</p>
-          <h2 *ngIf="post.status === '1'"  (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
+          <!-- <p>@{{ getChannelOwnerName(post.destDid, post.channelId) }}</p> -->
+          <h2 *ngIf="post.status === 1"  (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
             <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="post.status != '1'"  (press)="pressContent(post.content.content)" [style.touch-action]="'pan-y'">
+          <h2 *ngIf="post.status != 1"  (press)="pressContent(post.content.content)" [style.touch-action]="'pan-y'">
             <div *ngIf=" getPostContentTextSize(post.content.content)<=maxTextSize" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
               <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content.content) | html"></pre>
             </div>
@@ -113,7 +113,7 @@
             </div>
           </h2>
 
-          <div *ngIf="post.status != '1'&&post.content.mediaType ===1"  id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}channelrow style="width: 100%">
+          <div *ngIf="post.status != 1&&post.content.mediaType ===1"  id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}channelrow style="width: 100%">
             <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
               <div style="position:relative;">
 
@@ -143,7 +143,7 @@
 
           <!--video-->
 
-          <div *ngIf="post.status!='1'&&post.content.mediaType ===2" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayerchannel style="width:100%;position:relative;">
+          <div *ngIf="post.status!=1&&post.content.mediaType ===2" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayerchannel style="width:100%;position:relative;">
             <app-roundloading
             *ngIf="isVideoLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
             [ngStyle]="videoloadingStyleObj"
@@ -192,9 +192,9 @@
               <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
             </ion-col>
             <ion-col>
-              <ion-label class="status" *ngIf="post.status === '2'" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
-              <ion-label class="status" *ngIf="post.status === '11'" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
-              <ion-label class="status" *ngIf="post.status === '12'" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.status === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
+              <ion-label class="status" *ngIf="post.status === 12" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
             </ion-col>
           </ion-row>
 

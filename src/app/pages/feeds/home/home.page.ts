@@ -234,7 +234,7 @@ export class HomePage implements OnInit {
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       postList = _.filter(postList, (item: any) => {
-        return item.post_status != 1;
+        return item.status != 1;
       });
     }
     return postList;
@@ -1243,6 +1243,15 @@ export class HomePage implements OnInit {
           );
         }else{
          //下载原图
+         if (this.isExitDown()) {
+          this.isImgLoading[this.imgCurKey] = false;
+          this.openAlert();
+          return;
+        }
+
+        this.imgDownStatusKey = destDid + '-' + channelId + '-' + postId;
+        this.imgDownStatus[this.imgDownStatusKey] = '1';
+
          await this.native.showLoading('common.waitMoment');
          this.hiveVaultController
          .getV3Data(destDid,imageKey,fileOriginName,type)
@@ -1250,6 +1259,7 @@ export class HomePage implements OnInit {
           let img = realImg || '';
           this.native.hideLoading();
           if (img != '') {
+            this.imgDownStatus[this.imgDownStatusKey] = '';
             this.isImgLoading[this.imgCurKey] = false;
             this.viewHelper.openViewer(
               this.titleBar,
@@ -1262,6 +1272,8 @@ export class HomePage implements OnInit {
             );
           }
          }).catch(()=>{
+          this.imgDownStatus[this.imgDownStatusKey] = '';
+          this.isImgLoading[this.imgCurKey] = false;
           this.native.hideLoading();
          });
         }

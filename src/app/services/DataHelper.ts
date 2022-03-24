@@ -3037,11 +3037,40 @@ export class DataHelper {
     });
   }
 
+  getPostListV3FromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        let postList: FeedsData.PostV3[] = [];
+        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3);
+        let keys: string[] = Object.keys(this.postMapV3);
+        for (const key of keys) {
+          let post:FeedsData.PostV3 = null;
+          if(key.indexOf(destDid)>-1){
+            post = this.postMapV3[key];
+            if(post.channelId === channelId){
+              postList.push(post)
+            }else{
+              continue;
+            }
+          }else{
+            continue;
+          }
+        }
+        resolve(postList)
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let list: FeedsData.PostV3[] = []
         this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
+        console.log("=====this.postMapV3=======",this.postMapV3);
         let keys: string[] = Object.keys(this.postMapV3)
 
         for (const key in keys) {
