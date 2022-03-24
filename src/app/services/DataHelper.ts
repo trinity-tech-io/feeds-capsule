@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from 'src/app/services/StorageService';
 
-import _ from 'lodash';
+import _, { sortBy } from 'lodash';
 import { UtilService } from './utilService';
 import { Config } from './config';
 import { SignInData } from './FeedService';
@@ -3057,7 +3057,11 @@ export class DataHelper {
             continue;
           }
         }
-        resolve(postList)
+        let sortList = [];
+         sortList = _.sortBy(postList, (item: any) => {
+          return -item.createdAt;
+        });
+        resolve(sortList);
 
       } catch (error) {
         reject(error);
@@ -3078,7 +3082,11 @@ export class DataHelper {
           // TODO是否添加其他判断条件
           list.push(post)
         }
-        resolve(list)
+        let sortList = [];
+        sortList = _.sortBy(list, (item: any) => {
+          return -item.createdAt;
+        });
+        resolve(sortList)
       } catch (error) {
         reject(error)
       }
