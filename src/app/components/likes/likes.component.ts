@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppService } from '../../services/AppService';
 import { ViewHelper } from '../../services/viewhelper.service';
 import { FeedsServiceApi } from '../../services/api_feedsservice.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-likes',
@@ -49,7 +50,8 @@ export class LikesComponent implements OnInit {
     private native: NativeService,
     private viewHelper: ViewHelper,
     public appService: AppService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() {
@@ -60,25 +62,17 @@ export class LikesComponent implements OnInit {
   }
 
   channelName(destDid: string, channelId: string) {
-    let channel = this.getChannel(destDid, channelId) || '';
-    if (channel === '') {
-      return '';
-    } else {
-      return UtilService.moreNanme(channel['name']);
-    }
+    const key = UtilService.getKey(destDid, channelId);
+    return this.dataHelper.channelsMapV3[key].name;
   }
 
-  channelOwnerName(nodeId, channelId) {
-    let channel = this.getChannel(nodeId, channelId) || '';
-    if (channel === '') {
-      return '';
-    } else {
-      return UtilService.moreNanme(channel['owner_name']);
-    }
+  channelOwnerName(destDid: string, channelId: string) {
+        return;
   }
 
-  getChannel(destDid: string, channelId: string): any {
-    return this.feedService.getChannelFromId(destDid, channelId) || '';
+  getChannelName(destDid: string, channelId: string) {
+    const key = UtilService.getKey(destDid, channelId);
+    return this.dataHelper.channelsMapV3[key].name;
   }
 
   checkServerStatus(destDid: string) {
@@ -163,9 +157,12 @@ export class LikesComponent implements OnInit {
   }
 
   parseAvatar(destDid: string, channelId: string): string {
-    return this.feedService.parseChannelAvatar(
-      this.getChannel(destDid, channelId).avatar || '',
-    );
+
+    const key = UtilService.getKey(destDid, channelId);
+    let channel = this.dataHelper.channelsMapV3[key];
+
+    if (channel == null || channel == undefined) return './assets/icon/reserve.svg';
+    return this.feedService.parseChannelAvatar(this.dataHelper.channelsMapV3[key].avatar);
   }
 
   handleDisplayTime(createTime: number) {
@@ -195,7 +192,7 @@ export class LikesComponent implements OnInit {
   }
 
   menuMore(destDid: string, channelId: string, postId: string) {
-    let channelName = this.getChannel(destDid, channelId).name;
+    let channelName =  this.getChannelName(destDid, channelId) || '';
     this.fromChild.emit({
       destDid: destDid,
       channelId: channelId,
@@ -206,9 +203,8 @@ export class LikesComponent implements OnInit {
   }
 
   pressName(destDid: string, channelId: string) {
-    let channel = this.getChannel(destDid, channelId) || '';
-    if (channel != '') {
-      let name = channel['name'] || '';
+    let name  = this.getChannelName(destDid,channelId);
+    if (name != '') {
       if (name != '' && name.length > 15) {
         this.viewHelper.createTip(name);
       }
@@ -216,13 +212,7 @@ export class LikesComponent implements OnInit {
   }
 
   pressOwerName(destDid: string, channelId: string) {
-    let channel = this.getChannel(destDid, channelId) || '';
-    if (channel != '') {
-      let name = channel['owner_name'] || '';
-      if (name != '' && name.length > 15) {
-        this.viewHelper.createTip(name);
-      }
-    }
+
   }
 
   showComment(destDid: string, channelId: string, postId: string) {

@@ -1135,14 +1135,13 @@ export class ChannelsPage implements OnInit {
              this.isImgLoading[this.imgCurKey] = false;
              this.imgDownStatus[this.imgDownStatusKey] = '';
              this.viewHelper.openViewer(
-               this.titleBar,
-               realImg,
-               'common.image',
-               'FeedsPage.tabTitle1',
-               this.appService,
-               false,
-               ''
-             );
+              this.titleBar,
+              realImg,
+              'common.image',
+              'ChannelsPage.feeds',
+              this.appService,
+              true
+            );
            }
           }).catch(()=>{
            this.isImgLoading[this.imgCurKey] = false;

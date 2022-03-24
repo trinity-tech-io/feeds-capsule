@@ -27,6 +27,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveService } from 'src/app/services/HiveService';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 let TAG: string = 'Feeds-profile';
 
@@ -39,6 +40,89 @@ export class ProfilePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
+
+  // likeList = [{
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "2b97793e71d6eb253e3a50c2f0f568e796d28992f260bca48f89d1690478058b",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1647955924595,
+  //   "updatedAt": 1647955924595,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "image",
+  //       "originMediaPath": "12b7b2b9528156173b5a0975e6cd95ea@feeds/data/12b7b2b9528156173b5a0975e6cd95ea",
+  //       "type": "0",
+  //       "size": 565223,
+  //       "thumbnailPath": "ae20729c36af8cef069c08c512eae4f0@feeds/data/ae20729c36af8cef069c08c512eae4f0",
+  //       "duration": 0,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "trdggg23",
+  //     "mediaType": 1
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // }, {
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "a179ad85a2c5d91ea1be6247d637c2a5c514736326621ee176eebb2345d7845d",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1648053871439,
+  //   "updatedAt": 1648053871439,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "image",
+  //       "originMediaPath": "32606ee020db9d1c1cf8ab9603e3b2c1@feeds/data/32606ee020db9d1c1cf8ab9603e3b2c1",
+  //       "type": "0",
+  //       "size": 634979,
+  //       "thumbnailPath": "79b0d365f7ed7b84abd532be52717717@feeds/data/79b0d365f7ed7b84abd532be52717717",
+  //       "duration": 0,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "tesy133666",
+  //     "mediaType": 1
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // }, {
+  //   "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
+  //   "postId": "d763819fd243369c4de287457148547e1a43fe641b29f47f3281aac493d8bdc3",
+  //   "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
+  //   "createdAt": 1648054186048,
+  //   "updatedAt": 1648054186048,
+  //   "content": {
+  //     "version": "3.0",
+  //     "mediaData": [{
+  //       "kind": "image",
+  //       "originMediaPath": "1bc8b46c48c9871d6ac57cc105ec8364@feeds/data/1bc8b46c48c9871d6ac57cc105ec8364",
+  //       "type": "0",
+  //       "size": 116203,
+  //       "thumbnailPath": "821d062eac7d80d680bf0ca5f27d89f8@feeds/data/821d062eac7d80d680bf0ca5f27d89f8",
+  //       "duration": 0,
+  //       "imageIndex": 0,
+  //       "additionalInfo": {},
+  //       "memo": {}
+  //     }],
+  //     "content": "yhbbbbbbbbb",
+  //     "mediaType": 1
+  //   },
+  //   "status": 0,
+  //   "type": "public",
+  //   "tag": "Feeds-createpost",
+  //   "proof": "",
+  //   "memo": ""
+  // }];
 
   public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
@@ -192,7 +276,8 @@ export class ProfilePage implements OnInit {
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService,
     private postHelperService: PostHelperService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) {
   }
 
@@ -263,7 +348,7 @@ export class ProfilePage implements OnInit {
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
-        return item.post_status != 1;
+        return item.status != 1;
       });
     }
     return likeList;
@@ -1087,24 +1172,24 @@ export class ProfilePage implements OnInit {
       let srcId = postgridList[postgridindex].getAttribute('id') || '';
       if (srcId != '') {
         let arr = srcId.split('-');
-        let nodeId = arr[0];
+        let destDid = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
         let mediaType = arr[3];
-        let id = nodeId + '-' + channelId + '-' + postId;
+        let id = destDid + '-' + channelId + '-' + postId;
         //postImg
         if (mediaType === '1') {
-          this.handlePsotImg(id, srcId, postgridindex);
+           this.handlePostImg(id, srcId, postgridindex);
         }
         if (mediaType === '2') {
           //video
-          this.hanldVideo(id, srcId, postgridindex);
+          //this.hanldVideo(id, srcId, postgridindex);
         }
       }
     }
   }
 
-  handlePsotImg(id: string, srcId: string, rowindex: number) {
+async handlePostImg(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || '';
     let rpostImage = document.getElementById(id + 'likerow');
@@ -1118,87 +1203,33 @@ export class ProfilePage implements OnInit {
         if (isload === '') {
           this.isLoadimage[id] = '11';
           let arr = srcId.split('-');
-          let nodeId = arr[0];
-          let channelId: any = arr[1];
+          let destDid = arr[0];
           let postId: any = arr[2];
-          let imageKey = this.feedService.getImageKey(nodeId, channelId, postId, 0, 0);
-          let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-            nodeId,
-            channelId,
-            postId,
-            0,
-            0,
-          );
-          let contentVersion = this.feedService.getContentVersion(
-            nodeId,
-            channelId,
-            postId,
-            0,
-          );
 
-          if (contentVersion == '0') {
-            imageKey = thumbkey;
-          }
+          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
+          //缩略图
+          let thumbnailKey = elements.thumbnailPath;
+          //原图
+          let imageKey = elements.originMediaPath;
+          let type = elements.type;
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileOriginName:string = "origin-"+imageKey.split("@")[0];
+          let fileThumbnaiName:string = "thumbnail-"+thumbnailKey.split("@")[0];
 
-          const content: FeedsData.Content = this.feedService.getContentFromId(nodeId, channelId, postId, 0);
-          if (content.version == '2.0') {
-            postImage.setAttribute('src', './assets/icon/reserve.svg');
-            const mediaDatas = content.mediaDatas;
-            if (mediaDatas && mediaDatas.length > 0) {
-              const elements = mediaDatas[0];
-              this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-                .then((value) => {
-                  let thumbImage = value || "";
-                  postImage.setAttribute('src', thumbImage);
-
-                  // if (thumbImage != '') {
-                  //   this.isLoadimage[id] = '13';
-
-                  //   if (nftOrdeId != '' && priceDes != '') {
-                  //     let imagesWidth = postImage.clientWidth;
-                  //     let homebidfeedslogo = document.getElementById(
-                  //       id + 'homebidfeedslogo'
-                  //     );
-                  //     homebidfeedslogo.style.left = (imagesWidth - 90) / 2 + 'px';
-                  //     homebidfeedslogo.style.display = 'block';
-
-                  //     let homebuy = document.getElementById(id + 'homebuy');
-                  //     let homeNftPrice = document.getElementById(
-                  //       id + 'homeNftPrice'
-                  //     );
-                  //     let homeNftQuantity = document.getElementById(
-                  //       id + 'homeNftQuantity'
-                  //     );
-                  //     let homeMaxNftQuantity = document.getElementById(
-                  //       id + 'homeMaxNftQuantity'
-                  //     );
-                  //     homeNftPrice.innerText = priceDes;
-                  //     homeNftQuantity.innerText = nftQuantity;
-                  //     homeMaxNftQuantity.innerText = nftQuantity;
-                  //     homebuy.style.display = 'block';
-                  //   }
-                  //   rpostimg.style.display = 'block';
-                  // } else {
-                  //   this.isLoadimage[id] = '12';
-                  //   rpostimg.style.display = 'none';
-                  // }
-                })
-                .catch(() => {
-                  //TODO
-                });
-            }
-            return;
-          }
-
-          this.feedService
-            .getData(imageKey)
+          //原图
+          this.hiveVaultController.
+          getV3Data(destDid,imageKey,fileOriginName,type,"false")
             .then(imagedata => {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.isLoadimage[id] = '13';
                 postImage.setAttribute('src', realImage);
               } else {
-                this.feedService.getData(thumbkey).then((thumbImagedata) => {
+                this.hiveVaultController.
+                getV3Data(destDid,thumbnailKey,fileThumbnaiName,type)
+                .then((thumbImagedata) => {
                   let thumbImage = thumbImagedata || '';
                   if (thumbImage != '') {
                     this.isLoadimage[id] = '13';
@@ -1215,7 +1246,7 @@ export class ProfilePage implements OnInit {
             .catch(reason => {
               rpostImage.style.display = 'none';
               Logger.error(TAG,
-                "Excute 'handlePsotImg' in profile page is error , get data error, error msg is ",
+                "Excute 'handlePostImg' in profile page is error , get data error, error msg is ",
                 reason
               );
             });
@@ -1612,9 +1643,9 @@ export class ProfilePage implements OnInit {
 
   showBigImage(item: any) {
     this.pauseAllVideo();
-    this.zone.run(() => {
+    this.zone.run(async () => {
       let imagesId =
-        item.nodeId + '-' + item.channelId + '-' + item.postId + 'postimglike';
+        item.destDid + '-' + item.channelId + '-' + item.postId + 'postimglike';
       let imagesObj = document.getElementById(imagesId);
       let imagesWidth = imagesObj.clientWidth;
       let imagesHeight = imagesObj.clientHeight;
@@ -1626,54 +1657,18 @@ export class ProfilePage implements OnInit {
       this.imgCurKey = item.nodeId + '-' + item.channelId + '-' + item.postId;
       this.isImgLoading[this.imgCurKey] = true;
 
-      let contentVersion = this.feedService.getContentVersion(
-        item.destDid,
-        item.channelId,
-        item.postId,
-        0,
-      );
-      let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-        item.destDid,
-        item.channelId,
-        item.postId,
-        0,
-        0,
-      );
-      let key = this.feedService.getImageKey(
-        item.destDid,
-        item.channelId,
-        item.postId,
-        0,
-        0,
-      );
-      if (contentVersion == '0') {
-        key = thumbkey;
-      }
-
-      const content: FeedsData.Content = this.feedService.getContentFromId(item.destDid, item.channelId, item.postId, 0);
-      if (content.version == '2.0') {
-        const mediaDatas = content.mediaDatas;
-        if (mediaDatas && mediaDatas.length > 0) {
-          const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-            .then((value) => {
-              this.isImgLoading[this.imgCurKey] = false;
-              this.viewHelper.openViewer(
-                this.titleBar,
-                value,
-                'common.image',
-                'FeedsPage.tabTitle2',
-                this.appService,
-              );
-            })
-            .catch(() => {
-              //TODO
-            });
-        }
-        return;
-      }
-
-      this.feedService.getData(key).then(realImg => {
+      let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId);
+      let mediaDatas = post.content.mediaData;
+      const elements = mediaDatas[0];
+      //原图
+      let imageKey = elements.originMediaPath;
+      let type = elements.type;
+      //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+      let fileOriginName:string = "origin-"+imageKey.split("@")[0];
+      //原图
+      this.hiveVaultController
+      .getV3Data(item.destDid,imageKey,fileOriginName,type,"false")
+      .then(async realImg => {
         let img = realImg || '';
         if (img != '') {
           this.isImgLoading[this.imgCurKey] = false;
@@ -1685,11 +1680,6 @@ export class ProfilePage implements OnInit {
             this.appService,
           );
         } else {
-          if (this.checkServerStatus(item.destDid) != 0) {
-            this.isImgLoading[this.imgCurKey] = false;
-            this.native.toastWarn('common.connectionError1');
-            return;
-          }
 
           if (this.isExitDown()) {
             this.isImgLoading[this.imgCurKey] = false;
@@ -1698,35 +1688,31 @@ export class ProfilePage implements OnInit {
           }
           this.imgDownStatusKey =
             item.destDid+ '-' + item.channelId + '-' + item.postId;
-          this.cachedMediaType = 'img';
-          this.feedService.processGetBinary(
-            item.nodeId,
-            item.channelId,
-            item.postId,
-            0,
-            0,
-            FeedsData.MediaType.containsImg,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.imgDownStatus[this.imgDownStatusKey] = '1';
-                this.isImgLoading[this.imgDownStatusKey] = false;
-                this.isImgPercentageLoading[this.imgDownStatusKey] = true;
-              } else {
-                this.imgDownStatus[this.imgDownStatusKey] = '0';
-                this.curNodeId = '';
-              }
-            },
-            err => {
-              this.isImgLoading[this.imgDownStatusKey] = false;
-              this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-              this.imgDownStatus[this.imgDownStatusKey] = '';
-              this.imgPercent = 0;
-              this.imgRotateNum = {};
-              this.curNodeId = '';
-            },
-          );
+
+            this.imgDownStatusKey = item.destDid + '-' + item.channelId + '-' + item.postId;
+            this.imgDownStatus[this.imgDownStatusKey] = '1';
+            await this.native.showLoading('common.waitMoment');
+            this.hiveVaultController
+            .getV3Data(item.destDid,imageKey,fileOriginName,type)
+            .then(async realImg => {
+             let img = realImg || '';
+             this.native.hideLoading();
+             if (img != '') {
+               this.isImgLoading[this.imgCurKey] = false;
+               this.imgDownStatus[this.imgDownStatusKey] = '';
+               this.viewHelper.openViewer(
+                this.titleBar,
+                realImg,
+                'common.image',
+                'FeedsPage.tabTitle2',
+                this.appService,
+              );
+             }
+            }).catch(()=>{
+             this.isImgLoading[this.imgCurKey] = false;
+             this.imgDownStatus[this.imgDownStatusKey] = '';
+             this.native.hideLoading();
+            });
         }
       });
     });

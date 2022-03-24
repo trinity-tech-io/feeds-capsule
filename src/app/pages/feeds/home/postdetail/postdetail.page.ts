@@ -58,7 +58,7 @@ export class PostdetailPage implements OnInit {
 
   public popover: any;
 
-  public postStatus: string = "0";
+  public postStatus: number = 0;
   public styleObj: any = { width: '' };
   public dstyleObj: any = { width: '' };
 
@@ -783,7 +783,7 @@ export class PostdetailPage implements OnInit {
   menuMore() {
     let isMine = this.checkChannelIsMine();
     this.pauseVideo();
-    if (isMine === 0 && this.postStatus != "1") {
+    if (isMine === 0 && this.postStatus != 1) {
       this.menuService.showPostDetailMenu(
         this.destDid,
         this.channelId,
@@ -1253,7 +1253,7 @@ export class PostdetailPage implements OnInit {
   }
 
   pauseVideo() {
-    if (this.postStatus != "1" && this.mediaType === 2) {
+    if (this.postStatus != 1 && this.mediaType === 2) {
       let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       if (!video.paused) {
@@ -1264,7 +1264,7 @@ export class PostdetailPage implements OnInit {
   }
 
   clearVideo() {
-    if (this.postStatus != "1" && this.mediaType === 2) {
+    if (this.postStatus != 1 && this.mediaType === 2) {
       this.posterImg = '';
       this.videoObj = '';
       let id = this.destDid + this.channelId + this.postId;
