@@ -145,7 +145,7 @@ export class PostdetailPage implements OnInit {
 
   async initData(isInit: boolean) {
     let channel =
-     await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || '';
+      await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || '';
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
@@ -235,16 +235,15 @@ export class PostdetailPage implements OnInit {
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
-      console.log("====data====",data);
+      console.log("====data====", data);
       this.destDid = data.destDid;
       this.channelId = data.channelId;
       this.postId = data.postId;
     });
   }
 
- async initPostContent() {
-    let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
-    this.post = post;
+  async initPostContent() {
+    let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId);
     this.postStatus = post.status || 0;
     this.mediaType = post.content.mediaType;
     this.postContent = post.content.content;
@@ -252,10 +251,10 @@ export class PostdetailPage implements OnInit {
     this.likesNum = this.getPostLike(post);
     this.commentsNum = this.getPostComments(post);
     if (this.mediaType === FeedsData.MediaType.containsImg) {
-        this.getImage(post);
+      this.getImage(post);
     }
     if (this.mediaType === FeedsData.MediaType.containsVideo) {
-        this.getVideoPoster(post);
+      this.getVideoPoster(post);
     }
   }
 
@@ -518,15 +517,15 @@ export class PostdetailPage implements OnInit {
   }
 
   like() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+    // if (this.feedService.getConnectionStatus() != 0) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
-    if (this.checkServerStatus(this.destDid) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+    // if (this.checkServerStatus(this.destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
 
     if (this.checkMyLike()) {
       this.feedsServiceApi.postUnlike(
@@ -724,20 +723,20 @@ export class PostdetailPage implements OnInit {
   }
 
   getImage(post: FeedsData.PostV3) {
-      this.postImage = './assets/icon/reserve.svg';//set Reserve Image
-      let mediaDatas = post.content.mediaData;
-      const elements = mediaDatas[0];
-      let thumbnailKey = elements.thumbnailPath;
-      let type = elements.type;
-      //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-      let fileName:string = "thumbnail-"+thumbnailKey.split("@")[0];
-      this.hiveVaultController.getV3Data(this.destDid,thumbnailKey,fileName,type)
-      .then((cacheResult)=>{
+    this.postImage = './assets/icon/reserve.svg';//set Reserve Image
+    let mediaDatas = post.content.mediaData;
+    const elements = mediaDatas[0];
+    let thumbnailKey = elements.thumbnailPath;
+    let type = elements.type;
+    //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+    let fileName: string = "thumbnail-" + thumbnailKey.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
+      .then((cacheResult) => {
         let thumbImage = cacheResult || "";
-        if(thumbImage != ""){
-         this.postImage = thumbImage;
+        if (thumbImage != "") {
+          this.postImage = thumbImage;
         }
-      }).catch(()=>{
+      }).catch(() => {
       })
 
     // if (content.version == '2.0') {
@@ -884,13 +883,13 @@ export class PostdetailPage implements OnInit {
 
   checkChannelIsMine() {
 
-    let signInData :FeedsData.SignInData = this.feedService.getSignInData() || null;
-    if(signInData === null){
+    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+    if (signInData === null) {
       return 0;
     }
     let ownerDid: string = signInData.did;
-    if(this.destDid != ownerDid){
-        return 0;
+    if (this.destDid != ownerDid) {
+      return 0;
     }
     return 1;
   }
@@ -922,9 +921,9 @@ export class PostdetailPage implements OnInit {
     let thumbnailKey = elements.thumbnailPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName:string = "poster-"+thumbnailKey.split("@")[0];
+    let fileName: string = "poster-" + thumbnailKey.split("@")[0];
     this.hiveVaultController
-    .getV3Data(this.destDid, thumbnailKey, fileName, type)
+      .getV3Data(this.destDid, thumbnailKey, fileName, type)
       .then(imagedata => {
         let image = imagedata || '';
         if (image != '') {
@@ -971,37 +970,37 @@ export class PostdetailPage implements OnInit {
     let originKey = elements.originMediaPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName:string = "origin-"+originKey.split("@")[0];
+    let fileName: string = "origin-" + originKey.split("@")[0];
 
     this.hiveVaultController
-            .getV3Data(this.destDid, originKey, fileName, type,"false")
-    .then((videodata: string) => {
-      this.zone.run(() => {
-        let videoData = videodata || '';
-        if(videoData === ''){
-        this.videoDownStatus = '1';
-        this.isVideoLoading = true;
+      .getV3Data(this.destDid, originKey, fileName, type, "false")
+      .then((videodata: string) => {
+        this.zone.run(() => {
+          let videoData = videodata || '';
+          if (videoData === '') {
+            this.videoDownStatus = '1';
+            this.isVideoLoading = true;
+            this.isVideoPercentageLoading = false;
+            this.hiveVaultController.getV3Data(this.destDid, originKey, fileName, type)
+              .then((downVideodata) => {
+                let downVideoData = downVideodata || '';
+                this.videoObj = downVideoData;
+                this.loadVideo(downVideoData);
+              }).catch((err) => {
+                this.videoDownStatus = '';
+                this.isVideoPercentageLoading = false;
+                this.isVideoLoading = false;
+              });
+            return;
+          }
+          this.videoObj = videoData;
+          this.loadVideo(videoData);
+        });
+      }).catch((err) => {
+        this.videoDownStatus = '';
         this.isVideoPercentageLoading = false;
-         this.hiveVaultController.getV3Data(this.destDid, originKey, fileName, type)
-         .then((downVideodata)=>{
-          let downVideoData = downVideodata || '';
-          this.videoObj = downVideoData;
-          this.loadVideo(downVideoData);
-         }).catch((err)=>{
-          this.videoDownStatus = '';
-          this.isVideoPercentageLoading = false;
-          this.isVideoLoading = false;
-         });
-           return;
-        }
-        this.videoObj = videoData;
-        this.loadVideo(videoData);
+        this.isVideoLoading = false;
       });
-    }).catch((err)=>{
-      this.videoDownStatus = '';
-      this.isVideoPercentageLoading = false;
-      this.isVideoLoading = false;
-    });
   }
 
   loadVideo(videodata: any) {
@@ -1232,7 +1231,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let channel :any = this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let channel: any = this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     let tippingAddress = channel.tipping_address || "";
 
     if (tippingAddress == "") {
@@ -1240,7 +1239,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
     this.pauseVideo();
-    this.viewHelper.showPayPrompt(this.destDid, this.channelId,tippingAddress);
+    this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress);
   }
 
   clickComment(comment: any, event?: any) {
@@ -1273,12 +1272,12 @@ export class PostdetailPage implements OnInit {
     this.feedService.republishOnePost(destDid, destDid, postId);
   }
 
-  getPostLike(post: FeedsData.PostV3){
+  getPostLike(post: FeedsData.PostV3) {
     return 0;
   }
 
-  getPostComments(post: FeedsData.PostV3){
-  return 0;
+  getPostComments(post: FeedsData.PostV3) {
+    return 0;
   }
 }
 

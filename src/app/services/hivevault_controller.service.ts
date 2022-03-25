@@ -24,21 +24,36 @@ export class HiveVaultController {
   }
 
   //获得订阅的channel列表
-  async getHomePostContent() {
-    const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-    subscribedChannels.forEach(async (item: FeedsData.SubscribedChannelV3) => {
-      const channelId = item.channelId
-      const destDid = item.destDid
-      const channelsInfo = await this.getChannelInfoById(channelId, destDid)
-      channelsInfo.forEach(async item => {
-        await this.dataHelper.updateChannelV3(item)
-      });
-      const subscribedPost = await this.getPostListByChannel(channelId, destDid)
-      // TODO： 在这里存储是否合适
-      subscribedPost.forEach(async item => {
-        await this.dataHelper.addPostV3(item)
-      })
-    })
+  getHomePostContent() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        console.log("=====subscribedChannels=======", subscribedChannels);
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const item = subscribedChannels[index];
+
+          const channelId = item.channelId
+          const destDid = item.destDid
+
+          console.log("=====getHomePostContent=======   ", channelId, destDid);
+
+
+          const subscribedPost = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId)
+
+          const result = HiveVaultResultParse.parsePostResult(destDid, subscribedPost.find_message.items);
+          console.log('subscribedPost============', result);
+
+          for (let index = 0; index < result.length; index++) {
+            const element = result[index];
+            await this.dataHelper.addPostV3(element);
+          }
+        }
+      } catch (error) {
+
+      }
+
+    });
+    //提前加载：TODO
   }
 
   getPostListByChannel(channelId: string, targetDid: string): Promise<FeedsData.PostV3[]> {
@@ -219,7 +234,7 @@ export class HiveVaultController {
     // const postList = this.hiveVaultApi();
   }
 
-  getV3Data(destDid: string, remotePath: string, fileName: string, type: string,isDownload?: string): Promise<string> {
+  getV3Data(destDid: string, remotePath: string, fileName: string, type: string, isDownload?: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         isDownload = isDownload || '';
@@ -229,7 +244,7 @@ export class HiveVaultController {
           return;
         }
 
-        if(result == '' && isDownload != ''){
+        if (result == '' && isDownload != '') {
           resolve('');
           return;
         }
@@ -278,4 +293,82 @@ export class HiveVaultController {
       }
     });
   }
+
+  createComment(destDid: string, channelId: string, postId: string, refcommentId: string, content: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.createComment(destDid, channelId, postId, refcommentId, content);
+        console.log('createComment result', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Sync self post', error);
+        reject(error);
+      }
+    });
+  }
+
+  getCommentsByPost(destDid: string, channelId: string, postId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const commentResult = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
+        const parseResult = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
+
+        //TODO
+        // this.dataHelper.updateCommentV3()
+        console.log('getCommentsByPost parseResult', parseResult);
+        resolve(parseResult);
+      } catch (error) {
+        Logger.error(TAG, 'Sync self post', error);
+        reject(error);
+      }
+    });
+  }
+
+  like(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId);
+        console.log('like result', result);
+
+        //TODO
+        // this.dataHelper.addLikeV3();
+        console.log('like result is', result);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Sync self post', error);
+        reject(error);
+      }
+    });
+  }
+
+  removeLike(destDid: string, channelId: string, postId: string, commentId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
+        console.log('remove like result', result);
+
+        //TODO
+        // this.dataHelper.removeLikeV3();
+      } catch (error) {
+        Logger.error(TAG, 'Remove like data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getLike(destDid: string, channelId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
+        console.log('get like result', result);
+
+        //TODO
+        // this.dataHelper.removeLikeV3();
+      } catch (error) {
+        Logger.error(TAG, 'Get like data error', error);
+        reject(error);
+      }
+    });
+  }
+
 }

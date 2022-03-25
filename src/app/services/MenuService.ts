@@ -613,12 +613,14 @@ export class MenuService {
     this.channelId = comment['channel_id'];
     this.postId = comment['post_id'];
     this.commentId = comment['id'];
+
     let nodeId = comment['nodeId'];
     let feedId = comment['channel_id'];
     let postId = comment['post_id'];
     let commentById = comment['comment_id'];
     let commentId = comment['id'];
     let content = comment['content'];
+
     this.commentPostDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [

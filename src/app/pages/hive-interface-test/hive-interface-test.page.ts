@@ -115,7 +115,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   querySubscriptionInfoByUserDID() {
-    this.hiveVaultApi.querySubscriptionInfoByUserDID('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D');
+    this.hiveVaultApi.querySubscriptionInfoByUserDID('did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr', 'did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr');
     // alert('getSubscriptionByUser');
   }
 
@@ -233,5 +233,21 @@ export class HiveInterfaceTestPage implements OnInit {
       console.log('read from local result length', result.length);
       return;
     }
+  }
+
+  async getSubscriptionChannel() {
+    const list = await this.dataHelper.getSubscribedChannelV3List();
+    console.log('list', list);
+    list.forEach(element => {
+      console.log('element = ', element);
+    });
+
+
+
+    const postList = await this.dataHelper.getPostV3List();
+    console.log('postList', postList);
+    postList.forEach(element => {
+      console.log('postList element = ', element);
+    });
   }
 }
