@@ -19,6 +19,7 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { result } from 'lodash';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -35,7 +36,7 @@ export class PostdetailPage implements OnInit {
   public nodeStatus: any = {};
   public avatar: string = '';
 
-  public channelAvatar: string = '';
+  public channelAvatar: string = './assets/icon/reserve.svg';
   public channelName: string = '';
   public commentAvatar: string = '';
   public commentName: string = '';
@@ -142,16 +143,16 @@ export class PostdetailPage implements OnInit {
     private hiveVaultController: HiveVaultController
 
   ) { }
-
+  //
   async initData(isInit: boolean) {
     let channel =
       await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || '';
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
-    this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
-    // this.channelWOwner = channel['owner_name'] || '';
-    // this.channelOwner = UtilService.moreNanme(channel['owner_name'], 40);
-
+    let channelAvatarUri = channel['avatar'] || '';
+    if(channelAvatarUri != ''){
+       this.handleChannelAvatar(channelAvatarUri);
+    }
     this.initPostContent();
     this.initnodeStatus();
     if (isInit) {
@@ -159,6 +160,15 @@ export class PostdetailPage implements OnInit {
     } else {
       this.refreshCommentList();
     }
+  }
+
+  handleChannelAvatar(channelAvatarUri: string){
+    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
+    .then((result)=>{
+       this.channelAvatar = result;
+    }).catch((err)=>{
+    })
   }
 
   initRefresh() {

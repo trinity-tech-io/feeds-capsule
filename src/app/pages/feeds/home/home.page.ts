@@ -78,8 +78,8 @@ export class HomePage implements OnInit {
   public onlineStatus = null;
 
   public clientHeight: number = 0;
-  public isLoadimage: any = {};
-
+  private isLoadimage: any = {};
+  private isLoadAvatarImage: any = {};
   public isLoadVideoiamge: any = {};
   public videoIamges: any = {};
 
@@ -204,7 +204,7 @@ export class HomePage implements OnInit {
     // TODO 首页订阅频道请求
     const result = this.hiveVaultController.getHomePostContent();
     this.totalData = await this.sortPostList();
-
+    console.log("=====this.totalData======"+JSON.stringify(this.totalData));
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
 
@@ -221,6 +221,7 @@ export class HomePage implements OnInit {
       this.scrollToTop(1);
     }
     this.isLoadimage = {};
+    this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
@@ -255,6 +256,7 @@ export class HomePage implements OnInit {
       // this.infiniteScroll.disabled = true;
     }
     this.isLoadimage = {};
+    this.isLoadAvatarImage ={};
     this.isLoadVideoiamge = {};
     this.refreshImage(0);
     this.initnodeStatus(this.postList);
@@ -584,6 +586,7 @@ export class HomePage implements OnInit {
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
+    this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
     this.curNodeId = '';
 
@@ -1005,16 +1008,81 @@ export class HomePage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
+        //post Avatar
+        this.handlePostAvatar(id, srcId, postgridindex);
         //postImg
         if (mediaType === '1') {
           this.handlePostImg(id, srcId, postgridindex);
         }
         if (mediaType === '2') {
           //video
-          // TODO
           this.handleVideo(id, srcId, postgridindex);
         }
       }
+    }
+  }
+
+  async handlePostAvatar(id: string, srcId: string, rowindex: number) {
+    // 13 存在 12不存在
+    let isload = this.isLoadAvatarImage[id] || '';
+    let postAvatar = document.getElementById(id + 'homeChannelAvatar');
+    try {
+      if (
+        id != '' &&
+        postAvatar.getBoundingClientRect().top >= -100 &&
+        postAvatar.getBoundingClientRect().top <= this.clientHeight
+      ) {
+        if (isload === '') {
+          this.isLoadAvatarImage[id] = '11';
+          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
+          let arr = srcId.split('-');
+
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+
+          const key = UtilService.getKey(destDid, channelId);
+          let channel: FeedsData.ChannelV3 = this.dataHelper.channelsMapV3[key] || null;
+          let avatarUri = "";
+          if(channel != null){
+            avatarUri = channel.avatar;
+          }
+          let fileName:string = "channel-avatar-"+avatarUri.split("@")[0];
+          //头像
+          this.hiveVaultController.
+            getV3Data(destDid, avatarUri, fileName,"0",)
+            .then(imagedata => {
+              let realImage = imagedata || '';
+              if (realImage != '') {
+                this.isLoadAvatarImage[id] = '13';
+                postAvatar.setAttribute('src', realImage);
+              }else{
+                this.isLoadAvatarImage[id] = '13';
+                postAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+              }
+            })
+            .catch(reason => {
+              this.isLoadAvatarImage[id] = '13';
+              postAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+              Logger.error(TAG,
+                "Excute 'handlePostAvatar' in home page is error , get image data error, error msg is ",
+                reason
+              );
+            });
+        }
+      } else {
+        let postAvatarSrc = postAvatar.getAttribute('src') || '';
+        if (
+          postAvatar.getBoundingClientRect().top < -100 &&
+          this.isLoadAvatarImage[id] === '13' &&
+          postAvatarSrc != ''
+        ) {
+          this.isLoadAvatarImage[id] = '';
+          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
+        }
+      }
+    } catch (error) {
+      this.isLoadAvatarImage[id] = '';
+      postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
     }
   }
 

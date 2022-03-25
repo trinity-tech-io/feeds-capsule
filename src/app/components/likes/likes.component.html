@@ -10,7 +10,9 @@
     <ion-row class="post-row">
       <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid, post.channelId,post.postId)">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img src={{parseAvatar(post.destDid,post.channelId)}}>
+          <!-- <img src={{parseAvatar(post.destDid,post.channelId)}}> -->
+          <img id={{post.destDid}}-{{post.channelId}}-{{post.postId}}likeChannelAvatar src="./assets/icon/reserve.svg">
+
           <div class="offline" [class.online]="nodeStatus[post.destDid] == 0"></div>
         </div>
       </ion-col>

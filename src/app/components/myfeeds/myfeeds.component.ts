@@ -5,7 +5,7 @@ import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
-import { HiveService } from '../../services/HiveService'
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -20,13 +20,14 @@ export class MyfeedsComponent implements OnInit {
   @Output() subsciptions = new EventEmitter();
   @Output() chanelCollections = new EventEmitter();
   public popover: any = '';
+  public avatarList:any = '';
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
     private native: NativeService,
     private viewHelper: ViewHelper,
     public popupProvider: PopupProvider,
-    private hiveService: HiveService
+    private hiveVaultController: HiveVaultController
   ) {}
 
   ngOnInit() {
@@ -47,10 +48,6 @@ export class MyfeedsComponent implements OnInit {
       channelId: channelId,
       page: '/channels',
     });
-  }
-
-  parseAvatar(avatar: string): string {
-    return this.feedService.parseChannelAvatar(avatar);
   }
 
   menuMore(destDid: string, channelId: number, channelName: string) {

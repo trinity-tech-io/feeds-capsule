@@ -42,7 +42,7 @@ export class CreatenewpostPage implements OnInit {
   public loadingMaxNumber: string = null;
   public connectionStatus = 1;
   public nodeStatus = {};
-  public channelAvatar = '';
+  public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
   public subscribers: string = '';
   public newPost: string = '';
@@ -127,7 +127,20 @@ export class CreatenewpostPage implements OnInit {
     this.channelIdV3 = currentFeed.channelId;
     this.channelName = currentFeed['name'] || '';
     this.subscribers = currentFeed['subscribers'] || '';
-    this.channelAvatar = this.feedService.parseChannelAvatar(currentFeed['avatar']);
+    let channelAvatarUri =currentFeed['avatar'] || '';
+    if(channelAvatarUri != ''){
+       let destDid: string = currentFeed.destDid;
+       this.handleChannelAvatar(channelAvatarUri,destDid);
+    }
+  }
+
+  handleChannelAvatar(channelAvatarUri: string,destDid: string){
+    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
+    .then((result)=>{
+       this.channelAvatar = result;
+    }).catch((err)=>{
+    })
   }
 
   async ionViewWillEnter() {

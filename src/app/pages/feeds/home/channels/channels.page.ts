@@ -42,7 +42,7 @@ export class ChannelsPage implements OnInit {
   public popover: any;
   public nodeStatus: any = {};
   public connectionStatus: number = 1;
-  public channelAvatar: string = '';
+  public channelAvatar: string = './assets/icon/reserve.svg';
   public channelName: string = '';
   public updatedTime: number = 0;
   public channelOwner: string = '';
@@ -276,7 +276,17 @@ export class ChannelsPage implements OnInit {
     //this.channelSubscribes = channel.subscribers;
     this.tippingAddress = channel.tipping_address;
     console.log("channel.avatar ====" + channel.avatar);
-    this.channelAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+    let channelAvatarUri = channel.avatar || '';
+    this.handleChannelAvatar(channelAvatarUri);
+  }
+
+  handleChannelAvatar(channelAvatarUri: string){
+    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
+    .then((result)=>{
+       this.channelAvatar = result;
+    }).catch((err)=>{
+    })
   }
 
   ionViewWillEnter() {

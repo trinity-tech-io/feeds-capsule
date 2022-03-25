@@ -40,7 +40,7 @@ export class EditPostPage implements OnInit {
   newPostIonTextarea: IonTextarea;
   public connectionStatus = 1;
   public nodeStatus = {};
-  public channelAvatar = '';
+  public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
   public subscribers: string = '';
   public newPost: string = '';
@@ -417,8 +417,10 @@ export class EditPostPage implements OnInit {
     let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
-    this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
-
+    let channelAvatarUri = channel['avatar'] || '';
+    if(channelAvatarUri != ''){
+       this.handleChannelAvatar(channelAvatarUri);
+    }
     let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
     this.postData = post;
     this.mediaType = post.content.mediaType;
@@ -437,6 +439,15 @@ export class EditPostPage implements OnInit {
     this.getContent();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
+  }
+
+  handleChannelAvatar(channelAvatarUri: string){
+    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
+    .then((result)=>{
+       this.channelAvatar = result;
+    }).catch((err)=>{
+    })
   }
 
   videocam() {

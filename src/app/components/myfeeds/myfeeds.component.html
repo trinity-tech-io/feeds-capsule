@@ -11,19 +11,20 @@
   </ion-row>
 </div>
 
-<ion-list *ngIf="channels.length > 0 || followers > 0" class="channel-list" [class.darkChannelList]="theme.darkMode">
+<ion-list *ngIf="channels.length > 0 || followers > 0" class="channel-list" [class.darkChannelList]="theme.darkMode"
+  >
   <ion-item
-    *ngFor="let channel of channels"
+    *ngFor="let channel of channels let num=index"
     lines="none"
   >
-    <ion-row class="channel-row ion-activatable ripple">
+    <ion-row class="channel-row ion-activatable ripple ionRowMyfeeds" id={{channel.destDid}}-{{channel.channelId}}>
       <ion-col
         size="2.5"
         class="left-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img src={{parseAvatar(channel.avatar)}}>
+          <img src="./assets/icon/reserve.svg" id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatar>
           <div class="feed-source-card-status">
             <div class="offline" [class.online]="nodeStatus[channel.destDid] === 0"></div>
           </div>
