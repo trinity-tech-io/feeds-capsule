@@ -36,7 +36,7 @@ export class HiveVaultController {
           const destDid = item.destDid
 
           console.log("=====getHomePostContent=======   ", channelId, destDid);
-          const posts = await this.getPostListByChannel(channelId, destDid);
+          const posts = await this.getPostListByChannel(destDid, channelId);
           console.log('subscribedPost============', posts);
 
           for (let index = 0; index < posts.length; index++) {
@@ -55,12 +55,12 @@ export class HiveVaultController {
     //提前加载：TODO
   }
 
-  getPostListByChannel(channelId: string, targetDid: string): Promise<FeedsData.PostV3[]> {
+  getPostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         //目前暂时获取全部post，后续优化
-        const result = await this.hiveVaultApi.queryPostByChannelId(channelId, targetDid);
-        const postList = HiveVaultResultParse.parsePostResult(result.find_message.items, targetDid);
+        const result = await this.hiveVaultApi.queryPostByChannelId(targetDid, channelId);
+        const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -70,15 +70,15 @@ export class HiveVaultController {
   }
 
 
-  async downloadScripting(mediaPath: string, targetDid: string) {
-    return this.hiveVaultApi.downloadScripting(mediaPath, targetDid)
+  async downloadScripting(targetDid: string, mediaPath: string) {
+    return this.hiveVaultApi.downloadScripting(targetDid, mediaPath)
   }
 
-  async getChannelInfoById(channelId: string, targetDid: string): Promise<FeedsData.ChannelV3[]> {
+  async getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.queryChannelInfo(channelId, targetDid);
-        const channelInfoList = HiveVaultResultParse.parseChannelResult(result.find_message.items, targetDid);
+        const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
+        const channelInfoList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
         resolve(channelInfoList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -153,10 +153,11 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(channelId: string, userDisplayName: string, targetDid: string): Promise<string> {
+  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.subscribeChannel(channelId, userDisplayName, targetDid);
+
+        const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
         await this.dataHelper.addSubscribedChannelV3(targetDid, channelId) // 存储这个
 
         if (result) {

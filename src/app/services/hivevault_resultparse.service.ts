@@ -7,7 +7,7 @@ export class HiveVaultResultParse {
   /** parse post result start */
   // const posts = result.find_message.items;
   // const post = result;
-  public static parsePostResult(result: any, targetDid: string): FeedsData.PostV3[] {
+  public static parsePostResult(targetDid: string, result: any): FeedsData.PostV3[] {
     try {
       /**
        * channel_id: "channelId01"
@@ -84,7 +84,7 @@ export class HiveVaultResultParse {
   /** parse channel result start */
   // const channels = result.find_message.items;
   // const channels = result
-  public static parseChannelResult(result: any, targetDid: string): FeedsData.ChannelV3[] {
+  public static parseChannelResult(targetDid: string, result: any): FeedsData.ChannelV3[] {
     try {
       /**
        * avatar: "address"

@@ -214,10 +214,10 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
     }
 
-    private callQueryChannelInfo(channelId: string, targetDid: string) {
+    private callQueryChannelInfo(targetDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                let result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, { "channel_id": channelId }, targetDid)
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, { "channel_id": channelId })
                 console.log("callChannel result ======= ", result)
                 resolve(result)
             } catch (error) {
@@ -227,10 +227,10 @@ export class HiveVaultHelper {
         })
     }
 
-    queryChannelInfo(channelId: string, targetDid: string): Promise<any> {
+    queryChannelInfo(targetDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await this.callQueryChannelInfo(channelId, targetDid);
+                const result = await this.callQueryChannelInfo(targetDid, channelId);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query channnel info error', error);
@@ -390,11 +390,11 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
     }
 
-    private callQueryPostById(channelId: string, postId: string, targetDid: string): Promise<any> {
+    private callQueryPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const doc = { "channel_id": channelId, "post_id": postId }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, doc, targetDid)
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SPECIFIED_POST, doc)
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'callQueryPostById error:', error)
@@ -403,8 +403,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryPostById(channelId: string, postId: string, targetDid: string) {
-        return this.callQueryPostById(channelId, postId, targetDid);
+    queryPostById(targetDid: string, channelId: string, postId: string) {
+        return this.callQueryPostById(targetDid, channelId, postId);
     }
     /** query post data by id end*/
 
@@ -418,10 +418,10 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
     }
 
-    private callQueryPostByChannelId(channelId: string, targetDid: string) {
+    private callQueryPostByChannelId(targetDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                let result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, { "channel_id": channelId }, targetDid)
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, { "channel_id": channelId })
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'callQueryPostByChannelId error:', error)
@@ -430,8 +430,8 @@ export class HiveVaultHelper {
         })
     }
 
-    queryPostByChannelId(channelId: string, targetDid: string): Promise<any> {
-        return this.callQueryPostByChannelId(channelId, targetDid);
+    queryPostByChannelId(targetDid: string, channelId: string): Promise<any> {
+        return this.callQueryPostByChannelId(targetDid, channelId);
     }
     /** query post data by channel id end */
 
@@ -446,10 +446,10 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
     }
 
-    private callQueryPostRangeOfTimeScripting(channelId: string, targetDid: string) {
+    private callQueryPostRangeOfTimeScripting(targetDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                let result = await this.callScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, { "channel_id": channelId }, targetDid)
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SOMETIME_POST, { "channel_id": channelId })
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'callQueryPostByChannelId error:', error)
@@ -458,8 +458,8 @@ export class HiveVaultHelper {
         })
     }
 
-    queryPostRangeOfTimeScripting(channelId: string, targetDid: string): Promise<any> {
-        return this.callQueryPostRangeOfTimeScripting(channelId, targetDid);
+    queryPostRangeOfTimeScripting(targetDid: string, channelId: string): Promise<any> {
+        return this.callQueryPostRangeOfTimeScripting(targetDid, channelId);
     }
     /** query post data range of time end */
 
@@ -492,7 +492,7 @@ export class HiveVaultHelper {
         });
     }
 
-    private callSubscribeScripting(channelId: string, userDisplayName: string, targetDid: string): Promise<any> {
+    private callSubscribeScripting(targetDid: string, channelId: string, userDisplayName: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -500,7 +500,7 @@ export class HiveVaultHelper {
                     "created_at": UtilService.getCurrentTimeNum(),
                     "display_name": userDisplayName
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, params);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'callSubscription error:', error)
@@ -509,8 +509,8 @@ export class HiveVaultHelper {
         })
     }
 
-    subscribeChannel(channelId: string, displayName: string, targetDid: string): Promise<any> {
-        return this.callSubscribeScripting(channelId, displayName, targetDid);
+    subscribeChannel(targetDid: string, channelId: string, displayName: string): Promise<any> {
+        return this.callSubscribeScripting(targetDid, channelId, displayName);
     }
     /** subscribe channel end */
 
@@ -533,13 +533,13 @@ export class HiveVaultHelper {
         });
     }
 
-    private callUnsubscribeScripting(channelId: string, targetDid: string): Promise<any> {
+    private callUnsubscribeScripting(targetDid: string, channelId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, params);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'callSubscription error:', error)
@@ -548,8 +548,8 @@ export class HiveVaultHelper {
         })
     }
 
-    unsubscribeChannel(channelId: string, targetDid: string): Promise<any> {
-        return this.callUnsubscribeScripting(channelId, targetDid);
+    unsubscribeChannel(targetDid: string, channelId: string): Promise<any> {
+        return this.callUnsubscribeScripting(targetDid, channelId);
     }
     /** unsubscribe channel end */
 
@@ -564,13 +564,13 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
     }
 
-    private callQuerySubscriptionInfoByChannelId(channelId: string, targetDid: string): Promise<any> {
+    private callQuerySubscriptionInfoByChannelId(targetDid: string, channelId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, params);
                 console.log("Query subscription from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -580,8 +580,8 @@ export class HiveVaultHelper {
         });
     }
 
-    querySubscriptionInfoByChannelId(channelId: string, targetDid: string): Promise<any> {
-        return this.callQuerySubscriptionInfoByChannelId(channelId, targetDid);
+    querySubscriptionInfoByChannelId(targetDid: string, channelId: string): Promise<any> {
+        return this.callQuerySubscriptionInfoByChannelId(targetDid, channelId);
     }
     /** query subscription info by channelId end */
 
@@ -596,13 +596,13 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
     }
 
-    private callQuerySubscriptionByUserDID(userDid: string, targetDid: string): Promise<any> {
+    private callQuerySubscriptionByUserDID(targetDid: string, userDid: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "user_did": userDid
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, params);
                 console.log("Find subscription from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -612,8 +612,8 @@ export class HiveVaultHelper {
         });
     }
 
-    querySubscriptionByUserDID(userDid: string, targetDid: string): Promise<any> {
-        return this.callQuerySubscriptionByUserDID(userDid, targetDid);
+    querySubscriptionByUserDID(targetDid: string, userDid: string): Promise<any> {
+        return this.callQuerySubscriptionByUserDID(targetDid, userDid);
     }
     /** query subscription info by userDid end */
 
@@ -636,14 +636,14 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
     }
 
-    private callQueryCommentByPostIdScripting(channelId: string, postId: string, targetDid: string): Promise<any> {
+    private callQueryCommentByPostIdScripting(targetDid: string, channelId: string, postId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                     "post_id": postId
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, params);
                 console.log("Get comment from scripting by post id , result is ", result);
                 resolve(result);
             } catch (error) {
@@ -653,8 +653,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryCommentByPostId(channelId: string, postId: string, targetDid: string): Promise<any> {
-        return this.callQueryCommentByPostIdScripting(channelId, postId, targetDid);
+    queryCommentByPostId(targetDid: string, channelId: string, postId: string): Promise<any> {
+        return this.callQueryCommentByPostIdScripting(targetDid, channelId, postId);
     }
     /** query comment by postId end */
 
@@ -678,7 +678,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
     }
 
-    private callQueryCommentByID(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    private callQueryCommentByID(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -686,7 +686,7 @@ export class HiveVaultHelper {
                     "post_id": postId,
                     "comment_id": commentId
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, params);
                 console.log("Get comment from scripting by comment id , result is", result);
                 resolve(result);
             } catch (error) {
@@ -696,8 +696,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryCommentByID(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
-        return this.callQueryCommentByID(channelId, postId, commentId, targetDid);
+    queryCommentByID(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+        return this.callQueryCommentByID(targetDid, channelId, postId, commentId);
     }
     /** query comment by id end */
 
@@ -732,7 +732,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
     }
 
-    private callCreateComment(commentId: string, channelId: string, postId: string, refcommentId: string, content: string, targetDid: string) {
+    private callCreateComment(targetDid: string, commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -743,7 +743,7 @@ export class HiveVaultHelper {
                     "content": content,
                     "created_at": UtilService.getCurrentTimeNum()
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_COMMENT, params);
                 console.log("Create comment from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -753,12 +753,12 @@ export class HiveVaultHelper {
         });
     }
 
-    createComment(channelId: string, postId: string, refcommentId: string, content: string, targetDid: string): Promise<any> {
+    createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
                 const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
-                const result = await this.callCreateComment(commentId, channelId, postId, refcommentId, content, targetDid);
+                const result = await this.callCreateComment(targetDid, commentId, channelId, postId, refcommentId, content);
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -796,7 +796,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
     }
 
-    private callUpdateComment(channelId: string, postId: string, commentId: string, content: string, targetDid: string): Promise<any> {
+    private callUpdateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -806,7 +806,7 @@ export class HiveVaultHelper {
                     "content": content,
                     "updated_at": UtilService.getCurrentTimeNum()
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_COMMENT, params);
                 console.log("Get comment from scripting by comment id , result is", result);
                 resolve(result);
             } catch (error) {
@@ -816,8 +816,8 @@ export class HiveVaultHelper {
         });
     }
 
-    updateComment(channelId: string, postId: string, commentId: string, content: string, targetDid: string): Promise<any> {
-        return this.callUpdateComment(channelId, postId, commentId, content, targetDid);
+    updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+        return this.callUpdateComment(targetDid, channelId, postId, commentId, content);
     }
     /** update comment end */
 
@@ -847,7 +847,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
     }
 
-    private callDeleteComment(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    private callDeleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -855,7 +855,7 @@ export class HiveVaultHelper {
                     "post_id": postId,
                     "comment_id": commentId
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_DELETE_COMMENT, params);
                 console.log("Delete comment from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -865,8 +865,8 @@ export class HiveVaultHelper {
         });
     }
 
-    deleteComment(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
-        return this.callDeleteComment(channelId, postId, commentId, targetDid);
+    deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+        return this.callDeleteComment(targetDid, channelId, postId, commentId);
     }
     /** delte comment end */
 
@@ -889,7 +889,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
     }
 
-    private callQueryLikeById(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    private callQueryLikeById(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -897,7 +897,7 @@ export class HiveVaultHelper {
                     "post_id": postId,
                     "comment_id": commentId,
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, params);
                 console.log("Remove like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -907,8 +907,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryLikeById(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
-        return this.callQueryLikeById(channelId, postId, commentId, targetDid);
+    queryLikeById(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+        return this.callQueryLikeById(targetDid, channelId, postId, commentId);
     }
     /** query like by id end */
 
@@ -929,13 +929,13 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
     }
 
-    private callQueryLikeByChannel(channelId: string, targetDid: string) {
+    private callQueryLikeByChannel(targetDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, params);
                 console.log("Remove like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -945,8 +945,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryLikeByChannel(channelId: string, targetDid: string): Promise<any> {
-        return this.callQueryLikeByChannel(channelId, targetDid);
+    queryLikeByChannel(targetDid: string, channelId: string): Promise<any> {
+        return this.callQueryLikeByChannel(targetDid, channelId);
     }
     /** query like by channel end */
 
@@ -968,14 +968,14 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
     }
 
-    private callQueryLikeByPost(channelId: string, postId: string, targetDid: string) {
+    private callQueryLikeByPost(targetDid: string, channelId: string, postId: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                     "post_id": postId
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, params);
                 console.log("Remove like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -985,8 +985,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryLikeByPost(channelId: string, postId: string, targetDid: string): Promise<any> {
-        return this.callQueryLikeByPost(channelId, postId, targetDid);
+    queryLikeByPost(targetDid: string, channelId: string, postId: string): Promise<any> {
+        return this.callQueryLikeByPost(targetDid, channelId, postId);
     }
     /** query like by post end */
 
@@ -1016,7 +1016,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
     }
 
-    private callAddLike(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    private callAddLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const createdAt = UtilService.getCurrentTimeNum();
@@ -1026,7 +1026,7 @@ export class HiveVaultHelper {
                     "comment_id": commentId,
                     "created_at": createdAt
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_LIKE, params);
                 console.log("Add like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -1036,8 +1036,8 @@ export class HiveVaultHelper {
         });
     }
 
-    addLike(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
-        return this.callAddLike(channelId, postId, commentId, targetDid);
+    addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+        return this.callAddLike(targetDid, channelId, postId, commentId);
     }
     /** add like end */
 
@@ -1060,7 +1060,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
     }
 
-    private callRemoveLike(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
+    private callRemoveLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -1068,7 +1068,7 @@ export class HiveVaultHelper {
                     "post_id": postId,
                     "comment_id": commentId,
                 }
-                const result = await this.callScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, params, targetDid);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REMOVE_LIKE, params);
                 console.log("Remove like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -1078,8 +1078,8 @@ export class HiveVaultHelper {
         });
     }
 
-    removeLike(channelId: string, postId: string, commentId: string, targetDid: string): Promise<any> {
-        return this.callRemoveLike(channelId, postId, commentId, targetDid);
+    removeLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+        return this.callRemoveLike(targetDid, channelId, postId, commentId);
     }
     /** remove like end */
 
@@ -1177,7 +1177,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(scriptName, executable, null, false);
     }
 
-    downloadScripting(avatarHiveURL: string, targetDid: string): Promise<any> {
+    downloadScripting(targetDid: string, avatarHiveURL: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
@@ -1197,7 +1197,7 @@ export class HiveVaultHelper {
         const params = avatarHiveURL.split("@")
         const scriptName = params[0]
         const remoteName = params[1]
-        const result = await this.callScript(scriptName, { "path": remoteName }, targetDid)
+        const result = await this.callScript(targetDid, scriptName, { "path": remoteName })
         const transaction_id = result[scriptName]["transaction_id"]
         return transaction_id
     }
@@ -1214,7 +1214,7 @@ export class HiveVaultHelper {
         return dataBuffer
     }
 
-    private callScript(scriptName: string, params: any, targetDid: string): Promise<any> {
+    private callScript(targetDid: string, scriptName: string, params: any): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const appid = Config.APPLICATION_DID;
