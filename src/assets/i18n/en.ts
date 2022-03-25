@@ -193,7 +193,8 @@ export const en = {
     editedContentDes: "Are you sure to cancel? Canceling will discard your edited content!",
     editedContentDes1: "Confirm",
     editedContentDes2: "Cancel",
-    migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault'
+    migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault',
+    Subscribing: 'Subscribing...'
   },
   app: {
     profileDetails: 'Profile Details',

@@ -193,7 +193,10 @@ export const zh = {
     editedContentDes: "确认取消吗？取消将会丢弃您已编辑的内容！",
     editedContentDes1: "确定",
     editedContentDes2: "取消",
-    migrateFeedsServiceData: '迁移 Feeds Service 数据到 Hive Vault'
+    migrateFeedsServiceData: '迁移 Feeds Service 数据到 Hive Vault',
+    subscribing: '正在订阅...',
+    subscribeSuccess: '订阅成功',
+    subscribeFail: '订阅失败'
   },
   app: {
     profileDetails: '档案详情',

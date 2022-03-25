@@ -115,7 +115,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   querySubscriptionInfoByUserDID() {
-    this.hiveVaultApi.querySubscriptionInfoByUserDID('did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr', 'did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr');
+    this.hiveVaultApi.querySubscriptionInfoByUserDID('did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr', 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D');
     // alert('getSubscriptionByUser');
   }
 

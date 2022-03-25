@@ -227,9 +227,10 @@ export class HiveVaultHelper {
         })
     }
 
-    queryChannelInfo(targetDid: string, channelId: string) {
+    queryChannelInfo(targetDid: string, channelId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log()
                 const result = await this.callQueryChannelInfo(targetDid, channelId);
                 resolve(result);
             } catch (error) {
@@ -1218,9 +1219,10 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const appid = Config.APPLICATION_DID;
+                Logger.log('Call script params is targetDid:', targetDid, 'scriptName:', scriptName, 'params:', params);
                 // let callerDid = (await this.dataHelper.getSigninData()).did;
                 let result = await this.hiveService.callScript(scriptName, params, targetDid, appid)
-                console.log("callScript result ======= ", result);
+                Logger.log('Call script result is', result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'callScript error:', error);

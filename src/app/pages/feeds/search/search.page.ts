@@ -24,7 +24,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
-import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
+import { FeedsUrl, ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
 import { Logger } from 'src/app/services/logger';
 
 const TAG: string = 'SearchPage';
@@ -68,7 +68,11 @@ export class SearchPage implements OnInit {
   public searchChannelCollectionPageList: any = [];//搜索使用
   private panelPageSize: number = 10;//一页多少个
   private panelPageNum: number = 1;//页码
+  private confirmdialog = null;
 
+  private displayName: string = '';
+  private toBeSubscribeddestDid: string = '';
+  private toBeSubscribedChannelId: string = '';
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -470,8 +474,12 @@ export class SearchPage implements OnInit {
       return;
     }
     const feedsUrl = scanResult.feedsUrl;
-    const displayName = (await this.dataHelper.getSigninData()).name;
-    this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
+
+    //TODO 
+    //Show channel info dialog
+    // this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
+
+    this.showSubscribePrompt(feedsUrl);
   }
 
   loadData(events: any) {
@@ -1182,4 +1190,47 @@ export class SearchPage implements OnInit {
     return true;
   }
 
+
+  ////
+  async showSubscribePrompt(feedsUrl: FeedsUrl) {
+    //Temp
+    this.displayName = (await this.dataHelper.getSigninData()).name;
+    this.toBeSubscribeddestDid = feedsUrl.destDid;
+    this.toBeSubscribedChannelId = feedsUrl.channelId;
+
+    this.confirmdialog = await this.popupProvider.showConfirmdialog(
+      this,
+      'common.confirmDialog',
+      this.translate.instant('SearchPage.follow') + feedsUrl.channelName + '?',
+      this.cancelButton,
+      this.okButton,
+      './assets/images/finish.svg',
+      'SearchPage.follow',
+      "common.editedContentDes2"
+    );
+  }
+
+  async cancelButton(that: any) {
+    if (that.confirmdialog != null) {
+      await that.confirmdialog.dismiss();
+      that.confirmdialog = null;
+    }
+  }
+
+  async okButton(that: any) {
+    if (that.confirmdialog != null) {
+      await that.confirmdialog.dismiss();
+      that.confirmdialog = null;
+      that.native.showLoading();
+      try {
+        await that.hiveVaultController.getChannelInfoById(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId);
+        await that.hiveVaultController.subscribeChannel(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId, that.displayName);
+        that.native.toast('common.subscribeSuccess');
+      } catch (error) {
+        that.native.toastWarn('common.subscribeFail');
+      } finally {
+        that.native.hideLoading();
+      }
+    }
+  }
 }

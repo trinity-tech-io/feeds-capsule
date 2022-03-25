@@ -79,6 +79,11 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
         const channelInfoList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
+
+        for (let index = 0; index < channelInfoList.length; index++) {
+          const channel = channelInfoList[index];
+          this.dataHelper.addChannelV3(channel);
+        }
         resolve(channelInfoList);
       } catch (error) {
         Logger.error(TAG, error);

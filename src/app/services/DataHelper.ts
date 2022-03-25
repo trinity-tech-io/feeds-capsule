@@ -3043,20 +3043,20 @@ export class DataHelper {
         this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3);
         let keys: string[] = Object.keys(this.postMapV3);
         for (const key of keys) {
-          let post:FeedsData.PostV3 = null;
-          if(key.indexOf(destDid)>-1){
+          let post: FeedsData.PostV3 = null;
+          if (key.indexOf(destDid) > -1) {
             post = this.postMapV3[key];
-            if(post.channelId === channelId){
+            if (post.channelId === channelId) {
               postList.push(post)
-            }else{
+            } else {
               continue;
             }
-          }else{
+          } else {
             continue;
           }
         }
         let sortList = [];
-         sortList = _.sortBy(postList, (item: any) => {
+        sortList = _.sortBy(postList, (item: any) => {
           return -item.createdAt;
         });
         resolve(sortList);

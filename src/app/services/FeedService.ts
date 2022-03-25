@@ -3319,7 +3319,7 @@ export class FeedService {
 
   checkLoadPostId(nodeId: string, feedsId: string): number {
     let feedsList = this.getPostListFromChannel(nodeId, feedsId);
-    let id  = parseInt(feedsList[feedsList.length - 1].id);
+    let id = parseInt(feedsList[feedsList.length - 1].id);
     return id;
   }
 
