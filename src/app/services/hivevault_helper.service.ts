@@ -227,7 +227,7 @@ export class HiveVaultHelper {
         })
     }
 
-    queryChannelInfo(channelId: string, targetDid: string) {
+    queryChannelInfo(channelId: string, targetDid: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = await this.callQueryChannelInfo(channelId, targetDid);

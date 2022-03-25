@@ -35,7 +35,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.updateChannel(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
   }
 
-  queryChannelInfo(channelId: string, targetDid: string) {
+  queryChannelInfo(channelId: string, targetDid: string): Promise<any> {
     return this.hiveVaultHelper.queryChannelInfo(channelId, targetDid);
   }
 

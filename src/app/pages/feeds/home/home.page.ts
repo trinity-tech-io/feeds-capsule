@@ -202,7 +202,7 @@ export class HomePage implements OnInit {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
-    const result = await this.hiveVaultController.getHomePostContent();
+    const result = this.hiveVaultController.getHomePostContent();
     this.totalData = await this.sortPostList();
 
     if (this.totalData.length - this.pageNumber > 0) {
@@ -1267,7 +1267,7 @@ export class HomePage implements OnInit {
 
                 //video.
                 this.setFullScreen(id);
-                this.setOverPlay(id, srcId,post);
+                this.setOverPlay(id, srcId, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
                 video.style.display = 'none';
@@ -1417,7 +1417,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  setOverPlay(id: string, srcId: string,post: FeedsData.PostV3) {
+  setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
     let source: any = document.getElementById(id + 'source') || '';
@@ -1426,14 +1426,14 @@ export class HomePage implements OnInit {
         this.zone.run(() => {
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
-            this.getVideo(id,srcId,post);
+            this.getVideo(id, srcId, post);
           }
         });
       };
     }
   }
 
-  getVideo(id: string, srcId: string,post: FeedsData.PostV3) {
+  getVideo(id: string, srcId: string, post: FeedsData.PostV3) {
     let arr = srcId.split('-');
     let nodeId = arr[0];
     let channelId: any = arr[1];
@@ -1456,56 +1456,56 @@ export class HomePage implements OnInit {
     let originKey = elements.originMediaPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName:string = "origin-"+originKey.split("@")[0];
+    let fileName: string = "origin-" + originKey.split("@")[0];
     this.hiveVaultController
-      .getV3Data(this.destDid, originKey, fileName, type,"false")
-    .then((videoResult: string) => {
-      this.zone.run(() => {
-        let videodata = videoResult || '';
-        if (videodata == '') {
+      .getV3Data(this.destDid, originKey, fileName, type, "false")
+      .then((videoResult: string) => {
+        this.zone.run(() => {
+          let videodata = videoResult || '';
+          if (videodata == '') {
 
-          // if (!this.feedService.checkPostIsAvalible(post)) {
-          //   this.isVideoLoading[this.videoCurKey] = false;
-          //   this.pauseVideo(id);
-          //   return;
-          // }
+            // if (!this.feedService.checkPostIsAvalible(post)) {
+            //   this.isVideoLoading[this.videoCurKey] = false;
+            //   this.pauseVideo(id);
+            //   return;
+            // }
 
-          if (this.isExitDown()) {
-            this.isVideoLoading[this.videoCurKey] = false;
-            this.pauseVideo(id);
-            this.openAlert();
+            if (this.isExitDown()) {
+              this.isVideoLoading[this.videoCurKey] = false;
+              this.pauseVideo(id);
+              this.openAlert();
+              return;
+            }
+            this.videoDownStatusKey = nodeId + '-' + channelId + '-' + postId;
+
+            this.videoDownStatus[this.videoDownStatusKey] = '1';
+            this.isVideoLoading[this.videoDownStatusKey] = true;
+            this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+
+            this.hiveVaultController
+              .getV3Data(this.destDid, originKey, fileName, type)
+              .then((downVideoResult: string) => {
+                let downVideodata = downVideoResult || '';
+                if (downVideodata != '') {
+                  this.videoDownStatus[this.videoDownStatusKey] = '';
+                  this.isVideoLoading[this.videoCurKey] = false;
+                  this.loadVideo(id, videodata);
+                }
+              }).catch((err) => {
+                this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoDownStatusKey] = false;
+                this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+                this.pauseVideo(id);
+              });
             return;
           }
-          this.videoDownStatusKey = nodeId + '-' + channelId + '-' + postId;
-
-          this.videoDownStatus[this.videoDownStatusKey] = '1';
-          this.isVideoLoading[this.videoDownStatusKey] = true;
-          this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-
-          this.hiveVaultController
-          .getV3Data(this.destDid, originKey, fileName, type)
-           .then((downVideoResult: string)=>{
-            let downVideodata = downVideoResult || '';
-              if(downVideodata != ''){
-                this.videoDownStatus[this.videoDownStatusKey] = '';
-                this.isVideoLoading[this.videoCurKey] = false;
-                this.loadVideo(id, videodata);
-              }
-           }).catch((err)=>{
-              this.videoDownStatus[this.videoDownStatusKey] = '';
-              this.isVideoLoading[this.videoDownStatusKey] = false;
-              this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-              this.pauseVideo(id);
-           });
-          return;
-        }
+          this.isVideoLoading[this.videoCurKey] = false;
+          this.loadVideo(id, videodata);
+        });
+      }).catch((err) => {
+        this.videoDownStatus[this.videoDownStatusKey] = '';
         this.isVideoLoading[this.videoCurKey] = false;
-        this.loadVideo(id, videodata);
       });
-    }).catch((err)=>{
-      this.videoDownStatus[this.videoDownStatusKey] = '';
-      this.isVideoLoading[this.videoCurKey] = false;
-    });
   }
 
   loadVideo(id: string, videodata: string) {

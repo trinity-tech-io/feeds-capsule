@@ -24,7 +24,7 @@ export class HiveVaultController {
   }
 
   //获得订阅的channel列表
-  getHomePostContent() {
+  async getHomePostContent(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
@@ -36,23 +36,22 @@ export class HiveVaultController {
           const destDid = item.destDid
 
           console.log("=====getHomePostContent=======   ", channelId, destDid);
+          const posts = await this.getPostListByChannel(channelId, destDid);
+          console.log('subscribedPost============', posts);
 
-
-          const subscribedPost = await this.hiveVaultApi.queryPostByChannelId(destDid, channelId)
-
-          const result = HiveVaultResultParse.parsePostResult(destDid, subscribedPost.find_message.items);
-          console.log('subscribedPost============', result);
-
-          for (let index = 0; index < result.length; index++) {
-            const element = result[index];
-            await this.dataHelper.addPostV3(element);
+          for (let index = 0; index < posts.length; index++) {
+            const post: FeedsData.PostV3 = posts[index];
+            await this.dataHelper.addPostV3(post);
           }
         }
+        resolve('FINISH');
       } catch (error) {
-
+        Logger.error(TAG, 'Get all subscribed channel post error', error);
+        reject(error);
       }
 
     });
+
     //提前加载：TODO
   }
 
@@ -61,7 +60,7 @@ export class HiveVaultController {
       try {
         //目前暂时获取全部post，后续优化
         const result = await this.hiveVaultApi.queryPostByChannelId(channelId, targetDid);
-        const postList = HiveVaultResultParse.parsePostResult(result, targetDid);
+        const postList = HiveVaultResultParse.parsePostResult(result.find_message.items, targetDid);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -78,8 +77,8 @@ export class HiveVaultController {
   async getChannelInfoById(channelId: string, targetDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.queryChannelInfo(channelId, targetDid)
-        const channelInfoList = HiveVaultResultParse.parseChannelResult(result, targetDid);
+        const result = await this.hiveVaultApi.queryChannelInfo(channelId, targetDid);
+        const channelInfoList = HiveVaultResultParse.parseChannelResult(result.find_message.items, targetDid);
         resolve(channelInfoList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -270,7 +269,7 @@ export class HiveVaultController {
         const did = (await this.dataHelper.getSigninData()).did;
         const channelsResult = await this.hiveVaultApi.querySelfChannels();
         console.log('channelsResult', channelsResult);
-        const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
+        const parseResult = HiveVaultResultParse.parseChannelResult(channelsResult, did);
         console.log('parseResult', parseResult);
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);

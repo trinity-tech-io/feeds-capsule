@@ -22,12 +22,11 @@ export class HiveVaultResultParse {
        * type: "public"
        * updated_at: 1647853515908
        */
-      const items = result["find_message"]["items"]
       const posts = result;
       let parseResult = [];
       console.log('result ===== ', posts);
-      if (items) {
-        items.forEach(post => {
+      if (posts) {
+        posts.forEach(post => {
           if (post) {
             const contents = JSON.parse(post['content'])
             let mDatas = contents['mediaData'];
@@ -101,9 +100,7 @@ export class HiveVaultResultParse {
        * type: "public"
        * updated_at: 1647859737317
        */
-      const items = result["find_message"]["items"]
-
-      const channels = items;
+      const channels = result;
       let parseResult = [];
       console.log('parseChannelResult result ====== ', channels);
       if (channels) {
