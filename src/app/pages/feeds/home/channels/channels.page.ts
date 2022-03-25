@@ -1092,7 +1092,7 @@ export class ChannelsPage implements OnInit {
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
     let fileName:string = "origin-"+originKey.split("@")[0];
     this.hiveVaultController
-      .getV3Data(this.destDid, originKey, fileName, type,"false")
+      .getV3Data(destDid, originKey, fileName, type,"false")
     .then((videoResult: string) => {
       this.zone.run(() => {
         let videodata = videoResult || '';
@@ -1130,7 +1130,9 @@ export class ChannelsPage implements OnInit {
               if(downVideodata != ''){
                 this.videoDownStatus[this.videoDownStatusKey] = '';
                 this.isVideoLoading[this.videoCurKey] = false;
-                this.loadVideo(id, videodata);
+                this.zone.run(()=>{
+                  this.loadVideo(id, downVideodata);
+                })
               }
            }).catch((err)=>{
               this.videoDownStatus[this.videoDownStatusKey] = '';

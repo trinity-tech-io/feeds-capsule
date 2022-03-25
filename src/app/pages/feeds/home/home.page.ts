@@ -1163,6 +1163,7 @@ export class HomePage implements OnInit {
               .then(async realImg => {
                 let img = realImg || '';
                 if (img != '') {
+                  this.native.hideLoading();
                   this.imgDownStatus[this.imgDownStatusKey] = '';
                   this.isImgLoading[this.imgCurKey] = false;
                   this.viewHelper.openViewer(
@@ -1504,10 +1505,10 @@ export class HomePage implements OnInit {
 
   getVideo(id: string, srcId: string, post: FeedsData.PostV3) {
     let arr = srcId.split('-');
-    let nodeId = arr[0];
+    let destDid = arr[0];
     let channelId: any = arr[1];
     let postId: any = arr[2];
-    let videoId = nodeId + '-' + channelId + '-' + postId + 'vgplayer';
+    let videoId = destDid + '-' + channelId + '-' + postId + 'vgplayer';
     let videoObj = document.getElementById(videoId);
     let videoWidth = videoObj.clientWidth;
     let videoHeight = videoObj.clientHeight;
@@ -1517,7 +1518,7 @@ export class HomePage implements OnInit {
       (videoWidth - this.roundWidth) / 2 + 'px';
     this.videoloadingStyleObj['top'] =
       (videoHeight - this.roundWidth) / 2 + 'px';
-    this.videoCurKey = nodeId + '-' + channelId + '-' + postId;
+    this.videoCurKey = destDid+ '-' + channelId + '-' + postId;
     this.isVideoLoading[this.videoCurKey] = true;
 
     let mediaDatas = post.content.mediaData;
@@ -1527,7 +1528,7 @@ export class HomePage implements OnInit {
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
     let fileName: string = "origin-" + originKey.split("@")[0];
     this.hiveVaultController
-      .getV3Data(this.destDid, originKey, fileName, type, "false")
+      .getV3Data(destDid, originKey, fileName, type, "false")
       .then((videoResult: string) => {
         this.zone.run(() => {
           let videodata = videoResult || '';
@@ -1545,20 +1546,22 @@ export class HomePage implements OnInit {
               this.openAlert();
               return;
             }
-            this.videoDownStatusKey = nodeId + '-' + channelId + '-' + postId;
+            this.videoDownStatusKey = destDid + '-' + channelId + '-' + postId;
 
             this.videoDownStatus[this.videoDownStatusKey] = '1';
             this.isVideoLoading[this.videoDownStatusKey] = true;
             this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
 
             this.hiveVaultController
-              .getV3Data(this.destDid, originKey, fileName, type)
+              .getV3Data(destDid, originKey, fileName, type)
               .then((downVideoResult: string) => {
                 let downVideodata = downVideoResult || '';
                 if (downVideodata != '') {
                   this.videoDownStatus[this.videoDownStatusKey] = '';
                   this.isVideoLoading[this.videoCurKey] = false;
-                  this.loadVideo(id, videodata);
+                  this.zone.run(()=>{
+                    this.loadVideo(id, downVideodata);
+                  });
                 }
               }).catch((err) => {
                 this.videoDownStatus[this.videoDownStatusKey] = '';
@@ -1728,7 +1731,7 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let channel: any = this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let channel: any = this.feedService.getChannelFromIdV3(destDid, this.channelId);
     let tippingAddress = channel.tipping_address || "";
     if (tippingAddress == "") {
       this.native.toast('common.noElaAddress');

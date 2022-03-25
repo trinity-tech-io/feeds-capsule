@@ -255,7 +255,7 @@ export class HiveVaultController {
         }
 
         if (result == '' && isDownload === '') {
-          const downloadResult = await this.hiveVaultApi.downloadScripting(remotePath, destDid);
+          const downloadResult = await this.hiveVaultApi.downloadScripting(destDid,remotePath);
           await this.fileHelperService.saveV3Data(fileName, downloadResult);
           resolve(downloadResult);
           return;

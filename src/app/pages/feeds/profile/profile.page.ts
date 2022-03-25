@@ -1505,7 +1505,7 @@ export class ProfilePage implements OnInit {
               if(downVideodata != ''){
                 this.videoDownStatus[this.videoDownStatusKey] = '';
                 this.isVideoLoading[this.videoCurKey] = false;
-                this.loadVideo(id, videodata);
+                this.loadVideo(id, downVideodata);
               }
            }).catch((err)=>{
               this.videoDownStatus[this.videoDownStatusKey] = '';
