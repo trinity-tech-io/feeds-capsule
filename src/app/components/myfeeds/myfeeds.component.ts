@@ -5,7 +5,6 @@ import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
-import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -27,7 +26,6 @@ export class MyfeedsComponent implements OnInit {
     private native: NativeService,
     private viewHelper: ViewHelper,
     public popupProvider: PopupProvider,
-    private hiveVaultController: HiveVaultController
   ) {}
 
   ngOnInit() {
