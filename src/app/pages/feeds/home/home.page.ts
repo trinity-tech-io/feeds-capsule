@@ -1205,6 +1205,7 @@ export class HomePage implements OnInit {
               });
           }
         }).catch((err) => {
+          this.native.hideLoading();
           this.isImgLoading[this.imgCurKey] = false;
         });
     });
