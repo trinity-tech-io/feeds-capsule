@@ -7,14 +7,14 @@ import { ThemeService } from '../../services/theme.service';
   styleUrls: ['./sharemenu.component.scss'],
 })
 export class SharemenuComponent implements OnInit {
-  @Input() nodeId: string = '';
-  @Input() feedId: string = '';
+  @Input() destDid: string = '';
+  @Input() channelId: string = '';
   @Input() isShowTitle: boolean = false;
   @Input() isShowQrcode: boolean = false;
   @Input() isShowUnfollow: boolean = false;
   @Input() isShowInfo: boolean = false;
   @Input() isPreferences: boolean = false;
-  @Input() feedName: string = null;
+  @Input() channelName: string = null;
   @Input() qrCodeString: string = null;
   @Output() hideShareMenu = new EventEmitter();
 
@@ -25,8 +25,8 @@ export class SharemenuComponent implements OnInit {
   clickItem(buttonType: string) {
     this.hideShareMenu.emit({
       buttonType: buttonType,
-      nodeId: this.nodeId,
-      feedId: this.feedId,
+      destDid: this.destDid,
+      channelId: this.channelId,
     });
   }
 }

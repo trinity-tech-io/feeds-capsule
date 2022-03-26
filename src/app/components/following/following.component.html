@@ -10,21 +10,21 @@
     [class.removeBorder]="channel === followingList[followingList.length - 1]"
     lines="none"
   >
-    <ion-row class="channel-row ion-activatable ripple">
+    <ion-row class="channel-row ion-activatable ripple ionRowFollowing" id={{channel.destDid}}-{{channel.channelId}}>
       <ion-col
         size="2.5"
         class="left-col"
-        (click)="navTo(channel.nodeId, channel.id)"
+        (click)="navTo(channel.destDid, channel.channelId)"
       >
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img src={{parseAvatar(channel.avatar)}}>
-          <div class="offline" [class.online]="nodeStatus[channel.nodeId] === 0"></div>
+          <img src="./assets/icon/reserve.svg" id={{channel.destDid}}-{{channel.channelId}}-followingAvatar>
+          <div class="offline" [class.online]="nodeStatus[channel.destDid] === 0"></div>
         </div>
       </ion-col>
       <ion-col
         size="8"
         class="middle-col"
-        (click)="navTo(channel.nodeId, channel.id)"
+        (click)="navTo(channel.destDid, channel.channelId)"
       >
         <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channel.name }}</ion-label>
         <ion-row>
@@ -32,7 +32,7 @@
           <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
         </ion-row>
       </ion-col>
-      <ion-col size="1.5" class="right-col" (click)="menuMore(channel.nodeId, channel.id, channel.name)">
+      <ion-col size="1.5" class="right-col" (click)="menuMore(channel)">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
       </ion-col>
       <ion-ripple-effect></ion-ripple-effect>

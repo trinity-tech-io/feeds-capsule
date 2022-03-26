@@ -412,9 +412,9 @@ export class IntentService {
     return this.translate.instant("common.sharePasar");
   }
 
-  createShareChannelTitle(nodeId: string, channelId: string): string {
-    const key = this.dataHelper.getKey(nodeId, channelId, "0", 0);
-    const channel = this.dataHelper.getChannel(key);
+  createShareChannelTitle(destDid: string, channelId: string,channel: FeedsData.ChannelV3): string {
+    // const key = this.dataHelper.getKey(destDid, channelId, "0", 0);
+    // const channel = this.dataHelper.getChannel(key);
 
     const channelName = channel.name || '';
 

@@ -1,5 +1,5 @@
 <app-titlebar></app-titlebar>
-<ion-content>
+<ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -14,14 +14,14 @@
 <!---------------- ADD share menu---------------->
 <app-sharemenu
  *ngIf="hideSharMenuComponent"
- [nodeId] = "shareNodeId"
- [feedId] = "shareFeedId"
+ [destDid] = "shareDestDid"
+ [channelId] = "shareChannelId"
  [isShowTitle] = "isShowTitle"
  [isShowQrcode] = "isShowQrcode"
  [isShowUnfollow] = "isShowUnfollow"
  [isShowInfo] = "isShowInfo"
  [isPreferences]="isPreferences"
- [feedName] = "feedName"
+ [channelName] = "channelName"
  [qrCodeString]="qrCodeString"
  (hideShareMenu)="hideShareMenu($event)"
 >

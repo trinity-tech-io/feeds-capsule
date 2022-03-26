@@ -8,6 +8,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { UtilService } from 'src/app/services/utilService';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -23,12 +25,14 @@ export class SubscriptionsPage implements OnInit {
   public isShowTitle: boolean = false;
   public isShowInfo: boolean = false;
   public isPreferences: boolean = false;
-  public shareNodeId: string = '';
-  public shareFeedId: string = '';
+  public shareDestDid: string = '';
+  public shareChannelId: string = '';
   public curItem: any = {};
   public qrCodeString: string = null;
-  public feedName: string = null;
+  public channelName: string = null;
   public hideSharMenuComponent: boolean = false;
+  private followingIsLoadimage: any = {};
+  private clientHeight: number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -38,12 +42,14 @@ export class SubscriptionsPage implements OnInit {
     private native: NativeService,
     private intentService: IntentService,
     private feedsServiceApi: FeedsServiceApi,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() { }
 
   ionViewWillEnter() {
+    this.clientHeight = screen.availHeight;
     this.initTitle();
     this.addEvents();
     this.initFollowing();
@@ -76,8 +82,8 @@ export class SubscriptionsPage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.refreshSubscribedChannels,
       () => {
-        this.zone.run(() => {
-          this.followingList = this.feedService.getFollowedChannelList();
+        this.zone.run(async () => {
+          this.followingList = await this.initFollowing()
           this.initnodeStatus(this.followingList);
         });
       },
@@ -102,6 +108,7 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.followingIsLoadimage = {};
     this.hideSharMenuComponent = false;
     this.removeEvents();
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
@@ -114,13 +121,13 @@ export class SubscriptionsPage implements OnInit {
     this.isShowQrcode = true;
     this.isPreferences = false;
     this.isShowUnfollow = true;
-    this.feedName = item.channelName;
+    this.channelName = item.channelName;
     this.qrCodeString = this.getQrCodeString(item);
     this.hideSharMenuComponent = true;
   }
 
   toPage(eventParm: any) {
-    let nodeId = eventParm['nodeId'];
+    let destDid = eventParm['destDid'];
     let channelId = eventParm['channelId'];
     let postId = eventParm['postId'] || '';
     let page = eventParm['page'];
@@ -128,18 +135,19 @@ export class SubscriptionsPage implements OnInit {
     if (postId != '') {
       this.native
         .getNavCtrl()
-        .navigateForward([page, nodeId, channelId, postId]);
+        .navigateForward([page, destDid, channelId, postId]);
     } else {
-      this.native.getNavCtrl().navigateForward([page, nodeId, channelId]);
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId]);
     }
   }
 
-  initFollowing() {
-    this.followingList = this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+
+ async initFollowing() {
+    this.followingList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+    this.refreshFollowingVisibleareaImage();
     // this.initnodeStatus(this.followingList);
     // this.feedService.updateSubscribedFeed();
   }
-
   initnodeStatus(list: any) {
     list = list || [];
     for (let index = 0; index < list.length; index++) {
@@ -161,32 +169,32 @@ export class SubscriptionsPage implements OnInit {
     }, 500);
   }
 
-  getQrCodeString(feed: any) {
-    let nodeId = feed['nodeId'];
-    this.shareNodeId = nodeId;
-    let serverInfo = this.feedsServiceApi.getServerbyNodeId(nodeId);
-    let feedsUrl = serverInfo['feedsUrl'] || null;
-    let feedId = feed['channelId'] || '';
-    this.shareFeedId = feedId;
-    feedsUrl = feedsUrl + '/' + feedId;
-    let feedsName = feed['channelName'] || '';
-    return feedsUrl + '#' + encodeURIComponent(feedsName);
+  getQrCodeString(channel: any) {
+    console.log("=====channel=====",channel);
+    let destDid = channel['destDid'];
+    this.shareDestDid = destDid;
+    let channelId = channel['channelId'] || '';
+    this.shareChannelId = channelId;
+    let name = channel['channelName'] || '';
+    let signInData: SignInData = this.feedService.getSignInData() || null;
+    let ownerDid = signInData.did || "";
+    return "feeds://v3/"+ownerDid+"/"+channelId+'/'+encodeURIComponent(name);
   }
 
   async hideShareMenu(objParm: any) {
     let buttonType = objParm['buttonType'];
     let destDid = objParm['destDid'];
-    let channelId = objParm['feedId'];
+    let channelId = objParm['channelId'];
     switch (buttonType) {
       case 'unfollow':
         if (this.feedService.getConnectionStatus() != 0) {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        if (this.checkServerStatus(destDid) != 0) {
-          this.native.toastWarn('common.connectionError1');
-          return;
-        }
+        // if (this.checkServerStatus(destDid) != 0) {
+        //   this.native.toastWarn('common.connectionError1');
+        //   return;
+        // }
 
         this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
         this.qrCodeString = null;
@@ -201,8 +209,8 @@ export class SubscriptionsPage implements OnInit {
           let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
           let signInData: SignInData = this.feedService.getSignInData() || null;
           let ownerDid = signInData.did || "";
-          const sharedLink = await this.intentService.createShareLink(destDid, channelId, "0", ownerDid, channel);
-          this.intentService.share(this.intentService.createShareChannelTitle(destDid, channelId), sharedLink);
+          const sharedLink = await this.intentService.createShareLink(destDid,channelId, "0",ownerDid,channel);
+          this.intentService.share(this.intentService.createShareChannelTitle(destDid, channelId,channel), sharedLink);
         } catch (error) {
         }
         this.native.hideLoading();
@@ -218,8 +226,8 @@ export class SubscriptionsPage implements OnInit {
 
         this.native.navigateForward(['feedspreferences'], {
           queryParams: {
-            nodeId: this.shareNodeId,
-            feedId: this.shareFeedId,
+            nodeId: this.shareDestDid,
+            feedId: this.shareChannelId,
           },
         });
         this.hideSharMenuComponent = false;
@@ -231,35 +239,41 @@ export class SubscriptionsPage implements OnInit {
     }
   }
 
-  clickAvatar(nodeId: string, feedId: string) {
-    let feed = this.feedService.getChannelFromId(nodeId, feedId);
-    let followStatus = this.checkFollowStatus(nodeId, feedId);
-    let feedName = feed.name;
-    let feedDesc = feed.introduction;
-    let feedSubscribes = feed.subscribers;
-    let feedAvatar = this.feedService.parseChannelAvatar(feed.avatar);
-    if (feedAvatar.indexOf('data:image') > -1 ||
-      feedAvatar.startsWith("https:")) {
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(feedAvatar);
-    } else if (feedAvatar.indexOf('assets/images') > -1) {
-      let index = feedAvatar.substring(
-        feedAvatar.length - 5,
-        feedAvatar.length - 4,
-      );
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(feedAvatar);
-    }
-
-    this.feedService.setChannelInfo({
-      destDid: nodeId,
-      channelId: feedId,
-      name: feedName,
-      des: feedDesc,
-      followStatus: followStatus,
-      channelSubscribes: feedSubscribes,
-    });
-    this.native.navigateForward(['/feedinfo'], '');
+  async clickAvatar(destDid: string, channelId: string) {
+      let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId);
+      //let followStatus = this.checkFollowStatus(nodeId, feedId);
+      let followStatus = true;
+      let channelName = channel.name;
+      let channelDesc = channel.intro;
+      let channelSubscribes = 0;
+      let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+      if (feedAvatar.indexOf('data:image') > -1 ||
+        feedAvatar.startsWith("https:")) {
+        this.feedService.setSelsectIndex(0);
+        this.feedService.setProfileIamge(feedAvatar);
+      } else if (feedAvatar.indexOf('assets/images') > -1) {
+        let index = feedAvatar.substring(
+          feedAvatar.length - 5,
+          feedAvatar.length - 4,
+        );
+        this.feedService.setSelsectIndex(index);
+        this.feedService.setProfileIamge(feedAvatar);
+      }
+      let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+      let ownerDid: string = signInData.did || "";
+      this.feedService.setChannelInfo({
+        destDid: destDid,
+        channelId: channelId,
+        name: channelName,
+        des: channelDesc,
+        followStatus: followStatus,
+        channelSubscribes: channelSubscribes,
+        updatedTime: channel.updatedAt,
+        channelOwner: channel.destDid,
+        ownerDid: ownerDid,
+        tippingAddress: channel.tipping_address
+      });
+      this.native.navigateForward(['/feedinfo'], '');
   }
 
   checkFollowStatus(nodeId: string, channelId: string) {
@@ -274,4 +288,85 @@ export class SubscriptionsPage implements OnInit {
       return true;
     }
   }
+
+  ionScroll(){
+    this.native.throttle(this.setFollowingVisibleareaImage(), 200, this, true);
+  }
+
+  setFollowingVisibleareaImage(){
+    let ionRowFollowing = document.getElementsByClassName("ionRowFollowing") || null;
+    let len = ionRowFollowing.length;
+    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
+      let item = ionRowFollowing[itemIndex];
+      let id = item.getAttribute("id") || "";
+      if (id === "") {
+        continue;
+      }
+
+      let avatarImage = document.getElementById(id + "-followingAvatar");
+      let srcStr = avatarImage.getAttribute("src") || "";
+      let isload = this.followingIsLoadimage[id] || '';
+      try {
+        if (
+          id != '' &&
+          avatarImage.getBoundingClientRect().top >= -100 &&
+          avatarImage.getBoundingClientRect().top <= this.clientHeight
+        ) {
+          if (isload === "") {
+            let arr = id.split("-");
+            this.followingIsLoadimage[id] = '11';
+            let destDid = arr[0];
+            let channelId = arr[1];
+            const key = UtilService.getKey(destDid, channelId);
+            let channel: FeedsData.ChannelV3 = this.dataHelper.channelsMapV3[key] || null;
+            let avatarUri = "";
+            if(channel != null){
+              avatarUri = channel.avatar;
+            }
+            let fileName:string = "channel-avatar-"+avatarUri.split("@")[0];
+            this.hiveVaultController.getV3Data(destDid,avatarUri,fileName,"0").then((data) => {
+              this.zone.run(() => {
+                this.followingIsLoadimage[id] = '13';
+                let srcData = data || "";
+                if (srcData != "") {
+                  avatarImage.setAttribute("src", data);
+                }
+              });
+            }).catch((err) => {
+              if (this.followingIsLoadimage[id] === '13') {
+                this.followingIsLoadimage[id] = '';
+                avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+              }
+            });
+          }
+        } else {
+          srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
+          if (
+            avatarImage.getBoundingClientRect().top < -100 &&
+            this.followingIsLoadimage[id] === '13' &&
+            srcStr != './assets/icon/reserve.svg'
+          ) {
+            this.followingIsLoadimage[id] = '';
+            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
+        }
+       } catch (error) {
+        if (this.followingIsLoadimage[id] === '13') {
+          this.followingIsLoadimage[id] = '';
+          avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+        }
+      }
+
+    }
+  }
+
+  refreshFollowingVisibleareaImage() {
+      let sid = setTimeout(() => {
+        this.followingIsLoadimage = {};
+        this.setFollowingVisibleareaImage();
+        clearTimeout(sid);
+      }, 100);
+
+  }
+
 }

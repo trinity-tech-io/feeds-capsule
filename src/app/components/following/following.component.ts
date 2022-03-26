@@ -26,34 +26,33 @@ export class FollowingComponent implements OnInit {
     return UtilService.moreNanme(name);
   }
 
-  navTo(nodeId: string, channelId: string) {
-    this.read(nodeId, channelId);
+  navTo(destDid: string, channelId: string) {
+    this.read(destDid, channelId);
     this.toFollowPage.emit({
-      nodeId: nodeId,
+      destDid:destDid,
       channelId: channelId,
       page: '/channels',
     });
   }
 
-  parseAvatar(avatar: string): string {
-    return this.feedService.parseChannelAvatar(avatar);
+  checkUnreadNumber(destDid: string, channelId: string): number {
+    // let nodeChannelId = this.feedService.getChannelId(destDid, channelId);
+    // return this.feedService.getUnreadNumber(nodeChannelId);
+    return 0;
   }
 
-  checkUnreadNumber(nodeId: string, channelId: string): number {
-    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
-    return this.feedService.getUnreadNumber(nodeChannelId);
+  read(destDid: string, channelId: string) {
+    // let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
+    // this.feedService.readChannel(nodeChannelId);
+    return 0;
   }
 
-  read(nodeId: string, channelId: string) {
-    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
-    this.feedService.readChannel(nodeChannelId);
-  }
-
-  menuMore(nodeId: string, channelId: number, channelName: string) {
+  menuMore(channel: FeedsData.ChannelV3) {
+    //let channelName = "";
     this.fromChild.emit({
-      nodeId: nodeId,
-      channelId: channelId,
-      channelName: channelName,
+      destDid: channel.destDid,
+      channelId: channel.channelId,
+      channelName: channel.name,
       postId: 0,
       tabType: 'myfollow',
     });

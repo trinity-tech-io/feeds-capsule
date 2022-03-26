@@ -155,8 +155,6 @@ export class ProfilePage implements OnInit {
 
   public qrCodeString: string = null;
 
-  public feedName: string = null;
-
   public isShowUnfollow: boolean = false;
 
   public isShowQrcode: boolean = false;
@@ -273,11 +271,27 @@ export class ProfilePage implements OnInit {
     console.log("channels ===== ", this.channels)
 
     this.myFeedsSum = this.channels.length;
-    let followedList = this.feedService.getFollowedChannelList() || [];
+    let followedList = await this.getFollowedChannelList() || [];
     this.followers = followedList.length;
     this.initnodeStatus(this.channels);
     this.refreshMyFeedsVisibleareaImage();
   }
+
+  async getFollowedChannelList() {
+    let subscribedList = [];
+    const subscribedChannel = await this.dataHelper.getSubscribedChannelV3List();
+    for(let item of subscribedChannel){
+      let destDid = item.destDid;
+      let channelId = item.channelId;
+      let channel :any = await this.feedService.getChannelFromIdV3(destDid , channelId) || "";
+      if(channel != null) {
+        subscribedList.push(channel);
+      }
+      return subscribedList;
+   }
+  }
+
+
 
   initLike() {
     // 赞/收藏
@@ -830,7 +844,7 @@ export class ProfilePage implements OnInit {
         this.isShowQrcode = true;
         this.isPreferences = true;
         this.isShowUnfollow = false;
-        this.feedName = item.channelName;
+        this.channelName = item.channelName;
         this.qrCodeString = this.getQrCodeString(item);
         this.hideSharMenuComponent = true;
         break;
@@ -840,7 +854,7 @@ export class ProfilePage implements OnInit {
         this.isShowQrcode = true;
         this.isPreferences = false;
         this.isShowUnfollow = true;
-        this.feedName = item.channelName;
+        this.channelName = item.channelName;
         this.qrCodeString = this.getQrCodeString(item);
         this.hideSharMenuComponent = true;
         break;
@@ -1719,17 +1733,17 @@ export class ProfilePage implements OnInit {
   async hideShareMenu(objParm: any) {
     let buttonType = objParm['buttonType'];
     let destDid = objParm['destDid'];
-    let channelId = objParm['feedId'];
+    let channelId = objParm['channelId'];
     switch (buttonType) {
       case 'unfollow':
         if (this.feedService.getConnectionStatus() != 0) {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        if (this.checkServerStatus(destDid) != 0) {
-          this.native.toastWarn('common.connectionError1');
-          return;
-        }
+        // if (this.checkServerStatus(destDid) != 0) {
+        //   this.native.toastWarn('common.connectionError1');
+        //   return;
+        // }
 
         this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
         this.qrCodeString = null;
@@ -1749,7 +1763,7 @@ export class ProfilePage implements OnInit {
             let signInData: SignInData = this.feedService.getSignInData() || null;
             let ownerDid = signInData.did || "";
             const sharedLink = await this.intentService.createShareLink(myDestDid, myChannelId, myPostId,ownerDid,channel);
-            const title = this.intentService.createShareChannelTitle(myDestDid, myChannelId) || "";
+            const title = this.intentService.createShareChannelTitle(myDestDid, myChannelId,channel) || "";
             this.intentService.share(title, sharedLink);
           } catch (error) {
           }
@@ -1836,13 +1850,14 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  clickAvatar(nodeId: string, feedId: string) {
-    let feed = this.feedService.getChannelFromId(nodeId, feedId);
-    let followStatus = this.checkFollowStatus(nodeId, feedId);
-    let feedName = feed.name;
-    let feedDesc = feed.introduction;
-    let feedSubscribes = feed.subscribers;
-    let feedAvatar = this.feedService.parseChannelAvatar(feed.avatar);
+  async clickAvatar(destDid: string, channelId: string) {
+    let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId);
+    //let followStatus = this.checkFollowStatus(nodeId, feedId);
+    let followStatus = true;
+    let channelName = channel.name;
+    let channelDesc = channel.intro;
+    let channelSubscribes = 0;
+    let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
     if (feedAvatar.indexOf('data:image') > -1 ||
       feedAvatar.startsWith("https:")) {
       this.feedService.setSelsectIndex(0);
@@ -1855,17 +1870,22 @@ export class ProfilePage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(feedAvatar);
     }
-
+    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+    let ownerDid: string = signInData.did || "";
     this.feedService.setChannelInfo({
-      destDid: nodeId,
-      channelId: feedId,
-      name: feedName,
-      des: feedDesc,
+      destDid: destDid,
+      channelId: channelId,
+      name: channelName,
+      des: channelDesc,
       followStatus: followStatus,
-      channelSubscribes: feedSubscribes,
+      channelSubscribes: channelSubscribes,
+      updatedTime: channel.updatedAt,
+      channelOwner: channel.destDid,
+      ownerDid: ownerDid,
+      tippingAddress: channel.tipping_address
     });
     this.native.navigateForward(['/feedinfo'], '');
-  }
+}
 
   checkFollowStatus(nodeId: string, channelId: string) {
     let channelsMap = this.feedService.getChannelsMap();
