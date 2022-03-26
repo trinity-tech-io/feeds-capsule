@@ -229,7 +229,7 @@ export class MyApp {
         this.initSetting();
         this.initNftFirstdisclaimer();
         this.initFeedPublicStatus();
-        this.initCurrentFeed();
+        this.initCurrentChannel();
         this.initDiscoverfeeds();
         this.initCollectibleSetting();
         this.initWhiteList();
@@ -279,15 +279,15 @@ export class MyApp {
       .catch(err => { });
   }
 
-  initCurrentFeed() {
+  initCurrentChannel() {
     this.feedService
-      .getData('feeds.currentFeed')
+      .getData('feeds.currentChannel')
       .then(currentFeed => {
         if (currentFeed === null) {
-          this.feedService.setCurrentFeed(null);
+          this.feedService.setCurrentChannel(null);
           return;
         }
-        this.feedService.setCurrentFeed(JSON.parse(currentFeed));
+        this.feedService.setCurrentChannel(JSON.parse(currentFeed));
       })
       .catch(err => { });
   }

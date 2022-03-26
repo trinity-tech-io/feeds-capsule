@@ -386,8 +386,8 @@ export class ProfiledetailPage implements OnInit {
                   this.native.toast('ServerInfoPage.removeserver');
                   this.isShowPublisherAccount = false;
                   this.native.hideLoading();
-                  this.feedService.setCurrentFeed(null);
-                  this.storageService.remove('feeds.currentFeed');
+                  this.feedService.setCurrentChannel(null);
+                  this.storageService.remove('feeds.currentChannel');
                   this.native.hideLoading();
                   this.events.publish(FeedsEvent.PublishType.updateTab);
                 });

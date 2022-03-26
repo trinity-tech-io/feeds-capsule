@@ -3,29 +3,67 @@ import { ThemeService } from '../../services/theme.service';
 import { NativeService } from '../../services/NativeService';
 import { FeedService } from '../../services/FeedService';
 import { UtilService } from '../../services/utilService';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 @Component({
   selector: 'app-switchfeed',
   templateUrl: './switchfeed.component.html',
   styleUrls: ['./switchfeed.component.scss'],
 })
 export class SwitchfeedComponent implements OnInit {
-  @Input() public feedList = [];
+  @Input() public channelList = [];
   @Input() public nodeStatus = {};
   @Output() hideComment = new EventEmitter();
   public currentFeed: any = {};
-
+  public avatarList: any = {};
   constructor(
     public theme: ThemeService,
     public native: NativeService,
     private feedService: FeedService,
+    private hiveVaultController: HiveVaultController
   ) {}
 
   ngOnInit() {
-    this.currentFeed = this.feedService.getCurrentFeed();
+    this.currentFeed = this.feedService.getCurrentChannel();
+    this.getAllAvatarList();
   }
 
-  parseAvatar(avatar: string): string {
-    return this.feedService.parseChannelAvatar(avatar);
+  async getAllAvatarList(){
+      for(let channel of this.channelList){
+        let avatarUri  = channel.avatar || "";
+        if(avatarUri != ""){
+        let destDid = channel.destDid;
+        let avatar =  await this.parseAvatar(avatarUri,destDid) || './assets/icon/reserve.svg';
+        this.avatarList[avatarUri] = avatar;
+        }else{
+        this.avatarList[avatarUri] = './assets/icon/reserve.svg';
+        }
+      }
+  }
+
+  async parseAvatar(avatarUri: string,destDid: string):Promise<string> {
+
+    let avatar = await this.handleChannelAvatar(avatarUri,destDid);
+
+
+    return avatar;
+  }
+
+  handleChannelAvatar(channelAvatarUri: string,destDid: string): Promise<string>{
+    return new Promise(async (resolve, reject) => {
+      try {
+        let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+        this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
+        .then((result)=>{
+           let channelAvatar = result || '';
+           resolve(channelAvatar);
+        }).catch((err)=>{
+          resolve('');
+        })
+      }catch(err){
+        resolve('');
+      }
+    });
+
   }
 
   moreName(name: string) {

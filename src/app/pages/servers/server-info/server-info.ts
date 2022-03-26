@@ -308,8 +308,8 @@ export class ServerInfoPage implements OnInit {
             this.feedService.deleteFeedSource(this.nodeId).then(() => {
               this.native.toast('ServerInfoPage.removeserver');
               this.native.hideLoading();
-              this.feedService.setCurrentFeed(null);
-              this.storageService.remove('feeds.currentFeed');
+              this.feedService.setCurrentChannel(null);
+              this.storageService.remove('feeds.currentChannel');
               this.native.hideLoading();
               this.navigateBackPage();
               this.events.publish(FeedsEvent.PublishType.updateTab);

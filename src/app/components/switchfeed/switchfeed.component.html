@@ -3,15 +3,15 @@
 </div>
 <div class="feedlist feedlistbackdropdonghua" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
     <ion-grid >
-      <ion-row *ngFor="let feed of feedList" class="feedrow" [class.borderbottom]="feed != feedList[feedList.length - 1]" (click)="clickItem(feed)">
+      <ion-row *ngFor="let channel of channelList" class="feedrow" [class.borderbottom]="channel != channelList[channelList.length - 1]" (click)="clickItem(channel)">
         <ion-col
           size="2.5"
           class="left-col"
         >
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-            <img src={{parseAvatar(feed.avatar)}}>
+            <img src={{avatarList[channel.avatar]}}>
             <div class="feed-source-card-status">
-              <div class="offline" [class.online]="nodeStatus[feed.nodeId] === 0"></div>
+              <div class="offline" [class.online]="nodeStatus[channel.destDid] === 0"></div>
             </div>
           </div>
         </ion-col>
@@ -19,15 +19,15 @@
           size="8"
           class="middle-col"
         >
-          <ion-label [class.drakfeedname]="theme.darkMode" [class.lightfeedname]="!theme.darkMode" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{feed.name}}</ion-label>
+          <ion-label [class.drakfeedname]="theme.darkMode" [class.lightfeedname]="!theme.darkMode" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{channel.name}}</ion-label>
           <ion-row>
             <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-            <p><span>{{ feed.subscribers }}</span> {{ 'common.followers' | translate }}</p>
+            <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
           </ion-row>
         </ion-col>
         <ion-col size="1.5" class="right-col">
-           <img *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']===feed.id" src="./assets/images/radioSelect.svg">
-           <img *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']!=feed.id" src="./assets/images/radiounSelect.svg">
+           <img *ngIf="currentFeed['destDid']===channel.destDid&&currentFeed['channelId']===channel.channelId" src="./assets/images/radioSelect.svg">
+           <img *ngIf="currentFeed['destDid']===channel.destDid&&currentFeed['channelId']!=channel.channelId" src="./assets/images/radiounSelect.svg">
            <!-- <ion-icon *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']===feed.id" name="checkmark-circle-outline" style="color: #2dd36f;width: 26px;height: 26px"></ion-icon> -->
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>

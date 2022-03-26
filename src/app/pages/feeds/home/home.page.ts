@@ -1875,19 +1875,6 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let currentFeed = channels[0];
-    console.log("create post currentFeed ======== ", currentFeed)
-    this.feedService.setCurrentFeed(currentFeed);
-
-    if (currentFeed === null) {
-      let myFeed = this.feedService.getMyChannelList()[0];
-      let currentFeed = {
-        nodeId: myFeed.nodeId,
-        feedId: myFeed.id,
-      };
-      this.feedService.setCurrentFeed(currentFeed);
-      this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
-    }
     this.feedService.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }

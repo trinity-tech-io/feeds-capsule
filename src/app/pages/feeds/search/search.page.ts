@@ -475,7 +475,7 @@ export class SearchPage implements OnInit {
     }
     const feedsUrl = scanResult.feedsUrl;
 
-    //TODO 
+    //TODO
     //Show channel info dialog
     // this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
 
@@ -809,16 +809,6 @@ export class SearchPage implements OnInit {
       return;
     }
 
-    let currentFeed = this.feedService.getCurrentFeed();
-    if (currentFeed === null) {
-      let myFeed = this.feedService.getMyChannelList()[0];
-      let currentFeed = {
-        nodeId: myFeed.nodeId,
-        feedId: myFeed.id,
-      };
-      this.feedService.setCurrentFeed(currentFeed);
-      this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
-    }
     this.feedService.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }

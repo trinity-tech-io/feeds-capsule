@@ -356,16 +356,6 @@ export class NotificationPage {
       return;
     }
 
-    let currentFeed = this.feedService.getCurrentFeed();
-    if (currentFeed === null) {
-      let myFeed = this.feedService.getMyChannelList()[0];
-      let currentFeed = {
-        nodeId: myFeed.nodeId,
-        feedId: myFeed.id,
-      };
-      this.feedService.setCurrentFeed(currentFeed);
-      this.storageService.set('feeds.currentFeed', JSON.stringify(currentFeed));
-    }
     this.feedService.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }

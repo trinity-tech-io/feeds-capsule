@@ -6435,14 +6435,14 @@ export class FeedService {
     return this.dataHelper.isSyncCommnetFinish(ncpId);
   }
 
-  getCurrentFeed() {
-    console.log("getCurrentFeed" + this.currentFeed)
+  getCurrentChannel() {
+    console.log("getCurrentChannel" + this.currentFeed)
 
     return this.currentFeed;
   }
 
-  setCurrentFeed(currentFeed: any) {
-    console.log("setCurrentFeed" + currentFeed)
+  setCurrentChannel(currentFeed: any) {
+    console.log("setCurrentChannel" + currentFeed)
     this.currentFeed = currentFeed;
   }
 

@@ -67,7 +67,7 @@ export class CreatenewpostPage implements OnInit {
     FeedsData.TransDataChannel.MESSAGE;
   public fullScreenmodal: any = '';
 
-  public feedList = [];
+  public channelList = [];
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
   public pictureMenu: any = null;
@@ -116,12 +116,13 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async initFeed() {
-    let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentFeed();
+    let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentChannel() ;
 
     if (currentFeed == null) {
 
       const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
       currentFeed = await this.feedService.getChannelFromIdV3(item[1].destDid, item[1].channelId);
+      this.feedService.setCurrentChannel(currentFeed);
     }
 
     this.channelIdV3 = currentFeed.channelId;
@@ -146,7 +147,7 @@ export class CreatenewpostPage implements OnInit {
   async ionViewWillEnter() {
     this.imgUrl = this.feedService.getSelsectNftImage();
     this.feedService.setSelsectNftImage(this.imgUrl);
-    this.feedList = await this.feedService.getHiveMyChannelList() || [];
+    this.channelList = await this.feedService.getHiveMyChannelList() || [];
     this.initTitle();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
@@ -567,7 +568,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   clickFeedAvatar() {
-    if (this.feedList.length > 1) {
+    if (this.channelList.length > 1) {
       this.hideSwitchFeed = true;
     }
   }
@@ -583,16 +584,8 @@ export class CreatenewpostPage implements OnInit {
     this.subscribers = channel['subscribers'] || '';
     this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
 
-
-    // this.nodeId = feed.nodeId;
-    // this.channelId = feed.channel_id;
-    // let currentFeed = {
-    //   nodeId: this.nodeId,
-    //   feedId: this.channelId,
-    //   channel_id: this.channelId
-    // };
-    this.feedService.setCurrentFeed(channel);
-    this.storageService.set('feeds.currentFeed', JSON.stringify(channel));
+    this.feedService.setCurrentChannel(channel);
+    this.storageService.set('feeds.currentChannel', JSON.stringify(channel));
     this.initFeed();
     this.hideSwitchFeed = false;
   }
