@@ -271,27 +271,11 @@ export class ProfilePage implements OnInit {
     console.log("channels ===== ", this.channels)
 
     this.myFeedsSum = this.channels.length;
-    let followedList = await this.getFollowedChannelList() || [];
+    let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
     this.followers = followedList.length;
     this.initnodeStatus(this.channels);
     this.refreshMyFeedsVisibleareaImage();
   }
-
-  async getFollowedChannelList() {
-    let subscribedList = [];
-    const subscribedChannel = await this.dataHelper.getSubscribedChannelV3List();
-    for(let item of subscribedChannel){
-      let destDid = item.destDid;
-      let channelId = item.channelId;
-      let channel :any = await this.feedService.getChannelFromIdV3(destDid , channelId) || "";
-      if(channel != null) {
-        subscribedList.push(channel);
-      }
-      return subscribedList;
-   }
-  }
-
-
 
   initLike() {
     // 赞/收藏

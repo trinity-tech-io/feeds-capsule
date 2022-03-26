@@ -143,10 +143,24 @@ export class SubscriptionsPage implements OnInit {
 
 
  async initFollowing() {
-    this.followingList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+    this.followingList = await this.getFollowedChannelList(subscribedChannel);
     this.refreshFollowingVisibleareaImage();
     // this.initnodeStatus(this.followingList);
     // this.feedService.updateSubscribedFeed();
+  }
+
+  async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
+    let list = [];
+    for(let item of subscribedChannel){
+      let destDid = item.destDid;
+      let channelId = item.channelId;
+      let channel :any = await this.feedService.getChannelFromIdV3(destDid , channelId) || "";
+      if(channel != null) {
+        list.push(channel);
+      }
+      return  list;
+   }
   }
   initnodeStatus(list: any) {
     list = list || [];
@@ -170,7 +184,6 @@ export class SubscriptionsPage implements OnInit {
   }
 
   getQrCodeString(channel: any) {
-    console.log("=====channel=====",channel);
     let destDid = channel['destDid'];
     this.shareDestDid = destDid;
     let channelId = channel['channelId'] || '';
