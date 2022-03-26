@@ -1,4 +1,10 @@
 declare namespace FeedsData {
+  const enum SubscribedChannelType {
+    ALL_CHANNEL,
+    OTHER_CHANNEL,
+    MY_CHANNEL
+  }
+
   const enum CallbackMethod {
     SyncFeedsServiceData = 'SyncFeedsServiceData'
   }
@@ -1050,4 +1056,5 @@ declare namespace FeedsData {
     destDid: string,// 订阅channel的创建者的did
     channelId: string
   }
+
 }

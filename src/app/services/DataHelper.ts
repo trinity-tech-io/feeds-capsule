@@ -2876,7 +2876,7 @@ export class DataHelper {
     this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
   }
 
-  getSubscribedChannelV3List(): Promise<FeedsData.SubscribedChannelV3[]> {
+  getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let list: FeedsData.SubscribedChannelV3[] = []
@@ -2889,12 +2889,35 @@ export class DataHelper {
           // TODO是否添加其他判断条件
           list.push(subscribedChannel)
         }
-        resolve(list)
+
+        const resultList = await this.filterSubscribedChannelV3(list, subscribedChannelType);
+        resolve(resultList)
       } catch (error) {
         reject(error)
       }
     })
   }
+
+  private async filterSubscribedChannelV3(list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {
+
+    const signinDid = (await this.getSigninData()).did;
+    switch (subscribedChannelType) {
+      case FeedsData.SubscribedChannelType.ALL_CHANNEL:
+        return list;
+      case FeedsData.SubscribedChannelType.MY_CHANNEL:
+        return _.filter(list, subscribedChannel => {
+          return subscribedChannel.destDid == signinDid;
+        });
+
+      case FeedsData.SubscribedChannelType.OTHER_CHANNEL:
+        return _.filter(list, subscribedChannel => {
+          return subscribedChannel.destDid != signinDid;
+        });
+      default:
+        return list;
+    }
+  }
+
 
   getSubscribedChannelV3ByKey(destDid: string, channelId: string): FeedsData.SubscribedChannelV3 {
     if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return null;

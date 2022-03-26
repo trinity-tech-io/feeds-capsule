@@ -7,6 +7,7 @@ import { FeedService, SignInData } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-subscriptions',
@@ -36,7 +37,8 @@ export class SubscriptionsPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private intentService: IntentService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() { }
@@ -44,7 +46,7 @@ export class SubscriptionsPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.addEvents();
-    this.initFolling();
+    this.initFollowing();
   }
 
   addEvents() {
@@ -61,13 +63,13 @@ export class SubscriptionsPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
       this.zone.run(() => {
-        this.initFolling();
+        this.initFollowing();
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.refreshPage, () => {
       this.zone.run(() => {
-        this.initFolling();
+        this.initFollowing();
       });
     });
 
@@ -132,10 +134,10 @@ export class SubscriptionsPage implements OnInit {
     }
   }
 
-  initFolling() {
-    this.followingList = this.feedService.getFollowedChannelList();
-    this.initnodeStatus(this.followingList);
-    this.feedService.updateSubscribedFeed();
+  initFollowing() {
+    this.followingList = this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+    // this.initnodeStatus(this.followingList);
+    // this.feedService.updateSubscribedFeed();
   }
 
   initnodeStatus(list: any) {
@@ -153,7 +155,7 @@ export class SubscriptionsPage implements OnInit {
 
   doRefresh(event: any) {
     let sId = setTimeout(() => {
-      this.initFolling();
+      this.initFollowing();
       event.target.complete();
       clearTimeout(sId);
     }, 500);
@@ -186,7 +188,7 @@ export class SubscriptionsPage implements OnInit {
           return;
         }
 
-        this.feedsServiceApi.unsubscribeChannel(destDid,channelId);
+        this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
         break;
@@ -196,10 +198,10 @@ export class SubscriptionsPage implements OnInit {
         //share channel
         await this.native.showLoading("common.generateSharingLink");
         try {
-          let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId) || null;
+          let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
           let signInData: SignInData = this.feedService.getSignInData() || null;
           let ownerDid = signInData.did || "";
-          const sharedLink = await this.intentService.createShareLink(destDid,channelId, "0",ownerDid,channel);
+          const sharedLink = await this.intentService.createShareLink(destDid, channelId, "0", ownerDid, channel);
           this.intentService.share(this.intentService.createShareChannelTitle(destDid, channelId), sharedLink);
         } catch (error) {
         }

@@ -120,27 +120,27 @@ export class CreatenewpostPage implements OnInit {
 
     if (currentFeed == null) {
 
-      const item = await this.dataHelper.getSubscribedChannelV3List();
+      const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
       currentFeed = await this.feedService.getChannelFromIdV3(item[1].destDid, item[1].channelId);
     }
 
     this.channelIdV3 = currentFeed.channelId;
     this.channelName = currentFeed['name'] || '';
     this.subscribers = currentFeed['subscribers'] || '';
-    let channelAvatarUri =currentFeed['avatar'] || '';
-    if(channelAvatarUri != ''){
-       let destDid: string = currentFeed.destDid;
-       this.handleChannelAvatar(channelAvatarUri,destDid);
+    let channelAvatarUri = currentFeed['avatar'] || '';
+    if (channelAvatarUri != '') {
+      let destDid: string = currentFeed.destDid;
+      this.handleChannelAvatar(channelAvatarUri, destDid);
     }
   }
 
-  handleChannelAvatar(channelAvatarUri: string,destDid: string){
-    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
-    this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
-    .then((result)=>{
-       this.channelAvatar = result;
-    }).catch((err)=>{
-    })
+  handleChannelAvatar(channelAvatarUri: string, destDid: string) {
+    let fileName: string = "channel-avatar-" + channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(destDid, channelAvatarUri, fileName, "0")
+      .then((result) => {
+        this.channelAvatar = result;
+      }).catch((err) => {
+      })
   }
 
   async ionViewWillEnter() {
