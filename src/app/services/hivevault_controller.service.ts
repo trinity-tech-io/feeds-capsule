@@ -141,7 +141,7 @@ export class HiveVaultController {
           updatedAt: updatedAt,
           name: channelName,
           intro: intro,
-          avatar: avatarAddress, // 存储图片
+          avatar: avatarHiveURL, // 存储图片
           type: type,
           tipping_address: tippingAddress,
           nft: nft,
