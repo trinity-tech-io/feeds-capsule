@@ -287,7 +287,7 @@ export class CreatenewpostPage implements OnInit {
   prepareTempPost() { }
 
   async sendPost() {
-    this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, TAG)
+    await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, TAG)
   }
 
   async publishPostThrowMsg(tempPostId: string) {
@@ -725,13 +725,4 @@ export class CreatenewpostPage implements OnInit {
 
     return pathObj;
   }
-}
-
-function ab2str(u, f) {
-  var b = new Blob([u]);
-  var r = new FileReader();
-  r.readAsText(b, 'utf-8');
-  r.onload = function () {
-    if (f) f.call(null, r.result);
-  };
 }
