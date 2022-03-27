@@ -15,20 +15,17 @@
         </ion-col>
       </ion-row>
     </ion-item>
-    <div (click)="newPostTextArea()">
-    <ion-textarea  #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
+    <div (click)="clickTextArea()">
+    <ion-textarea  #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="editContent">
     </ion-textarea>
     </div>
     <div *ngIf="imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
-      <!-- <img class="remove" src="/assets/icons/remove.svg" (click)="imgUrl = ''"/> -->
     </div>
 
 
     <div *ngIf="posterImg!==''" style="width: 320px;height:200px;margin: 0 auto;">
-      <!-- <div style="position: relative;">
-      <img style="position:absolute;z-index: 10;right: -8px;top: -8px;width: 20px;height: 20px;" src="/assets/icons/remove.svg" (click)="removeVideo()"/>
-      </div> -->
+
       <vg-player>
         <vg-overlay-play id={{destDid+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>
         <vg-buffering id={{destDid+channelId+postId}}vgbufferingeditpost></vg-buffering>
@@ -46,13 +43,9 @@
     <p *ngIf="totalProgress>0&&totalProgress!=100" style="text-align: center;">{{"common.videoloading"|translate}} {{totalProgress}}%</p>
     <ion-row class="submit-row">
       <ion-col class="left-col">
-        <!-- <ion-icon id="image" mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon>
-        <ion-icon id="camera" mode="ios" name="camera" (click)="addImg(1)"  *ngIf="posterImg ===''"></ion-icon>
-        <ion-icon id="selectvideo" mode="ios" name="selectvideo" (click)="selectvideo()" *ngIf="imgUrl === ''" ></ion-icon>
-        <ion-icon id="videocam" name="videocam" (click)="videocam()"*ngIf="imgUrl === ''"  ></ion-icon> -->
       </ion-col>
       <ion-col class="right-col" size="6">
-        <ion-button (click)="post()">
+        <ion-button (click)="clickEidtPost()">
           <ion-label>{{ 'CreatenewpostPage.post' | translate }}</ion-label>
         </ion-button>
       </ion-col>

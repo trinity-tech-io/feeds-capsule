@@ -376,4 +376,8 @@ export class HiveVaultController {
     });
   }
 
+  updatePost(postId: string, channelId: string, newType: string, newTag:string, newContent:string) {
+    return this.hiveVaultApi.updatePost(postId,channelId,newType,newTag,newContent);
+  }
+
 }
