@@ -380,4 +380,9 @@ export class HiveVaultController {
     return this.hiveVaultApi.updatePost(postId,channelId,newType,newTag,newContent);
   }
 
+  deletePost(postId: string) {
+    console.log("=====postId=======",postId);
+    return this.hiveVaultApi.deletePost(postId);
+  }
+
 }

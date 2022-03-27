@@ -12,6 +12,7 @@ import { Config } from './config';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveVaultController } from './hivevault_controller.service';
 
 @Injectable()
 export class MenuService {
@@ -44,7 +45,8 @@ export class MenuService {
     private nftContractControllerService: NFTContractControllerService,
     private events: Events,
     private dataHelper: DataHelper,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   async showChannelMenu(
@@ -538,11 +540,22 @@ export class MenuService {
     that.native
       .showLoading('common.waitMoment', () => { }, 50000)
       .then(() => {
-        that.feedService.deletePost(
-          that.nodeId,
-          Number(that.channelId),
-          Number(that.postId),
-        );
+        // that.feedService.deletePost(
+        //   that.nodeId,
+        //   Number(that.channelId),
+        //   Number(that.postId),
+        // );
+        try {
+          that.hiveVaultController.deletePost(that.postId).then((result: any)=>{
+            console.log("========1111111111=======",result);
+             that.events(FeedsEvent.PublishType.deletePostFinish);
+          }).catch((err:any)=>{
+            that.native.hideLoading();
+          })
+        } catch (error) {
+          that.native.hideLoading();
+        }
+
       })
       .catch(() => {
         that.native.hideLoading();

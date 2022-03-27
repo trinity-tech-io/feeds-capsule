@@ -272,14 +272,14 @@ export class CreatenewpostPage implements OnInit {
         //show dialog
         this.isLoading = true;
         try {
-          await this.sendPost();
-          this.isLoading = false;
+         await this.sendPost();
+         this.isLoading = false;
+            //dismiss dialog
+         this.backHome();
         } catch (error) {
           this.isLoading = false;
           this.native.toast('common.sendFail'); // 需要更改错误提示
         }
-        //dismiss dialog
-        this.backHome();
       }
     });
   }
