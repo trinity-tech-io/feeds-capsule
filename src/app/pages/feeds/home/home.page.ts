@@ -289,6 +289,9 @@ export class HomePage implements OnInit {
         this.refreshPostList();
         break;
       case 'pasar':
+        if(this.searchText != "" ||  this.searchText != null){
+          return;
+        }
         await this.refreshLocalPasarData();
         break;
     }
@@ -2466,7 +2469,7 @@ export class HomePage implements OnInit {
 
     if (events && events.keyCode === 13) {
       this.keyboard.hide();
-      if (this.searchText === "") {
+      if (this.searchText === "" || this.searchText === null) {
         this.ionClear();
         return;
       }
@@ -2478,7 +2481,7 @@ export class HomePage implements OnInit {
   handlePasarSearch() {
     this.zone.run(async () => {
       await this.native.showLoading('common.waitMoment');
-      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText);
+      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText,this.sortType);
       this.refreshPasarGridVisibleareaImage();
       this.native.hideLoading();
     });
@@ -2684,7 +2687,13 @@ export class HomePage implements OnInit {
     this.dataHelper.setFeedsSortType(sortType);
     event.stopPropagation();
     await this.native.showLoading('common.waitMoment');
-    await this.refreshPasarList();
+    let searchText = this.searchText || '';
+    if(searchText != ''){
+      this.pasarList = await this.nftContractHelperService.searchPasarOrder(FeedsData.SearchType.DEFAULT, this.searchText,this.sortType);
+      this.refreshPasarGridVisibleareaImage();
+    }else{
+      await this.refreshPasarList();
+    }
     this.isShowSearchField = false;
     this.native.hideLoading();
   }

@@ -93,7 +93,7 @@ export class PasarAssistService {
   }
 
   //https://test.trinity-feeds.app/pasar/api/v1/searchSaleOrders?searchType=description&key=%E6%99%AF%20%E6%95%8F
-  searchPasarOrder(searchType: FeedsData.SearchType, key: string, saveMode: boolean) {
+  searchPasarOrder(searchType: FeedsData.SearchType, key: string, saveMode: boolean, sortType: FeedsData.SortType) {
     return new Promise(async (resolve, reject) => {
       try {
         let url = '';
@@ -103,6 +103,25 @@ export class PasarAssistService {
           url = Config.PASAR_ASSIST_TESTNET_SERVER + 'searchSaleOrders'
 
         url = url + '?key=' + key;
+
+        if (sortType != null && sortType != undefined) {
+          switch (sortType) {
+            case FeedsData.SortType.PRICE_HIGHEST:
+              url = url + '&sortType=price';
+              break;
+            case FeedsData.SortType.PRICE_CHEAPEST:
+              url = url + '&sortType=price&sort=asc';
+              break;
+            case FeedsData.SortType.TIME_ORDER_LATEST:
+              url = url + '&sortType=createTime';
+              break;
+            case FeedsData.SortType.TIME_ORDER_OLDEST:
+              url = url + '&sortType=createTime&sort=asc';
+              break;
+            default:
+              break;
+          }
+        }
         switch (searchType) {
           case FeedsData.SearchType.NAME:
             url = url + '&searchType=name';
