@@ -25,7 +25,7 @@ export class DisclaimerPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    // this.styleObj['height'] = screen.height - 245 + 'px';
+    this.styleObj['height'] = screen.height - 245 + 'px';
     this.initTitle();
   }
 
