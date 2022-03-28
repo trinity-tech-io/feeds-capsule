@@ -1522,11 +1522,12 @@ export class NFTContractHelperService {
     }
   }
 
-  searchPasarOrder(searchType: FeedsData.SearchType, key: string): Promise<FeedsData.NFTItem[]> {
+  searchPasarOrder(searchType: FeedsData.SearchType, key: string, sortType: FeedsData.SortType ): Promise<FeedsData.NFTItem[]> {
+
     return new Promise(async (resolve, reject) => {
       try {
         const isShowAdult = this.dataHelper.getAdultStatus();
-        const result = await this.pasarAssistService.searchPasarOrder(searchType, key, !isShowAdult);
+        const result = await this.pasarAssistService.searchPasarOrder(searchType, key, !isShowAdult, sortType);
         const list = this.parseSearchResultFromAssistResult(result, FeedsData.SyncMode.REFRESH);
         resolve(list);
       } catch (error) {
