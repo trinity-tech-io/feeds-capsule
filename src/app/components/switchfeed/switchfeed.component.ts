@@ -32,6 +32,7 @@ export class SwitchfeedComponent implements OnInit {
         let avatarUri  = channel.avatar || "";
         if(avatarUri != ""){
         let destDid = channel.destDid;
+        this.avatarList[avatarUri] = "./assets/icon/reserve.svg";
         let avatar =  await this.parseAvatar(avatarUri,destDid) || './assets/icon/reserve.svg';
         this.avatarList[avatarUri] = avatar;
         }else{

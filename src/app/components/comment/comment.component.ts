@@ -11,6 +11,8 @@ import { NativeService } from 'src/app/services/NativeService';
 import { FeedService } from 'src/app/services/FeedService';
 import { IonTextarea, Platform } from '@ionic/angular';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+
 
 @Component({
   selector: 'app-comment',
@@ -38,7 +40,8 @@ export class CommentComponent implements OnInit {
     public native: NativeService,
     private feedService: FeedService,
     private platform: Platform,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
@@ -47,6 +50,8 @@ export class CommentComponent implements OnInit {
     } else {
       this.isAndroid = "android";
     }
+
+    this.parseAvatar();
   }
 
   ionViewDidEnter() {
@@ -59,6 +64,31 @@ export class CommentComponent implements OnInit {
 
   addImg() {
     this.native.toast('common.comingSoon');
+  }
+
+  async parseAvatar() {
+   let avatarUri = this.channelAvatar;
+    this.channelAvatar = "./assets/icon/reserve.svg";
+    let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
+    this.channelAvatar = avatar;
+  }
+
+  handleChannelAvatar(channelAvatarUri: string,destDid: string): Promise<string>{
+    return new Promise(async (resolve, reject) => {
+      try {
+        let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+        this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
+        .then((result)=>{
+           let channelAvatar = result || '';
+           resolve(channelAvatar);
+        }).catch((err)=>{
+          resolve('');
+        })
+      }catch(err){
+        resolve('');
+      }
+    });
+
   }
 
   sendComment() {
