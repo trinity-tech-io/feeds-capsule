@@ -186,12 +186,12 @@ export class MyApp {
           }
 
           //分享菜单了 app-sharemenu
-
-          let sharemenu:HTMLElement = document.querySelector("app-sharemenu")|| null;
+          let sharemenu:HTMLElement = document.querySelector("app-sharemenu") || null;
           if(sharemenu != null){
             let sharemenuMask:HTMLElement = document.getElementById("sharemenuMask") || null;
            if(sharemenuMask!= null){
             sharemenuMask.click();
+            sharemenu.remove();
            }
             return;
            }
