@@ -1841,7 +1841,6 @@ export class ProfilePage implements OnInit {
             this.intentService.share(title, sharedLink);
           } catch (error) {
           }
-
           this.native.hideLoading();
           return;
         }
@@ -1892,6 +1891,10 @@ export class ProfilePage implements OnInit {
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
         break;
+    }
+    let sharemenu:HTMLElement = document.querySelector("app-sharemenu") || null;
+    if(sharemenu != null){
+      sharemenu.remove();
     }
   }
 
@@ -1950,6 +1953,7 @@ export class ProfilePage implements OnInit {
       followStatus: followStatus,
       channelSubscribes: feedSubscribes,
     });
+
     this.native.navigateForward(['/feedinfo'], '');
   }
 
