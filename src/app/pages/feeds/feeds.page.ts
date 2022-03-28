@@ -33,7 +33,6 @@ export class FeedsPage implements OnInit {
 
   initTab() {
     let currentTab = this.feedService.getCurTab();
-    console.log("======================");
     switch (currentTab) {
       case 'home':
         this.home();
