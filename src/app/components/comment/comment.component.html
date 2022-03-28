@@ -6,14 +6,14 @@
       <ion-row class="channel-row ion-activatable ripple">
         <ion-col size="2.5" class="left-col">
 
-          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="commentId!=0">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="commentId!='0'">
             <img style="border: 1.25px solid #368bff;" class="comment-avatar" src={{channelAvatar}}>
             <div class="feed-source-card-status circlePosition">
               <div class="offline" [class.online]="onlineStatus == 0"></div>
             </div>
           </div>
 
-          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="commentId===0">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="commentId==='0'">
             <img src={{channelAvatar}}>
             <div class="feed-source-card-status circlePosition">
               <div class="offline" [class.online]="onlineStatus == 0"></div>

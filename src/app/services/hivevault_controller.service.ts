@@ -385,4 +385,8 @@ export class HiveVaultController {
     return this.hiveVaultApi.deletePost(postId);
   }
 
+  updateComment(destDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    return this.hiveVaultApi.updateComment(destDid, channelId, postId, commentId, content);
+  }
+
 }

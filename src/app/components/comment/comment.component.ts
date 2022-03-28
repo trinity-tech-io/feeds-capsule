@@ -25,10 +25,10 @@ export class CommentComponent implements OnInit {
   @Input() public channelAvatar = '';
   @Input() public channelName = '';
 
-  @Input() public destDid = '';
-  @Input() public channelId = 0;
-  @Input() public postId = 0;
-  @Input() public commentId = 0;
+  @Input() public destDid: string = '';
+  @Input() public channelId: string = '';
+  @Input() public postId: string = '0';
+  @Input() public commentId: string = '0';
   @Input() public onlineStatus = 0;
 
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -109,13 +109,23 @@ export class CommentComponent implements OnInit {
   }
 
   publishComment() {
-    this.feedsServiceApi.postComment(
-      this.destDid,
-      Number(this.channelId),
-      Number(this.postId),
-      this.commentId,
-      this.newComment,
-    );
+    try {
+      this.hiveVaultController.updateComment(
+        this.destDid,
+        this.channelId,
+        this.postId,
+        this.commentId,
+        this.newComment
+      ).then(()=>{
+        this.native.hideLoading();
+        this.hideComponent();
+      }).catch((err)=>{
+        this.native.hideLoading();
+      })
+    } catch (error) {
+      this.native.hideLoading();
+    }
+
   }
 
   hideComponent() {
