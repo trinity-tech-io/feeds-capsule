@@ -121,7 +121,7 @@ export class CreatenewpostPage implements OnInit {
     if (currentFeed == null) {
 
       const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
-      currentFeed = await this.feedService.getChannelFromIdV3(item[1].destDid, item[1].channelId);
+      currentFeed = await this.feedService.getChannelFromIdV3(item[0].destDid, item[0].channelId);
       this.feedService.setCurrentChannel(currentFeed);
     }
 

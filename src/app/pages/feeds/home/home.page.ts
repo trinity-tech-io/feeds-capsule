@@ -780,9 +780,9 @@ export class HomePage implements OnInit {
     if (signInData === null) {
       return;
     }
-    let ownerDid = signInData.did || "";
+    let ownerDid = signInData.did || '';
     let channelName = this.getChannelName(post.destDid, post.channelId);
-    if (ownerDid != null && ownerDid === destDid) {//自己的post
+    if (ownerDid != '' && ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
         post.destDid,
         post.channelId,
