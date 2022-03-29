@@ -155,7 +155,7 @@ export class HiveVaultController {
           proof: '',
           memo: '',
         }
-        console.log("create channelId ==== ", channelId)
+        //console.log("create channelId ==== ", channelId)
         await this.dataHelper.updateChannelV3(channelV3);
         resolve(channelV3.channelId)
       } catch (error) {
@@ -485,13 +485,6 @@ export class HiveVaultController {
   deleteComment(targetDid: string, channelId: string, postId: string, commentId: string){
     console.log("===deleteComment==",targetDid,channelId,postId,commentId);
     return this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
-  }
-
-
-
-  updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
-    newTippingAddress: string, newNft: string) {
-    return this.hiveVaultApi.updateChannel(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
   }
 
 }
