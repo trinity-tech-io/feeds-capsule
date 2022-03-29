@@ -265,8 +265,6 @@ export class ChannelsPage implements OnInit {
     console.log("this.channelId== " + this.channelId);
     console.log("this.destDid==" + this.destDid);
 
-    console.log("channel.avatar ==== 1" + channel);
-
     this.checkFollowStatus(this.destDid, this.channelId);
     if (channel == null || channel == undefined) return;
     this.channelName = channel.name;

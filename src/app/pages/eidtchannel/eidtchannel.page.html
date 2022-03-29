@@ -5,11 +5,11 @@
     <ion-list>
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
-            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputName'|translate" [(ngModel)] ="name"></ion-input>
+            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputName'|translate" [(ngModel)] ="channelName"></ion-input>
         </ion-item>
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
-            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="des"></ion-input>
+            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="channelDes"></ion-input>
         </ion-item>
         <ion-item lines="none" (click)="profileimage()" class="removeBorder">
           <ion-row>

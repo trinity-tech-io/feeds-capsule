@@ -18,6 +18,7 @@ import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { CarrierService } from 'src/app/services/CarrierService';
 import { PopupProvider } from 'src/app/services/popup';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-eidtchannel',
@@ -27,10 +28,10 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 export class EidtchannelPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public connectionStatus = 1;
-  public nodeId: string = '';
-  public channelId: number = 0;
-  public name: string = '';
-  public des: string = '';
+  public destDid: string = '';
+  public channelId: string = '';
+  public channelName: string = '';
+  public channelDes: string = '';
   public channelAvatar = '';
   public avatar = '';
   public oldChannelInfo: any = {};
@@ -58,17 +59,18 @@ export class EidtchannelPage implements OnInit {
     private pasarAssistService: PasarAssistService,
     private carrierService: CarrierService,
     private popupProvider: PopupProvider,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
     let item = this.feedService.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
-    this.nodeId = channelInfo['nodeId'] || '';
+    this.destDid = channelInfo['nodeId'] || '';
     this.channelId = channelInfo['channelId'] || '';
-    this.name = channelInfo['name'] || '';
-    this.des = channelInfo['des'] || '';
+    this.channelName = channelInfo['name'] || '';
+    this.channelDes = channelInfo['des'] || '';
     this.channelOwner = channelInfo['channelOwner'] || '';
     this.channelSubscribes = channelInfo['channelSubscribes'] || '';
     this.followStatus = channelInfo['followStatus'] || false;
@@ -84,18 +86,6 @@ export class EidtchannelPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.editFeedInfoFinish, () => {
-      this.zone.run(() => {
-        let channelInfo = this.feedService.getChannelInfo();
-        channelInfo["name"] = this.name;
-        channelInfo["des"] = this.des;
-        this.feedService.setChannelInfo(channelInfo);
-        //this.updatePublicData();
-        this.native.hideLoading();
-        this.native.pop();
       });
     });
 
@@ -124,7 +114,6 @@ export class EidtchannelPage implements OnInit {
       this.feedService.setProfileIamge(this.oldChannelAvatar);
     }
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.editFeedInfoFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
@@ -132,10 +121,10 @@ export class EidtchannelPage implements OnInit {
 
   profileimage() {
     this.feedService.setChannelInfo({
-      destDid: this.nodeId,
+      destDid: this.destDid,
       channelId: this.channelId,
-      name: this.name,
-      des: this.des,
+      name: this.channelName,
+      des: this.channelDes,
       channelOwner: this.channelOwner,
       channelSubscribes: this.channelSubscribes,
       followStatus: this.followStatus
@@ -154,56 +143,68 @@ export class EidtchannelPage implements OnInit {
       return;
     }
 
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-    await this.native.showLoading('common.waitMoment', isDismiss => { })
-    await this.getPublicStatus();
-    this.native.hideLoading();
-    if (this.isPublic === "1") {
-      this.open("EidtchannelPage.des", "EidtchannelPage.des1")
-      return;
-    }
-    if (this.isPublic === "2") {
-      this.open("EidtchannelPage.des", "EidtchannelPage.des2")
-      return;
-    }
-    if (this.isPublic === "3") {
-      this.open("EidtchannelPage.des", "EidtchannelPage.des3")
-      return;
-    }
+    // if (this.feedService.getServerStatusFromId(this.destDid) != 0) {
+    //   this.native.toastWarn('common.connectionError1');
+    //   return;
+    // }
+    // await this.native.showLoading('common.waitMoment', isDismiss => { })
+    // await this.getPublicStatus();
+    // this.native.hideLoading();
+    // if (this.isPublic === "1") {
+    //   this.open("EidtchannelPage.des", "EidtchannelPage.des1")
+    //   return;
+    // }
+    // if (this.isPublic === "2") {
+    //   this.open("EidtchannelPage.des", "EidtchannelPage.des2")
+    //   return;
+    // }
+    // if (this.isPublic === "3") {
+    //   this.open("EidtchannelPage.des", "EidtchannelPage.des3")
+    //   return;
+    // }
     this.isClickConfirm = true;
 
     if (this.checkparms() && this.isPublic === "") {
-      this.native
-        .showLoading('common.waitMoment', isDismiss => { })
-        .then(() => {
-          this.feedsServiceApi.editFeedInfo(
-            this.nodeId,
-            Number(this.channelId),
-            this.name,
-            this.des,
-            this.avatar,
-          );
-        });
+     await this.native.showLoading('common.waitMoment', isDismiss => { });
+     this.editChannelInfo();
     }
   }
 
+  editChannelInfo() {
+    try {
+      this.hiveVaultController.updateChannel(
+        this.channelId,this.channelName,this.channelDes,this.channelAvatar,"public",'','',''
+      ).then((result)=>{
+        let channelInfo = this.feedService.getChannelInfo();
+        channelInfo["name"] = this.channelName;
+        channelInfo["des"] = this.channelDes;
+        this.feedService.setChannelInfo(channelInfo);
+        this.native.hideLoading();
+        this.native.pop();
+      }).catch((err)=>{
+        this.native.hideLoading();
+      })
+    } catch (error) {
+      this.native.hideLoading();
+      alert("===err=="+JSON.stringify(error));
+    }
+
+  }
+
   checkparms() {
-    let nameValue = this.name || '';
+    let nameValue = this.channelName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
       this.native.toast_trans('CreatenewfeedPage.inputName');
       return false;
     }
 
-    if (this.name.length > 32) {
+    if (this.channelName.length > 32) {
       this.native.toast_trans('CreatenewfeedPage.tipMsgLength1');
       return;
     }
 
-    let descValue = this.des || '';
+    let descValue = this.channelDes || '';
     descValue = this.native.iGetInnerText(descValue);
 
     if (descValue === '') {
@@ -211,7 +212,7 @@ export class EidtchannelPage implements OnInit {
       return false;
     }
 
-    if (this.des.length > 128) {
+    if (this.channelDes.length > 128) {
       this.native.toast_trans('CreatenewfeedPage.tipMsgLength');
       return;
     }
@@ -222,8 +223,8 @@ export class EidtchannelPage implements OnInit {
     }
 
     if (
-      this.oldChannelInfo['name'] === this.name &&
-      this.oldChannelInfo['des'] === this.des &&
+      this.oldChannelInfo['name'] === this.channelName &&
+      this.oldChannelInfo['des'] === this.channelDes &&
       this.oldChannelAvatar === this.channelAvatar
     ) {
       this.native.toast_trans('common.nochanges');
@@ -237,13 +238,13 @@ export class EidtchannelPage implements OnInit {
     if (this.isPublic === '') {
       return;
     }
-    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.nodeId);
+    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.destDid);
     let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let obj = {
       feedsUrlHash: feedsUrlHash,
-      name: this.name,
-      description: this.des,
+      name: this.channelName,
+      description: this.channelDes,
       feedsAvatar: this.avatar,
       followers: this.oldChannelInfo['subscribers'],
     };
@@ -262,7 +263,7 @@ export class EidtchannelPage implements OnInit {
       return;
     }
 
-    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.nodeId);
+    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.destDid);
     let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
     let tokenInfo = await this.isExitStrick(feedsUrl);
     if (tokenInfo != null) {
@@ -292,7 +293,7 @@ export class EidtchannelPage implements OnInit {
 
   async getChannelCollectionsStatus() {
     try {
-      let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
+      let server = this.feedsServiceApi.getServerbyNodeId(this.destDid) || null;
       if (server === null) {
         return;
       }

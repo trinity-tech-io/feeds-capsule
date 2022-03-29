@@ -171,9 +171,10 @@ export class PostdetailPage implements OnInit {
     })
   }
 
-  initRefresh() {
+ async initRefresh() {
     this.startIndex = 0;
-    this.totalData = this.sortCommentList();
+    this.totalData = await this.sortCommentList();
+    console.log("=====this.totalData=====",JSON.stringify(this.totalData));
     if (this.totalData.length - this.pageNumber > 0) {
       this.captainCommentList = this.totalData.slice(0, this.pageNumber);
 
@@ -184,32 +185,32 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
-    this.totalData = this.sortCommentList();
+    //this.totalData = this.sortCommentList();
   }
 
   initOwnCommentObj() {
     let captainCommentList = _.cloneDeep(this.captainCommentList);
 
-    _.each(captainCommentList, (item: any) => {
-      let key = item.id;
-      this.userNameList[key] = item['user_name'];
-      this.checkCommentIsMine(item);
-      let commentId = item.id;
-      let replayCommentList =
-        this.feedService.getReplayCommentList(
-          this.destDid,
-          this.channelId,
-          this.postId,
-          commentId,
-        ) || [];
-      item['replayCommentSum'] = replayCommentList.length;
-    });
+    // _.each(captainCommentList, (item: any) => {
+    //   let key = item.commentId;
+    //   this.userNameList[key] = item['user_name'];
+    //   this.checkCommentIsMine(item);
+    //   let commentId = item.commentId;
+    //   let replayCommentList =
+    //     this.feedService.getReplayCommentList(
+    //       this.destDid,
+    //       this.channelId,
+    //       this.postId,
+    //       commentId,
+    //     ) || [];
+    //   item['replayCommentSum'] = replayCommentList.length;
+    // });
 
     this.captainCommentList = _.cloneDeep(captainCommentList);
   }
 
-  refreshCommentList() {
-    this.totalData = this.sortCommentList();
+ async refreshCommentList() {
+    this.totalData = await this.sortCommentList();
     if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
@@ -226,19 +227,27 @@ export class PostdetailPage implements OnInit {
     this.initOwnCommentObj();
   }
 
-  sortCommentList() {
-    let captainCommentList =
-      this.feedService.getCaptainCommentList(
-        this.destDid,
-        this.channelId,
-        this.postId,
-      ) || [];
+ async sortCommentList() {
+  let captainCommentList = [];
+    try {
+      captainCommentList =
+      await this.hiveVaultController.getCommentsByPost(
+         this.destDid,
+         this.channelId,
+         this.postId,
+       ) || [];
+    } catch (error) {
+
+    }
+
+    console.log("====111111==="+JSON.stringify(captainCommentList));
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     if (!this.hideDeletedComments) {
       captainCommentList = _.filter(captainCommentList, (item: any) => {
         return item.status != 1;
       });
     }
+    console.log("====22222222==="+JSON.stringify(captainCommentList));
     this.maxCount = captainCommentList.length;
     return captainCommentList;
   }
@@ -518,13 +527,15 @@ export class PostdetailPage implements OnInit {
     );
   }
 
-  checkLikedComment(commentId: number) {
-    return this.feedService.checkLikedComment(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      commentId,
-    );
+  checkLikedComment(commentId: string) {
+    // return this.feedService.checkLikedComment(
+    //   this.destDid,
+    //   this.channelId,
+    //   this.postId,
+    //   commentId,
+    // );
+
+    return false;
   }
 
   like() {
@@ -556,7 +567,7 @@ export class PostdetailPage implements OnInit {
     );
   }
 
-  likeComment(commentId: number) {
+  likeComment(commentId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -567,22 +578,22 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    if (this.checkLikedComment(commentId)) {
-      this.feedsServiceApi.postUnlike(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        commentId,
-      );
-      return;
-    }
+    // if (this.checkLikedComment(commentId)) {
+    //   this.feedsServiceApi.postUnlike(
+    //     this.destDid,
+    //     this.channelId,
+    //     this.postId,
+    //     commentId,
+    //   );
+    //   return;
+    // }
 
-    this.feedsServiceApi.postLike(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      commentId,
-    );
+    // this.feedsServiceApi.postLike(
+    //   this.destDid,
+    //   this.channelId,
+    //   this.postId,
+    //   commentId,
+    // );
   }
 
   handleUpdateDate(updatedTime: number) {
@@ -593,7 +604,7 @@ export class PostdetailPage implements OnInit {
   menuMore() {
     let isMine = this.checkChannelIsMine();
     this.pauseVideo();
-    if (isMine === 0 && this.postStatus != 1) {
+    if (isMine === 1 && this.postStatus != 1) {
       this.menuService.showPostDetailMenu(
         this.destDid,
         this.channelId,
@@ -724,8 +735,8 @@ export class PostdetailPage implements OnInit {
     });
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
+  checkServerStatus(destDid: string) {
+    return this.feedService.getServerStatusFromId(destDid);
   }
 
   initnodeStatus() {
@@ -749,76 +760,6 @@ export class PostdetailPage implements OnInit {
         }
       }).catch(() => {
       })
-
-    // if (content.version == '2.0') {
-    //   this.postImage = './assets/icon/reserve.svg';//set Reserve Image
-    //   const mediaDatas = content.mediaDatas;
-    //   if (mediaDatas && mediaDatas.length > 0) {
-    //     const elements = mediaDatas[0];
-    //     this.postHelperService.getPostData(elements.thumbnailCid, elements.type)
-    //       .then((value) => {
-    //         this.postImage = value;
-    //       })
-    //       .catch(() => {
-    //         //TODO
-    //       });
-    //   }
-    //   return;
-    // }
-
-    // let imageKey = this.feedService.getImageKey(
-    //   this.destDid,
-    //   this.channelId,
-    //   this.postId,
-    //   0,
-    //   0,
-    // );
-
-    // let thumbkey =
-    //   this.feedService.getImgThumbKeyStrFromId(
-    //     this.destDid,
-    //     this.channelId,
-    //     this.postId,
-    //     0,
-    //     0,
-    //   ) || '';
-
-    // let contentVersion = this.feedService.getContentVersion(
-    //   this.destDid,
-    //   this.channelId,
-    //   this.postId,
-    //   0,
-    // );
-
-    // if (contentVersion == '0') {
-    //   imageKey = thumbkey;
-    // }
-    // if (imageKey != '') {
-    //   this.feedService
-    //     .getData(imageKey)
-    //     .then(image => {
-    //       let realImage = image || '';
-    //       if (realImage != "") {
-    //         this.postImage = realImage;
-    //       } else {
-    //         this.feedService.getData(thumbkey).then((thumbImagedata) => {
-    //           let thumbImage = thumbImagedata || '';
-    //           this.postImage = thumbImage;
-    //         }).catch(reason => {
-    //           Logger.log(TAG,
-    //             "Excute 'getImage' in post page is error , get image data error, error msg is ",
-    //             reason
-    //           );
-    //         })
-    //       }
-    //     })
-    //     .catch(reason => {
-    //       Logger.log(TAG,
-    //         "Excute 'getImage' in post page is error , get image data error, error msg is ",
-    //         reason
-    //       );
-    //     });
-    // }
   }
 
   doRefresh(event: any) {
@@ -909,15 +850,15 @@ export class PostdetailPage implements OnInit {
     this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
-  checkCommentIsMine(comment: any) {
-    let commentId = comment.id;
-    let isOwnComment = this.feedService.checkCommentIsMine(
-      comment.nodeId,
-      comment.channel_id,
-      comment.post_id,
-      Number(comment.id),
-    );
-    this.isOwnComment[commentId] = isOwnComment;
+  checkCommentIsMine(comment: FeedsData.CommentV3) {
+    let commentId = comment.commentId;
+    // let isOwnComment = this.feedService.checkCommentIsMine(
+    //   comment.destDid,
+    //   comment.channelId,
+    //   comment.postId,
+    //   comment.commentId,
+    // );
+    this.isOwnComment[commentId] = true;
   }
 
   hideComponent(event) {
@@ -1185,7 +1126,7 @@ export class PostdetailPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isPress = true;
     }
-    let text = this.feedsServiceApi.parsePostContentText(postContent);
+    let text = postContent || "";
     this.native
       .copyClipboard(text)
       .then(() => {

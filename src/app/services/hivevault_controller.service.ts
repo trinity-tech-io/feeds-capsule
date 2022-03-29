@@ -389,4 +389,9 @@ export class HiveVaultController {
     return this.hiveVaultApi.updateComment(destDid, channelId, postId, commentId, content);
   }
 
+  updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
+    newTippingAddress: string, newNft: string) {
+    return this.hiveVaultApi.updateChannel(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
+  }
+
 }
