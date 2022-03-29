@@ -95,18 +95,28 @@ export class HiveVaultController {
   getCommentByChannel() {
   }
 
-  async publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string) {
-    const mediaData = await this.postHelperService.prepareMediaDataV3(imagesBase64, videoData)
-    let medaType = FeedsData.MediaType.noMeida
-    if (imagesBase64[0].length > 0) {
-      medaType = FeedsData.MediaType.containsImg
+  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const mediaData = await this.postHelperService.prepareMediaDataV3(imagesBase64, videoData)
+        let medaType = FeedsData.MediaType.noMeida
+        if (imagesBase64 && imagesBase64.length > 0) {
+          medaType = FeedsData.MediaType.containsImg
+        } else if (videoData) {
+          medaType = FeedsData.MediaType.containsVideo
+        }
+        const content = this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
 
-    } else if (videoData) {
-      medaType = FeedsData.MediaType.containsVideo
-    }
-    const content = this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
+        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
 
-    return await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
+        // this.dataHelper.addPostV3();
+        resolve(result);
+        return
+      } catch (error) {
+        Logger.error(TAG, 'Publish post error', error);
+        reject(error);
+      }
+    });
   }
 
   async createCollectionAndRregisteScript(callerDid: string) {
@@ -122,37 +132,121 @@ export class HiveVaultController {
     }
   }
 
-  async createChannel(userDid: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<string> {
+  createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = ''): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
         const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(avatarAddress)
-        const doc = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft)
-        const channelId = doc['channel_id']
-        const createdAt = doc['created_at']
-        const updatedAt = doc['updated_at']
-        const category = doc['category']
-        const proof = doc['proof']
+        const insertResult = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft)
 
+        //TODO add category、proof、memo
         let channelV3: FeedsData.ChannelV3 = {
-          destDid: userDid,
-          channelId: channelId,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
+          destDid: insertResult.destDid,
+          channelId: insertResult.channelId,
+          createdAt: insertResult.createdAt,
+          updatedAt: insertResult.updatedAt,
           name: channelName,
           intro: intro,
           avatar: avatarHiveURL, // 存储图片
           type: type,
           tipping_address: tippingAddress,
           nft: nft,
-          category: category,
-          proof: proof,
-          memo: doc.memo,
+          category: '',
+          proof: '',
+          memo: '',
         }
         console.log("create channelId ==== ", channelId)
         await this.dataHelper.updateChannelV3(channelV3);
         resolve(channelV3.channelId)
       } catch (error) {
+        reject(error)
+      }
+    });
+  }
+
+  async updateChannel(channelId: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = ''): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // 处理avatar
+        //TODO add category
+        const signinDid = (await this.dataHelper.getSigninData()).did;
+        const originChannel = await this.dataHelper.getChannelV3ById(signinDid, channelId);
+        const updatedAt = UtilService.getCurrentTimeNum();
+        let avatarHiveURL = '';
+        let finalTippingAddress = '';
+        let finalName = '';
+        let finalIntro = '';
+        let finalType = '';
+        let finalNft = '';
+        let finalCategory = '';
+        let finalMemo = '';
+
+        if (avatarAddress) {
+          avatarHiveURL = await this.hiveVaultApi.uploadMediaData(avatarAddress);
+        } else {
+          avatarHiveURL = originChannel.avatar;
+        }
+
+        if (tippingAddress) {
+          finalTippingAddress = tippingAddress;
+        } else {
+          finalTippingAddress = originChannel.tipping_address;
+        }
+
+        if (channelName) {
+          finalName = channelName;
+        } else {
+          finalName = originChannel.name;
+        }
+
+        if (intro) {
+          finalIntro = intro;
+        } else {
+          finalIntro = originChannel.intro;
+        }
+
+        if (type) {
+          finalType = type;
+        } else {
+          finalType = originChannel.type;
+        }
+
+        if (nft) {
+          finalNft = nft;
+        } else {
+          finalNft = originChannel.nft;
+        }
+
+        if (memo) {
+          finalMemo = memo;
+        } else {
+          finalMemo = originChannel.memo;
+        }
+
+        const proof = '';
+
+        const result = await this.hiveVaultApi.updateChannel(channelId, finalName, finalIntro, avatarHiveURL, finalType, finalMemo, finalTippingAddress, finalNft);
+
+        let channelV3: FeedsData.ChannelV3 = {
+          destDid: signinDid,
+          channelId: channelId,
+          createdAt: originChannel.createdAt,
+          updatedAt: updatedAt,
+          name: finalName,
+          intro: finalIntro,
+          avatar: avatarHiveURL, // 存储图片
+          type: finalType,
+          tipping_address: finalTippingAddress,
+          nft: finalNft,
+          category: finalCategory,
+          proof: proof,
+          memo: finalMemo,
+        }
+
+        await this.dataHelper.updateChannelV3(channelV3);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update channel error', error);
         reject(error)
       }
     });
@@ -255,7 +349,7 @@ export class HiveVaultController {
         }
 
         if (result == '' && isDownload === '') {
-          const downloadResult = await this.hiveVaultApi.downloadScripting(destDid,remotePath);
+          const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
           await this.fileHelperService.saveV3Data(fileName, downloadResult);
           resolve(downloadResult);
           return;
@@ -306,7 +400,7 @@ export class HiveVaultController {
         console.log('createComment result', result);
         resolve('SUCCESS');
       } catch (error) {
-        Logger.error(TAG, 'Sync self post', error);
+        Logger.error(TAG, 'Create comment error', error);
         reject(error);
       }
     });
@@ -323,7 +417,7 @@ export class HiveVaultController {
         console.log('getCommentsByPost parseResult', parseResult);
         resolve(parseResult);
       } catch (error) {
-        Logger.error(TAG, 'Sync self post', error);
+        Logger.error(TAG, 'Get comments by post error', error);
         reject(error);
       }
     });
@@ -340,7 +434,7 @@ export class HiveVaultController {
         console.log('like result is', result);
         resolve(result);
       } catch (error) {
-        Logger.error(TAG, 'Sync self post', error);
+        Logger.error(TAG, 'Like error', error);
         reject(error);
       }
     });
@@ -376,13 +470,12 @@ export class HiveVaultController {
     });
   }
 
-  updatePost(postId: string, channelId: string, newType: string, newTag:string, newContent:string) {
-    return this.hiveVaultApi.updatePost(postId,channelId,newType,newTag,newContent);
+  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string) {
+    return this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent);
   }
 
-  deletePost(postId: string) {
-    console.log("=====postId=======",postId);
-    return this.hiveVaultApi.deletePost(postId);
+  deletePost(postId: string, channelId: string) {
+    return this.hiveVaultApi.deletePost(postId, channelId);
   }
 
   updateComment(destDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {

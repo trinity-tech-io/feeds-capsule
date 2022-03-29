@@ -45,11 +45,11 @@ export class HiveVaultApi {
   }
 
   updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string) {
-    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, '', FeedsData.PostCommentStatus.edited);
+    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, '');
   }
 
-  deletePost(postId: string) {
-    return this.hiveVaultHelper.deletePost(postId);
+  deletePost(postId: string, channelId: string) {
+    return this.hiveVaultHelper.deletePost(postId, channelId);
   }
 
   queryPostByChannelId(targetDid: string, channelId: string) {

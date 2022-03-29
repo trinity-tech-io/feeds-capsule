@@ -28,34 +28,48 @@ export class HiveVaultResultParse {
       if (posts) {
         posts.forEach(post => {
           if (post) {
-            const contents = JSON.parse(post['content'])
-            let mDatas = contents['mediaData'];
-            let mData = {}
-            for (let index = 0; index < mDatas.length; index++) {
-              mData = mDatas[index];
+            let contents = null;
+            let parsedContents: FeedsData.postContentV3 = {
+              version: '3.0',
+              mediaData: [],
+              content: '',
+              mediaType: FeedsData.MediaType.noMeida
+            };
+            try {
+              contents = JSON.parse(post['content'])
+            } catch (error) {
             }
-            // mediaDataV3
-            const mediaDataV3: FeedsData.mediaDataV3 = {
-              kind: mData['kind'],
-              originMediaPath: mData['originMediaPath'],
-              type: mData['type'],
-              size: mData['size'],
-              thumbnailPath: mData['thumbnailPath'],
-              duration: mData['duration'],
-              imageIndex: mData['imageIndex'],
-              additionalInfo: mData['additionalInfo'],
-              memo: mData['memo']
-            }
-            let mediaDatasV3: FeedsData.mediaDataV3[] = []
-            mediaDatasV3.push(mediaDataV3)
 
-            // postContentV3
-            let content: FeedsData.postContentV3 = {
-              version: contents['version'],
-              mediaData: mediaDatasV3,
-              content: contents['content'],
-              mediaType: contents['mediaType']
+            if (contents) {
+              let mDatas = contents['mediaData'];
+              let mData = {}
+              for (let index = 0; index < mDatas.length; index++) {
+                mData = mDatas[index];
+              }
+              // mediaDataV3
+              const mediaDataV3: FeedsData.mediaDataV3 = {
+                kind: mData['kind'],
+                originMediaPath: mData['originMediaPath'],
+                type: mData['type'],
+                size: mData['size'],
+                thumbnailPath: mData['thumbnailPath'],
+                duration: mData['duration'],
+                imageIndex: mData['imageIndex'],
+                additionalInfo: mData['additionalInfo'],
+                memo: mData['memo']
+              }
+              let mediaDatasV3: FeedsData.mediaDataV3[] = []
+              mediaDatasV3.push(mediaDataV3)
+
+              // postContentV3
+              parsedContents = {
+                version: contents['version'],
+                mediaData: mediaDatasV3,
+                content: contents['content'],
+                mediaType: contents['mediaType']
+              }
             }
+
             // PostV3
             const postResult: FeedsData.PostV3 = {
               destDid: targetDid,
@@ -63,7 +77,7 @@ export class HiveVaultResultParse {
               channelId: post.channel_id,
               createdAt: post.created_at,
               updatedAt: post.updated_at,
-              content: content,
+              content: parsedContents,
               status: post.status,
               type: post.type,
               tag: post.tag,
@@ -167,7 +181,9 @@ export class HiveVaultResultParse {
               updatedAt: comment.updated_at,
               createdAt: comment.created_at,
               proof: '',
-              memo: comment.memo
+              memo: comment.memo,
+
+              createrDid: comment.creater_did
             }
             parseResult.push(commentResult);
           }

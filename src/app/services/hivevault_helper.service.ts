@@ -11,6 +11,7 @@ import SparkMD5 from 'spark-md5';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { trace } from 'console';
 import { R3TargetBinder } from '@angular/compiler';
+import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
 
 const TAG = 'HiveVaultHelper';
 
@@ -144,15 +145,25 @@ export class HiveVaultHelper {
         })
     }
 
-    private insertChannelData(channelName: string, intro: string, avatarAddress: string, tippingAddress: string, type: string, nft: string, memo: string, category: string, proof: string): Promise<string> {
+    private insertChannelData(channelName: string, intro: string, avatarAddress: string, tippingAddress: string, type: string, nft: string, memo: string, category: string, proof: string): Promise<{ [x: string]: string | number | boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const channelId = UtilService.generateChannelId(signinDid, channelName);
-                let doc = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft, category, proof);
-                resolve(doc);
+                let result = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft, category, proof);
+                if (result) {
+                    const insertResult = {
+                        destDid: signinDid,
+                        channelId: channelId,
+                        createdAt: createdAt,
+                        updatedAt: updatedAt
+                    }
+                    resolve(insertResult);
+                }
+                else
+                    reject('Insert channel data error');
             } catch (error) {
                 Logger.error(error);
                 reject()
@@ -167,25 +178,25 @@ export class HiveVaultHelper {
 
     /** update channel start */
     private updateDataToChannelDB(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
-        newTippingAddress: string, newNft: string): Promise<UpdateResult> {
+        newTippingAddress: string, newNft: string, updatedAt: number): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
-            const channel = this.dataHelper.getChannel(channelId.toString())
-            const updated_at = new Date().getTime().toString()
-            const doc = {
-                "channel_id": channelId,
-                "name": newName,
-                "intro": newIntro,
-                "avatar": newAvatar,
-                "created_at": channel.created_at,
-                "updated_at": updated_at,
-                "type": newType,
-                "tipping_address": newTippingAddress,
-                "nft": newNft,
-                "memo": newMemo,
-            }
-            const option = new UpdateOptions(false, true)
             try {
-                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_CHANNELS, channel, doc, option)
+                const doc =
+                {
+                    "name": newName,
+                    "intro": newIntro,
+                    "avatar": newAvatar,
+                    "updated_at": updatedAt,
+                    "type": newType,
+                    "tipping_address": newTippingAddress,
+                    "nft": newNft,
+                    "memo": newMemo,
+                }
+                const option = new UpdateOptions(false, true)
+                let filter = { "channel_id": channelId };
+                let update = { "$set": doc };
+
+                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_CHANNELS, filter, update, option);
                 Logger.log(TAG, 'update channel result', updateResult)
                 resolve(updateResult)
             } catch (error) {
@@ -197,7 +208,8 @@ export class HiveVaultHelper {
 
     private updateChannelData(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
         newTippingAddress: string, newNft: string) {
-        return this.updateDataToChannelDB(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft)
+        const updatedAt = UtilService.getCurrentTimeNum();
+        return this.updateDataToChannelDB(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft, updatedAt);
     }
 
     updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
@@ -293,40 +305,36 @@ export class HiveVaultHelper {
     /** publish post end */
 
     /** update post start */
-    private updateDataToPostDB(postId: string, channelId: string, originPost: FeedsData.PostV3, updatedAt: number, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<UpdateResult> {
+    private updateDataToPostDB(postId: string, channelId: string, updatedAt: number, newType: string, newTag: string, newContent: string, newMemo: string): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
             const doc =
             {
-                "channel_id": channelId,
-                "post_id": postId,
-                "created_at": originPost.createdAt,
                 "updated_at": updatedAt,
                 "content": newContent,
-                "status": newStatus,
+                "status": FeedsData.PostCommentStatus.edited,
                 "memo": newMemo,
                 "type": newType,
                 "tag": newTag
             }
             const option = new UpdateOptions(false, true)
+            let filter = { "channel_id": channelId, "post_id": postId };
+            let update = { "$set": doc };
             try {
-                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, originPost, doc, option)
-                Logger.log(TAG, 'update post result', updateResult)
-                resolve(updateResult)
+                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
+                Logger.log(TAG, 'update post result', updateResult);
+                resolve(updateResult);
             } catch (error) {
                 Logger.error(TAG, 'updateDataToPostDB error', error)
-                reject(error)
+                reject(error);
             }
-        })
+        });
     }
 
-    private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<any> {
+    private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinData = await this.dataHelper.getSigninData();
-                let userDid = signinData.did
-                const originPost = await this.dataHelper.getPostV3ById(userDid, postId)
                 const updated_at = UtilService.getCurrentTimeNum()
-                const result = this.updateDataToPostDB(postId, channelId, originPost, updated_at, newType, newTag, newContent, newMemo, newStatus)
+                const result = this.updateDataToPostDB(postId, channelId, updated_at, newType, newTag, newContent, newMemo)
                 Logger.log(TAG, 'update post result', result)
                 resolve(result)
             } catch (error) {
@@ -336,33 +344,39 @@ export class HiveVaultHelper {
         })
     }
 
-    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string, newStatus: number): Promise<any> {
-        return this.updatePostData(postId, channelId, newType, newTag, newContent, newMemo, newStatus);
+    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string): Promise<any> {
+        return this.updatePostData(postId, channelId, newType, newTag, newContent, newMemo);
     }
     /** update post end */
 
     /** delete post , Not use now */
-    private deleteDataFromPostDB(post: FeedsData.PostV3): Promise<void> {
+    private deleteDataFromPostDB(postId: string, channelId: string, updatedAt: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            try {
-                this.hiveService.deleateOneDBData(HiveVaultHelper.TABLE_POSTS, post)
-                Logger.log(TAG, 'delete post result success')
-                resolve()
-            } catch (error) {
-                Logger.error(TAG, 'deleteDataFromPostDB error', error)
-                reject(error)
+            const doc =
+            {
+                "updated_at": updatedAt,
+                "status": FeedsData.PostCommentStatus.deleted,
             }
-        })
+            const option = new UpdateOptions(false, true)
+            let filter = { "channel_id": channelId, "post_id": postId };
+            let update = { "$set": doc };
+            try {
+                const result = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
+                Logger.log(TAG, 'Delete post result', result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Delete data from postDB error', error);
+                reject(error);
+            }
+        });
     }
 
     /** delete post start */
-    private deletePostData(postId: string): Promise<any> {
+    private deletePostData(postId: string, channelId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinData = await this.dataHelper.getSigninData();
-                let userDid = signinData.did
-                const post = await this.dataHelper.getPostV3ById(userDid, postId)
-                const result = await this.deleteDataFromPostDB(post)
+                const updatedAt = UtilService.getCurrentTimeNum();
+                const result = await this.deleteDataFromPostDB(postId, channelId, updatedAt);
                 Logger.log(TAG, 'delete post result success')
                 resolve(result)
             }
@@ -373,8 +387,8 @@ export class HiveVaultHelper {
         });
     }
 
-    deletePost(postId: string): Promise<any> {
-        return this.deletePostData(postId);
+    deletePost(postId: string, channelId: string): Promise<any> {
+        return this.deletePostData(postId, channelId);
     }
     /** delete post end */
 
@@ -1132,7 +1146,7 @@ export class HiveVaultHelper {
                 try {
                     //const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
                     const hash = SparkMD5.hash(bufferString);
-    
+     
                     const remoteName = 'feeds/data/' + hash;
                     const bufferData = base64ImageToBuffer(bufferString)
                     await this.hiveService.uploadScriptWithBuffer(remoteName, bufferData);

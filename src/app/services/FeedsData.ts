@@ -1028,7 +1028,9 @@ declare namespace FeedsData {
     updatedAt: number,
     createdAt: number,
     proof: string,
-    memo: string
+    memo: string,
+
+    createrDid: string
   }
 
   type LikeV3 = {

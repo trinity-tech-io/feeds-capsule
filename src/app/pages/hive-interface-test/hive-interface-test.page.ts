@@ -66,35 +66,41 @@ export class HiveInterfaceTestPage implements OnInit {
 
   // channel
   createChannel() {
-    this.hiveVaultApi.createChannel('channelId01', 'channel01 desc', 'address');
+    // this.hiveVaultApi.createChannel('channelId01', 'channel01 desc', 'address');
+    this.hiveVaultController.createChannel('channelTestName', 'channelTest desc', 'avatar address');
   }
 
   updateChannel() {
     //TODO
     // this.hiveVaultApi.updateChannel();
-    alert('updateChannel');
+    // alert('updateChannel');
+    this.hiveVaultController.updateChannel('b434c0d62c83ccdf1ecaabf831894f87b086c58bd2f4711d889ae832056d9c7d', 'test new name', 'test new intro', '');
   }
 
   queryChannelInfo() {
     this.hiveVaultApi.queryChannelInfo(this.destDid, 'b434c0d62c83ccdf1ecaabf831894f87b086c58bd2f4711d889ae832056d9c7d');
+    // this.hiveVaultApi.queryChannelInfo(this.destDid, 'channelId01');
+
   }
 
   // post
   publishPost() {
-    this.hiveVaultApi.publishPost('channelId01', 'tag01', 'testContent');
-    alert('publishPost');
+    // this.hiveVaultApi.publishPost('channelId01', 'tag01', 'testContent');
+    this.hiveVaultController.publishPost('channelId01', 'haha', [], null, 'test');
   }
 
   updatePost() {
     //TODO
     // this.hiveVaultApi.updatePost('');
-    alert('updatePost');
+    // alert('updatePost');
+    this.hiveVaultController.updatePost('90d7fa220d1e2e97be2b1c7cc00fc0563f953a39ea25ef40d9ae8f40af23cd36', 'channelId01', 'testNewType', 'testNewTag', 'testNewContent');
   }
 
   deletePost() {
     //TODO
     // this.hiveVaultApi.deletePost('');
-    alert('deletePost');
+    // alert('deletePost');
+    this.hiveVaultController.deletePost('90d7fa220d1e2e97be2b1c7cc00fc0563f953a39ea25ef40d9ae8f40af23cd36', 'channelId01');
   }
 
   queryPostByChannelId() {

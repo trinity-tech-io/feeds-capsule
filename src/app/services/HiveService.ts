@@ -309,11 +309,11 @@ export class HiveService {
     })
   }
 
-  updateOneDBData(collectName: string, origin: JSONObject, update: JSONObject, option: UpdateOptions): Promise<UpdateResult> {
+  updateOneDBData(collectName: string, filter: JSONObject, update: JSONObject, option: UpdateOptions): Promise<UpdateResult> {
     return new Promise(async (resolve, reject) => {
       try {
         const dbService = await this.getDatabaseService()
-        const result = await dbService.updateOne(collectName, origin, update, option)
+        const result = await dbService.updateOne(collectName, filter, update, option)
         resolve(result)
       } catch (error) {
         Logger.error(TAG, 'update one error:', error)
