@@ -117,11 +117,14 @@ export class PostdetailPage implements OnInit {
 
   public isAndroid: boolean = true;
 
-  public commentId: number = 0;
+  public refcommentId: string = '0';
+
+  public commentId: string = '';
 
   public curComment: any = {};
   private maxCount: number = 0;
   private post: FeedsData.PostV3 = null;
+  private channelAvatarUri: string = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -145,12 +148,15 @@ export class PostdetailPage implements OnInit {
   ) { }
   //
   async initData(isInit: boolean) {
-    let channel =
-      await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || '';
+    let channel :FeedsData.ChannelV3 =
+      await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+    this.channelOwner = channel.destDid || ''
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     let channelAvatarUri = channel['avatar'] || '';
+    this.channelAvatarUri
     if(channelAvatarUri != ''){
+      this.channelAvatarUri = channelAvatarUri;
        this.handleChannelAvatar(channelAvatarUri);
     }
     this.initPostContent();
@@ -174,7 +180,6 @@ export class PostdetailPage implements OnInit {
  async initRefresh() {
     this.startIndex = 0;
     this.totalData = await this.sortCommentList();
-    console.log("=====this.totalData=====",JSON.stringify(this.totalData));
     if (this.totalData.length - this.pageNumber > 0) {
       this.captainCommentList = this.totalData.slice(0, this.pageNumber);
 
@@ -191,20 +196,20 @@ export class PostdetailPage implements OnInit {
   initOwnCommentObj() {
     let captainCommentList = _.cloneDeep(this.captainCommentList);
 
-    // _.each(captainCommentList, (item: any) => {
-    //   let key = item.commentId;
-    //   this.userNameList[key] = item['user_name'];
-    //   this.checkCommentIsMine(item);
-    //   let commentId = item.commentId;
-    //   let replayCommentList =
-    //     this.feedService.getReplayCommentList(
-    //       this.destDid,
-    //       this.channelId,
-    //       this.postId,
-    //       commentId,
-    //     ) || [];
-    //   item['replayCommentSum'] = replayCommentList.length;
-    // });
+    _.each(captainCommentList, (item: FeedsData.CommentV3) => {
+      let key = item.commentId;
+      this.userNameList[key] = item.destDid;
+      this.checkCommentIsMine(item);
+      // let commentId = item.commentId;
+      // let replayCommentList =
+      //   this.feedService.getReplayCommentList(
+      //     this.destDid,
+      //     this.channelId,
+      //     this.postId,
+      //     commentId,
+      //   ) || [];
+      // item['replayCommentSum'] = replayCommentList.length;
+    });
 
     this.captainCommentList = _.cloneDeep(captainCommentList);
   }
@@ -240,14 +245,17 @@ export class PostdetailPage implements OnInit {
 
     }
 
-    console.log("====111111==="+JSON.stringify(captainCommentList));
+    captainCommentList =  _.filter(captainCommentList,(item: FeedsData.CommentV3)=>{
+            return item.refcommentId === '0';
+    });
+
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     if (!this.hideDeletedComments) {
       captainCommentList = _.filter(captainCommentList, (item: any) => {
         return item.status != 1;
       });
     }
-    console.log("====22222222==="+JSON.stringify(captainCommentList));
+
     this.maxCount = captainCommentList.length;
     return captainCommentList;
   }
@@ -289,7 +297,7 @@ export class PostdetailPage implements OnInit {
     this.dstyleObj.width = screen.width - 105 + 'px';
     this.initData(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
+    // this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
@@ -491,19 +499,20 @@ export class PostdetailPage implements OnInit {
     return this.feedsServiceApi.parsePostContentImg(content);
   }
 
-  indexText(text: string, limit: number, indexLength: number): string {
-    return this.feedService.indexText(text, limit, indexLength);
+  indexText(text: string): string {
+    text = text.replace('did:elastos:','');
+    return UtilService.resolveAddress(text);
   }
 
   showComment(comment: any) {
     if (comment === null) {
-      this.commentId = 0;
+      this.refcommentId = '0';
       this.commentName = this.channelName;
-      this.commentAvatar = this.channelAvatar;
+      this.commentAvatar = this.channelAvatarUri;
     } else {
-      this.commentId = comment.id;
-      this.commentName = comment.user_name;
-      this.commentAvatar = './assets/images/default-contact.svg';
+      this.refcommentId = comment.commentId;
+      this.commentName = comment.destDid || '';
+      this.commentAvatar = '';
     }
     // if (this.checkServerStatus(this.destDid) != 0) {
     //   this.native.toastWarn('common.connectionError1');
@@ -852,12 +861,16 @@ export class PostdetailPage implements OnInit {
 
   checkCommentIsMine(comment: FeedsData.CommentV3) {
     let commentId = comment.commentId;
-    // let isOwnComment = this.feedService.checkCommentIsMine(
-    //   comment.destDid,
-    //   comment.channelId,
-    //   comment.postId,
-    //   comment.commentId,
-    // );
+    let destDid  = comment.destDid;
+    let signInData :FeedsData.SignInData = this.feedService.getSignInData() || null;
+    if(signInData === null){
+      this.isOwnComment[commentId] = false;
+    }
+    let ownerDid: string = signInData.did;
+    if( destDid != ownerDid){
+      this.isOwnComment[commentId] = false;
+
+    }
     this.isOwnComment[commentId] = true;
   }
 
@@ -1194,7 +1207,7 @@ export class PostdetailPage implements OnInit {
     this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress);
   }
 
-  clickComment(comment: any, event?: any) {
+  clickComment(comment: FeedsData.CommentV3, event?: any) {
     if (this.isPress) {
       this.isPress = false;
       return;
@@ -1209,14 +1222,13 @@ export class PostdetailPage implements OnInit {
         return;
       }
     }
-    let commentId: number = comment.id;
+    let commentId: string = comment.commentId;
     this.native.navigateForward(['commentlist'], {
       queryParams: {
-        nodeId: this.destDid,
+        destDid: this.destDid,
         channelId: this.channelId,
         postId: this.postId,
         commentId: commentId,
-        username: comment['user_name'],
       },
     });
   }

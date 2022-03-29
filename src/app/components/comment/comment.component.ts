@@ -28,7 +28,7 @@ export class CommentComponent implements OnInit {
   @Input() public destDid: string = '';
   @Input() public channelId: string = '';
   @Input() public postId: string = '0';
-  @Input() public commentId: string = '0';
+  @Input() public refcommentId: string = '0';
   @Input() public onlineStatus = 0;
 
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -50,8 +50,11 @@ export class CommentComponent implements OnInit {
     } else {
       this.isAndroid = "android";
     }
-
-    this.parseAvatar();
+    if(this.channelAvatar === ""){
+      this.channelAvatar = "./assets/images/default-contact.svg";
+    }else{
+      this.parseAvatar();
+    }
   }
 
   ionViewDidEnter() {
@@ -110,11 +113,11 @@ export class CommentComponent implements OnInit {
 
   publishComment() {
     try {
-      this.hiveVaultController.updateComment(
+      this.hiveVaultController.createComment(
         this.destDid,
         this.channelId,
         this.postId,
-        this.commentId,
+        this.refcommentId,
         this.newComment
       ).then(()=>{
         this.native.hideLoading();

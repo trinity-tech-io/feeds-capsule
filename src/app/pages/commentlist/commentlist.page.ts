@@ -17,6 +17,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 let TAG: string = 'Feeds-commentlist';
 
@@ -31,7 +32,7 @@ export class CommentlistPage implements OnInit {
   infiniteScroll: IonInfiniteScroll;
   public connectionStatus: number = 1;
 
-  public nodeId: string = '';
+  public destDid: string = '';
   public channelId: string = "";
   public postId: string = "";
   public startIndex: number = 0;
@@ -49,7 +50,7 @@ export class CommentlistPage implements OnInit {
 
   public isPress: boolean = false;
   public isAndroid: boolean = true;
-  public commentId: number = 0;
+  public commentId: string = "";
   public replayCommentList = [];
   public hideDeletedComments: boolean = false;
   public isFullContent = {};
@@ -63,6 +64,8 @@ export class CommentlistPage implements OnInit {
   public updatedAt: number = 0;
   public channelOwner: string = '';
   public curComment: any = {};
+  public refcommentId: string = "0";
+  public captainCommentList  = [];
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -78,7 +81,8 @@ export class CommentlistPage implements OnInit {
     public modalController: ModalController,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   initData(isInit: boolean) {
@@ -89,9 +93,9 @@ export class CommentlistPage implements OnInit {
     }
   }
 
-  initRefresh() {
+ async initRefresh() {
     this.startIndex = 0;
-    this.totalData = this.sortCommentList();
+    this.totalData = await this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.replayCommentList = this.totalData.slice(0, this.pageNumber);
 
@@ -112,8 +116,8 @@ export class CommentlistPage implements OnInit {
     });
   }
 
-  refreshCommentList() {
-    this.totalData = this.sortCommentList();
+ async refreshCommentList() {
+    this.totalData = await this.sortCommentList();
     if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
@@ -130,14 +134,11 @@ export class CommentlistPage implements OnInit {
     this.initOwnCommentObj();
   }
 
-  sortCommentList() {
-    let replayCommentList =
-      this.feedService.getReplayCommentList(
-        this.nodeId,
-        this.channelId,
-        this.postId,
-        this.commentId,
-      ) || [];
+ async sortCommentList() {
+    let replayCommentList = [];
+    replayCommentList =  _.filter(this.captainCommentList,(item: FeedsData.CommentV3)=>{
+      return item.refcommentId === this.commentId;
+    });
     this.commentsNum = replayCommentList.length;
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     if (!this.hideDeletedComments) {
@@ -145,26 +146,26 @@ export class CommentlistPage implements OnInit {
         return item.status != 1;
       });
     }
+
     return replayCommentList;
   }
 
-  ngOnInit() {
-    this.acRoute.queryParams.subscribe(data => {
-      this.nodeId = data.nodeId;
+ ngOnInit() {
+    this.acRoute.queryParams.subscribe(async data => {
+      this.destDid = data.destDid;
       this.channelId = data.channelId;
       this.postId = data.postId;
       this.commentId = data.commentId;
-      let feed =
-        this.feedService.getChannelFromId(this.nodeId, this.channelId) || '';
-      if (feed != '') {
-        this.channelOwner = UtilService.moreNanme(feed['owner_name'], 40);
+      let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+      if (channel != null) {
+        this.channelOwner = UtilService.resolveAddress(channel.destDid);
       }
-      this.userNameList[this.commentId] = data.username;
+      this.userNameList[this.commentId] = data.destDid || '';
     });
   }
 
-  ionViewWillEnter() {
-    this.getCaptainComment();
+ async ionViewWillEnter() {
+    await this.getCaptainComment();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -175,7 +176,7 @@ export class CommentlistPage implements OnInit {
     this.dstyleObj.width = screen.width - 105 + 'px';
     this.initData(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
-    this.feedService.refreshPostById(this.nodeId, this.channelId, this.postId);
+    //this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
 
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
@@ -207,7 +208,7 @@ export class CommentlistPage implements OnInit {
             ' postId is ',
             postId);
           if (
-            nodeId == this.nodeId &&
+            nodeId == this.destDid &&
             channelId == this.channelId &&
             postId == this.postId
           ) {
@@ -325,15 +326,10 @@ export class CommentlistPage implements OnInit {
     return this.feedService.indexText(text, limit, indexLength);
   }
 
-  showComment(comment: any) {
-    this.channelName = comment.user_name;
-    this.channelAvatar = './assets/images/default-contact.svg';
-    this.commentId = comment.id;
-
-    if (this.checkServerStatus(this.nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
+  showComment(comment: FeedsData.CommentV3) {
+    this.channelName = comment.destDid;
+    this.channelAvatar = '';
+    this.refcommentId = comment.commentId;
 
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
@@ -344,7 +340,7 @@ export class CommentlistPage implements OnInit {
 
   checkMyLike() {
     return this.feedService.checkMyLike(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
     );
@@ -352,7 +348,7 @@ export class CommentlistPage implements OnInit {
 
   checkLikedComment(commentId: number) {
     return this.feedService.checkLikedComment(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       commentId,
@@ -365,14 +361,14 @@ export class CommentlistPage implements OnInit {
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
+    if (this.checkServerStatus(this.destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
 
     if (this.checkMyLike()) {
       this.feedsServiceApi.postUnlike(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         0,
@@ -381,7 +377,7 @@ export class CommentlistPage implements OnInit {
     }
 
     this.feedsServiceApi.postLike(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       0,
@@ -394,14 +390,14 @@ export class CommentlistPage implements OnInit {
       return;
     }
 
-    if (this.checkServerStatus(this.nodeId) != 0) {
+    if (this.checkServerStatus(this.destDid) != 0) {
       this.native.toastWarn('common.connectionError1');
       return;
     }
 
     if (this.checkLikedComment(commentId)) {
       this.feedsServiceApi.postUnlike(
-        this.nodeId,
+        this.destDid,
         this.channelId,
         this.postId,
         commentId,
@@ -410,7 +406,7 @@ export class CommentlistPage implements OnInit {
     }
 
     this.feedsServiceApi.postLike(
-      this.nodeId,
+      this.destDid,
       this.channelId,
       this.postId,
       commentId,
@@ -418,7 +414,7 @@ export class CommentlistPage implements OnInit {
   }
 
   handleUpdateDate(updatedTime: number) {
-    let updateDate = new Date(updatedTime * 1000);
+    let updateDate = new Date(updatedTime);
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
   }
 
@@ -479,14 +475,19 @@ export class CommentlistPage implements OnInit {
     return status;
   }
 
-  checkCommentIsMine(comment: any) {
-    let commentId = comment.id;
-    let isOwnComment = this.feedService.checkCommentIsMine(
-      comment.nodeId,
-      comment.channel_id,
-      comment.post_id,
-      Number(comment.id),
-    );
+  checkCommentIsMine(comment: FeedsData.CommentV3) {
+    let commentId = comment.commentId;
+    let isOwnComment = false;
+    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+    if (signInData === null) {
+      isOwnComment = false;
+    }
+    let ownerDid: string = signInData.did;
+    if (this.destDid != ownerDid) {
+      isOwnComment = false;
+    }else{
+      isOwnComment = true;
+    }
     this.isOwnComment[commentId] = isOwnComment;
   }
 
@@ -570,23 +571,34 @@ export class CommentlistPage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  getCaptainComment() {
-    let captainCommentList =
-      this.feedService.getCaptainCommentList(
-        this.nodeId,
-        this.channelId,
-        this.postId,
-      ) || [];
-    this.captainComment = _.find(captainCommentList, item => {
-      return item.id == this.commentId;
+ async getCaptainComment() {
+    let captainCommentList = [];
+    try {
+      captainCommentList =
+      await this.hiveVaultController.getCommentsByPost(
+         this.destDid,
+         this.channelId,
+         this.postId,
+       ) || [];
+    } catch (error) {
+      captainCommentList = [];
+    }
+    this.captainCommentList = _.cloneDeep(captainCommentList);
+    this.captainComment = _.find(captainCommentList, (item: FeedsData.CommentV3) => {
+      return item.commentId == this.commentId;
     });
-    let id = this.captainComment.id;
-    this.userNameList[id] = this.captainComment['user_name'];
-    this.updatedAt = this.captainComment['updated_at'];
+
+    let commentId = this.captainComment.commentId;
+    this.userNameList[commentId] = this.captainComment.destDid;
+    this.updatedAt = this.captainComment['updatedAt'];
     this.checkCommentIsMine(this.captainComment);
   }
 
   menuMore() {
     this.menuService.showCommentDetailMenu(this.captainComment);
+  }
+
+  handleText(text: string) {
+    return UtilService.resolveAddress(text);
   }
 }

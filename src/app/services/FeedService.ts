@@ -4675,13 +4675,13 @@ export class FeedService {
   }
 
   checkCommentIsMine(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     postId: string,
     commentId: number,
   ): boolean {
     let comment = this.dataHelper.getComment(
-      nodeId,
+      destDid,
       channelId,
       postId,
       commentId,

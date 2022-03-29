@@ -11,7 +11,8 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-editcomment',
@@ -24,16 +25,16 @@ export class EditCommentPage implements OnInit {
   newPostIonTextarea: IonTextarea;
   public connectionStatus = 1;
   public nodeStatus: any = {};
-  public channelAvatar = '';
+  public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
   public subscribers: string = '';
   public newComment: string = '';
   public oldNewComment: string = '';
-  public nodeId: string = '';
+  public destDid: string = '';
   public channelId: string = "";
   public postId: string = "";
-  public commentById: Number = 0;
-  public commentId: Number = 0;
+  public refcommentId: string = "0";
+  public commentId: string = "0";
   public imgUrl: string = '';
   public titleKey: string = '';
   constructor(
@@ -47,16 +48,17 @@ export class EditCommentPage implements OnInit {
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe(data => {
       let item = _.cloneDeep(data);
-      this.nodeId = item.nodeId;
+      this.destDid = item.destDid;
       this.channelId = item.channelId;
       this.postId = item.postId;
-      this.commentById = item.commentById;
+      this.refcommentId = item.refcommentId;
       this.commentId = item.commentId;
       let content = item.content || '';
       this.titleKey = item.titleKey;
@@ -68,17 +70,17 @@ export class EditCommentPage implements OnInit {
     }, 300);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.initTitle();
 
     this.connectionStatus = this.feedService.getConnectionStatus();
-    let channel =
-      this.feedService.getChannelFromId(this.nodeId, this.channelId) || {};
+    let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
-    this.channelAvatar =
-      this.feedService.parseChannelAvatar(channel['avatar']) || '';
-
+    let channelAvatarUri = channel['avatar'] || '';
+    if(channelAvatarUri != ''){
+       this.handleChannelAvatar(channelAvatarUri);
+    }
     this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
       this.zone.run(() => {
         this.connectionStatus = status;
@@ -101,14 +103,6 @@ export class EditCommentPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
-      this.zone.run(() => {
-        this.navCtrl.pop().then(() => {
-          this.native.hideLoading();
-        });
-      });
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.friendConnectionChanged,
       (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
@@ -126,12 +120,20 @@ export class EditCommentPage implements OnInit {
   ionViewDidEnter() {
   }
 
+  handleChannelAvatar(channelAvatarUri: string){
+    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
+    .then((result)=>{
+       this.channelAvatar = result;
+    }).catch((err)=>{
+    })
+  }
+
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-    this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
   }
 
@@ -152,11 +154,6 @@ export class EditCommentPage implements OnInit {
 
     if (this.feedService.getConnectionStatus() !== 0) {
       this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if (this.feedService.getServerStatusFromId(this.nodeId) != 0) {
-      this.native.toast_trans('common.connectionError1');
       return;
     }
 
@@ -182,23 +179,28 @@ export class EditCommentPage implements OnInit {
   }
 
   private editComment() {
-    this.feedsServiceApi.editComment(
-      this.nodeId,
-      Number(this.channelId),
-      Number(this.postId),
-      Number(this.commentId),
-      Number(this.commentById),
-      this.newComment,
-    );
+    try {
+      this.hiveVaultController.updateComment(
+        this.destDid,this.channelId,
+        this.postId,this.commentId,this.newComment)
+        .then(()=>{
+          this.native.hideLoading();
+          this.native.pop();
+        }).catch((err)=>{
+          this.native.hideLoading();
+        })
+    } catch (error) {
+      this.native.hideLoading();
+    }
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
+  checkServerStatus(destId: string) {
+    return this.feedService.getServerStatusFromId(destId);
   }
 
   initnodeStatus() {
-    let status = this.checkServerStatus(this.nodeId);
-    this.nodeStatus[this.nodeId] = status;
+    let status = this.checkServerStatus(this.destDid);
+    this.nodeStatus[this.destDid] = status;
   }
 
   pressName(channelName: string) {

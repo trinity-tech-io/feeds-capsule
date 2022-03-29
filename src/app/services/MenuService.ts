@@ -13,6 +13,7 @@ import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from './hivevault_controller.service';
+import { result } from 'lodash';
 
 @Injectable()
 export class MenuService {
@@ -622,16 +623,16 @@ export class MenuService {
   }
 
   async showCommentDetailMenu(comment: any) {
-    this.destDid = comment['nodeId'];
-    this.channelId = comment['channel_id'];
-    this.postId = comment['post_id'];
-    this.commentId = comment['id'];
+    this.destDid = comment['destDid'];
+    this.channelId = comment['channelId'];
+    this.postId = comment['postId'];
+    this.commentId = comment['commentId'];
 
-    let nodeId = comment['nodeId'];
-    let feedId = comment['channel_id'];
-    let postId = comment['post_id'];
-    let commentById = comment['comment_id'];
-    let commentId = comment['id'];
+    let destDid = comment['destDid'];
+    let channelId = comment['channelId'];
+    let postId = comment['postId'];
+    let refcommentId = comment['refcommentId'] || '0';
+    let commentId = comment['commentId'];
     let content = comment['content'];
 
     this.commentPostDetail = await this.actionSheetController.create({
@@ -642,10 +643,10 @@ export class MenuService {
           icon: 'create',
           handler: () => {
             this.native.go('editcomment', {
-              nodeId: nodeId,
-              channelId: feedId,
+              destDid: destDid,
+              channelId: channelId,
               postId: postId,
-              commentById: commentById,
+              refcommentId: refcommentId,
               commentId: commentId,
               content: content,
               titleKey: 'common.editcomment',
@@ -701,12 +702,19 @@ export class MenuService {
     that.native
       .showLoading('common.waitMoment', () => { }, 50000)
       .then(() => {
-        that.feedService.deleteComment(
-          that.nodeId,
-          Number(that.channelId),
-          Number(that.postId),
-          Number(that.commentId),
-        );
+        try {
+          that.hiveVaultController
+          .deleteComment(that.destDid,that.channelId,that.postId,that.commentId)
+          .then((result:any)=>{
+            alert("result"+JSON.stringify(result));
+            that.native.hideLoading();
+          }).catch(()=>{
+            that.native.hideLoading();
+          })
+        } catch (error) {
+          that.native.hideLoading();
+        }
+
       })
       .catch(() => {
         that.native.hideLoading();
@@ -714,15 +722,15 @@ export class MenuService {
   }
 
   async showReplyDetailMenu(reply: any) {
-    this.destDid = reply['nodeId'];
-    this.channelId = reply['channel_id'];
-    this.postId = reply['post_id'];
-    this.commentId = reply['id'];
-    let nodeId = reply['nodeId'];
-    let feedId = reply['channel_id'];
-    let postId = reply['post_id'];
-    let commentById = reply['comment_id'];
-    let commentId = reply['id'];
+    this.destDid = reply['destDid'];
+    this.channelId = reply['channelId'];
+    this.postId = reply['postId'];
+    this.commentId = reply['commentId'];
+    let destDid= reply['destDid'];
+    let channelId = reply['channelId'];
+    let postId = reply['postId'];
+    let refcommentId = reply['refcommentId'] || '0';
+    let commentId = reply['commentId'];
     let content = reply['content'];
     this.replyDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -732,10 +740,10 @@ export class MenuService {
           icon: 'create',
           handler: () => {
             this.native.go('editcomment', {
-              nodeId: nodeId,
-              channelId: feedId,
+              destDid: destDid,
+              channelId: channelId,
               postId: postId,
-              commentById: commentById,
+              refcommentId: refcommentId,
               commentId: commentId,
               content: content,
               titleKey: 'CommentlistPage.editreply',

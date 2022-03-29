@@ -10,7 +10,7 @@
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img src={{channelAvatar}}>
             <div class="feed-source-card-status circlePosition">
-              <div class="offline" [class.online]="nodeStatus[nodeId] == 0"></div>
+              <div class="offline" [class.online]="nodeStatus[destDid] == 0"></div>
             </div>
           </div>
           <ion-label (press)="pressName(channelName)" [style.touch-action]="'pan-y'">{{ channelName }}</ion-label>

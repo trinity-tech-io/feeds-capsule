@@ -24,11 +24,11 @@
         </ion-col>
         <ion-col class="mid-col" size="8">
           <ion-label>
-            {{ captainComment.user_name }}
+            {{ indexText(captainComment.destDid,20,20) }}
           </ion-label>
-            <p><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ channelOwner }}</p>
+            <p><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(channelOwner,20,20) }}</p>
         </ion-col>
-       <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.id]">
+       <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.commentId]">
           <img (click)="menuMore()"
                 [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
@@ -48,10 +48,10 @@
       </ion-col>
       </ion-row>
      <ion-row class="bottom-row">
-        <ion-col size="1.75" (click)="likeComment(captainComment.id)">
-          <img [src]="checkLikedComment(captainComment.id) ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
-          <img [src]="checkLikedComment(captainComment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-           <ion-label [class.liked]="checkLikedComment(captainComment.id)">{{ captainComment.likes }}</ion-label>
+        <ion-col size="1.75" (click)="likeComment(captainComment.commentId)">
+          <img [src]="checkLikedComment(captainComment.commentId) ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+          <img [src]="checkLikedComment(captainComment.commentId) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+           <ion-label [class.liked]="checkLikedComment(captainComment.commentId)">{{ captainComment.likes }}</ion-label>
         </ion-col>
         <ion-col size="1.75" (click)="showComment(captainComment)">
           <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
@@ -71,7 +71,7 @@
       <div *ngFor="let replayComment of replayCommentList">
         <ion-grid  class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode">
           <ion-row class="post-row">
-            <ion-col class="right-col" size="1.5"  *ngIf="replayComment.status != 1 && isOwnComment[replayComment.id]">
+            <ion-col class="right-col" size="1.5"  *ngIf="replayComment.status != 1 && isOwnComment[replayComment.commentId]">
               <img (click)="openEditTool(replayComment)"
                 [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
               >
@@ -83,14 +83,14 @@
               <ion-row class="top-row">
                 <ion-col class="left-col" size="10.5" (press)="userName(replayComment.user_name)" [style.touch-action]="'pan-y'">
                   <ion-label >
-                    @{{ indexText(replayComment.user_name,20,20) }}
-                    <span> {{handleDisplayTime(replayComment.created_at) }}</span>
+                    @{{ indexText(replayComment.destDid,20,20) }}
+                    <span> {{handleDisplayTime(replayComment.createdAt) }}</span>
                   </ion-label>
                 </ion-col>
               </ion-row>
 
               <ion-label>
-                <p (press)="userNameList[replayComment.comment_id]" [style.touch-action]="'pan-y'"><span style="color:#7624fe;" [style.touch-action]="'pan-y'">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(userNameList[replayComment.comment_id],20,20)}}</p>
+                <p (press)="userNameList[replayComment.comment_id]" [style.touch-action]="'pan-y'"><span style="color:#7624fe;" [style.touch-action]="'pan-y'">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(userNameList[replayComment.refcommentId],20,20)}}</p>
               </ion-label>
               <h2 *ngIf="replayComment.status === 1">
                 <pre>{{'CommentlistPage.replydeleted' | translate}}</pre>
@@ -98,22 +98,15 @@
               <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)<=maxTextSize" (press)="pressContent(replayComment.content)" [style.touch-action]="'pan-y'">
                 <pre [ngStyle]="dstyleObj" [innerHTML]="replayComment.content | html" (click)="clickUrl($event)"></pre>
               </h2>
-              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&!isFullContent[replayComment.id]" (press)="pressContent(replayComment.content)" [style.touch-action]="'pan-y'">
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&!isFullContent[replayComment.commentId]" (press)="pressContent(replayComment.content)" [style.touch-action]="'pan-y'">
                 <pre [ngStyle]="dstyleObj" [innerHTML]="handleCommentContent(replayComment.content) | html" (click)="clickUrl($event)"></pre>
-                <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="showFullContent(replayComment.id)">{{"common.showmore" | translate }}</pre>
+                <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="showFullContent(replayComment.commentId)">{{"common.showmore" | translate }}</pre>
               </h2>
-              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&isFullContent[replayComment.id]" (press)="pressContent(replayComment.content)" [style.touch-action]="'pan-y'">
+              <h2 *ngIf="replayComment.status != 1&&getPostContentTextSize(replayComment.content)>maxTextSize&&isFullContent[replayComment.commentId]" (press)="pressContent(replayComment.content)" [style.touch-action]="'pan-y'">
                 <pre [ngStyle]="dstyleObj" [innerHTML]="replayComment.content | html" (click)="clickUrl($event)"></pre>
-                <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="hideFullContent(replayComment.id)">{{"common.showless" | translate }}</pre>
+                <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="hideFullContent(replayComment.commentId)">{{"common.showless" | translate }}</pre>
               </h2>
               <ion-row class="bottom-row">
-                <!-- <ion-col size="2.25" (click)="likeComment(replayComment.id)">
-                  <img [src]="checkLikedComment(replayComment.id) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'">
-                  <ion-label [class.liked]="checkLikedComment(replayComment.id)">{{ replayComment.likes }}</ion-label>
-                </ion-col> -->
-                <!-- <ion-col size="2.25" (click)="showComment(replayComment.comment_id)">
-                  <img src="/assets/images/bubble-line.svg">
-                </ion-col> -->
                 <ion-col>
                   <ion-label class="status" style="right:-7px;" *ngIf="replayComment.status === 2">{{ 'common.edit' | translate}}</ion-label>
                 </ion-col>
@@ -138,9 +131,9 @@
 <app-comment
   *ngIf="!hideComment"
   [postId]="postId"
-  [destDid]="nodeId"
+  [destDid]="destDid"
   [channelId]="channelId"
-  [commentId]="commentId"
+  [refcommentId]="refcommentId"
   [channelAvatar]="channelAvatar"
   [channelName]="channelName"
   (hideComment)="hideComponent($event)"

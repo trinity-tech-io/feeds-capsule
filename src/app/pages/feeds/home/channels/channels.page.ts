@@ -43,6 +43,7 @@ export class ChannelsPage implements OnInit {
   public nodeStatus: any = {};
   public connectionStatus: number = 1;
   public channelAvatar: string = './assets/icon/reserve.svg';
+  public channelAvatarUri: string = '';
   public channelName: string = '';
   public updatedTime: number = 0;
   public channelOwner: string = '';
@@ -273,8 +274,8 @@ export class ChannelsPage implements OnInit {
     this.channelDesc = channel.intro;
     //this.channelSubscribes = channel.subscribers;
     this.tippingAddress = channel.tipping_address;
-    console.log("channel.avatar ====" + channel.avatar);
     let channelAvatarUri = channel.avatar || '';
+    this.channelAvatarUri = channelAvatarUri;
     this.handleChannelAvatar(channelAvatarUri);
   }
 
