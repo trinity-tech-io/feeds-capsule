@@ -153,13 +153,19 @@ export class ChannelsPage implements OnInit {
 
   ) { }
 
-  subscribe() {
+ async subscribe() {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did
+    this.hiveVaultController.subscribeChannel(
+      userDid,this.channelId,this.channelName).then(async (result)=>{
+        await this.checkFollowStatus(this.destDid,this.channelId);
+      }).catch((err)=>{
 
-    this.feedsServiceApi.subscribeChannel(this.destDid, this.channelId);
+      })
   }
 
   tip() {
@@ -290,7 +296,6 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    console.log("ionViewWillEnter 11111");
 
     this.isMine = this.checkChannelIsMine();
     if (this.platform.is('ios')) {

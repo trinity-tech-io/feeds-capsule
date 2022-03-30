@@ -205,7 +205,7 @@ export class HomePage implements OnInit {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
-    const result = this.hiveVaultController.getHomePostContent();
+    const result =  await this.hiveVaultController.getHomePostContent();
     this.totalData = await this.sortPostList();
     console.log("=====this.totalData======"+JSON.stringify(this.totalData));
     if (this.totalData.length - this.pageNumber > 0) {
@@ -349,8 +349,10 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
+    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
       this.zone.run(() => {
+        //todo
+
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
         this.refreshPostList();
       });

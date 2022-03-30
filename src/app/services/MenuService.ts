@@ -431,7 +431,19 @@ export class MenuService {
               return;
             }
 
-            this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
+            this.hiveVaultController.unSubscribeChannel(
+              destDid,  channelId
+              ).then(async (result)=>{
+                let channel :FeedsData.SubscribedChannelV3 = {
+                  destDid: destDid,
+                  channelId: channelId
+                };
+                this.dataHelper.removeSubscribedChannelV3(channel);
+                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+              }).catch(()=>{
+
+              });
+            //this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
           },
         },
         {

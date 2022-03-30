@@ -483,7 +483,21 @@ export class HiveVaultController {
     });
   }
 
+  unSubscribeChannel(destDid: string, channelId: string): Promise<any> {
 
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
+        console.log('getLikeByPost result', result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'getLikeByPost data error', error);
+        reject([]);
+      }
+    });
+
+  }
 
   updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string) {
     return this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent);
