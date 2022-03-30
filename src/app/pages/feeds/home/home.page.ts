@@ -1728,14 +1728,17 @@ export class HomePage implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(destDid: string, channelId: string, postId: string) {
+ async clickDashang(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    let channel: any = this.feedService.getChannelFromIdV3(destDid, this.channelId);
-    let tippingAddress = channel.tipping_address || "";
+    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
+    let tippingAddress = '';
+    if(tippingAddress != null){
+      tippingAddress = channel.tipping_address || '';
+    }
     if (tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;

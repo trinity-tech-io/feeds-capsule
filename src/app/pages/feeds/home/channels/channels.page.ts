@@ -261,7 +261,7 @@ export class ChannelsPage implements OnInit {
   }
 
  async initChannelData() {
-    let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
     console.log("====channel===",channel);
     console.log("this.channelId== " + this.channelId);
     console.log("this.destDid==" + this.destDid);
@@ -270,10 +270,10 @@ export class ChannelsPage implements OnInit {
     if (channel == null || channel == undefined) return;
     this.channelName = channel.name;
     this.updatedTime = channel.updatedAt || 0;
-    this.channelOwner = channel.owner_name;
+    this.channelOwner = "";
     this.channelDesc = channel.intro;
     //this.channelSubscribes = channel.subscribers;
-    this.tippingAddress = channel.tipping_address;
+    this.tippingAddress = channel.tipping_address || '';
     let channelAvatarUri = channel.avatar || '';
     this.channelAvatarUri = channelAvatarUri;
     this.handleChannelAvatar(channelAvatarUri);

@@ -350,6 +350,8 @@ export const en = {
     feedMaxNumber: 'The maximum number of channels can be created is 5',
     feedNum: 'You can create up to 5 channels',
     des1: 'Show channel in the Explore Feeds for users to discover.',
+    tippingAddress: 'Tipping Address',
+    tippingAddressDes: 'Please enter the Tipping address',
   },
   ProfileimagePage: {
     title: 'Choose Avatar',

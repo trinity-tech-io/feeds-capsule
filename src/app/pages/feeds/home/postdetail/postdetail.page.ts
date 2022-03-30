@@ -1190,15 +1190,17 @@ export class PostdetailPage implements OnInit {
     return obj.content;
   }
 
-  clickDashang() {
+ async clickDashang() {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    let channel: any = this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
-    let tippingAddress = channel.tipping_address || "";
-
+    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+    let tippingAddress = '';
+    if(tippingAddress != null){
+      tippingAddress = channel.tipping_address || '';
+    }
     if (tippingAddress == "") {
       this.native.toast('common.noElaAddress');
       return;

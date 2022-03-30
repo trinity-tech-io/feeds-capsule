@@ -5,10 +5,6 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TipdialogComponent } from '../../../components/tipdialog/tipdialog.component';
-import { ApiUrl } from '../../../services/ApiUrl';
-import { StorageService } from '../../../services/StorageService';
-import { UtilService } from '../../../services/utilService';
-import { HttpService } from '../../../services/HttpService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -17,7 +13,6 @@ import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService'
 import { DataHelper } from 'src/app/services/DataHelper';
-// import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 
 @Component({
@@ -37,6 +32,7 @@ export class CreatenewfeedPage implements OnInit {
   public isHelp: boolean = false;
   public arrowBoxStyle: any = { top: '0px' };
   public curLang: string = '';
+  public tippingAddress: string = '';
   constructor(
     private popover: PopoverController,
     private navCtrl: NavController,
@@ -47,15 +43,13 @@ export class CreatenewfeedPage implements OnInit {
     private native: NativeService,
     public theme: ThemeService,
     private translate: TranslateService,
-    private storageService: StorageService,
-    private httpService: HttpService,
     private titleBarService: TitleBarService,
     private popup: PopupProvider,
     private languageService: LanguageService,
     private ipfsService: IPFSService,
-    // private hiveService: HiveService,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private popupProvider: PopupProvider
 
   ) { }
 
@@ -193,19 +187,7 @@ export class CreatenewfeedPage implements OnInit {
     //   return;
     // }
 
-    // this.feedService.checkDIDOnSideChain(
-    //   this.selectedServer.did,
-    //   isOnSideChain => {
-    //     this.zone.run(() => {
-    //       if (!isOnSideChain) {
-    //         this.native.toastWarn('common.waitOnChain');
-    //         return;
-    //       }
-    //       this.processCreateChannel(name, desc);
-    //     });
-    //   },
-    // );
-    this.processCreateChannel(name, desc);
+   await this.processCreateChannel(name, desc);
   }
 
   async processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement) {
@@ -259,7 +241,8 @@ export class CreatenewfeedPage implements OnInit {
       let userDid = signinData.did
       let userDisplayName = signinData.name;
       await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar)
+      let tippingAddress = this.tippingAddress || '';
+      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, tippingAddress)
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
 
       this.native.hideLoading()
@@ -276,14 +259,6 @@ export class CreatenewfeedPage implements OnInit {
 
   profileimage() {
     this.native.navigateForward(['/profileimage'], '');
-  }
-
-  onChangeText(des) {
-    this.len = des.value.length;
-  }
-
-  onChangeName(name) {
-    this.namelen = name.value.length;
   }
 
   async createDialog(name: string, des: string) {
@@ -344,5 +319,22 @@ export class CreatenewfeedPage implements OnInit {
       imgUri = this.avatar;
     }
     return imgUri;
+  }
+
+ async scanWalletAddress(){
+    let scanObj =  await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+     let scannedContent = scanData["scannedText"] || "";
+     if(scannedContent === ''){
+       this.tippingAddress = "";
+       return;
+     }
+     if (scannedContent.indexOf('ethereum:') > -1) {
+       this.tippingAddress  = scannedContent.replace('ethereum:', '');
+     }else if (scannedContent.indexOf('elastos:') > -1) {
+       this.tippingAddress  = scannedContent.replace('elastos:', '');
+     }else{
+       this.tippingAddress  = scannedContent;
+     }
   }
 }
