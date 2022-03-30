@@ -260,7 +260,7 @@ export class HiveService {
       return scriptingService.uploadFile(transactionId, img)
     }
     catch (error) {
-      Logger.error(TAG, "Upload custome avatar error: ", error);
+      Logger.error(TAG, "getUploadDataFromScript error: ", error);
     }
   }
 
@@ -270,7 +270,7 @@ export class HiveService {
       return scriptingService.uploadFile(transactionId, img)
     }
     catch (error) {
-      Logger.error(TAG, "Upload custome avatar error: ", error);
+      Logger.error(TAG, "uploadDataFromScript error: ", error);
     }
   }
 
@@ -292,7 +292,7 @@ export class HiveService {
       return await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
     }
     catch (error) {
-      Logger.error(TAG, "Upload custome avatar error: ", error);
+      Logger.error(TAG, "uploadScriptWithString error: ", error);
     }
   }
 

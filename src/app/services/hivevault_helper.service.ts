@@ -66,8 +66,8 @@ export class HiveVaultHelper {
 
                 //post
                 this.registerQueryPostByChannelIdScripting();
-                // this.registerQueryPostRangeOfTimeScripting();
-                // this.registerQueryPostByIdScripting();
+                this.registerQueryPostRangeOfTimeScripting();
+                this.registerQueryPostByIdScripting();
 
                 //subscription
                 await this.registerSubscribeScripting();

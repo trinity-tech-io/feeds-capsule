@@ -128,7 +128,6 @@ export class HiveVaultController {
       } catch (error) {
         localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
       }
-      await this.hiveVaultApi.registeScripting()
     }
   }
 
