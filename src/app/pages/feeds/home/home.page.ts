@@ -165,6 +165,7 @@ export class HomePage implements OnInit {
   public isAutoGet: string = 'unAuto';
   public thumbImageName: string = "homeImg";
   private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
+  private likeMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -224,7 +225,8 @@ export class HomePage implements OnInit {
     this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
     this.refreshImage(0);
-    this.initnodeStatus(this.postList);
+    //this.initLikeMap();
+    //this.initnodeStatus(this.postList);
     this.dataHelper.resetNewPost();
   }
 
@@ -666,26 +668,44 @@ export class HomePage implements OnInit {
   ngOnInit() {
   }
 
-  like(destDid: string, channelId: string, postId: string) {
+  async like(destDid: string, channelId: string, postId: string) {
+
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    if (this.checkServerStatus(destDid) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
+    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
+
+    let  isLike  = this.likeMap[postId] || '';
+    if(isLike === ''){
+      try{
+        this.likeMap[postId] = "like";
+        let resust =  await this.hiveVaultController.like(destDid,channelId,postId,'0');
+        }catch(err){
+        this.likeMap[postId] = "";
+        }
+    }else{
+      try {
+        this.likeMap[postId] = "";
+        let resust =  await this.hiveVaultController.removeLike(destDid,channelId,postId,'0');
+      } catch (error) {
+        this.likeMap[postId] = "like";
+      }
     }
+  }
 
-    let post = this.feedService.getPostFromId(destDid, channelId, postId);
-    if (!this.feedService.checkPostIsAvalible(post)) return;
-
-    if (this.checkMyLike(destDid, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(destDid, channelId, postId, 0);
-      return;
-    }
-
-    this.feedsServiceApi.postLike(destDid, channelId, postId, 0);
+  initLikeMap(){
+   _.forEach(this.postList,async (post :FeedsData.PostV3)=>{
+      let destDid = post.destDid;
+      let channelId = post.channelId;
+      let postId = post.postId;
+      let isLike = this.likeMap[postId] || '';
+      if(isLike === ''){
+        this.likeMap[postId] = '';
+      }
+   })
   }
 
   navTo(destDid: string, channelId: string, postId: number) {
@@ -2379,6 +2399,13 @@ export class HomePage implements OnInit {
   }
 
   getPostLike(post: FeedsData.PostV3) {
+
+  //  try {
+  //   let result = await this.hiveVaultController.getLikeByPost(post.destDid, post.channelId, post.postId);
+  //  } catch (error) {
+
+  //  }
+
     return 0;
   }
 

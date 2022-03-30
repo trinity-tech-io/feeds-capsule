@@ -10,6 +10,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { UtilService } from 'src/app/services/utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-subscriptions',
@@ -254,8 +255,7 @@ export class SubscriptionsPage implements OnInit {
 
   async clickAvatar(destDid: string, channelId: string) {
       let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId);
-      //let followStatus = this.checkFollowStatus(nodeId, feedId);
-      let followStatus = true;
+      let followStatus = this.checkFollowStatus(destDid, channelId);
       let channelName = channel.name;
       let channelDesc = channel.intro;
       let channelSubscribes = 0;
@@ -289,17 +289,19 @@ export class SubscriptionsPage implements OnInit {
       this.native.navigateForward(['/feedinfo'], '');
   }
 
-  checkFollowStatus(nodeId: string, channelId: string) {
-    let channelsMap = this.feedService.getChannelsMap();
-    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
-    if (
-      channelsMap[nodeChannelId] == undefined ||
-      !channelsMap[nodeChannelId].isSubscribed
-    ) {
+  async checkFollowStatus(destDid: string, channelId: string) {
+    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+     if(subscribedChannel.length === 0){
+        return false;
+     }
+
+    let channelIndex =  _.find(subscribedChannel,(item: FeedsData.SubscribedChannelV3)=>{
+         return item.destDid === destDid && item.channelId === channelId;
+    }) || '';
+    if(channelIndex === '') {
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   ionScroll(){

@@ -125,6 +125,7 @@ export class PostdetailPage implements OnInit {
   private maxCount: number = 0;
   private post: FeedsData.PostV3 = null;
   private channelAvatarUri: string = null;
+  public isLike: boolean = false;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -262,7 +263,6 @@ export class PostdetailPage implements OnInit {
 
   ngOnInit() {
     this.acRoute.params.subscribe(data => {
-      console.log("====data====", data);
       this.destDid = data.destDid;
       this.channelId = data.channelId;
       this.postId = data.postId;
@@ -276,14 +276,16 @@ export class PostdetailPage implements OnInit {
     this.mediaType = post.content.mediaType;
     this.postContent = post.content.content;
     this.updatedTime = post.updatedAt;
-    this.likesNum = this.getPostLike(post);
-    this.commentsNum = this.getPostComments(post);
+
     if (this.mediaType === FeedsData.MediaType.containsImg) {
       this.getImage(post);
     }
     if (this.mediaType === FeedsData.MediaType.containsVideo) {
       this.getVideoPoster(post);
     }
+
+    this.likesNum = await this.getPostLikeNum(post);
+    this.commentsNum = await this.getPostComments(post);
   }
 
   ionViewWillEnter() {
@@ -353,7 +355,7 @@ export class PostdetailPage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, () => {
-      this.zone.run(() => {
+      this.zone.run(async () => {
         Logger.log(TAG, 'Received refreshPostDetail event');
         let post: any = this.feedService.getChannelFromIdV3(
           this.destDid,
@@ -361,8 +363,8 @@ export class PostdetailPage implements OnInit {
         ) || null;
         this.postContent = post.content.content;
         this.updatedTime = post.updatedAt;
-        this.likesNum = this.getPostLike(post);
-        this.commentsNum = this.getPostComments(post);
+        this.likesNum = await this.getPostLikeNum(post);
+        this.commentsNum = await this.getPostComments(post);
       });
     });
 
@@ -547,33 +549,29 @@ export class PostdetailPage implements OnInit {
     return false;
   }
 
-  like() {
-    // if (this.feedService.getConnectionStatus() != 0) {
-    //   this.native.toastWarn('common.connectionError');
-    //   return;
-    // }
+ like() {
+    if(this.isLike){
+      try {
+        this.isLike = false;
+        this.likesNum = this.likesNum - 1;
+        this.hiveVaultController.removeLike(this.destDid,this.channelId,this.postId,'0');
+      } catch (error) {
+        this.isLike = true;
+        this.likesNum = this.likesNum + 1;
 
-    // if (this.checkServerStatus(this.destDid) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
-
-    if (this.checkMyLike()) {
-      this.feedsServiceApi.postUnlike(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        0,
-      );
+      }
       return;
     }
 
-    this.feedsServiceApi.postLike(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      0,
-    );
+    try{
+      this.isLike = true;
+      this.likesNum = this.likesNum + 1;
+      this.hiveVaultController.like(this.destDid,this.channelId,this.postId,'0');
+      }catch(err){
+       this.isLike = false;
+       this.likesNum = this.likesNum - 1;
+      }
+
   }
 
   likeComment(commentId: string) {
@@ -1238,12 +1236,36 @@ export class PostdetailPage implements OnInit {
     this.feedService.republishOnePost(destDid, destDid, postId);
   }
 
-  getPostLike(post: FeedsData.PostV3) {
-    return 0;
+ async getPostLikeNum(post: FeedsData.PostV3) {
+   let likeNum = 0;
+   try{
+    let result = await this.hiveVaultController.getLikeByPost(post.destDid, post.channelId , post.postId) || [];
+    let list = result.find_message.items || [];
+    let index = _.find(list,(item)=>{
+          return item.channel_id === post.channelId && item.post_id === post.postId;
+    }) || "";
+
+    if(index === ""){
+      this.isLike = false;
+    }else{
+      this.isLike = true;
+    }
+    likeNum = list.length;
+    return likeNum;
+   }catch(err){
+    return likeNum;
+   }
   }
 
-  getPostComments(post: FeedsData.PostV3) {
-    return 0;
+  async getPostComments(post: FeedsData.PostV3) {
+   let commentNum = 0;
+   try {
+    let result = await this.hiveVaultController.getCommentsByPost(post.destDid,post.channelId,post.postId);
+    commentNum = result.length;
+   } catch (error) {
+
+   }
+  return commentNum ;
   }
 }
 

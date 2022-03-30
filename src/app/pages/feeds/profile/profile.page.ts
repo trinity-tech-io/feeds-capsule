@@ -1841,8 +1841,7 @@ export class ProfilePage implements OnInit {
 
   async clickAvatar(destDid: string, channelId: string) {
     let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId);
-    //let followStatus = this.checkFollowStatus(nodeId, feedId);
-    let followStatus = true;
+    let followStatus = await this.checkFollowStatus(destDid, channelId);
     let channelName = channel.name;
     let channelDesc = channel.intro;
     let channelSubscribes = 0;
@@ -1876,18 +1875,20 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(['/feedinfo'], '');
 }
 
-  checkFollowStatus(nodeId: string, channelId: string) {
-    let channelsMap = this.feedService.getChannelsMap();
-    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
-    if (
-      channelsMap[nodeChannelId] == undefined ||
-      !channelsMap[nodeChannelId].isSubscribed
-    ) {
+async checkFollowStatus(destDid: string, channelId: string) {
+  let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+   if(subscribedChannel.length === 0){
       return false;
-    } else {
-      return true;
-    }
+   }
+
+  let channelIndex =  _.find(subscribedChannel,(item: FeedsData.SubscribedChannelV3)=>{
+       return item.destDid === destDid && item.channelId === channelId;
+  }) || '';
+  if(channelIndex === '') {
+    return false;
   }
+  return true;
+}
 
   async createPost() {
     // if (this.feedService.getConnectionStatus() != 0) {

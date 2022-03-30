@@ -107,9 +107,9 @@
       </ion-row>
       <ion-row class="bottom-row">
         <ion-col size="1.75" (click)="like()">
-          <img [src]="checkMyLike() ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
-          <img [src]="checkMyLike() ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-          <ion-label [class.liked]="checkMyLike()">{{ likesNum }}</ion-label>
+          <img [src]="isLike ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+          <img [src]="isLike ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+          <ion-label [class.liked]="isLike">{{ likesNum }}</ion-label>
         </ion-col>
         <ion-col size="1.75" (click)="showComment(null)">
           <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">

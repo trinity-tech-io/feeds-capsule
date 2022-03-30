@@ -262,11 +262,7 @@ export class ChannelsPage implements OnInit {
 
  async initChannelData() {
     let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
-    console.log("====channel===",channel);
-    console.log("this.channelId== " + this.channelId);
-    console.log("this.destDid==" + this.destDid);
-
-    this.checkFollowStatus(this.destDid, this.channelId);
+    await this.checkFollowStatus(this.destDid, this.channelId);
     if (channel == null || channel == undefined) return;
     this.channelName = channel.name;
     this.updatedTime = channel.updatedAt || 0;
@@ -311,10 +307,8 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.subscribeFinish,
       (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
-        this.zone.run(() => {
-          let destDid = subscribeFinishData.nodeId;
-          let channelId = subscribeFinishData.channelId;
-          this.checkFollowStatus(this.destDid, this.channelId);
+        this.zone.run(async () => {
+         await this.checkFollowStatus(this.destDid, this.channelId);
         });
       },
     );
@@ -322,8 +316,8 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
       (unsubscribeData: FeedsEvent.unsubscribeData) => {
-        this.zone.run(() => {
-          this.checkFollowStatus(this.destDid, this.channelId);
+        this.zone.run(async () => {
+         await this.checkFollowStatus(this.destDid, this.channelId);
           this.native.setRootRouter(['/tabs/home']);
         });
       },
@@ -544,18 +538,22 @@ export class ChannelsPage implements OnInit {
     return this.feedService.checkMyLike(destDid, channelId, postId);
   }
 
-  checkFollowStatus(destDid: string, channelId: string) {
-    // let channelsMap = this.feedService.getChannelsMap();
-    // let nodeChannelId = this.feedService.getChannelId(destDid, channelId);
-    // if (
-    //   channelsMap[nodeChannelId] == undefined ||
-    //   !channelsMap[nodeChannelId].isSubscribed
-    // ) {
-    //   this.followStatus = false;
-    // } else {
-    //   this.followStatus = true;
-    // }
-     this.followStatus = true;
+ async checkFollowStatus(destDid: string, channelId: string) {
+
+    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+     if(subscribedChannel.length === 0){
+      this.followStatus = false;
+      return;
+     }
+
+    let channelIndex =  _.find(subscribedChannel,(item: FeedsData.SubscribedChannelV3)=>{
+         return item.destDid === destDid && item.channelId === channelId;
+    }) || '';
+    if(channelIndex === '') {
+      this.followStatus = false;
+      return;
+    }
+    this.followStatus = true;
   }
   handleDisplayTime(createTime: number) {
     let obj = UtilService.handleDisplayTime(createTime);

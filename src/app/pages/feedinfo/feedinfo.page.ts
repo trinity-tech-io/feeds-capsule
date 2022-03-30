@@ -18,6 +18,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 import _ from 'lodash';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-feedinfo',
@@ -67,7 +68,8 @@ export class FeedinfoPage implements OnInit {
     private viewHelper: ViewHelper,
     private intentService: IntentService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() {
@@ -125,10 +127,10 @@ export class FeedinfoPage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.subscribeFinish,
       (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           let nodeId = subscribeFinishData.nodeId;
           let channelId = subscribeFinishData.channelId;
-          this.checkFollowStatus(nodeId, channelId);
+          await this.checkFollowStatus(nodeId, channelId);
         });
       },
     );
@@ -154,17 +156,22 @@ export class FeedinfoPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.search);
   }
 
-  checkFollowStatus(nodeId: string, channelId: string) {
-    let channelsMap = this.feedService.getChannelsMap();
-    let nodeChannelId = this.feedService.getChannelId(nodeId, channelId);
-    if (
-      channelsMap[nodeChannelId] == undefined ||
-      !channelsMap[nodeChannelId].isSubscribed
-    ) {
+  async checkFollowStatus(destDid: string, channelId: string) {
+
+    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+     if(subscribedChannel.length === 0){
       this.followStatus = false;
-    } else {
-      this.followStatus = true;
+      return;
+     }
+
+    let channelIndex =  _.find(subscribedChannel,(item: FeedsData.SubscribedChannelV3)=>{
+         return item.destDid === destDid && item.channelId === channelId;
+    }) || '';
+    if(channelIndex === '') {
+      this.followStatus = false;
+      return;
     }
+    this.followStatus = true;
   }
 
   initTitle() {

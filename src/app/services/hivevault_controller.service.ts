@@ -440,12 +440,12 @@ export class HiveVaultController {
     });
   }
 
-  removeLike(destDid: string, channelId: string, postId: string, commentId: string) {
+  removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<any>  {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
         console.log('remove like result', result);
-
+        resolve(result);
         //TODO
         // this.dataHelper.removeLikeV3();
       } catch (error) {
@@ -455,7 +455,7 @@ export class HiveVaultController {
     });
   }
 
-  getLike(destDid: string, channelId: string) {
+  getLike(destDid: string, channelId: string): Promise<any>  {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
@@ -469,6 +469,22 @@ export class HiveVaultController {
       }
     });
   }
+
+  getLikeByPost(destDid: string, channelId: string, postId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryLikeByPost(destDid, channelId, postId);
+        console.log('getLikeByPost result', result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'getLikeByPost data error', error);
+        reject([]);
+      }
+    });
+  }
+
+
 
   updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string) {
     return this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent);
