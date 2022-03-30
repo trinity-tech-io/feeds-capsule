@@ -98,9 +98,9 @@ export class HiveVaultController {
   publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const mediaData = await this.postHelperService.prepareMediaDataV3(imagesBase64, videoData)
-        let medaType = FeedsData.MediaType.noMeida
-        if (imagesBase64 && imagesBase64.length > 0) {
+        const mediaData = await this.postHelperService.prepareMediaDataV3(imagesBase64, videoData);
+        let medaType = FeedsData.MediaType.noMeida;
+        if ( imagesBase64.length > 0 && imagesBase64[0] != null && imagesBase64[0] != '' ) {
           medaType = FeedsData.MediaType.containsImg
         } else if (videoData) {
           medaType = FeedsData.MediaType.containsVideo
@@ -190,7 +190,7 @@ export class HiveVaultController {
         if (tippingAddress) {
           finalTippingAddress = tippingAddress;
         } else {
-          finalTippingAddress = originChannel.tipping_address;
+          finalTippingAddress = originChannel.tipping_address || '';
         }
 
         if (channelName) {

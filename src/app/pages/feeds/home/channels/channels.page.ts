@@ -744,6 +744,7 @@ export class ChannelsPage implements OnInit {
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
+
           let arr = srcId.split('-');
 
           let destDid: string = arr[0];
@@ -753,10 +754,15 @@ export class ChannelsPage implements OnInit {
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
           //缩略图
-          let thumbnailKey = elements.thumbnailPath;
+          let thumbnailKey = elements.thumbnailPath || '';
           //原图
-          let imageKey = elements.originMediaPath;
-          let type = elements.type;
+          let imageKey = elements.originMediaPath || '';
+          let type = elements.type || '';
+          if(thumbnailKey === '' || imageKey === ''){
+              this.isLoadimage[id] = '13';
+              rpostImage.style.display = 'none';
+              return;
+          }
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
           let fileOriginName:string = "origin-"+imageKey.split("@")[0];
           let fileThumbnaiName:string = "thumbnail-"+thumbnailKey.split("@")[0];

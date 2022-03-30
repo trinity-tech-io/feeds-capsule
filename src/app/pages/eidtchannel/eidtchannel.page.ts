@@ -37,6 +37,7 @@ export class EidtchannelPage implements OnInit {
   public oldChannelInfo: any = {};
   public oldChannelAvatar: string = '';
   public isPublic: string = '';
+  public tippingAddress: string = '';
   private channelOwner: string = "";
   private channelSubscribes: number = null;
   private followStatus: boolean = false;
@@ -63,18 +64,29 @@ export class EidtchannelPage implements OnInit {
     private hiveVaultController: HiveVaultController
   ) { }
 
-  ngOnInit() {
+ async ngOnInit() {
     let item = this.feedService.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
-    this.destDid = channelInfo['nodeId'] || '';
+    this.destDid = channelInfo['destDid'] || '';
     this.channelId = channelInfo['channelId'] || '';
     this.channelName = channelInfo['name'] || '';
     this.channelDes = channelInfo['des'] || '';
     this.channelOwner = channelInfo['channelOwner'] || '';
     this.channelSubscribes = channelInfo['channelSubscribes'] || '';
+    this.tippingAddress = await this.getChannelTipAddress();
     this.followStatus = channelInfo['followStatus'] || false;
     this.oldChannelAvatar = this.feedService.getProfileIamge();
+  }
+
+ async getChannelTipAddress() {
+
+    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+    let tippingAddress = '';
+    if(tippingAddress != null){
+      tippingAddress = channel.tipping_address || '';
+    }
+    return tippingAddress;
   }
 
   ionViewWillEnter() {
@@ -127,7 +139,7 @@ export class EidtchannelPage implements OnInit {
       des: this.channelDes,
       channelOwner: this.channelOwner,
       channelSubscribes: this.channelSubscribes,
-      followStatus: this.followStatus
+      followStatus: this.followStatus,
     });
     this.native.navigateForward(['/profileimage'], '');
   }
@@ -162,8 +174,7 @@ export class EidtchannelPage implements OnInit {
     //   this.open("EidtchannelPage.des", "EidtchannelPage.des3")
     //   return;
     // }
-    this.isClickConfirm = true;
-
+    this.isClickConfirm = false;
     if (this.checkparms() && this.isPublic === "") {
      await this.native.showLoading('common.waitMoment', isDismiss => { });
      this.editChannelInfo();
@@ -172,21 +183,34 @@ export class EidtchannelPage implements OnInit {
 
   editChannelInfo() {
     try {
+      this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
+      let tippingAddress = this.tippingAddress || '';
       this.hiveVaultController.updateChannel(
-        this.channelId,this.channelName,this.channelDes,this.channelAvatar,"public",'','',''
+        this.channelId,
+        this.channelName,
+        this.channelDes,
+        this.avatar,
+        tippingAddress,
+        "public",
+        '',
+        '',
       ).then((result)=>{
         let channelInfo = this.feedService.getChannelInfo();
+        let tippingAddress = this.tippingAddress || '';
         channelInfo["name"] = this.channelName;
         channelInfo["des"] = this.channelDes;
+        channelInfo["tippingAddress"] = tippingAddress;
         this.feedService.setChannelInfo(channelInfo);
+        this.isClickConfirm = true;
         this.native.hideLoading();
         this.native.pop();
       }).catch((err)=>{
         this.native.hideLoading();
+        this.isClickConfirm = false;
       })
     } catch (error) {
       this.native.hideLoading();
-      alert("===err=="+JSON.stringify(error));
+      this.isClickConfirm = false;
     }
 
   }
@@ -384,6 +408,23 @@ export class EidtchannelPage implements OnInit {
       this.popover = null;
       that.native.pop();
     }
+  }
+
+  async scanWalletAddress(){
+    let scanObj =  await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+     let scannedContent = scanData["scannedText"] || "";
+     if(scannedContent === ''){
+       this.tippingAddress = "";
+       return;
+     }
+     if (scannedContent.indexOf('ethereum:') > -1) {
+       this.tippingAddress  = scannedContent.replace('ethereum:', '');
+     }else if (scannedContent.indexOf('elastos:') > -1) {
+       this.tippingAddress  = scannedContent.replace('elastos:', '');
+     }else{
+       this.tippingAddress  = scannedContent;
+     }
   }
 
 }
