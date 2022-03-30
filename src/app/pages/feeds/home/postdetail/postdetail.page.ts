@@ -284,8 +284,8 @@ export class PostdetailPage implements OnInit {
       this.getVideoPoster(post);
     }
 
-    this.likesNum = await this.getPostLikeNum(post);
-    this.commentsNum = await this.getPostComments(post);
+    this.getPostLikeNum(post);
+    this.getPostComments(post);
   }
 
   ionViewWillEnter() {
@@ -363,8 +363,8 @@ export class PostdetailPage implements OnInit {
         ) || null;
         this.postContent = post.content.content;
         this.updatedTime = post.updatedAt;
-        this.likesNum = await this.getPostLikeNum(post);
-        this.commentsNum = await this.getPostComments(post);
+        this.getPostLikeNum(post);
+        this.getPostComments(post);
       });
     });
 
@@ -1236,36 +1236,42 @@ export class PostdetailPage implements OnInit {
     this.feedService.republishOnePost(destDid, destDid, postId);
   }
 
- async getPostLikeNum(post: FeedsData.PostV3) {
-   let likeNum = 0;
+ getPostLikeNum(post: FeedsData.PostV3) {
    try{
-    let result = await this.hiveVaultController.getLikeByPost(post.destDid, post.channelId , post.postId) || [];
-    let list = result.find_message.items || [];
-    let index = _.find(list,(item)=>{
-          return item.channel_id === post.channelId && item.post_id === post.postId;
-    }) || "";
+      this.hiveVaultController.getLikeByPost(
+      post.destDid, post.channelId , post.postId
+      ).then((result)=>{
 
-    if(index === ""){
-      this.isLike = false;
-    }else{
-      this.isLike = true;
-    }
-    likeNum = list.length;
-    return likeNum;
+        let list = result.find_message.items || [];
+        let index = _.find(list,(item)=>{
+              return item.channel_id === post.channelId && item.post_id === post.postId;
+        }) || "";
+
+        if(index === ""){
+          this.isLike = false;
+        }else{
+          this.isLike = true;
+        }
+        this.likesNum = list.length;
+      }).catch((err)=>{
+
+      });
    }catch(err){
-    return likeNum;
+    this.likesNum = 0;
    }
   }
 
-  async getPostComments(post: FeedsData.PostV3) {
+  getPostComments(post: FeedsData.PostV3) {
    let commentNum = 0;
    try {
-    let result = await this.hiveVaultController.getCommentsByPost(post.destDid,post.channelId,post.postId);
-    commentNum = result.length;
+     this.hiveVaultController.getCommentsByPost(
+       post.destDid,post.channelId,post.postId
+       ).then((result)=>{
+        this.commentsNum = result.length;
+       });
    } catch (error) {
 
    }
-  return commentNum ;
   }
 }
 

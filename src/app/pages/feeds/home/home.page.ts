@@ -166,6 +166,8 @@ export class HomePage implements OnInit {
   public thumbImageName: string = "homeImg";
   private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private likeMap: any = {};
+  private likeNumMap: any = {};
+  private commentNumMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -225,7 +227,8 @@ export class HomePage implements OnInit {
     this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
     this.refreshImage(0);
-    //this.initLikeMap();
+    this.initLikeMap(this.postList);
+    this.initCommentSum(this.postList);
     //this.initnodeStatus(this.postList);
     this.dataHelper.resetNewPost();
   }
@@ -668,7 +671,7 @@ export class HomePage implements OnInit {
   ngOnInit() {
   }
 
-  async like(destDid: string, channelId: string, postId: string) {
+  like(destDid: string, channelId: string, postId: string) {
 
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
@@ -682,30 +685,86 @@ export class HomePage implements OnInit {
     if(isLike === ''){
       try{
         this.likeMap[postId] = "like";
-        let resust =  await this.hiveVaultController.like(destDid,channelId,postId,'0');
+        this.likeNumMap[postId] = this.likeNumMap[postId] +1;
+        this.hiveVaultController.like(destDid,channelId,postId,'0');
         }catch(err){
         this.likeMap[postId] = "";
+        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
         }
     }else{
       try {
         this.likeMap[postId] = "";
-        let resust =  await this.hiveVaultController.removeLike(destDid,channelId,postId,'0');
+        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
+        this.hiveVaultController.removeLike(destDid,channelId,postId,'0');
       } catch (error) {
         this.likeMap[postId] = "like";
+        this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
+
       }
     }
   }
 
-  initLikeMap(){
-   _.forEach(this.postList,async (post :FeedsData.PostV3)=>{
-      let destDid = post.destDid;
+  initLikeMap(postList:any){
+    let sid = setTimeout(()=>{
+    _.forEach(postList, (post :FeedsData.PostV3)=>{
+      let destDid = post. destDid;
       let channelId = post.channelId;
       let postId = post.postId;
-      let isLike = this.likeMap[postId] || '';
-      if(isLike === ''){
-        this.likeMap[postId] = '';
+      try{
+        this.hiveVaultController.getLikeByPost(
+          destDid, channelId, post.postId
+        ).then((result)=>{
+
+          let list = result.find_message.items || [];
+          let index = _.find(list,(item)=>{
+                return item.channel_id === post.channelId && item.post_id === post.postId;
+          }) || "";
+
+          if(index === ""){
+            this.likeMap[postId] = "";
+          }else{
+            this.likeMap[postId] = "like";
+          }
+          this.likeNumMap[postId] = list.length;
+        }).catch((err)=>{
+          this.likeMap[postId] = "";
+          this.likeNumMap[postId] = 0;
+        });
+      }catch(err){
+        //this.likesNum = 0;
+        this.likeMap[postId] = "";
+        this.likeNumMap[postId] = 0;
       }
-   })
+    });
+    clearTimeout(sid);
+    sid = null;
+    },10);
+
+  }
+
+  initCommentSum(postList:any){
+   let sid = setTimeout(()=>{
+    _.forEach(postList,(post :FeedsData.PostV3)=>{
+      let destDid = post. destDid;
+      let channelId = post.channelId;
+      let postId = post.postId;
+
+      try {
+        this.hiveVaultController.getCommentsByPost(
+          destDid,channelId,postId
+          ).then((result)=>{
+           this.commentNumMap[postId] = result.length;
+          }).catch(()=>{
+            this.commentNumMap[postId] = 0;
+          });
+      } catch (error) {
+        this.commentNumMap[postId] = 0;
+      }
+    });
+
+
+    clearTimeout(sid);
+   },10);
   }
 
   navTo(destDid: string, channelId: string, postId: number) {
@@ -859,7 +918,9 @@ export class HomePage implements OnInit {
               let len = this.postList.length - 1;
               this.postList = this.postList.concat(arr);
               this.refreshImage(len);
-              this.initnodeStatus(arr);
+              // this.initnodeStatus(arr);
+              this.initLikeMap(arr);
+              this.initCommentSum(arr);
               event.target.complete();
             });
           } else {
@@ -2397,20 +2458,4 @@ export class HomePage implements OnInit {
     this.dataHelper.setBidPageAssetItem(assetItem);
     this.native.navigateForward(['bid'], { queryParams: assetItem });
   }
-
-  getPostLike(post: FeedsData.PostV3) {
-
-  //  try {
-  //   let result = await this.hiveVaultController.getLikeByPost(post.destDid, post.channelId, post.postId);
-  //  } catch (error) {
-
-  //  }
-
-    return 0;
-  }
-
-  getPostComments(post: FeedsData.PostV3) {
-    return 0;
-  }
-
 }
