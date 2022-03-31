@@ -4,7 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 
 @Injectable()
 export class StorageService {
-  constructor(private native: NativeService, private storage: Storage) {}
+  constructor(private native: NativeService, private storage: Storage) { }
 
   ready(): Promise<LocalForage> {
     return this.storage.ready();
@@ -24,7 +24,7 @@ export class StorageService {
     return this.storage.remove(key);
   }
 
-  setInfo() {}
+  setInfo() { }
 
   clearAll(): Promise<any> {
     return this.storage.clear();

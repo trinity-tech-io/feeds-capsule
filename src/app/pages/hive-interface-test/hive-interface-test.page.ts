@@ -10,6 +10,8 @@ import { Logger, LogLevel } from 'src/app/services/logger';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { SqliteHelper } from 'src/app/services/sqlite_helper.service';
+import { UtilService } from 'src/app/services/utilService';
 
 
 @Component({
@@ -34,7 +36,8 @@ export class HiveInterfaceTestPage implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
-    private fileHelperService: FileHelperService
+    private fileHelperService: FileHelperService,
+    private sqliteHelper: SqliteHelper
   ) { }
 
   ngOnInit() {
@@ -255,5 +258,53 @@ export class HiveInterfaceTestPage implements OnInit {
     postList.forEach(element => {
       console.log('postList element = ', element);
     });
+  }
+
+
+  createTables() {
+    this.sqliteHelper.createTables();
+  }
+
+  queryPostData() {
+    this.sqliteHelper.queryPostData();
+  }
+
+  queryPostDataByID() {
+    this.sqliteHelper.queryPostDataByID('testPostId');
+  }
+
+  insertPostData() {
+    const mediaDataV3: FeedsData.mediaDataV3 = {
+      kind: 'kind',           //"image/video/audio"
+      originMediaPath: 'originMediaPath',
+      type: 'type',           //"image/jpg",
+      size: 0,           //origin file size
+      thumbnailPath: 'testpath',    //"thumbnailCid"
+      duration: 0,
+      imageIndex: 0,
+      additionalInfo: 'additionalInfo',
+      memo: 'memo'
+    }
+    const testContent: FeedsData.postContentV3 = {
+      version: "3.0",
+      content: '',
+      mediaData: [mediaDataV3],// 已经上传的到hive(size/type/scriptName@path)
+      mediaType: FeedsData.MediaType.containsImg
+    }
+    const post: FeedsData.PostV3 = {
+      destDid: 'testdestDid',
+      postId: 'testPostId',
+
+      channelId: 'testChannelId',
+      createdAt: UtilService.getCurrentTimeNum(),
+      updatedAt: UtilService.getCurrentTimeNum(),
+      content: testContent,
+      status: FeedsData.PostCommentStatus.available,
+      type: 'public',
+      tag: 'no tag',
+      proof: 'string',
+      memo: 'string'
+    }
+    this.sqliteHelper.insertPostData(post)
   }
 }
