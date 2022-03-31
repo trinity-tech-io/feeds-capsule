@@ -9,6 +9,8 @@ import { AppService } from '../../services/AppService';
 import { ViewHelper } from '../../services/viewhelper.service';
 import { FeedsServiceApi } from '../../services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-likes',
@@ -33,15 +35,18 @@ export class LikesComponent implements OnInit {
   @Input() videoloadingStyleObj: any = {};
 
   @Input() hideDeletedPosts: boolean = false;
+  @Input() likeMap: any = {};
+  @Input() likeNumMap: any = {};
+  @Input() commentNumMap: any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
   @Output() toPage = new EventEmitter();
-
   public styleObj: any = { width: '' };
   public maxTextSize = 240;
   public isPress: boolean = false;
   public isAndroid: boolean = true;
+
   constructor(
     private platform: Platform,
     private feedService: FeedService,
@@ -51,7 +56,8 @@ export class LikesComponent implements OnInit {
     private viewHelper: ViewHelper,
     public appService: AppService,
     private feedsServiceApi: FeedsServiceApi,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() {
@@ -60,6 +66,8 @@ export class LikesComponent implements OnInit {
     }
     this.styleObj.width = screen.width - 105 + 'px';
   }
+
+
 
   channelName(destDid: string, channelId: string) {
     const key = UtilService.getKey(destDid, channelId);
@@ -80,22 +88,35 @@ export class LikesComponent implements OnInit {
   }
 
   like(destDid: string, channelId: string, postId: string) {
+
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    // if (this.checkServerStatus(destDid) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
+    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
+    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    if (this.checkMyLike(destDid, channelId, postId)) {
-      this.feedsServiceApi.postUnlike(destDid, channelId, postId, 0);
-      return;
+    let  isLike  = this.likeMap[postId] || '';
+    if(isLike === ''){
+      try{
+        this.likeMap[postId] = "like";
+        this.likeNumMap[postId] = this.likeNumMap[postId] +1;
+        this.hiveVaultController.like(destDid,channelId,postId,'0');
+        }catch(err){
+        this.likeMap[postId] = "";
+        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
+        }
+    }else{
+      try {
+        this.likeMap[postId] = "";
+        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
+        this.hiveVaultController.removeLike(destDid,channelId,postId,'0');
+      } catch (error) {
+        this.likeMap[postId] = "like";
+        this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
+      }
     }
-
-    this.feedsServiceApi.postLike(destDid, channelId, postId, 0);
   }
 
   getContentText(content: string): string {
@@ -114,7 +135,7 @@ export class LikesComponent implements OnInit {
     return size;
   }
 
-  navTo(destDid: string, channelId: number, postId: number) {
+  navTo(destDid: string, channelId: string, postId: string) {
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.toPage.emit({
       destDid: destDid,
@@ -125,8 +146,8 @@ export class LikesComponent implements OnInit {
 
   navToPostDetail(
     destDid: string,
-    channelId: number,
-    postId: number,
+    channelId: string,
+    postId: string,
     event?: any,
   ) {
     if (this.isPress) {
@@ -150,10 +171,6 @@ export class LikesComponent implements OnInit {
       postId: postId,
       page: '/postdetail',
     });
-  }
-
-  checkMyLike(destDid: string, channelId: string, postId: string) {
-    return this.feedService.checkMyLike(destDid, channelId, postId);
   }
 
   parseAvatar(destDid: string, channelId: string): string {
@@ -290,7 +307,7 @@ export class LikesComponent implements OnInit {
       .catch(() => { });
   }
 
- async clickDashang(destDid: string, channelId: string, postId: string) {
+  async clickDashang(destDid: string, channelId: string, postId: string) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;

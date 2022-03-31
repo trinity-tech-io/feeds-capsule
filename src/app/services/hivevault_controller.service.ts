@@ -459,12 +459,12 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
         console.log('get like result', result);
-
+        resolve(result);
         //TODO
         // this.dataHelper.removeLikeV3();
       } catch (error) {
+        reject([]);
         Logger.error(TAG, 'Get like data error', error);
-        reject(error);
       }
     });
   }

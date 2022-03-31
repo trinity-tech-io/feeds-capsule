@@ -231,6 +231,11 @@ export class ProfilePage implements OnInit {
   private myFeedsIsLoadimage: any = {};
   private sortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private collectiblesPageNum: number = 0;
+
+  private likeMap: any = {};
+  private likeNumMap: any = {};
+  private commentNumMap: any = {};
+
   constructor(
     private feedService: FeedService,
     public theme: ThemeService,
@@ -265,11 +270,8 @@ export class ProfilePage implements OnInit {
   }
 
   async initMyFeeds() {
-    console.log("刷新myfeeds ======= ")
     // 频道
     this.channels = await this.feedService.getHiveMyChannelList() || [];
-    console.log("channels ===== ", this.channels)
-
     this.myFeedsSum = this.channels.length;
     let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
     this.followers = followedList.length;
@@ -281,11 +283,11 @@ export class ProfilePage implements OnInit {
     // 赞/收藏
     this.startIndex = 0;
     this.initRefresh();
-    this.initnodeStatus(this.likeList);
+    //this.initnodeStatus(this.likeList);
   }
 
-  initRefresh() {
-    this.totalLikeList = this.sortLikeList();
+ async initRefresh() {
+    this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
     this.startIndex = 0;
     if (this.totalLikeList.length - this.pageNumber > 0) {
@@ -304,15 +306,18 @@ export class ProfilePage implements OnInit {
       this.refreshImage();
       this.infiniteScroll.disabled = true;
     }
+
+    this.initLikeMap(this.likeList);
+    this.initCommentSum(this.likeList);
   }
 
-  refreshLikeList() {
+ async refreshLikeList() {
     if (this.startIndex === 0) {
       this.initRefresh();
       return;
     }
 
-    this.totalLikeList = this.sortLikeList();
+    this.totalLikeList = await this.sortLikeList();
     if (this.totalLikeList.length - this.pageNumber * this.startIndex > 0) {
       this.likeList = this.likeList.slice(0, this.startIndex * this.pageNumber);
       this.infiniteScroll.disabled = false;
@@ -326,14 +331,38 @@ export class ProfilePage implements OnInit {
     this.refreshImage();
   }
 
-  sortLikeList() {
-    let likeList = this.feedService.getLikeList() || [];
+ async sortLikeList() {
+    //let likeList = this.feedService.getLikeList() || [];
+    let likeList = [];
+    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List();
+    console.log("======subscribedChannel=====",subscribedChannel);
+    for(let item of subscribedChannel){
+    //_.forEach(subscribedChannel,async (item: FeedsData.SubscribedChannelV3)=>{
+        let destDid = item.destDid;
+        let channelId = item.channelId;
+        try {
+          let result =  await this.hiveVaultController.getLike(destDid,channelId);
+          let list = result.find_message.items || [].length;
+          if(list.length > 0){
+            for(let index = 0; index < list.length; index++){
+              let postId = list[index]['post_id'];
+              let post = await this.dataHelper.getPostV3ById(destDid,postId);
+              likeList.push(post);
+            }
+          }
+
+        } catch (error) {
+
+        }
+      }
+    //});
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
         return item.status != 1;
       });
     }
+    console.log("====likeList======",JSON.stringify(likeList));
     return likeList;
   }
 
@@ -620,8 +649,10 @@ export class ProfilePage implements OnInit {
     }
 
 
-    this.totalLikeList = this.sortLikeList() || [];
+    this.totalLikeList = await this.sortLikeList() || [];
+    console.log("=======this.totalLikeList========",this.totalLikeList);
     this.likeSum = this.totalLikeList.length;
+    console.log("=======this.likeSum========",this.likeSum);
   }
 
   ionViewWillLeave() {
@@ -795,8 +826,9 @@ export class ProfilePage implements OnInit {
               this.likeList = this.likeList.concat(arr);
             });
             this.refreshImage();
-            this.initnodeStatus(arr);
-
+            // this.initnodeStatus(arr);
+            this.initLikeMap(arr);
+            this.initCommentSum(arr);
             event.target.complete();
           } else {
             arr = this.totalLikeList.slice(
@@ -2422,5 +2454,57 @@ async checkFollowStatus(destDid: string, channelId: string) {
   prepareSaveCollectiblesData(address: string) {
     if (this.refreshNotSaleOrderFinish && this.refreshSaleOrderFinish)
       this.saveCollectiblesToCache(address);
+  }
+
+  initLikeMap(postList:any){
+    let sid = setTimeout(async ()=>{
+      for(let post of postList){
+    //_.forEach(postList, (post :FeedsData.PostV3)=>{
+      let destDid = post. destDid;
+      let channelId = post.channelId;
+      let postId = post.postId;
+      try{
+        let result:any = await this.hiveVaultController.getLikeByPost(
+          destDid, channelId, post.postId);
+          let list = result.find_message.items || [];
+          let index = _.find(list,(item)=>{
+                return item.channel_id === post.channelId && item.post_id === post.postId;
+          }) || "";
+
+          if(index === ""){
+            this.likeMap[postId] = "";
+          }else{
+            this.likeMap[postId] = "like";
+          }
+          this.likeNumMap[postId] = list.length;
+      }catch(err){
+        //this.likesNum = 0;
+        this.likeMap[postId] = "";
+        this.likeNumMap[postId] = 0;
+      }
+      }
+    clearTimeout(sid);
+    sid = null;
+    },10);
+
+  }
+
+  initCommentSum(postList:any){
+   let sid = setTimeout(async ()=>{
+    for(let post of postList){
+      let destDid = post. destDid;
+      let channelId = post.channelId;
+      let postId = post.postId;
+
+      try {
+        let result =  await this.hiveVaultController.getCommentsByPost( destDid,channelId,postId);
+        this.commentNumMap[postId] = result.length;
+      } catch (error) {
+        this.commentNumMap[postId] = 0;
+      }
+    }
+    clearTimeout(sid);
+    sid = null;
+   },10);
   }
 }

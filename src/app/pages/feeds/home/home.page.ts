@@ -701,22 +701,20 @@ export class HomePage implements OnInit {
       } catch (error) {
         this.likeMap[postId] = "like";
         this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
-
       }
     }
   }
 
   initLikeMap(postList:any){
-    let sid = setTimeout(()=>{
-    _.forEach(postList, (post :FeedsData.PostV3)=>{
+    let sid = setTimeout(async ()=>{
+      for(let post of postList){
+    //_.forEach(postList, (post :FeedsData.PostV3)=>{
       let destDid = post. destDid;
       let channelId = post.channelId;
       let postId = post.postId;
       try{
-        this.hiveVaultController.getLikeByPost(
-          destDid, channelId, post.postId
-        ).then((result)=>{
-
+        let result:any = await this.hiveVaultController.getLikeByPost(
+          destDid, channelId, post.postId);
           let list = result.find_message.items || [];
           let index = _.find(list,(item)=>{
                 return item.channel_id === post.channelId && item.post_id === post.postId;
@@ -728,16 +726,12 @@ export class HomePage implements OnInit {
             this.likeMap[postId] = "like";
           }
           this.likeNumMap[postId] = list.length;
-        }).catch((err)=>{
-          this.likeMap[postId] = "";
-          this.likeNumMap[postId] = 0;
-        });
       }catch(err){
         //this.likesNum = 0;
         this.likeMap[postId] = "";
         this.likeNumMap[postId] = 0;
       }
-    });
+      }
     clearTimeout(sid);
     sid = null;
     },10);
@@ -745,27 +739,21 @@ export class HomePage implements OnInit {
   }
 
   initCommentSum(postList:any){
-   let sid = setTimeout(()=>{
-    _.forEach(postList,(post :FeedsData.PostV3)=>{
+   let sid = setTimeout(async ()=>{
+    for(let post of postList){
       let destDid = post. destDid;
       let channelId = post.channelId;
       let postId = post.postId;
 
       try {
-        this.hiveVaultController.getCommentsByPost(
-          destDid,channelId,postId
-          ).then((result)=>{
-           this.commentNumMap[postId] = result.length;
-          }).catch(()=>{
-            this.commentNumMap[postId] = 0;
-          });
+        let result =  await this.hiveVaultController.getCommentsByPost( destDid,channelId,postId);
+        this.commentNumMap[postId] = result.length;
       } catch (error) {
         this.commentNumMap[postId] = 0;
       }
-    });
-
-
+    }
     clearTimeout(sid);
+    sid = null;
    },10);
   }
 
