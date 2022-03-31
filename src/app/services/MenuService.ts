@@ -102,8 +102,25 @@ export class MenuService {
                   destDid: destDid,
                   channelId: channelId
                 };
-                this.dataHelper.removeSubscribedChannelV3(channel);
-                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+                await this.native.showLoading("common.waitMoment");
+                try {
+                  this.hiveVaultController.unSubscribeChannel(
+                    destDid,  channelId
+                    ).then(async (result)=>{
+                      let channel :FeedsData.SubscribedChannelV3 = {
+                        destDid: destDid,
+                        channelId: channelId
+                      };
+                      await this.dataHelper.removeSubscribedChannelV3(channel);
+                      await this.hiveVaultController.getHomePostContent();
+                      this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+                      this.native.hideLoading();
+                    }).catch(()=>{
+                      this.native.hideLoading();
+                    });
+                } catch (error) {
+                  this.native.hideLoading();
+                }
               }).catch(()=>{
 
               });
@@ -234,7 +251,8 @@ export class MenuService {
             this.translate.instant('common.unsubscribe') + ' @' + channelName,
           role: 'destructive',
           icon: 'person-remove',
-          handler: () => {
+          handler: async () => {
+            await this.native.showLoading("common.waitMoment");
             this.hiveVaultController.unSubscribeChannel(
               destDid,  channelId
               ).then(async (result)=>{
@@ -242,10 +260,12 @@ export class MenuService {
                   destDid: destDid,
                   channelId: channelId
                 };
-                this.dataHelper.removeSubscribedChannelV3(channel);
-                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+               await this.dataHelper.removeSubscribedChannelV3(channel);
+               await this.hiveVaultController.getHomePostContent();
+               this.events.publish(FeedsEvent.PublishType.unsubscribeFinish,channel);
+               this.native.hideLoading();
               }).catch(()=>{
-
+               this.native.hideLoading();
               });
           },
         },
@@ -279,19 +299,26 @@ export class MenuService {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
           icon: 'person-remove',
-          handler: () => {
-            this.hiveVaultController.unSubscribeChannel(
-              destDid,  channelId
-              ).then(async (result)=>{
-                let channel :FeedsData.SubscribedChannelV3 = {
-                  destDid: destDid,
-                  channelId: channelId
-                };
-                this.dataHelper.removeSubscribedChannelV3(channel);
-                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
-              }).catch(()=>{
-
-              });
+          handler: async () => {
+            await this.native.showLoading("common.waitMoment");
+            try {
+              this.hiveVaultController.unSubscribeChannel(
+                destDid,  channelId
+                ).then(async (result)=>{
+                  let channel :FeedsData.SubscribedChannelV3 = {
+                    destDid: destDid,
+                    channelId: channelId
+                  };
+                  await this.dataHelper.removeSubscribedChannelV3(channel);
+                  await this.hiveVaultController.getHomePostContent();
+                  this.events.publish(FeedsEvent.PublishType.unsubscribeFinish,channel);
+                  this.native.hideLoading();
+                }).catch(()=>{
+                  this.native.hideLoading();
+                });
+            } catch (error) {
+              this.native.hideLoading();
+            }
           },
         },
         {
@@ -458,24 +485,31 @@ export class MenuService {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
           icon: 'person-remove',
-          handler: () => {
+          handler: async () => {
             if (this.feedService.getConnectionStatus() != 0) {
               this.native.toastWarn('common.connectionError');
               return;
             }
+            await this.native.showLoading("common.waitMoment");
+            try {
+              this.hiveVaultController.unSubscribeChannel(
+                destDid,  channelId
+                ).then(async (result)=>{
+                  let channel :FeedsData.SubscribedChannelV3 = {
+                    destDid: destDid,
+                    channelId: channelId
+                  };
+                  await this.dataHelper.removeSubscribedChannelV3(channel);
+                  await this.hiveVaultController.getHomePostContent();
+                  this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+                  this.native.hideLoading();
+                }).catch(()=>{
+                  this.native.hideLoading();
+                });
+            } catch (error) {
+              this.native.hideLoading();
+            }
 
-            this.hiveVaultController.unSubscribeChannel(
-              destDid,  channelId
-              ).then(async (result)=>{
-                let channel :FeedsData.SubscribedChannelV3 = {
-                  destDid: destDid,
-                  channelId: channelId
-                };
-                this.dataHelper.removeSubscribedChannelV3(channel);
-                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
-              }).catch(()=>{
-
-              });
           },
         },
         {

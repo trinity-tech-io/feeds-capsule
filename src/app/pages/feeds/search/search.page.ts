@@ -1215,6 +1215,7 @@ export class SearchPage implements OnInit {
       try {
         await that.hiveVaultController.getChannelInfoById(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId);
         await that.hiveVaultController.subscribeChannel(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId, that.displayName);
+        await that.hiveVaultController.getHomePostContent();
         that.native.toast('common.subscribeSuccess');
       } catch (error) {
         that.native.toastWarn('common.subscribeFail');

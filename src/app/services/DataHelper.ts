@@ -2867,13 +2867,15 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
   }
 
-  removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+ async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+  console.log("=======111this.subscribedChannelMapV3======",this.subscribedChannelMapV3);
     if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return;
 
     let key = subscribedChannel.destDid + "#" + subscribedChannel.channelId;
     this.subscribedChannelMapV3[key] = null;
     delete this.subscribedChannelMapV3[key];
-    this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
+    console.log("=======this.subscribedChannelMapV3======",this.subscribedChannelMapV3);
+   await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
   }
 
   getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
@@ -3218,5 +3220,13 @@ export class DataHelper {
         reject(error)
       }
     })
+  }
+
+  setPostMapV3(postMapV3: any){
+    this.postMapV3 = postMapV3;
+  }
+
+  getPostMapV3(){
+    return this.postMapV3;
   }
 }

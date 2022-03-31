@@ -125,19 +125,8 @@ export class FeedinfoPage implements OnInit {
     });
 
     this.events.subscribe(
-      FeedsEvent.PublishType.subscribeFinish,
-      (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
-        this.zone.run(async () => {
-          let nodeId = subscribeFinishData.nodeId;
-          let channelId = subscribeFinishData.channelId;
-          await this.checkFollowStatus(nodeId, channelId);
-        });
-      },
-    );
-
-    this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
-      (unsubscribeData: FeedsEvent.unsubscribeData) => {
+      () => {
         this.zone.run(() => {
           this.native.setRootRouter(['/tabs/home']);
         });
@@ -148,7 +137,6 @@ export class FeedinfoPage implements OnInit {
   removeEvents() {
     this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.publish(FeedsEvent.PublishType.notification);
@@ -214,16 +202,24 @@ export class FeedinfoPage implements OnInit {
     this.native.go('/eidtchannel');
   }
 
-  subscribe() {
+  async subscribe() {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
-    // this.feedsServiceApi.subscribeChannel(this.nodeId, Number(this.channelId));
-
-    //TODO
-    // this.hiveVaultController.subscribeChannel();
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveVaultController.subscribeChannel(
+        userDid,this.channelId,this.name);
+      await this.hiveVaultController.getHomePostContent();
+      this.followStatus = true;
+      this.native.hideLoading();
+    } catch (error) {
+      this.followStatus = false;
+      this.native.hideLoading();
+    }
   }
 
   unsubscribe() {

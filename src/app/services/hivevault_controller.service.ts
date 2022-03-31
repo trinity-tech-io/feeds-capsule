@@ -28,21 +28,28 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-        console.log("=====subscribedChannels=======", subscribedChannels);
+        if(subscribedChannels.length === 0){
+          this.dataHelper.setPostMapV3({});
+          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3,{});
+          resolve('FINISH');
+        }
+        let postMapV3 =  this.dataHelper.getPostMapV3();
         for (let index = 0; index < subscribedChannels.length; index++) {
           const item = subscribedChannels[index];
 
           const channelId = item.channelId
           const destDid = item.destDid
 
-          console.log("=====getHomePostContent=======   ", channelId, destDid);
           const posts = await this.getPostListByChannel(destDid, channelId);
-          console.log('subscribedPost============', posts);
 
           for (let index = 0; index < posts.length; index++) {
             const post: FeedsData.PostV3 = posts[index];
-            await this.dataHelper.addPostV3(post);
+            const key = UtilService.getKey(post.destDid, post.postId);
+            postMapV3[key] = post;
+            //await this.dataHelper.addPostV3(post);
           }
+          this.dataHelper.setPostMapV3(postMapV3);
+          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3,postMapV3);
         }
         resolve('FINISH');
       } catch (error) {

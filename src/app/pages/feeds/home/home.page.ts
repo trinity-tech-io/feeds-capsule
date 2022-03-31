@@ -201,13 +201,15 @@ export class HomePage implements OnInit {
     private hiveVaultController: HiveVaultController
   ) { }
 
-  async initPostListData(scrollToTop: boolean) {
+  async initPostListData(scrollToTop: boolean,homePostContent?: string) {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
-    const result =  await this.hiveVaultController.getHomePostContent();
+    homePostContent = homePostContent || '';
+    if(homePostContent === ''){
+      const result =  await this.hiveVaultController.getHomePostContent();
+    }
     this.totalData = await this.sortPostList();
-    console.log("=====this.totalData======"+JSON.stringify(this.totalData));
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
 
@@ -244,9 +246,10 @@ export class HomePage implements OnInit {
     return postList;
   }
 
-  async refreshPostList() {
+  async refreshPostList(homePostContent?: string) {
+    homePostContent = homePostContent || '';
     if (this.startIndex === 0) {
-      this.initPostListData(false);
+      this.initPostListData(false,homePostContent);
       return;
     }
     this.totalData = await this.sortPostList();
@@ -350,11 +353,9 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
-      this.zone.run(() => {
-        //todo
-
+      this.zone.run(async () => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-        this.refreshPostList();
+        this.refreshPostList("unHomePostContent");
       });
     });
 

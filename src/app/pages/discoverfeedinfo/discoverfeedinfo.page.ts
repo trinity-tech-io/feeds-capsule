@@ -15,6 +15,8 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import  _ from 'lodash';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-discoverfeedinfo',
@@ -59,6 +61,8 @@ export class DiscoverfeedinfoPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private ipfsService: IPFSService,
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController
   ) {}
 
   ngOnInit() {
@@ -165,26 +169,47 @@ export class DiscoverfeedinfoPage implements OnInit {
     }
   }
 
-  subscribe() {
+ async subscribe() {
     let feedUrl = this.feedInfo['url'];
     let avatar = this.feedInfo['feedsAvatar'];
     let followers = this.feedInfo['followers'];
     let feedName = this.feedInfo['name'];
     let desc = this.feedInfo['description'];
     let ownerName = this.feedInfo['ownerName'];
+    let channelId = feedUrl.split('/')[4];
+    await this.subscribeV3(channelId,feedName);
+    // this.feedService
+    //   .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
+    //   .then(isSuccess => {
+    //     if (isSuccess) {
+    //       //this.native.pop();
+    //       //return;
+    //       this.status = '0';
+    //     }
+    //   })
+    //   .catch(err => {
+    //     this.status = '1';
+    //   });
+  }
 
-    this.feedService
-      .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
-      .then(isSuccess => {
-        if (isSuccess) {
-          //this.native.pop();
-          //return;
-          this.status = '0';
-        }
-      })
-      .catch(err => {
-        this.status = '1';
-      });
+  async subscribeV3(channelId :string, channelName: string) {
+    if (this.feedService.getConnectionStatus() != 0) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveVaultController.subscribeChannel(
+        userDid,channelId, channelName);
+      await this.hiveVaultController.getHomePostContent();
+      this.status = '2';
+      this.native.hideLoading();
+    } catch (error) {
+      this.followStatus = false;
+      this.native.hideLoading();
+    }
   }
 
   async unsubscribe() {

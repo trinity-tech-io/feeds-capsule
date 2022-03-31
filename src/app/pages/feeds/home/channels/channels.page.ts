@@ -153,19 +153,25 @@ export class ChannelsPage implements OnInit {
 
   ) { }
 
- async subscribe() {
+  async subscribe() {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
-    this.hiveVaultController.subscribeChannel(
-      userDid,this.channelId,this.channelName).then(async (result)=>{
-        await this.checkFollowStatus(this.destDid,this.channelId);
-      }).catch((err)=>{
-
-      })
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveVaultController.subscribeChannel(
+        userDid,this.channelId,this.channelName);
+      await this.hiveVaultController.getHomePostContent();
+      this.initRefresh();
+      this.followStatus = true;
+      this.native.hideLoading();
+    } catch (error) {
+      this.followStatus = false;
+      this.native.hideLoading();
+    }
   }
 
   tip() {
@@ -315,19 +321,9 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe(
-      FeedsEvent.PublishType.subscribeFinish,
-      (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
-        this.zone.run(async () => {
-         await this.checkFollowStatus(this.destDid, this.channelId);
-        });
-      },
-    );
-
-    this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
-      (unsubscribeData: FeedsEvent.unsubscribeData) => {
-        this.zone.run(async () => {
-         await this.checkFollowStatus(this.destDid, this.channelId);
+      () => {
+        this.zone.run(() => {
           this.native.setRootRouter(['/tabs/home']);
         });
       },
@@ -385,17 +381,6 @@ export class ChannelsPage implements OnInit {
       this.hideFullScreen();
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.channelRightMenu, () => {
       this.clickAvatar();
     });
@@ -421,7 +406,6 @@ export class ChannelsPage implements OnInit {
     this.videoRotateNum['transform'] = 'rotate(0deg)';
 
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
@@ -431,7 +415,6 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
     this.removeImages();
     this.removeAllVideo();
