@@ -1121,10 +1121,9 @@ export class HiveVaultHelper {
     }
     /** download essential avatar end */
 
-    uploadMediaData(data: any): Promise<string> {
+    uploadMediaDataWithString(data: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                //const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
                 const hash = SparkMD5.hash(data);
 
                 const remoteName = 'feeds/data/' + hash;
@@ -1140,41 +1139,20 @@ export class HiveVaultHelper {
             }
         });
     }
-    /*
-        uploadMediaDataWithBuffer(bufferString: string): Promise<string> {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    //const dataBase64 = await this.fileHelperService.transBlobToBase64(data)
-                    const hash = SparkMD5.hash(bufferString);
-     
-                    const remoteName = 'feeds/data/' + hash;
-                    const bufferData = base64ImageToBuffer(bufferString)
-                    await this.hiveService.uploadScriptWithBuffer(remoteName, bufferData);
-                    const scriptName = hash
-                    await this.registerFileDownloadScripting(scriptName);
-                    let avatarHiveURL = scriptName + "@" + remoteName //
-                    Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
-                    resolve(avatarHiveURL);
-                } catch (error) {
-                    console.log("uploadMediaData error:", error)
-                    reject(error);
-                }
-            });
-        }
-    */
-    uploadMediaDataWithBlob(blobData: Blob): Promise<string> {
+    
+    uploadMediaDataWithBuffer(bufferData: Buffer): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                const dataBase64 = await this.fileHelperService.transBlobToBase64(blobData)
+                const dataBase64 = bufferData.toString()
                 const hash = SparkMD5.hash(dataBase64);
-
+                console.log("dataBase64 ======= ", dataBase64)
                 const remoteName = 'feeds/data/' + hash;
-                await this.hiveService.uploadScriptWithBlob(remoteName, blobData);
+                await this.hiveService.uploadScriptWithBuffer(remoteName, bufferData);
                 const scriptName = hash
                 await this.registerFileDownloadScripting(scriptName);
                 let avatarHiveURL = scriptName + "@" + remoteName //
                 Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
-                resolve("TODO")
+                resolve(avatarHiveURL)
             } catch (error) {
                 console.log("uploadMediaData error:", error)
                 reject(error);
@@ -1197,9 +1175,9 @@ export class HiveVaultHelper {
             try {
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
                 const dataBuffer = await this.downloadScriptingData(transaction_id);
-                // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
-
-                resolve(dataBuffer);
+                const rawImage = await rawImageToBase64DataUrl(dataBuffer)
+                
+                resolve(rawImage);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
                 reject(error);
@@ -1219,8 +1197,8 @@ export class HiveVaultHelper {
 
     private async downloadScriptingData(transactionID: string) {
         let dataBuffer = await this.hiveService.downloadScripting(transactionID)
-        let jsonString = dataBuffer.toString();
-        return jsonString
+        // let jsonString = dataBuffer.toString();
+        return dataBuffer
     }
 
     private async downloadScriptingDataWithBuffer(transactionID: string) {

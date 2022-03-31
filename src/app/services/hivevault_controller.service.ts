@@ -145,7 +145,9 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
-        const avatarHiveURL = await this.hiveVaultApi.uploadMediaData(avatarAddress)
+        const avatarBlob = this.postHelperService.base64ToBlob(avatarAddress);
+        const avatarBlob2Buffer = await UtilService.blob2Buffer(avatarBlob)
+        const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithBuffer(avatarBlob2Buffer)
         const insertResult = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft)
 
         //TODO add category、proof、memo
@@ -191,7 +193,9 @@ export class HiveVaultController {
         let finalMemo = '';
 
         if (avatarAddress) {
-          avatarHiveURL = await this.hiveVaultApi.uploadMediaData(avatarAddress);
+          const avatarBlob = this.postHelperService.base64ToBlob(avatarAddress);
+          const avatarBlob2Buffer = await UtilService.blob2Buffer(avatarBlob)
+          avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithBuffer(avatarBlob2Buffer);
         } else {
           avatarHiveURL = originChannel.avatar;
         }

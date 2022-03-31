@@ -240,15 +240,6 @@ export class HiveService {
     }
   }
 
-  async downloadScriptingURL(avatarHiveURL: string) {
-    try {
-      const scriptingService = await this.getScriptingService()
-      // return await scriptingService.downloadScriptingURL(avatarHiveURL)
-    } catch (error) {
-      console.log("downloadScriptingURL  ===== ", error)
-    }
-  }
-
   async downloadFile(remotePath: string) {
     const fileService = await this.getFilesService()
     return await fileService.download(remotePath)
@@ -274,9 +265,7 @@ export class HiveService {
     }
   }
 
-  async uploadScriptWithBlob(remotePath: string, img: Blob) {
-    console.log("=======remotePath========", remotePath);
-    console.log("=======img========", img);
+  async uploadScriptWithBuffer(remotePath: string, img: Buffer) {
     try {
       const fileService = await this.getFilesService()
       return await fileService.upload(remotePath, img)

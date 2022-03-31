@@ -136,8 +136,12 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.downloadEssAvatar();
   }
 
-  uploadMediaData(data: any): Promise<string> {
-    return this.hiveVaultHelper.uploadMediaData(data);
+  uploadMediaDataWithString(data: string): Promise<string> {
+    return this.hiveVaultHelper.uploadMediaDataWithString(data);
+  }
+
+  uploadMediaDataWithBuffer(data: Buffer): Promise<string> {
+    return this.hiveVaultHelper.uploadMediaDataWithBuffer(data);
   }
 
   /** selfData */

@@ -125,19 +125,18 @@ export class PostHelperService {
             if (!element || element == '')
               continue;
 
-            //const elementBlob = this.base64ToBlob(element);
-            // const elementBuffer = this.base64ToBuffer(element);
-            // const elementBuffer = this.base64ToBuffer(element);
-            const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(element, FeedsData.MediaType.noMeida.toString());
+            const elementBlob = this.base64ToBlob(element);
+            const blob2Buffer = await UtilService.blob2Buffer(elementBlob)
+            const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(blob2Buffer, elementBlob.type);
             if (originMediaData) {
               const medaPath = originMediaData.medaPath;
               // this.fileHelperService.savePostData(medaPath, elementBuffer);
             }
 
             const thumbnail = await UtilService.compress(element);
-            //const thumbnailBlob = this.base64ToBlob(thumbnail);
-            // const thumbnailBuffer = this.base64ToBuffer(thumbnail);
-            const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(thumbnail, FeedsData.MediaType.containsImg.toString());
+            const thumbnailBlob = this.base64ToBlob(thumbnail);
+            const thumbnailBlob2Buffer = await UtilService.blob2Buffer(thumbnailBlob)
+            const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(thumbnailBlob2Buffer, thumbnailBlob.type);
             if (thumbnailMediaData) {
               const path = thumbnailMediaData.medaPath;
               // this.fileHelperService.savePostData(path, thumbnailBlob);
@@ -152,19 +151,17 @@ export class PostHelperService {
         // TODO Video data
 
         if (videoData) {
-          //const videoBlob = this.base64ToBlob(videoData.video);
-          // const videoBuffer = this.base64ToBuffer(videoData.video);
-
-          const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(videoData.video, FeedsData.MediaType.containsVideo.toString());
+          const videoBlob = this.base64ToBlob(videoData.video);
+          const videoBlob2Buffer = await UtilService.blob2Buffer(videoBlob)
+          const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(videoBlob2Buffer, videoBlob.type);
           if (originMediaData) {
             const medaPath = originMediaData.medaPath;
             // this.fileHelperService.savePostData(medaPath, videoBlob);
           }
 
-          //const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
-          // const videoThumbBuffer = this.base64ToBuffer(videoData.thumbnail);
-
-          const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHive(videoData.thumbnail, FeedsData.MediaType.containsVideo.toString());
+          const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
+          const videoThumbBlob2Buffer = await UtilService.blob2Buffer(videoThumbBlob)
+          const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(videoThumbBlob2Buffer, videoThumbBlob.type);
           if (thumbnailMediaData) {
             const medaPath = thumbnailMediaData.medaPath;
             // this.fileHelperService.savePostData(medaPath, videoThumbBlob);
@@ -185,12 +182,30 @@ export class PostHelperService {
     });
   }
 
-  uploadDataToHive(elementBlob: string, type: string): Promise<FeedsData.originMediaDataV3> {
+  uploadDataToHiveWtihString(elementBlob: string, type: string): Promise<FeedsData.originMediaDataV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const size = elementBlob.length;
-        //const type = elementBlob.type;
-        const path = await this.hiveVaultHelper.uploadMediaData(elementBlob);
+        const path = await this.hiveVaultHelper.uploadMediaDataWithString(elementBlob);
+        const originMediaData: FeedsData.originMediaDataV3 = {
+          size: size,
+          type: type,
+          medaPath: path
+        }
+        resolve(originMediaData);
+      } catch (error) {
+        const errorMsg = 'Upload data to hive error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  uploadDataToHiveWithBuffer(elementBuffer: Buffer, type: string): Promise<FeedsData.originMediaDataV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const size = elementBuffer.length;
+        const path = await this.hiveVaultHelper.uploadMediaDataWithBuffer(elementBuffer);
         const originMediaData: FeedsData.originMediaDataV3 = {
           size: size,
           type: type,
