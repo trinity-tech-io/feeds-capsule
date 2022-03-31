@@ -118,8 +118,8 @@ export class PostHelperService {
     return new Promise(async (resolve, reject) => {
       try {
         let mediasData: FeedsData.mediaDataV3[] = [];
-
-        if (imagesBase64 && imagesBase64.length > 0) {
+        console.log("=====imagesBase64====",imagesBase64);
+        if (imagesBase64.length > 0 && imagesBase64[0] != null && imagesBase64[0] != '') {
           for (let index = 0; index < imagesBase64.length; index++) {
             const element = imagesBase64[index];
             if (!element || element == '')
