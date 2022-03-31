@@ -127,7 +127,7 @@ export class PostHelperService {
 
             const elementBlob = this.base64ToBlob(element);
             const blob2Buffer = await UtilService.blob2Buffer(elementBlob)
-            const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(blob2Buffer, elementBlob.type);
+            const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(element, elementBlob.type);
             if (originMediaData) {
               const medaPath = originMediaData.medaPath;
               // this.fileHelperService.savePostData(medaPath, elementBuffer);
@@ -136,7 +136,7 @@ export class PostHelperService {
             const thumbnail = await UtilService.compress(element);
             const thumbnailBlob = this.base64ToBlob(thumbnail);
             const thumbnailBlob2Buffer = await UtilService.blob2Buffer(thumbnailBlob)
-            const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(thumbnailBlob2Buffer, thumbnailBlob.type);
+            const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(thumbnail, thumbnailBlob.type);
             if (thumbnailMediaData) {
               const path = thumbnailMediaData.medaPath;
               // this.fileHelperService.savePostData(path, thumbnailBlob);
@@ -153,7 +153,7 @@ export class PostHelperService {
         if (videoData) {
           const videoBlob = this.base64ToBlob(videoData.video);
           const videoBlob2Buffer = await UtilService.blob2Buffer(videoBlob)
-          const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(videoBlob2Buffer, videoBlob.type);
+          const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.video, videoBlob.type);
           if (originMediaData) {
             const medaPath = originMediaData.medaPath;
             // this.fileHelperService.savePostData(medaPath, videoBlob);
@@ -161,7 +161,7 @@ export class PostHelperService {
 
           const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
           const videoThumbBlob2Buffer = await UtilService.blob2Buffer(videoThumbBlob)
-          const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithBuffer(videoThumbBlob2Buffer, videoThumbBlob.type);
+          const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.thumbnail, videoThumbBlob.type);
           if (thumbnailMediaData) {
             const medaPath = thumbnailMediaData.medaPath;
             // this.fileHelperService.savePostData(medaPath, videoThumbBlob);
@@ -182,7 +182,7 @@ export class PostHelperService {
     });
   }
 
-  uploadDataToHiveWtihString(elementBlob: string, type: string): Promise<FeedsData.originMediaDataV3> {
+  uploadDataToHiveWithString(elementBlob: string, type: string): Promise<FeedsData.originMediaDataV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const size = elementBlob.length;

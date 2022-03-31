@@ -1174,10 +1174,10 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
-                const dataBuffer = await this.downloadScriptingData(transaction_id);
-                const rawImage = await rawImageToBase64DataUrl(dataBuffer)
+                const data = await this.downloadScriptingDataWithString(transaction_id);
+                // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
                 
-                resolve(rawImage);
+                resolve(data);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
                 reject(error);
@@ -1195,10 +1195,10 @@ export class HiveVaultHelper {
         return transaction_id
     }
 
-    private async downloadScriptingData(transactionID: string) {
+    private async downloadScriptingDataWithString(transactionID: string) {
         let dataBuffer = await this.hiveService.downloadScripting(transactionID)
-        // let jsonString = dataBuffer.toString();
-        return dataBuffer
+        let jsonString = dataBuffer.toString();
+        return jsonString
     }
 
     private async downloadScriptingDataWithBuffer(transactionID: string) {
