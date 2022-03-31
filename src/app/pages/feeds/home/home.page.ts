@@ -507,8 +507,9 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
       this.zone.run(() => {
-        this.native.hideLoading();
-        this.refreshPostList();
+        console.log("===========deletePostFinish===========");
+        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+        this.refreshPostList("unHomePostContent");
       });
     });
 

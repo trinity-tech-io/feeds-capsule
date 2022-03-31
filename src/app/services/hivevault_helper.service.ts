@@ -1139,7 +1139,7 @@ export class HiveVaultHelper {
             }
         });
     }
-    
+
     uploadMediaDataWithBuffer(bufferData: Buffer): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1176,7 +1176,7 @@ export class HiveVaultHelper {
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
                 const data = await this.downloadScriptingDataWithString(transaction_id);
                 // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
-                
+
                 resolve(data);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
@@ -1260,4 +1260,4 @@ export class HiveVaultHelper {
         return this.queryPostsFromDB();
     }
     /** query slef post end */
-}               
+}

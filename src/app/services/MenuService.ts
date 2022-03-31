@@ -612,33 +612,22 @@ export class MenuService {
     }
   }
 
-  confirm(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-    }
-    that.native
-      .showLoading('common.waitMoment', () => { }, 50000)
-      .then(() => {
-        // that.feedService.deletePost(
-        //   that.nodeId,
-        //   Number(that.channelId),
-        //   Number(that.postId),
-        // );
-        try {
-          that.hiveVaultController.deletePost(that.postId).then((result: any)=>{
-            console.log("========1111111111=======",result);
-             that.events(FeedsEvent.PublishType.deletePostFinish);
-          }).catch((err:any)=>{
-            that.native.hideLoading();
-          })
-        } catch (error) {
+  async confirm(that: any) {
+  if (this.popover != null) {
+    this.popover.dismiss();
+  }
+  await that.native.showLoading('common.waitMoment');
+      try {
+        that.hiveVaultController.deletePost(that.postId,that.channelId).then((result: any)=>{
+          that.dataHelper.deletePostV3(that.destDid,that.postId);
+          that.events.publish(FeedsEvent.PublishType.deletePostFinish);
           that.native.hideLoading();
-        }
-
-      })
-      .catch(() => {
+        }).catch((err:any)=>{
+          that.native.hideLoading();
+        })
+      } catch (error) {
         that.native.hideLoading();
-      });
+      }
   }
 
   async showPictureMenu(
@@ -773,18 +762,18 @@ export class MenuService {
     }
   }
 
-  confirm1(that: any) {
+  async confirm1(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    that.native
-      .showLoading('common.waitMoment', () => { }, 50000)
-      .then(() => {
+    await that.native.showLoading('common.waitMoment');
         try {
           that.hiveVaultController
           .deleteComment(that.destDid,that.channelId,that.postId,that.commentId)
-          .then((result:any)=>{
-            alert("result"+JSON.stringify(result));
+          .then(async (result:any)=>{
+           this.dataHelper
+            await this.hiveVaultController.getHomePostContent();
+            that.events.publish(FeedsEvent.PublishType.deletePostFinish);
             that.native.hideLoading();
           }).catch(()=>{
             that.native.hideLoading();
@@ -792,12 +781,7 @@ export class MenuService {
         } catch (error) {
           that.native.hideLoading();
         }
-
-      })
-      .catch(() => {
-        that.native.hideLoading();
-      });
-  }
+    }
 
   async showReplyDetailMenu(reply: any) {
     this.destDid = reply['destDid'];

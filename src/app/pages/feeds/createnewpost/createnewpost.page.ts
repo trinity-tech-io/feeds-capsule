@@ -278,6 +278,7 @@ export class CreatenewpostPage implements OnInit {
          this.backHome();
         } catch (error) {
           this.isLoading = false;
+          this.isPublishing = false;
           this.native.toast('common.sendFail'); // 需要更改错误提示
         }
       }

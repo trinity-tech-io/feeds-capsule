@@ -3038,6 +3038,16 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
   }
 
+ deletePostV3(destDid: string, postId:string) {
+    console.log("========destDid=========",this.postMapV3);
+    console.log("========postId=========",postId);
+
+    const key = UtilService.getKey(destDid, postId);
+    this.postMapV3[key].status = FeedsData.PostCommentStatus.deleted;//已删除状态
+    console.log("========this.postMapV3=========",this.postMapV3);
+    this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
+  }
+
   async updatePostV3(post: FeedsData.PostV3) {
     const key = UtilService.getKey(post.destDid, post.postId);
     this.postMapV3[key] = post;
@@ -3095,10 +3105,12 @@ export class DataHelper {
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let list: FeedsData.PostV3[] = []
-        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
-        let keys: string[] = Object.keys(this.postMapV3)
 
+        let list: FeedsData.PostV3[] = []
+        if(JSON.stringify(this.postMapV3) === "{}") {
+          this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
+        }
+        let keys: string[] = Object.keys(this.postMapV3)
         for (const key in keys) {
           let post = this.postMapV3[keys[key]]
           if (post == null) continue

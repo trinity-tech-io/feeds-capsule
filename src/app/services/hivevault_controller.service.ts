@@ -523,17 +523,40 @@ export class HiveVaultController {
     return this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent);
   }
 
-  deletePost(postId: string, channelId: string) {
-    return this.hiveVaultApi.deletePost(postId, channelId);
+  deletePost(postId: string, channelId: string): Promise<any> {
+    Logger.log(TAG, "deletePost",postId,channelId);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = this.hiveVaultApi.deletePost(postId, channelId);;
+        Logger.log(TAG, "deletePost result",result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'deletePost data error', error);
+        reject('');
+
+      }
+    });
   }
 
   updateComment(destDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
     return this.hiveVaultApi.updateComment(destDid, channelId, postId, commentId, content);
   }
 
-  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string){
-    console.log("===deleteComment==",targetDid,channelId,postId,commentId);
-    return this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
+  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any>{
+    Logger.log(TAG, "deleteCommen",targetDid,channelId,postId,commentId);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
+        Logger.log(TAG, "deleteComment result",result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'deleteComment data error', error);
+        reject('');
+
+      }
+    });
   }
 
 }
