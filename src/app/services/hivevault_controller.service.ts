@@ -136,6 +136,7 @@ export class HiveVaultController {
         await this.hiveVaultApi.createAllCollections()
         await this.hiveVaultApi.registeScripting()
       } catch (error) {
+        await this.hiveVaultApi.registeScripting()
         localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
       }
     }
