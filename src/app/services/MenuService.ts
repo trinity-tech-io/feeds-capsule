@@ -95,7 +95,18 @@ export class MenuService {
               return;
             }
 
-            this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
+            this.hiveVaultController.unSubscribeChannel(
+              destDid,  channelId
+              ).then(async (result)=>{
+                let channel :FeedsData.SubscribedChannelV3 = {
+                  destDid: destDid,
+                  channelId: channelId
+                };
+                this.dataHelper.removeSubscribedChannelV3(channel);
+                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+              }).catch(()=>{
+
+              });
           },
         },
         {
@@ -211,7 +222,7 @@ export class MenuService {
   }
 
   async showUnsubscribeMenu(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     channelName: string,
   ) {
@@ -224,7 +235,18 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: () => {
-            this.feedsServiceApi.unsubscribeChannel(nodeId, channelId);
+            this.hiveVaultController.unSubscribeChannel(
+              destDid,  channelId
+              ).then(async (result)=>{
+                let channel :FeedsData.SubscribedChannelV3 = {
+                  destDid: destDid,
+                  channelId: channelId
+                };
+                this.dataHelper.removeSubscribedChannelV3(channel);
+                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+              }).catch(()=>{
+
+              });
           },
         },
         {
@@ -258,7 +280,18 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: () => {
-            this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
+            this.hiveVaultController.unSubscribeChannel(
+              destDid,  channelId
+              ).then(async (result)=>{
+                let channel :FeedsData.SubscribedChannelV3 = {
+                  destDid: destDid,
+                  channelId: channelId
+                };
+                this.dataHelper.removeSubscribedChannelV3(channel);
+                this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish,channel);
+              }).catch(()=>{
+
+              });
           },
         },
         {
@@ -443,7 +476,6 @@ export class MenuService {
               }).catch(()=>{
 
               });
-            //this.feedsServiceApi.unsubscribeChannel(destDid, channelId);
           },
         },
         {
