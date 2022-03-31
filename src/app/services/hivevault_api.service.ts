@@ -4,6 +4,7 @@ import { Logger } from './logger';
 import { DataHelper } from './DataHelper';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
+import { en } from 'src/assets/i18n/en';
 
 const TAG = 'API-HiveVault';
 
@@ -56,6 +57,9 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryPostByChannelId(targetDid, channelId);
   }
 
+  queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
+    return this.hiveVaultHelper.queryPostRangeOfTimeScripting(targetDid, channelId, star, end)
+  } 
   queryPostById(targetDid: string, channelId: string, postId: string) {
     return this.hiveVaultHelper.queryPostById(targetDid, channelId, postId);
   }

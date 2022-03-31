@@ -65,9 +65,9 @@ export class HiveVaultHelper {
                 await this.registerQueryChannelInfoScripting();
 
                 //post
-                this.registerQueryPostByChannelIdScripting();
-                this.registerQueryPostRangeOfTimeScripting();
-                this.registerQueryPostByIdScripting();
+                await this.registerQueryPostByChannelIdScripting();
+                await this.registerQueryPostRangeOfTimeScripting();
+                await this.registerQueryPostByIdScripting();
 
                 //subscription
                 await this.registerSubscribeScripting();
@@ -453,7 +453,7 @@ export class HiveVaultHelper {
     /** query post data range of time start */
     private registerQueryPostRangeOfTimeScripting() {
         let executablefilter =
-            { "channel_id": "$params.channel_id", "update_at": { $gt: "$params.start", $lt: "$params.end" } }
+            { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
         let options = { "projection": { "_id": false }, "limit": 100 }
         let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
@@ -461,10 +461,10 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
     }
 
-    private callQueryPostRangeOfTimeScripting(targetDid: string, channelId: string) {
+    private callQueryPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number) {
         return new Promise(async (resolve, reject) => {
             try {
-                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SOMETIME_POST, { "channel_id": channelId })
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SOMETIME_POST, { "channel_id": channelId, "start": start, "end": end })
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'callQueryPostByChannelId error:', error)
@@ -473,8 +473,8 @@ export class HiveVaultHelper {
         })
     }
 
-    queryPostRangeOfTimeScripting(targetDid: string, channelId: string): Promise<any> {
-        return this.callQueryPostRangeOfTimeScripting(targetDid, channelId);
+    queryPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
+        return this.callQueryPostRangeOfTimeScripting(targetDid, channelId, start, end);
     }
     /** query post data range of time end */
 

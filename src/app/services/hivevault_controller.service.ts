@@ -55,6 +55,16 @@ export class HiveVaultController {
     //提前加载：TODO
   }
 
+  async queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
+    const result = await this.hiveVaultApi.queryPostByRangeOfTime(targetDid, channelId, star, end)
+        // TODO： 解析
+  }
+
+  async queryPostByPostId(targetDid: string, channelId: string, postId: string) {
+    const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId)
+    // TODO： 解析
+  }
+
   getPostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
