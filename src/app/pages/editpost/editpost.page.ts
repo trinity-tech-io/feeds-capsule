@@ -444,8 +444,13 @@ export class EditPostPage implements OnInit {
     try {
       let content = _.cloneDeep(this.postData.content);
       content.content = this.editContent;
-      this.hiveVaultController.updatePost(this.postId,this.channelId,"public",TAG,JSON.stringify(content))
-        .then((result)=>{
+      this.hiveVaultController.updatePost(
+        this.postId,this.channelId,
+        "public",
+        TAG,
+        JSON.stringify(content),
+        FeedsData.PostCommentStatus.edited
+        ).then((result)=>{
           this.zone.run(async () => {
             await this.hiveVaultController.getHomePostContent();
             this.events.publish(FeedsEvent.PublishType.updateTab);

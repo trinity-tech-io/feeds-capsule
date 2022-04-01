@@ -128,7 +128,7 @@ export class HiveVaultController {
     });
   }
 
-  public updatePost(postId: string, channelId: string, newType: string = 'public', newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.available, newMemo: string = '', newProof: string = ''): Promise<any> {
+  public updatePost(postId: string, channelId: string, newType: string = 'public', newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const newUpdateAt = UtilService.getCurrentTimeNum();
