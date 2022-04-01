@@ -41,12 +41,12 @@ export class HiveVaultApi {
   }
 
   /** Post */
-  publishPost(channelId: string, tag: string, content: string) {
-    return this.hiveVaultHelper.publishPost(channelId, tag, content);
+  publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string) {
+    return this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
   }
 
-  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string) {
-    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, '');
+  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
+    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
   }
 
   deletePost(postId: string, channelId: string) {

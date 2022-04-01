@@ -110,19 +110,11 @@ export class HiveVaultController {
   getCommentByChannel() {
   }
 
-  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string): Promise<any> {
+  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const mediaData = await this.postHelperService.prepareMediaDataV3(imagesBase64, videoData);
-        let medaType = FeedsData.MediaType.noMeida;
-        if ( imagesBase64.length > 0 && imagesBase64[0] != null && imagesBase64[0] != '' ) {
-          medaType = FeedsData.MediaType.containsImg
-        } else if (videoData) {
-          medaType = FeedsData.MediaType.containsVideo
-        }
-        const content = this.postHelperService.preparePublishPostContentV3(postText, mediaData, medaType);
-
-        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content))
+        const content = await this.progressMediaData(postText, imagesBase64, videoData)
+        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
 
         // this.dataHelper.addPostV3();
         resolve(result);
@@ -132,6 +124,32 @@ export class HiveVaultController {
         reject(error);
       }
     });
+  }
+
+  public updatePost(postId: string, channelId: string, newType: string = 'public', newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.available, newMemo: string = '', newProof: string = ''): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const newUpdateAt = UtilService.getCurrentTimeNum();
+        const result = await this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof)
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'Update post error', error);
+        reject(error);
+      }
+    })
+  }
+
+  private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData) {
+    const mediaData = await this.postHelperService.prepareMediaDataV3(newImagesBase64, newVideoData);
+    let mediaType = FeedsData.MediaType.noMeida;
+    if (newImagesBase64.length > 0 && newImagesBase64[0] != null && newImagesBase64[0] != '') {
+      mediaType = FeedsData.MediaType.containsImg
+    } else if (newVideoData) {
+      mediaType = FeedsData.MediaType.containsVideo
+    }
+    const content = this.postHelperService.preparePublishPostContentV3(newPostText, mediaData, mediaType);
+
+    return content
   }
 
   async createCollectionAndRregisteScript(callerDid: string) {
@@ -516,10 +534,6 @@ export class HiveVaultController {
       }
     });
 
-  }
-
-  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string) {
-    return this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent);
   }
 
   deletePost(postId: string, channelId: string): Promise<any> {

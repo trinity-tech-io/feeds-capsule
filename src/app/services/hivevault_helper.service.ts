@@ -254,7 +254,7 @@ export class HiveVaultHelper {
     /** query channel info end*/
 
     /** publish post start */
-    private insertDataToPostDB(postId: string, channelId: string, type: string, tag: string, content: string, memo: string, createdAt: number, updateAt: number, status: number): Promise<InsertResult> {
+    private insertDataToPostDB(postId: string, channelId: string, type: string, tag: string, content: string, memo: string, createdAt: number, updateAt: number, status: number, proof: string = ''): Promise<InsertResult> {
         return new Promise(async (resolve, reject) => {
             const doc =
             {
@@ -266,7 +266,8 @@ export class HiveVaultHelper {
                 "status": status,
                 "memo": memo,
                 "type": type,
-                "tag": tag
+                "tag": tag,
+                "proof": proof
             }
 
             try {
@@ -280,7 +281,7 @@ export class HiveVaultHelper {
         })
     }
 
-    private insertPostData(channelId: string, tag: string, content: string, type: string, status: number): Promise<any> {
+    private insertPostData(channelId: string, tag: string, content: string, type: string, status: number, memo: string, proof: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
@@ -288,9 +289,8 @@ export class HiveVaultHelper {
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const postId = UtilService.generatePostId(signinDid, channelId, content);
-                const memo = '';
 
-                await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status);
+                await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status, proof);
                 resolve(postId);
             } catch (error) {
                 Logger.error(error);
@@ -299,22 +299,23 @@ export class HiveVaultHelper {
         });
     }
 
-    publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available): Promise<any> {
-        return this.insertPostData(channelId, tag, content, type, status);
+    publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<any> {
+        return this.insertPostData(channelId, tag, content, type, status, memo, proof);
     }
     /** publish post end */
 
     /** update post start */
-    private updateDataToPostDB(postId: string, channelId: string, updatedAt: number, newType: string, newTag: string, newContent: string, newMemo: string): Promise<UpdateResult> {
+    private updateDataToPostDB(postId: string, channelId: string, updatedAt: number, newType: string, newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string, newProof: string,): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
             const doc =
             {
                 "updated_at": updatedAt,
                 "content": newContent,
-                "status": FeedsData.PostCommentStatus.edited,
+                "status": newStatus,
                 "memo": newMemo,
                 "type": newType,
-                "tag": newTag
+                "tag": newTag,
+                "proof": newProof
             }
             const option = new UpdateOptions(false, true)
             let filter = { "channel_id": channelId, "post_id": postId };
@@ -330,11 +331,10 @@ export class HiveVaultHelper {
         });
     }
 
-    private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string): Promise<any> {
+    private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const updated_at = UtilService.getCurrentTimeNum()
-                const result = this.updateDataToPostDB(postId, channelId, updated_at, newType, newTag, newContent, newMemo)
+                const result = this.updateDataToPostDB(postId, channelId, newUpdateAt, newType, newTag, newContent, newStatus, newMemo, newProof)
                 Logger.log(TAG, 'update post result', result)
                 resolve(result)
             } catch (error) {
@@ -344,8 +344,8 @@ export class HiveVaultHelper {
         })
     }
 
-    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newMemo: string): Promise<any> {
-        return this.updatePostData(postId, channelId, newType, newTag, newContent, newMemo);
+    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string): Promise<any> {
+        return this.updatePostData(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
     }
     /** update post end */
 
