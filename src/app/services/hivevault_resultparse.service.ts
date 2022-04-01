@@ -113,6 +113,7 @@ export class HiveVaultResultParse {
        * tipping_address: ""
        * type: "public"
        * updated_at: 1647859737317
+       * proof: ""
        */
       const channels = result;
       let parseResult = [];
@@ -133,7 +134,7 @@ export class HiveVaultResultParse {
               tipping_address: channel.tipping_address,
               nft: channel.nft,
               category: channel.category,
-              proof: '',
+              proof: channel.proof,
               memo: channel.memo,
             }
             parseResult.push(channelResult);
