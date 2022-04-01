@@ -208,6 +208,8 @@ export class HomePage implements OnInit {
     if(homePostContent === ''){
       const result =  await this.hiveVaultController.getHomePostContent();
     }
+    let postMapV3 = this.dataHelper.getPostMapV3();
+    Logger.log(TAG,"postMapV3=1",postMapV3);
     this.totalData = await this.sortPostList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -356,6 +358,7 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
+      Logger.log(TAG,"revice unfollowFeedsFinish event");
       this.zone.run(async () => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
         await this.refreshPostList("unHomePostContent");

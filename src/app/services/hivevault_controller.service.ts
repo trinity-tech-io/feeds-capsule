@@ -33,7 +33,7 @@ export class HiveVaultController {
           await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3,{});
           resolve('FINISH');
         }
-        let postMapV3 =  this.dataHelper.getPostMapV3();
+        let postMapV3 =  {};
         for (let index = 0; index < subscribedChannels.length; index++) {
           const item = subscribedChannels[index];
 

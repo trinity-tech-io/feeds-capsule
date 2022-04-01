@@ -2869,7 +2869,6 @@ export class DataHelper {
 
  async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
     if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return;
-
     let key = subscribedChannel.destDid + "#" + subscribedChannel.channelId;
     this.subscribedChannelMapV3[key] = null;
     delete this.subscribedChannelMapV3[key];
@@ -3098,6 +3097,7 @@ export class DataHelper {
         //if(JSON.stringify(this.postMapV3) === "{}") {
           this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
         //}
+        Logger.log(TAG,"postMapV3=2",this.postMapV3);
         let keys: string[] = Object.keys(this.postMapV3)
         for (const key in keys) {
           let post = this.postMapV3[keys[key]]
