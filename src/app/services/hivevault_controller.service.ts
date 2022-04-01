@@ -62,12 +62,14 @@ export class HiveVaultController {
 
   async queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
     const result = await this.hiveVaultApi.queryPostByRangeOfTime(targetDid, channelId, star, end)
-        // TODO： 解析
+    const rangeOfTimePostList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+    console.log("rangeOfTimePostList >>>>>>>>>>>> ", rangeOfTimePostList)
   }
 
   async queryPostByPostId(targetDid: string, channelId: string, postId: string) {
     const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId)
-    // TODO： 解析
+    const post = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+    console.log("queryPostByPostId >>>>>>>>>>>> ", post)
   }
 
   getPostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
