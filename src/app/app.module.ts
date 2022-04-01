@@ -233,7 +233,7 @@ export function TranslateLoaderFactory() {
     HiveVaultApi,
     HiveVaultHelper,
     HiveVaultController,
-    SqliteHelper
+    SqliteHelper,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],
