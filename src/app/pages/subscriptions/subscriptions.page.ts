@@ -269,6 +269,10 @@ export class SubscriptionsPage implements OnInit {
         this.hideSharMenuComponent = false;
         break;
     }
+    let sharemenu:HTMLElement = document.querySelector("app-sharemenu") || null;
+    if(sharemenu != null){
+      sharemenu.remove();
+    }
   }
 
   async clickAvatar(destDid: string, channelId: string) {

@@ -1860,6 +1860,10 @@ export class ProfilePage implements OnInit {
         this.hideSharMenuComponent = false;
         break;
     }
+    let sharemenu:HTMLElement = document.querySelector("app-sharemenu") || null;
+    if(sharemenu != null){
+      sharemenu.remove();
+    }
   }
 
   getQrCodeString(feed: any) {

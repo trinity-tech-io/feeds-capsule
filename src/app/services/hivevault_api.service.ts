@@ -59,7 +59,7 @@ export class HiveVaultApi {
 
   queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
     return this.hiveVaultHelper.queryPostRangeOfTimeScripting(targetDid, channelId, star, end)
-  } 
+  }
   queryPostById(targetDid: string, channelId: string, postId: string) {
     return this.hiveVaultHelper.queryPostById(targetDid, channelId, postId);
   }

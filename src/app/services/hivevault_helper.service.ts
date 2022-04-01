@@ -361,7 +361,7 @@ export class HiveVaultHelper {
             let filter = { "channel_id": channelId, "post_id": postId };
             let update = { "$set": doc };
             try {
-                const result = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
+                const result = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
                 Logger.log(TAG, 'Delete post result', result);
                 resolve(result);
             } catch (error) {

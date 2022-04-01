@@ -120,7 +120,8 @@ export class CreatenewpostPage implements OnInit {
 
     if (currentFeed == null) {
 
-      const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
+      //const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
+      const item = await this.feedService.getHiveMyChannelList() || [];
       currentFeed = await this.feedService.getChannelFromIdV3(item[0].destDid, item[0].channelId);
       this.feedService.setCurrentChannel(currentFeed);
     }
@@ -234,6 +235,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.search);
+    this.events.publish(FeedsEvent.PublishType.homeCommonEvents);//添加删除的home event与其它页面相同的页面
   }
 
   ionViewDidEnter() { }

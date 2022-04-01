@@ -256,12 +256,12 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  refreshChannelList() {
+  async refreshChannelList() {
     if (this.startIndex === 0) {
       this.initRefresh();
       return;
     }
-    this.totalData = this.sortChannelList();
+    this.totalData = await this.sortChannelList();
     if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
       this.postList = this.totalData.slice(
         0,
@@ -330,15 +330,26 @@ export class ChannelsPage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      this.zone.run(() => {
-        this.refreshChannelList();
+      this.zone.run(async () => {
+        Logger.log(TAG,FeedsEvent.PublishType.editPostFinish);
+        await this.refreshChannelList();
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
-      this.native.hideLoading();
-      this.zone.run(() => {
-        this.refreshChannelList();
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: any) => {
+      this.zone.run(async () => {
+        await this.native.showLoading('common.waitMoment');
+        try {
+            this.hiveVaultController.deletePost(post.postId,post.channelId).then(async (result: any)=>{
+            await this.hiveVaultController.getHomePostContent();
+            await this.refreshChannelList();
+            this.native.hideLoading();
+          }).catch((err:any)=>{
+            this.native.hideLoading();
+          })
+        } catch (error) {
+          this.native.hideLoading();
+        }
       });
     });
 
@@ -355,8 +366,8 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
-      this.zone.run(() => {
-        this.refreshChannelList();
+      this.zone.run(async () => {
+       await this.refreshChannelList();
         this.isLoadimage = {};
         this.isLoadVideoiamge = {};
         this.refreshImage();
@@ -428,6 +439,7 @@ export class ChannelsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.search);
+    this.events.publish(FeedsEvent.PublishType.homeCommonEvents);//添加删除的home event与其它页面相同的页面
     this.native.hideLoading();
     this.hideFullScreen();
   }

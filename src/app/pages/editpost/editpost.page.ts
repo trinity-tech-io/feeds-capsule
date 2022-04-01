@@ -211,7 +211,7 @@ export class EditPostPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  clickEidtPost() {
+  async clickEidtPost() {
 
     let editContent = this.native.iGetInnerText(this.editContent);
     if (editContent === '') {
@@ -224,14 +224,9 @@ export class EditPostPage implements OnInit {
       return false;
     }
 
-    this.native
-      .showLoading('common.waitMoment', isDismiss => { })
-      .then(() => {
-        this.updatePost();
-      })
-      .catch(() => {
-        this.native.hideLoading();
-      });
+   await this.native.showLoading('common.waitMoment');
+   this.updatePost();
+
   }
 
   showBigImage(content: any) {
@@ -449,14 +444,12 @@ export class EditPostPage implements OnInit {
     try {
       let content = _.cloneDeep(this.postData.content);
       content.content = this.editContent;
-      console.log("======this.postId======",this.postId);
-      console.log("======this.channelId======",this.channelId);
-      console.log("========content========="+JSON.stringify(content));
       this.hiveVaultController.updatePost(this.postId,this.channelId,"public",TAG,JSON.stringify(content))
         .then((result)=>{
-          console.log("===result===",result);
-          this.zone.run(() => {
+          this.zone.run(async () => {
+            await this.hiveVaultController.getHomePostContent();
             this.events.publish(FeedsEvent.PublishType.updateTab);
+            this.events.publish(FeedsEvent.PublishType.editPostFinish);
             this.native.hideLoading();
             this.native.pop();
           });

@@ -35,6 +35,7 @@ export class SettingsPage implements OnInit {
   private isListGrid: boolean = false;
   public isShowAdult: boolean = true;
   private isClickAdult: boolean = false;
+  private isHideDeletedPosts: boolean = false;
   constructor(
     private languageService: LanguageService,
     private feedService: FeedService,
@@ -127,14 +128,19 @@ export class SettingsPage implements OnInit {
       this.events.publish(FeedsEvent.PublishType.hideAdult);
       this.isClickAdult = false;
     }
+
+    if(this.isHideDeletedPosts){
+      this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
+      this.isHideDeletedPosts = false;
+    }
   }
 
   toggleHideDeletedPosts() {
+    this.isHideDeletedPosts = true;
     this.zone.run(() => {
       this.hideDeletedPosts = !this.hideDeletedPosts;
     });
     this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
-    this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
     this.feedService.setData('feeds.hideDeletedPosts', this.hideDeletedPosts);
   }
 

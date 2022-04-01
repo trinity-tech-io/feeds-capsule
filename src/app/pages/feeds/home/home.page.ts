@@ -40,7 +40,6 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 
 let TAG: string = 'Feeds-home';
@@ -289,7 +288,7 @@ export class HomePage implements OnInit {
 
   async ionViewWillEnter() {
 
-    this.dataHelper.loadChannelV3Map();
+     this.dataHelper.loadChannelV3Map();
 
     // let mAppIdCredential = await this.storageService.get('appIdCredential');
     // Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
@@ -325,6 +324,10 @@ export class HomePage implements OnInit {
         break;
     }
 
+    this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents,()=>{
+         this.addCommonEvents();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.addConnectionChanged, () => {
       this.addConnectionChangedEvent();
     });
@@ -355,7 +358,7 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
       this.zone.run(async () => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-        this.refreshPostList("unHomePostContent");
+        await this.refreshPostList("unHomePostContent");
       });
     });
 
@@ -363,6 +366,7 @@ export class HomePage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
       this.events.unsubscribe(FeedsEvent.PublishType.createpost);
       this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
+      this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
       this.clearData();
       this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
@@ -372,13 +376,13 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
-      this.zone.run(() => {
+      this.zone.run(async () => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
         if (isInit) {
-          this.initPostListData(true);
+          await this.initPostListData(true);
           return;
         }
-        this.refreshPostList();
+       await this.refreshPostList();
       });
     });
 
@@ -387,7 +391,7 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
-      this.zone.run(() => {
+      this.zone.run(async () => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
         this.refreshPostList();
       });
@@ -500,16 +504,27 @@ export class HomePage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      this.zone.run(() => {
-        this.refreshPostList();
+      Logger.log(TAG, "======= editPostFinish ========")
+      this.zone.run(async () => {
+       await this.refreshPostList("unHomePostContent");
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
-      this.zone.run(() => {
-        console.log("===========deletePostFinish===========");
-        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-        this.refreshPostList("unHomePostContent");
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post:any) => {
+      Logger.log(TAG, "=======Receive  deletePostFinish========")
+      this.zone.run(async () => {
+      await this.native.showLoading('common.waitMoment');
+      try {
+          this.hiveVaultController.deletePost(post.postId,post.channelId).then(async (result: any)=>{
+          await this.hiveVaultController.getHomePostContent();
+          this.refreshPostList("unHomePostContent");
+          this.native.hideLoading();
+        }).catch((err:any)=>{
+          this.native.hideLoading();
+        })
+      } catch (error) {
+        this.native.hideLoading();
+      }
       });
     });
 
@@ -630,6 +645,7 @@ export class HomePage implements OnInit {
 
   ionViewDidLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
+    this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
   }
 
   ionViewWillUnload() { }
@@ -1456,7 +1472,7 @@ export class HomePage implements OnInit {
   }
 
   ionScroll() {
-    console.log("ionScroll");
+
     this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
@@ -1479,7 +1495,7 @@ export class HomePage implements OnInit {
       this.postgridindex = startPos;
       this.setVisibleareaImage(startPos);
       clearTimeout(sid);
-    }, 0);
+    }, 50);
   }
 
   pauseVideo(id: string) {

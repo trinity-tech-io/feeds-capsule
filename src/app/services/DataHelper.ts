@@ -2868,13 +2868,11 @@ export class DataHelper {
   }
 
  async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
-  console.log("=======111this.subscribedChannelMapV3======",this.subscribedChannelMapV3);
     if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return;
 
     let key = subscribedChannel.destDid + "#" + subscribedChannel.channelId;
     this.subscribedChannelMapV3[key] = null;
     delete this.subscribedChannelMapV3[key];
-    console.log("=======this.subscribedChannelMapV3======",this.subscribedChannelMapV3);
    await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
   }
 
@@ -3038,16 +3036,6 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
   }
 
- deletePostV3(destDid: string, postId:string) {
-    console.log("========destDid=========",this.postMapV3);
-    console.log("========postId=========",postId);
-
-    const key = UtilService.getKey(destDid, postId);
-    this.postMapV3[key].status = FeedsData.PostCommentStatus.deleted;//已删除状态
-    console.log("========this.postMapV3=========",this.postMapV3);
-    this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
-  }
-
   async updatePostV3(post: FeedsData.PostV3) {
     const key = UtilService.getKey(post.destDid, post.postId);
     this.postMapV3[key] = post;
@@ -3107,9 +3095,9 @@ export class DataHelper {
       try {
 
         let list: FeedsData.PostV3[] = []
-        if(JSON.stringify(this.postMapV3) === "{}") {
+        //if(JSON.stringify(this.postMapV3) === "{}") {
           this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
-        }
+        //}
         let keys: string[] = Object.keys(this.postMapV3)
         for (const key in keys) {
           let post = this.postMapV3[keys[key]]

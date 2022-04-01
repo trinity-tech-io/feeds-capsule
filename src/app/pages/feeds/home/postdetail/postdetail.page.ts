@@ -373,11 +373,23 @@ export class PostdetailPage implements OnInit {
       this.initData(true);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: any) => {
       Logger.log(TAG, 'Received deletePostFinish event');
-      this.events.publish(FeedsEvent.PublishType.updateTab);
-      this.native.hideLoading();
-      this.initData(true);
+      this.zone.run(async () => {
+        await this.native.showLoading('common.waitMoment');
+        try {
+            this.hiveVaultController.deletePost(post.postId,post.channelId).then(async (result: any)=>{
+            await this.hiveVaultController.getHomePostContent();
+            await this.initData(true);
+            this.native.hideLoading();
+            this.events.publish(FeedsEvent.PublishType.updateTab);
+          }).catch((err:any)=>{
+            this.native.hideLoading();
+          })
+        } catch (error) {
+          this.native.hideLoading();
+        }
+      });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
@@ -455,10 +467,12 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
+    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.publish(FeedsEvent.PublishType.updateTab);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
+    this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
+
   }
 
   ionViewDidLeave() {

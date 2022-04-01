@@ -373,8 +373,8 @@ export class MenuService {
         {
           text: this.translate.instant('common.sharepost'),
           icon: 'share',
-          handler: () => {
-            this.handlePostDetailMenun(
+          handler: async () => {
+           await this.handlePostDetailMenun(
               nodeId,
               channelId,
               channelName,
@@ -616,18 +616,7 @@ export class MenuService {
   if (this.popover != null) {
     this.popover.dismiss();
   }
-  await that.native.showLoading('common.waitMoment');
-      try {
-        that.hiveVaultController.deletePost(that.postId,that.channelId).then((result: any)=>{
-          that.dataHelper.deletePostV3(that.destDid,that.postId);
-          that.events.publish(FeedsEvent.PublishType.deletePostFinish);
-          that.native.hideLoading();
-        }).catch((err:any)=>{
-          that.native.hideLoading();
-        })
-      } catch (error) {
-        that.native.hideLoading();
-      }
+  that.events.publish(FeedsEvent.PublishType.deletePostFinish,{'channelId':that.channelId,'postId':that.postId});
   }
 
   async showPictureMenu(
@@ -724,7 +713,7 @@ export class MenuService {
           text: this.translate.instant('common.removecomment'),
           role: 'destructive',
           icon: 'trash',
-          handler: () => {
+          handler:() => {
             this.popover = this.popupProvider.ionicConfirm(
               this,
               'common.deleteComment',
