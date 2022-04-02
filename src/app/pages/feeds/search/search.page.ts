@@ -205,10 +205,10 @@ export class SearchPage implements OnInit {
     this.clientHeight = screen.availHeight;
     this.events.subscribe(FeedsEvent.PublishType.search, () => {
       this.initTile();
-      this.init();
+      //this.init();
     });
     this.initTile();
-    this.init();
+    //this.init();
   }
 
   initTitleBar() {

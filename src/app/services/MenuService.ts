@@ -751,26 +751,18 @@ export class MenuService {
     }
   }
 
-  async confirm1(that: any) {
+  confirm1(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    await that.native.showLoading('common.waitMoment');
-        try {
-          that.hiveVaultController
-          .deleteComment(that.destDid,that.channelId,that.postId,that.commentId)
-          .then(async (result:any)=>{
-           this.dataHelper
-            await this.hiveVaultController.getHomePostContent();
-            that.events.publish(FeedsEvent.PublishType.deletePostFinish);
-            that.native.hideLoading();
-          }).catch(()=>{
-            that.native.hideLoading();
-          })
-        } catch (error) {
-          that.native.hideLoading();
-        }
-    }
+    that.events.publish(FeedsEvent.PublishType.deleteCommentFinish,
+      {
+        "destDid":that.destDid,
+        "channelId":that.channelId,
+        "postId":that.postId,
+        "commentId":that.commentId
+      });
+  }
 
   async showReplyDetailMenu(reply: any) {
     this.destDid = reply['destDid'];

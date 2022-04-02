@@ -110,8 +110,8 @@ export class CommentlistPage implements OnInit {
 
   initOwnCommentObj() {
     _.each(this.replayCommentList, replayItem => {
-      let key = replayItem['id'];
-      this.userNameList[key] = replayItem['user_name'];
+      let key = replayItem['refcommentId'];
+      this.userNameList[key] = replayItem['.createrDid'];
       this.checkCommentIsMine(replayItem);
     });
   }
@@ -165,15 +165,14 @@ export class CommentlistPage implements OnInit {
   }
 
  async ionViewWillEnter() {
-    await this.getCaptainComment();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
-
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
     this.initTitle();
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';
+    await this.getCaptainComment();
     this.initData(true);
     this.connectionStatus = this.feedService.getConnectionStatus();
     //this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
@@ -238,11 +237,23 @@ export class CommentlistPage implements OnInit {
       this.initData(false);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, () => {
+    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, async (comment) => {
       Logger.log(TAG, 'Received deleteCommentFinish event');
-      this.getCaptainComment();
-      this.native.hideLoading();
-      this.initData(false);
+      await this.native.showLoading('common.waitMoment');
+      try {
+        this.hiveVaultController
+        .deleteComment(comment.destDid,comment.channelId,comment.postId,comment.commentId)
+        .then(async (result:any)=>{
+        this.getCaptainComment();
+        this.native.hideLoading();
+        this.initData(false);
+        }).catch(()=>{
+          this.native.hideLoading();
+        })
+      } catch (error) {
+        this.native.hideLoading();
+      }
+
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
@@ -589,7 +600,7 @@ export class CommentlistPage implements OnInit {
     });
 
     let commentId = this.captainComment.commentId;
-    this.userNameList[commentId] = this.captainComment.destDid;
+    this.userNameList[commentId] = this.captainComment.createrDid;
     this.updatedAt = this.captainComment['updatedAt'];
     this.checkCommentIsMine(this.captainComment);
   }

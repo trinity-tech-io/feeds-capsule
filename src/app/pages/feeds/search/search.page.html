@@ -7,7 +7,7 @@
     </form>
   </div>
 </ion-content>
-  <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
+  <!-- <ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
       <ion-refresher-content
         class="refresh"
@@ -17,8 +17,9 @@
         refreshingText="{{'common.beingRefresh'|translate}}">
       </ion-refresher-content>
     </ion-refresher>
+
     <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode">
-      <!-- adding Feed-->
+       //adding Feed
       <ion-item
           *ngFor="let addingchannel of addingChanneList"
           lines="none">
@@ -55,7 +56,7 @@
             <ion-ripple-effect></ion-ripple-effect>
           </ion-row>
         </ion-item>
-        <!-- channel Collection -->
+        // channel Collection
         <ion-item
         *ngFor="let channelCollection of channelCollectionPageList"
         class="channelCollectionFeeds"
@@ -69,7 +70,6 @@
           >
             <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
               <img src="./assets/icon/reserve.svg" id={{handleCollectionImgId(channelCollection)}}>
-              <!-- <div class="offline"></div> -->
             </div>
           </ion-col>
           <ion-col
@@ -94,7 +94,7 @@
           <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
       </ion-item>
-      <!---unfollowedFeed--->
+      //unfollowedFeed
       <ion-item
       *ngFor="let feed of unfollowedFeed"
       lines="none"
@@ -133,7 +133,7 @@
       </ion-row>
     </ion-item>
 
-      <!-- discoverSquare Feed-->
+      //discoverSquare Feed
         <ion-item
         class="discoverSquareFeed"
         id = {{feed.feedsUrlHash}}
@@ -147,7 +147,6 @@
             (click)="clickItem(feed)"
           >
             <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-              <!-- <div *ngIf="!avatarList[feed.feedsUrlHash]" class="defaultAvatar"></div> -->
               <img src="./assets/icon/reserve.svg"  id={{handleId(feed)}}>
             </div>
           </ion-col>
@@ -158,8 +157,7 @@
           >
             <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
             <ion-row>
-              <!-- <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-              <p><span>{{ feed.followers}}</span> {{ 'common.followers' | translate }}</p> -->
+
               <p class="ownerName">@{{feed.ownerName}}</p>
             </ion-row>
             <ion-row>
@@ -176,13 +174,6 @@
       </ion-item>
     </ion-list>
 
-    <!-- <ion-infinite-scroll threshold="50px" (ionInfinite)="loadData($event)">
-      <ion-infinite-scroll-content
-        class="ion-padding-top"
-        loadingSpinner="circles"
-      >
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll> -->
 
-  </ion-content>
-  <!-- <div class="add-tab" (click)="createPost()"></div> -->
+
+  </ion-content> -->

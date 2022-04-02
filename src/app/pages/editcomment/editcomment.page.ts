@@ -34,7 +34,7 @@ export class EditCommentPage implements OnInit {
   public channelId: string = "";
   public postId: string = "";
   public refcommentId: string = "0";
-  public commentId: string = "0";
+  public commentId: string = "";
   public imgUrl: string = '';
   public titleKey: string = '';
   constructor(
@@ -181,8 +181,11 @@ export class EditCommentPage implements OnInit {
   private editComment() {
     try {
       this.hiveVaultController.updateComment(
-        this.destDid,this.channelId,
-        this.postId,this.commentId,this.newComment)
+        this.destDid,
+        this.channelId,
+        this.postId,
+        this.commentId,
+        this.newComment)
         .then(()=>{
           this.native.hideLoading();
           this.native.pop();

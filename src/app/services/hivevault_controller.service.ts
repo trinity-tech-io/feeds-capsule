@@ -554,12 +554,24 @@ export class HiveVaultController {
     });
   }
 
-  updateComment(destDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
-    return this.hiveVaultApi.updateComment(destDid, channelId, postId, commentId, content);
+  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any>{
+    Logger.log(TAG, "updateComment",targetDid,channelId,postId,commentId);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.updateComment(targetDid, channelId, postId, commentId,content);
+        Logger.log(TAG, "updateComment result",result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'updateComment data error', error);
+        reject('');
+
+      }
+    });
   }
 
   deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any>{
-    Logger.log(TAG, "deleteCommen",targetDid,channelId,postId,commentId);
+    Logger.log(TAG, "deleteComment",targetDid,channelId,postId,commentId);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
@@ -569,7 +581,6 @@ export class HiveVaultController {
       } catch (error) {
         Logger.error(TAG, 'deleteComment data error', error);
         reject('');
-
       }
     });
   }

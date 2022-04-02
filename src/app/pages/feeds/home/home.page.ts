@@ -732,9 +732,8 @@ export class HomePage implements OnInit {
           destDid, channelId, post.postId);
           let list = result.find_message.items || [];
           let index = _.find(list,(item)=>{
-                return item.channel_id === post.channelId && item.post_id === post.postId;
+                return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
           }) || "";
-
           if(index === ""){
             this.likeMap[postId] = "";
           }else{
@@ -761,7 +760,7 @@ export class HomePage implements OnInit {
       let postId = post.postId;
 
       try {
-        let result =  await this.hiveVaultController.getCommentsByPost( destDid,channelId,postId);
+        let result =  await this.hiveVaultController.getCommentsByPost(destDid,channelId,postId);
         this.commentNumMap[postId] = result.length;
       } catch (error) {
         this.commentNumMap[postId] = 0;
