@@ -6436,13 +6436,10 @@ export class FeedService {
   }
 
   getCurrentChannel() {
-    console.log("getCurrentChannel" + this.currentFeed)
-
     return this.currentFeed;
   }
 
   setCurrentChannel(currentFeed: any) {
-    console.log("setCurrentChannel" + currentFeed)
     this.currentFeed = currentFeed;
   }
 

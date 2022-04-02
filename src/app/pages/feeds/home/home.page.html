@@ -37,8 +37,18 @@
   </ion-refresher>
  <!-- feeds timeTime-->
 <div *ngIf="tabType==='feeds'">
+  <!-- first loading -->
+  <ion-row *ngIf="isPostLoading">
+    <ion-col size="12" class="loading">
+    <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+    <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+    </ion-col>
+    <ion-col size="12" class="loading">
+    <p>{{'common.beingRefresh'|translate}}</p>
+    </ion-col>
+  </ion-row>
   <!-- NO POSTS -->
-  <div *ngIf="postList.length === 0" class="empty-container" style="margin-top:159px;">
+  <div *ngIf="postList.length === 0 && !this.isPostLoading" class="empty-container" style="margin-top:159px;">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'HomePage.allempty' | translate }}</h1>
     <p>{{ "HomePage.emptyDes"| translate }}</p>
@@ -52,7 +62,7 @@
   </div>
 
   <!-- HAS POSTS  -->
-  <div *ngIf="postList.length > 0">
+  <div *ngIf="postList.length > 0 && !this.isPostLoading">
     <div  *ngFor="let post of postList let i=index" >
     <ion-grid class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"

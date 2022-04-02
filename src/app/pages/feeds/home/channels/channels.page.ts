@@ -329,6 +329,12 @@ export class ChannelsPage implements OnInit {
       },
     );
 
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment)=>{
+      Logger.log(TAG, "======= Receive getCommentFinish ========");
+      let postId = comment.postId;
+      this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
       this.zone.run(async () => {
         Logger.log(TAG,FeedsEvent.PublishType.editPostFinish);

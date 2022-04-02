@@ -8,10 +8,9 @@ import {
 } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { NativeService } from 'src/app/services/NativeService';
-import { FeedService } from 'src/app/services/FeedService';
 import { IonTextarea, Platform } from '@ionic/angular';
-import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { Events } from 'src/app/services/events.service';
 
 
 @Component({
@@ -38,10 +37,9 @@ export class CommentComponent implements OnInit {
   constructor(
     public theme: ThemeService,
     public native: NativeService,
-    private feedService: FeedService,
     private platform: Platform,
-    private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private events: Events,
   ) { }
 
   ngOnInit() {
@@ -122,6 +120,13 @@ export class CommentComponent implements OnInit {
       ).then(()=>{
         this.native.hideLoading();
         this.hideComponent();
+        let comment = {
+        "destDid": this.destDid,
+        "channelId": this.channelId,
+        "postId": this.postId,
+        "refcommentId": this.refcommentId
+      }
+        this.events.publish(FeedsEvent.PublishType.getCommentFinish,comment);
       }).catch((err)=>{
         this.native.hideLoading();
       })

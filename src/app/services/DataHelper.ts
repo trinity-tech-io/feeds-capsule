@@ -3097,7 +3097,6 @@ export class DataHelper {
         //if(JSON.stringify(this.postMapV3) === "{}") {
           this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
         //}
-        Logger.log(TAG,"postMapV3=2",this.postMapV3);
         let keys: string[] = Object.keys(this.postMapV3)
         for (const key in keys) {
           let post = this.postMapV3[keys[key]]

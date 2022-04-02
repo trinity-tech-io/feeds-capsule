@@ -308,7 +308,7 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.commentDataUpdate, () => {
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, () => {
       this.zone.run(() => {
         Logger.log(TAG, 'Received commentDataUpdate event');
         this.startIndex = 0;
@@ -339,17 +339,6 @@ export class PostdetailPage implements OnInit {
             this.startIndex = 0;
             this.initData(true);
           }
-        });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
         });
       },
     );
@@ -454,8 +443,7 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
 
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.commentDataUpdate);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPostDetail);
 
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);

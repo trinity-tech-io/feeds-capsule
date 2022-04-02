@@ -439,7 +439,7 @@ export class HiveVaultController {
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create comment error', error);
-        reject(error);
+        reject('');
       }
     });
   }

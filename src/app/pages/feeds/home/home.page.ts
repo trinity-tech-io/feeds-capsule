@@ -32,13 +32,12 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import _, { result } from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { HttpService } from '../../../services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
-import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 
@@ -167,6 +166,7 @@ export class HomePage implements OnInit {
   private likeMap: any = {};
   private likeNumMap: any = {};
   private commentNumMap: any = {};
+  public isPostLoading: boolean = true;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -194,9 +194,7 @@ export class HomePage implements OnInit {
     private dataHelper: DataHelper,
     private keyboard: Keyboard,
     private fileHelperService: FileHelperService,
-    private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    // private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController
   ) { }
 
@@ -206,10 +204,13 @@ export class HomePage implements OnInit {
     // TODO 首页订阅频道请求
     homePostContent = homePostContent || '';
     if(homePostContent === ''){
-      const result =  await this.hiveVaultController.getHomePostContent();
+      try {
+        const result =  await this.hiveVaultController.getHomePostContent();
+      } catch (error) {
+        this.isPostLoading = false;
+      }
     }
-    let postMapV3 = this.dataHelper.getPostMapV3();
-    Logger.log(TAG,"postMapV3=1",postMapV3);
+
     this.totalData = await this.sortPostList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -234,6 +235,7 @@ export class HomePage implements OnInit {
     this.initCommentSum(this.postList);
     //this.initnodeStatus(this.postList);
     this.dataHelper.resetNewPost();
+    this.isPostLoading = false;
   }
 
   async sortPostList() {
@@ -253,6 +255,7 @@ export class HomePage implements OnInit {
       this.initPostListData(false,homePostContent);
       return;
     }
+    this.isPostLoading = false;
     this.totalData = await this.sortPostList();
     if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
       this.postList = this.totalData.slice(
@@ -289,13 +292,7 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
-
-     this.dataHelper.loadChannelV3Map();
-
-    // let mAppIdCredential = await this.storageService.get('appIdCredential');
-    // Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
-    // console.log("appid ====== ", mAppIdCredential);
-
+    this.dataHelper.loadChannelV3Map();
     this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
@@ -495,19 +492,15 @@ export class HomePage implements OnInit {
 
     this.addConnectionChangedEvent();
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
+
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment)=>{
+      Logger.log(TAG, "======= Receive getCommentFinish ========");
+      let postId = comment.postId;
+      this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      Logger.log(TAG, "======= editPostFinish ========")
+      Logger.log(TAG, "======= Receive editPostFinish ========")
       this.zone.run(async () => {
        await this.refreshPostList("unHomePostContent");
       });
@@ -585,6 +578,7 @@ export class HomePage implements OnInit {
   }
 
   clearData() {
+    this.isPostLoading = false;
     this.doRefreshCancel();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
@@ -603,7 +597,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
+    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
@@ -653,8 +647,8 @@ export class HomePage implements OnInit {
 
   ionViewWillUnload() { }
 
-  getChannel(nodeId: string, channelId: string): any {
-    return this.feedService.getChannelFromId(nodeId, channelId);
+  getChannel(destDid: string, channelId: string): any {
+    return this.feedService.getChannelFromId(destDid, channelId);
   }
   // 新增
   getChannelV3(destDid: string, channelId: string): any {
@@ -994,15 +988,16 @@ export class HomePage implements OnInit {
 
  async doRefresh(event) {
     this.refreshEvent = event;
+    this.isPostLoading = false;
     switch (this.tabType) {
       case 'feeds':
         // 首页刷新
-        let sId = setTimeout(() => {
-          this.initPostListData(true);
+        //let sId = setTimeout(() => {
+         await this.initPostListData(true);
           if (event != null) event.target.complete();
           this.refreshEvent = null;
-          clearTimeout(sId);
-        }, 500);
+          //clearTimeout(sId);
+        //}, 500);
         break;
       case 'pasar':
         this.elaPrice = this.feedService.getElaUsdPrice();

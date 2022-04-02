@@ -525,17 +525,6 @@ export class ProfilePage implements OnInit {
       });
     });
 
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () => {
       this.zone.run(() => {
         console.log("channelsDataUpdate ===== ")
@@ -550,7 +539,14 @@ export class ProfilePage implements OnInit {
       });
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment)=>{
+      Logger.log(TAG, "======= Receive getCommentFinish ========");
+      let postId = comment.postId;
+      this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
+      Logger.log(TAG, "======= Receive editPostFinish ========");
       this.zone.run(() => {
         this.refreshLikeList();
       });
@@ -676,7 +672,6 @@ export class ProfilePage implements OnInit {
     this.hideSharMenuComponent = false;
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
 
