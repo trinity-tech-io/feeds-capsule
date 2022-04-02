@@ -1013,24 +1013,22 @@ export class ChannelsPage implements OnInit {
             true
           );
         } else {
-
+          this.isImgLoading[this.imgCurKey] = false;
           if (this.isExitDown()) {
-            this.isImgLoading[this.imgCurKey] = false;
             this.openAlert();
             return;
           }
 
           this.imgDownStatusKey = destDid + '-' + channelId + '-' + postId;
           this.imgDownStatus[this.imgDownStatusKey] = '1';
-          await this.native.showLoading('common.waitMoment');
+          this.isImgPercentageLoading[this.imgCurKey] = true;
           this.hiveVaultController
           .getV3Data(destDid,imageKey,fileOriginName,type)
           .then(async realImg => {
-           let img = realImg || '';
-           this.native.hideLoading();
+            let img = realImg || '';
+            this.imgDownStatus[this.imgDownStatusKey] = '';
+            this.isImgPercentageLoading[this.imgCurKey] = false;
            if (img != '') {
-             this.isImgLoading[this.imgCurKey] = false;
-             this.imgDownStatus[this.imgDownStatusKey] = '';
              this.viewHelper.openViewer(
               this.titleBar,
               realImg,
@@ -1043,7 +1041,7 @@ export class ChannelsPage implements OnInit {
           }).catch(()=>{
            this.isImgLoading[this.imgCurKey] = false;
            this.imgDownStatus[this.imgDownStatusKey] = '';
-           this.native.hideLoading();
+           this.isImgPercentageLoading[this.imgCurKey] = false;
           });
         }
       });

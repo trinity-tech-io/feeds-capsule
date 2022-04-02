@@ -126,6 +126,7 @@ export class PostdetailPage implements OnInit {
   private post: FeedsData.PostV3 = null;
   private channelAvatarUri: string = null;
   public isLike: boolean = false;
+  public likedCommentMap: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -630,29 +631,8 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  showBigImage() {
-    this.zone.run(() => {
-      const content: FeedsData.Content = this.feedService.getContentFromId(this.destDid, this.channelId, this.postId, 0);
-      if (content.version == '2.0') {
-        const mediaDatas = content.mediaDatas;
-        if (mediaDatas && mediaDatas.length > 0) {
-          const elements = mediaDatas[0];
-          this.postHelperService.getPostData(elements.originMediaCid, elements.type)
-            .then((value) => {
-              this.isImgLoading = false;
-              this.viewHelper.openViewer(
-                this.titleBar,
-                value,
-                'common.image',
-                'PostdetailPage.postview',
-                this.appService,
-              );
-            }).catch(() => {
-              //TODO
-            });
-        }
-        return;
-      }
+  showBigImage(destDid: string, channelId: string, postId: string) {
+    this.zone.run(async () => {
 
       if (this.imgDownStatus != '') {
         return;
@@ -660,9 +640,9 @@ export class PostdetailPage implements OnInit {
       let imagesId = UtilService.gethtmlId(
         'postdetail',
         'img',
-        this.destDid,
-        this.channelId,
-        this.postId,
+        destDid,
+        channelId,
+        postId,
       );
       let imagesObj = document.getElementById(imagesId);
       let imagesWidth = imagesObj.clientWidth;
@@ -673,36 +653,23 @@ export class PostdetailPage implements OnInit {
       this.imgloadingStyleObj['top'] =
         (imagesHeight - this.roundWidth) / 2 + 8 + 'px';
       this.isImgLoading = true;
-      let contentVersion = this.feedService.getContentVersion(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        0,
-      );
-      let thumbkey = this.feedService.getImgThumbKeyStrFromId(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        0,
-        0,
-      );
-      let key = this.feedService.getImageKey(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        0,
-        0,
-      );
 
-      if (contentVersion == '0') {
-        key = thumbkey;
-      }
-
-      this.feedService.getData(key).then(realImg => {
+      let post = await this.dataHelper.getPostV3ById(destDid, postId);
+      let mediaDatas = post.content.mediaData;
+      const elements = mediaDatas[0];
+      //原图
+      let imageKey = elements.originMediaPath;
+      let type = elements.type;
+      //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+      let fileOriginName: string = "origin-" + imageKey.split("@")[0];
+      //原图
+      try {
+      this.hiveVaultController
+        .getV3Data(destDid, imageKey, fileOriginName, type, "false")
+        .then(realImg => {
         let img = realImg || '';
+        this.isImgLoading =false;
         if (img != '') {
-          this.imgDownStatus = '';
-          this.isImgLoading = false;
           this.viewHelper.openViewer(
             this.titleBar,
             realImg,
@@ -711,36 +678,39 @@ export class PostdetailPage implements OnInit {
             this.appService,
           );
         } else {
-          this.cachedMediaType = 'img';
-          this.feedService.processGetBinary(
-            this.destDid,
-            this.channelId,
-            this.postId,
-            0,
-            0,
-            FeedsData.MediaType.containsImg,
-            key,
-            transDataChannel => {
-              this.cacheGetBinaryRequestKey = key;
-              if (transDataChannel == FeedsData.TransDataChannel.SESSION) {
-                this.imgDownStatus = '1'; //session down
-                this.isImgLoading = false;
-                this.isImgPercentageLoading = true;
-                return;
-              }
-              if (transDataChannel == FeedsData.TransDataChannel.MESSAGE) {
-                this.imgDownStatus = '0'; //message down
-                return;
-              }
-            },
-            err => {
-              this.imgDownStatus = '';
-              this.isImgLoading = false;
-              this.isImgPercentageLoading = false;
-            },
-          );
+          this.imgDownStatus = '1'; //session down
+          this.isImgLoading = false;
+          this.isImgPercentageLoading = true;
+
+          this.hiveVaultController
+          .getV3Data(destDid, imageKey, fileOriginName, type)
+          .then(async realImg => {
+            let img = realImg || '';
+            this.imgDownStatus = '';
+            this.isImgPercentageLoading = false;
+            if (img != '') {
+              this.viewHelper.openViewer(
+                this.titleBar,
+                realImg,
+                'common.image',
+                'PostdetailPage.postview',
+                this.appService,
+              );
+            }
+          }).catch(() => {
+            this.imgDownStatus = '';
+            this.isImgLoading = false;
+          });
+
         }
+      }).catch(()=>{
+        this.imgDownStatus = '';
+        this.isImgLoading = false;
       });
+    } catch (error) {
+      this.imgDownStatus = '';
+      this.isImgLoading = false;
+    }
     });
   }
 

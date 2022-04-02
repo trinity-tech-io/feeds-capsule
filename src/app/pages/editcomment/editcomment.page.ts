@@ -216,12 +216,4 @@ export class EditCommentPage implements OnInit {
     this.native.toast('common.comingSoon');
   }
 
-  showBigImage(content: any) {
-    this.viewHelper.openViewer(
-      this.titleBar,
-      content,
-      'common.image',
-      'CreatenewpostPage.addingPost',
-    );
-  }
 }

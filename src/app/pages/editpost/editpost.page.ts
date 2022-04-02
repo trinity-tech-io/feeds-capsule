@@ -228,7 +228,7 @@ export class EditPostPage implements OnInit {
    this.updatePost();
 
   }
-
+  //todo
   showBigImage(content: any) {
     this.viewHelper.openViewer(
       this.titleBar,

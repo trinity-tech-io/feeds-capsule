@@ -1622,9 +1622,8 @@ export class ProfilePage implements OnInit {
             this.appService,
           );
         } else {
-
+          this.isImgLoading[this.imgCurKey] = false;
           if (this.isExitDown()) {
-            this.isImgLoading[this.imgCurKey] = false;
             this.openAlert();
             return;
           }
@@ -1633,15 +1632,15 @@ export class ProfilePage implements OnInit {
 
             this.imgDownStatusKey = item.destDid + '-' + item.channelId + '-' + item.postId;
             this.imgDownStatus[this.imgDownStatusKey] = '1';
-            await this.native.showLoading('common.waitMoment');
+            this.isImgPercentageLoading[this.imgCurKey] = true;
             this.hiveVaultController
             .getV3Data(item.destDid,imageKey,fileOriginName,type)
             .then(async realImg => {
              let img = realImg || '';
-             this.native.hideLoading();
+             this.isImgPercentageLoading[this.imgCurKey] = false;
+             this.isImgLoading[this.imgCurKey] = false;
+             this.imgDownStatus[this.imgDownStatusKey] = '';
              if (img != '') {
-               this.isImgLoading[this.imgCurKey] = false;
-               this.imgDownStatus[this.imgDownStatusKey] = '';
                this.viewHelper.openViewer(
                 this.titleBar,
                 realImg,
@@ -1651,9 +1650,9 @@ export class ProfilePage implements OnInit {
               );
              }
             }).catch(()=>{
+             this.isImgPercentageLoading[this.imgCurKey] = false;
              this.isImgLoading[this.imgCurKey] = false;
              this.imgDownStatus[this.imgDownStatusKey] = '';
-             this.native.hideLoading();
             });
         }
       });

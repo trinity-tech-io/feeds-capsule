@@ -67,7 +67,7 @@
             *ngIf="postStatus != 1&&mediaType===1&&postImage!= ''"
             [src]="postImage"
             class="post-img"
-            (click)="showBigImage()"
+            (click)="showBigImage(destDid,channelId,postId)"
             />
           </div>
 

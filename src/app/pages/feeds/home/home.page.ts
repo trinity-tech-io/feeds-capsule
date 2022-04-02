@@ -1238,24 +1238,25 @@ export class HomePage implements OnInit {
             );
           } else {
             //下载原图
+            this.isImgLoading[this.imgCurKey] = false;//隐藏loading
             if (this.isExitDown()) {
-              this.isImgLoading[this.imgCurKey] = false;
               this.openAlert();
               return;
             }
 
             this.imgDownStatusKey = destDid + '-' + channelId + '-' + postId;
             this.imgDownStatus[this.imgDownStatusKey] = '1';
+            this.isImgPercentageLoading[this.imgCurKey] = true;
 
-            await this.native.showLoading('common.waitMoment');
+            //await this.native.showLoading('common.waitMoment');
             this.hiveVaultController
               .getV3Data(destDid, imageKey, fileOriginName, type)
               .then(async realImg => {
                 let img = realImg || '';
+                this.imgDownStatus[this.imgDownStatusKey] = '';
+                this.isImgLoading[this.imgCurKey] = false;
+                this.isImgPercentageLoading[this.imgCurKey] = false;
                 if (img != '') {
-                  this.native.hideLoading();
-                  this.imgDownStatus[this.imgDownStatusKey] = '';
-                  this.isImgLoading[this.imgCurKey] = false;
                   this.viewHelper.openViewer(
                     this.titleBar,
                     realImg,
@@ -1265,39 +1266,17 @@ export class HomePage implements OnInit {
                     false,
                     ''
                   );
-                } else {
-                  //下载原图
-                  await this.native.showLoading('common.waitMoment');
-                  this.hiveVaultController
-                    .getV3Data(destDid, imageKey, fileOriginName, type)
-                    .then(async realImg => {
-                      let img = realImg || '';
-                      this.native.hideLoading();
-                      if (img != '') {
-                        this.isImgLoading[this.imgCurKey] = false;
-                        this.viewHelper.openViewer(
-                          this.titleBar,
-                          realImg,
-                          'common.image',
-                          'FeedsPage.tabTitle1',
-                          this.appService,
-                          false,
-                          ''
-                        );
-                      }
-                    }).catch(() => {
-                      this.native.hideLoading();
-                    });
                 }
               }).catch(() => {
                 this.imgDownStatus[this.imgDownStatusKey] = '';
                 this.isImgLoading[this.imgCurKey] = false;
-                this.native.hideLoading();
+                this.isImgPercentageLoading[this.imgCurKey] = false;
               });
           }
         }).catch((err) => {
-          this.native.hideLoading();
+          this.imgDownStatus[this.imgDownStatusKey] = '';
           this.isImgLoading[this.imgCurKey] = false;
+          this.isImgPercentageLoading[this.imgCurKey] = false;
         });
     });
   }
