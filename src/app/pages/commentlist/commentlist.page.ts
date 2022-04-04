@@ -110,8 +110,8 @@ export class CommentlistPage implements OnInit {
 
   initOwnCommentObj() {
     _.each(this.replayCommentList, replayItem => {
-      let key = replayItem['refcommentId'];
-      this.userNameList[key] = replayItem['.createrDid'];
+      let key = replayItem['commentId'];
+      this.userNameList[key] = replayItem['createrDid'];
       this.checkCommentIsMine(replayItem);
     });
   }
@@ -338,7 +338,7 @@ export class CommentlistPage implements OnInit {
   }
 
   showComment(comment: FeedsData.CommentV3) {
-    this.channelName = comment.destDid;
+    this.channelName = comment.createrDid;
     this.channelAvatar = '';
     this.refcommentId = comment.commentId;
 
@@ -488,13 +488,14 @@ export class CommentlistPage implements OnInit {
 
   checkCommentIsMine(comment: FeedsData.CommentV3) {
     let commentId = comment.commentId;
+    let createrDid = comment.createrDid;
     let isOwnComment = false;
     let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
     if (signInData === null) {
       isOwnComment = false;
     }
     let ownerDid: string = signInData.did;
-    if (this.destDid != ownerDid) {
+    if (createrDid != ownerDid) {
       isOwnComment = false;
     }else{
       isOwnComment = true;

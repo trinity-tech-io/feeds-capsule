@@ -498,14 +498,14 @@ export class PostdetailPage implements OnInit {
     return UtilService.resolveAddress(text);
   }
 
-  showComment(comment: any) {
+  showComment(comment: FeedsData.CommentV3) {
     if (comment === null) {
       this.refcommentId = '0';
       this.commentName = this.channelName;
       this.commentAvatar = this.channelAvatarUri;
     } else {
       this.refcommentId = comment.commentId;
-      this.commentName = comment.destDid || '';
+      this.commentName = comment.createrDid;
       this.commentAvatar = '';
     }
     // if (this.checkServerStatus(this.destDid) != 0) {
@@ -823,14 +823,16 @@ export class PostdetailPage implements OnInit {
 
   checkCommentIsMine(comment: FeedsData.CommentV3) {
     let commentId = comment.commentId;
-    let destDid  = comment.destDid;
+    let destDid  = comment.createrDid;
     let signInData :FeedsData.SignInData = this.feedService.getSignInData() || null;
     if(signInData === null){
       this.isOwnComment[commentId] = false;
+      return false;
     }
     let ownerDid: string = signInData.did;
     if( destDid != ownerDid){
       this.isOwnComment[commentId] = false;
+      return false;
 
     }
     this.isOwnComment[commentId] = true;
