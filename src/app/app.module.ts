@@ -88,7 +88,8 @@ import { FeedsUtil } from 'src/app/services/feeds_util.service';
 import * as Sentry from '@sentry/browser';
 import { HiveVaultHelper } from './services/hivevault_helper.service';
 import { HiveVaultController } from './services/hivevault_controller.service';
-import { SqliteHelper } from './services/sqlite_helper.service';
+import { FeedsSqliteHelper } from './services/sqlite_helper.service';
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 
 Sentry.init({
   dsn:
@@ -233,7 +234,8 @@ export function TranslateLoaderFactory() {
     HiveVaultApi,
     HiveVaultHelper,
     HiveVaultController,
-    SqliteHelper,
+    FeedsSqliteHelper,
+    SQLite,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: ErrorHandler },
   ],

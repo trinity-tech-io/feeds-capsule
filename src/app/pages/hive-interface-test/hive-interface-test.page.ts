@@ -10,7 +10,7 @@ import { Logger, LogLevel } from 'src/app/services/logger';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
-// import { SqliteHelper } from 'src/app/services/sqlite_helper.service';
+import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { UtilService } from 'src/app/services/utilService';
 
 
@@ -37,7 +37,7 @@ export class HiveInterfaceTestPage implements OnInit {
     private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
     private fileHelperService: FileHelperService,
-    // private sqliteHelper: SqliteHelper
+    private sqliteHelper: FeedsSqliteHelper
   ) { }
 
   ngOnInit() {
@@ -108,7 +108,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
   queryPostByChannelId() {
     // this.hiveVaultApi.queryPostByChannelId(this.destDid, 'channelId01');
-    this.hiveVaultController.getPostListByChannel(this.destDid, 'channelId01');
+    this.hiveVaultController.getPostListByChannel(this.destDid, '5c125000ee1e1bd6cbf3815ef026dbfd5060f098d9c5a1e58234afbcb8941296');
     alert('queryPostByChannelId');
   }
 
@@ -261,50 +261,76 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
 
-  createTables() {
-    // this.sqliteHelper.createTables();
+  async createTables() {
+    console.log('createTables');
+    try {
+      await this.sqliteHelper.createTables();
+    } catch (error) {
+
+    }
   }
 
   queryPostData() {
-    // this.sqliteHelper.queryPostData();
+    console.log('queryPostData');
+    this.sqliteHelper.queryPostData();
   }
 
   queryPostDataByID() {
-    // this.sqliteHelper.queryPostDataByID('testPostId');
+    console.log('queryPostDataByID');
+    this.sqliteHelper.queryPostDataByID('testPostId');
   }
 
   insertPostData() {
-    //   const mediaDataV3: FeedsData.mediaDataV3 = {
-    //     kind: 'kind',           //"image/video/audio"
-    //     originMediaPath: 'originMediaPath',
-    //     type: 'type',           //"image/jpg",
-    //     size: 0,           //origin file size
-    //     thumbnailPath: 'testpath',    //"thumbnailCid"
-    //     duration: 0,
-    //     imageIndex: 0,
-    //     additionalInfo: 'additionalInfo',
-    //     memo: 'memo'
-    //   }
-    //   const testContent: FeedsData.postContentV3 = {
-    //     version: "3.0",
-    //     content: '',
-    //     mediaData: [mediaDataV3],// 已经上传的到hive(size/type/scriptName@path)
-    //     mediaType: FeedsData.MediaType.containsImg
-    //   }
-    //   const post: FeedsData.PostV3 = {
-    //     destDid: 'testdestDid',
-    //     postId: 'testPostId',
+    console.log('insertPostData');
+    const mediaDataV3: FeedsData.mediaDataV3 = {
+      kind: 'kind',           //"image/video/audio"
+      originMediaPath: 'originMediaPath',
+      type: 'type',           //"image/jpg",
+      size: 0,           //origin file size
+      thumbnailPath: 'testpath',    //"thumbnailCid"
+      duration: 0,
+      imageIndex: 0,
+      additionalInfo: 'additionalInfo',
+      memo: 'memo'
+    }
+    const testContent: FeedsData.postContentV3 = {
+      version: "3.0",
+      content: '',
+      mediaData: [mediaDataV3],// 已经上传的到hive(size/type/scriptName@path)
+      mediaType: FeedsData.MediaType.containsImg
+    }
+    const post: FeedsData.PostV3 = {
+      destDid: 'testdestDid',
+      postId: 'testPostId',
 
-    //     channelId: 'testChannelId',
-    //     createdAt: UtilService.getCurrentTimeNum(),
-    //     updatedAt: UtilService.getCurrentTimeNum(),
-    //     content: testContent,
-    //     status: FeedsData.PostCommentStatus.available,
-    //     type: 'public',
-    //     tag: 'no tag',
-    //     proof: 'string',
-    //     memo: 'string'
-    //   }
-    //   this.sqliteHelper.insertPostData(post)
+      channelId: 'testChannelId',
+      createdAt: UtilService.getCurrentTimeNum(),
+      updatedAt: UtilService.getCurrentTimeNum(),
+      content: testContent,
+      status: FeedsData.PostCommentStatus.available,
+      type: 'public',
+      tag: 'no tag',
+      proof: 'string',
+      memo: 'string'
+    }
+    this.sqliteHelper.insertPostData(post)
+
+    // this.sqliteHelper.test();
+  }
+
+  queryPostDataByTime() {
+    console.log('queryPostDataByTime');
+    this.sqliteHelper.queryPostDataByTime(1648801128610, 1648803967893)
+  }
+
+
+  updatePostData() {
+    console.log('updatePostData');
+    // this.sqliteHelper.updatePostData();
+  }
+
+  deletePostData() {
+    console.log('updatePostData');
+    // this.sqliteHelper.deletePostData();
   }
 }
