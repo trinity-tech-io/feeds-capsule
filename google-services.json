@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:28839232315:android:d1827bcff95ee565686d1e",
         "android_client_info": {
-          "package_name": "io.trinitytech.dapp.feeds"
+          "package_name": "io.trinitytech.dapp.feedsnetwork"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "28839232315-m61lrj3vlbbgej7rsif4m075h5p7l5m8.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.trinitytech.dapp.feeds"
+                "bundle_id": "io.trinitytech.dapp.feedsnetwork"
               }
             }
           ]
