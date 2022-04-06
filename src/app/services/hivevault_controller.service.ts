@@ -28,12 +28,12 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-        if(subscribedChannels.length === 0){
+        if (subscribedChannels.length === 0) {
           this.dataHelper.setPostMapV3({});
-          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3,{});
+          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, {});
           resolve('FINISH');
         }
-        let postMapV3 =  {};
+        let postMapV3 = {};
         for (let index = 0; index < subscribedChannels.length; index++) {
           const item = subscribedChannels[index];
 
@@ -49,7 +49,7 @@ export class HiveVaultController {
             //await this.dataHelper.addPostV3(post);
           }
           this.dataHelper.setPostMapV3(postMapV3);
-          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3,postMapV3);
+          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, postMapV3);
         }
         resolve('FINISH');
       } catch (error) {
@@ -58,6 +58,58 @@ export class HiveVaultController {
       }
 
     });
+  }
+
+  syncAllPost() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        if (subscribedChannels.length === 0) {
+          this.dataHelper.setPostMapV3({});
+          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, {});
+          resolve('FINISH');
+        }
+        let postMapV3 = {};
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const item = subscribedChannels[index];
+
+          const channelId = item.channelId
+          const destDid = item.destDid
+
+          const posts = await this.getPostListByChannel(destDid, channelId);
+
+          for (let index = 0; index < posts.length; index++) {
+            const post: FeedsData.PostV3 = posts[index];
+            const key = UtilService.getKey(post.destDid, post.postId);
+            postMapV3[key] = post;
+            //await this.dataHelper.addPostV3(post);
+          }
+          this.dataHelper.setPostMapV3(postMapV3);
+          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, postMapV3);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Get all subscribed channel post error', error);
+        reject(error);
+      }
+    });
+  }
+
+  async syncPostFromChannel(destDid: string, channelId: string) {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    if (destDid == selfDid) {
+      this.syncSelfPosts();
+    } else {
+      this.syncOtherPosts();
+    }
+  }
+
+  syncCommentFromPost(destDid: string, channelId: string, postId: string) {
+
+  }
+
+  syncOtherPosts() {
+
   }
 
   async queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
@@ -416,13 +468,15 @@ export class HiveVaultController {
     });
   }
 
-  syncSelfPost() {
+  syncSelfPosts(): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
         const postResult = await this.hiveVaultApi.querySelfPosts();
         console.log('postResult', postResult);
         const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+
+        await this.dataHelper.addPostsV3(parseResult);
         console.log('parseResult', parseResult);
       } catch (error) {
         Logger.error(TAG, 'Sync self post', error);
@@ -478,7 +532,7 @@ export class HiveVaultController {
     });
   }
 
-  removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<any>  {
+  removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
@@ -493,7 +547,7 @@ export class HiveVaultController {
     });
   }
 
-  getLike(destDid: string, channelId: string): Promise<any>  {
+  getLike(destDid: string, channelId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
@@ -539,11 +593,11 @@ export class HiveVaultController {
   }
 
   deletePost(postId: string, channelId: string): Promise<any> {
-    Logger.log(TAG, "deletePost",postId,channelId);
+    Logger.log(TAG, "deletePost", postId, channelId);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.deletePost(postId, channelId);;
-        Logger.log(TAG, "deletePost result",result);
+        Logger.log(TAG, "deletePost result", result);
         resolve(result);
         //TODO
       } catch (error) {
@@ -554,12 +608,12 @@ export class HiveVaultController {
     });
   }
 
-  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any>{
-    Logger.log(TAG, "updateComment",targetDid,channelId,postId,commentId);
+  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    Logger.log(TAG, "updateComment", targetDid, channelId, postId, commentId);
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.updateComment(targetDid, channelId, postId, commentId,content);
-        Logger.log(TAG, "updateComment result",result);
+        const result = await this.hiveVaultApi.updateComment(targetDid, channelId, postId, commentId, content);
+        Logger.log(TAG, "updateComment result", result);
         resolve(result);
         //TODO
       } catch (error) {
@@ -570,12 +624,12 @@ export class HiveVaultController {
     });
   }
 
-  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any>{
-    Logger.log(TAG, "deleteComment",targetDid,channelId,postId,commentId);
+  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    Logger.log(TAG, "deleteComment", targetDid, channelId, postId, commentId);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
-        Logger.log(TAG, "deleteComment result",result);
+        Logger.log(TAG, "deleteComment result", result);
         resolve(result);
         //TODO
       } catch (error) {

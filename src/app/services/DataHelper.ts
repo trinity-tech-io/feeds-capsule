@@ -2867,12 +2867,12 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
   }
 
- async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+  async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
     if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return;
     let key = subscribedChannel.destDid + "#" + subscribedChannel.channelId;
     this.subscribedChannelMapV3[key] = null;
     delete this.subscribedChannelMapV3[key];
-   await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
+    await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
   }
 
   getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
@@ -3035,6 +3035,26 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
   }
 
+  addPostsV3(posts: FeedsData.PostV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!posts) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < posts.length; index++) {
+          const post = posts[index];
+          await this.addPostV3(post);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add posts error', error);
+        reject(error)
+      }
+    });
+  }
+
   async updatePostV3(post: FeedsData.PostV3) {
     const key = UtilService.getKey(post.destDid, post.postId);
     this.postMapV3[key] = post;
@@ -3095,7 +3115,7 @@ export class DataHelper {
 
         let list: FeedsData.PostV3[] = []
         //if(JSON.stringify(this.postMapV3) === "{}") {
-          this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
+        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
         //}
         let keys: string[] = Object.keys(this.postMapV3)
         for (const key in keys) {
@@ -3221,11 +3241,11 @@ export class DataHelper {
     })
   }
 
-  setPostMapV3(postMapV3: any){
+  setPostMapV3(postMapV3: any) {
     this.postMapV3 = postMapV3;
   }
 
-  getPostMapV3(){
+  getPostMapV3() {
     return this.postMapV3;
   }
 }
