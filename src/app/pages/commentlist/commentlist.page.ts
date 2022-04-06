@@ -93,9 +93,9 @@ export class CommentlistPage implements OnInit {
     }
   }
 
- async initRefresh() {
+ initRefresh() {
     this.startIndex = 0;
-    this.totalData = await this.sortCommentList();
+    this.totalData = this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.replayCommentList = this.totalData.slice(0, this.pageNumber);
 
@@ -116,8 +116,8 @@ export class CommentlistPage implements OnInit {
     });
   }
 
- async refreshCommentList() {
-    this.totalData = await this.sortCommentList();
+ refreshCommentList() {
+    this.totalData = this.sortCommentList();
     if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
@@ -134,7 +134,7 @@ export class CommentlistPage implements OnInit {
     this.initOwnCommentObj();
   }
 
- async sortCommentList() {
+ sortCommentList() {
     let replayCommentList = [];
     replayCommentList =  _.filter(this.captainCommentList,(item: FeedsData.CommentV3)=>{
       return item.refcommentId === this.commentId;
@@ -194,26 +194,12 @@ export class CommentlistPage implements OnInit {
 
     this.events.subscribe(
       FeedsEvent.PublishType.getCommentFinish,
-      (getCommentData: FeedsEvent.getCommentData) => {
-        this.zone.run(() => {
-          let nodeId = getCommentData.nodeId;
-          let channelId = getCommentData.channelId;
-          let postId = getCommentData.postId;
-          Logger.log(TAG,
-            'Received getCommentFinish event, nodeId is ',
-            nodeId,
-            ' channelId is',
-            channelId,
-            ' postId is ',
-            postId);
-          if (
-            nodeId == this.destDid &&
-            channelId == this.channelId &&
-            postId == this.postId
-          ) {
-            this.startIndex = 0;
-            this.initData(true);
-          }
+      (getCommentData: FeedsData.CommentV3) => {
+        this.zone.run(async () => {
+          await this.getCaptainComment();
+          this.startIndex = 0;
+          this.initData(true);
+
         });
       },
     );
@@ -244,9 +230,9 @@ export class CommentlistPage implements OnInit {
         this.hiveVaultController
         .deleteComment(comment.destDid,comment.channelId,comment.postId,comment.commentId)
         .then(async (result:any)=>{
-        this.getCaptainComment();
-        this.native.hideLoading();
+        await this.getCaptainComment();
         this.initData(false);
+        this.native.hideLoading();
         }).catch(()=>{
           this.native.hideLoading();
         })
