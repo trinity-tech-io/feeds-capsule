@@ -221,8 +221,8 @@ export class HiveVaultController {
         const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
         const subscriptionList = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
 
-        this.dataHelper.addSubscriptionV3Data(subscriptionList);
-        resolve(subscribedChannelList);
+        this.dataHelper.addSubscriptionsV3Data(subscriptionList);
+        resolve(subscriptionList);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
