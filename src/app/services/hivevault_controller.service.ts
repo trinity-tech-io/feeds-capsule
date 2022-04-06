@@ -219,7 +219,9 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
-        const subscribedChannelList = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        const subscriptionList = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+
+        this.dataHelper.addSubscriptionV3Data(subscriptionList);
         resolve(subscribedChannelList);
       } catch (error) {
         Logger.error(TAG, error);
