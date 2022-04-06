@@ -148,6 +148,86 @@ export class HiveVaultController {
     });
   }
 
+  syncAllLikeData(): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        let likeList = [];
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          const likes = await this.syncLikeDataFromChannel(destDid, channelId);
+          likeList.push(likes);
+        }
+
+        resolve(likeList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync all like data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  syncAllChannelInfo(): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        let channelList = [];
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          const channel = await this.getChannelInfoById(destDid, channelId);
+          channelList.push(channel);
+        }
+
+        resolve(channelList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync all like data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  syncAllSubscriptionData() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        let subscribedChannelList = [];
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          const channel = await this.getSubscriptionInfoByChannel(destDid, channelId);
+          subscribedChannelList.push(channel);
+        }
+
+        resolve(subscribedChannelList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  getSubscriptionInfoByChannel(targetDid: string, channelId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
+        const subscribedChannelList = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        resolve(subscribedChannelList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
   async queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
     const result = await this.hiveVaultApi.queryPostByRangeOfTime(targetDid, channelId, star, end)
     const rangeOfTimePostList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
@@ -179,17 +259,14 @@ export class HiveVaultController {
     return this.hiveVaultApi.downloadScripting(targetDid, mediaPath)
   }
 
-  async getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3[]> {
+  getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
-        const channelInfoList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
+        const channelList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
 
-        for (let index = 0; index < channelInfoList.length; index++) {
-          const channel = channelInfoList[index];
-          this.dataHelper.addChannelV3(channel);
-        }
-        resolve(channelInfoList);
+        this.dataHelper.addChannelsV3(channelList)
+        resolve(channelList);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
@@ -700,4 +777,10 @@ export class HiveVaultController {
     });
   }
 
+  //TODO
+  backupSubscriptions() {
+  }
+
+  restoreSubscriptions() {
+  }
 }

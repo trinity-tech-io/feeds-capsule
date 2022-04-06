@@ -2940,8 +2940,36 @@ export class DataHelper {
 
 
   //subscriptionV3
-  addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3) {
-    const key = UtilService.getKey(subscription.destDid, subscription.channelId);
+  addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //TODO saveData
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add subscription error', error);
+        reject(error)
+      }
+    });
+  }
+
+  addSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!subscriptions) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < subscriptions.length; index++) {
+          const subscription = subscriptions[index];
+          await this.addSubscriptionV3Data(subscription);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add subscriptions error', error);
+        reject(error)
+      }
+    });
   }
 
   updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3) {
