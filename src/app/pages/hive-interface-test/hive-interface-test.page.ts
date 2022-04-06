@@ -216,7 +216,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   syncSelfPost() {
-    this.hiveVaultController.syncSelfPost();
+    this.hiveVaultController.syncSelfPosts();
   }
 
   downloadData() {

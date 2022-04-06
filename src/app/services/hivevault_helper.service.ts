@@ -1260,4 +1260,23 @@ export class HiveVaultHelper {
         return this.queryPostsFromDB();
     }
     /** query slef post end */
+
+    /** query slef post by channel start */
+    private queryPostsByChannelFromDB(channelId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const filter = { 'channel_id': channelId };
+                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_POSTS, filter);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query post by channel from DB', error);
+                reject(error);
+            }
+        });
+    }
+
+    querySelfPostsByChannel(channelId: string): Promise<any> {
+        return this.queryPostsByChannelFromDB(channelId);
+    }
+    /** query slef post by channel end */
 }

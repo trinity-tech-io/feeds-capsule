@@ -60,15 +60,17 @@ export class HiveVaultController {
     });
   }
 
-  syncAllPost() {
+  syncAllPost(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
         if (subscribedChannels.length === 0) {
           this.dataHelper.setPostMapV3({});
           await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, {});
-          resolve('FINISH');
+          resolve([]);
+          return;
         }
+        let postList = [];
         let postMapV3 = {};
         for (let index = 0; index < subscribedChannels.length; index++) {
           const item = subscribedChannels[index];
@@ -86,8 +88,9 @@ export class HiveVaultController {
           }
           this.dataHelper.setPostMapV3(postMapV3);
           await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, postMapV3);
+          postList.push(posts);
         }
-        resolve('FINISH');
+        resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Get all subscribed channel post error', error);
         reject(error);
@@ -95,13 +98,24 @@ export class HiveVaultController {
     });
   }
 
-  async syncPostFromChannel(destDid: string, channelId: string) {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
-    if (destDid == selfDid) {
-      this.syncSelfPosts();
-    } else {
-      this.syncOtherPosts();
-    }
+  syncPostFromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.dataHelper.getSigninData()).did;
+        let postList = [];
+        if (destDid == selfDid) {
+          const posts = await this.syncSelfPostsByChannel(channelId);
+          postList.push(posts);
+        } else {
+          const posts = await this.getPostListByChannel(destDid, channelId);
+          postList.push(posts);
+        }
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync post from channel error', error);
+        reject(error);
+      }
+    });
   }
 
   syncCommentFromPost(destDid: string, channelId: string, postId: string) {
@@ -453,7 +467,7 @@ export class HiveVaultController {
     });
   }
 
-  syncSelfChannel() {
+  syncSelfChannel(): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
@@ -461,6 +475,10 @@ export class HiveVaultController {
         console.log('channelsResult', channelsResult);
         const parseResult = HiveVaultResultParse.parseChannelResult(channelsResult, did);
         console.log('parseResult', parseResult);
+
+        await this.dataHelper.addChannelsV3(parseResult);
+
+        resolve(parseResult);
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);
         reject(error);
@@ -468,7 +486,7 @@ export class HiveVaultController {
     });
   }
 
-  syncSelfPosts(): Promise<FeedsData.PostV3> {
+  syncSelfPosts(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
@@ -478,6 +496,27 @@ export class HiveVaultController {
 
         await this.dataHelper.addPostsV3(parseResult);
         console.log('parseResult', parseResult);
+
+        resolve(parseResult);
+      } catch (error) {
+        Logger.error(TAG, 'Sync self post', error);
+        reject(error);
+      }
+    });
+  }
+
+  private syncSelfPostsByChannel(channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const did = (await this.dataHelper.getSigninData()).did;
+        const postResult = await this.hiveVaultApi.querySelfPostsByChannel(channelId);
+        console.log('postResult', postResult);
+        const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+
+        await this.dataHelper.addPostsV3(parseResult);
+        console.log('parseResult', parseResult);
+
+        resolve(parseResult);
       } catch (error) {
         Logger.error(TAG, 'Sync self post', error);
         reject(error);

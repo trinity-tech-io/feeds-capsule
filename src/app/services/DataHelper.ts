@@ -2973,6 +2973,25 @@ export class DataHelper {
       .catch(err => { });
   }
 
+  addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!channels) {
+          resolve('FINISH');
+          return;
+        }
+        for (let index = 0; index < channels.length; index++) {
+          const channel = channels[index];
+          await this.addChannelV3(channel);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add channels erorr', error);
+        reject(error);
+      }
+    });
+  }
+
   async updateChannelV3(channel: FeedsData.ChannelV3) {
     // update 的时候更新updateTime
     const key = UtilService.getKey(channel.destDid, channel.channelId);

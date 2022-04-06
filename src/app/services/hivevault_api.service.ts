@@ -153,4 +153,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.querySelfPosts();
   }
 
+  querySelfPostsByChannel(channelId: string): Promise<any> {
+    return this.hiveVaultHelper.querySelfPostsByChannel(channelId);
+  }
+
 }
