@@ -66,7 +66,10 @@ export class ChannelsPage implements OnInit {
   // For comment component
   public postId = null;
 
-  public clientHeight: number = 0;
+  private clientHeight: number = 0;
+  private clientWidth: number = 0;
+  private isInitLike: any = {};
+  private isInitComment: any = {};
   public isLoadimage: any = {};
   public isLoadVideoiamge: any = {};
   public videoIamges: any = {};
@@ -244,15 +247,17 @@ export class ChannelsPage implements OnInit {
 
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
+      this.isInitLike = {};
+      this.isInitComment = {};
       this.refreshImage();
     } else {
       this.postList = this.totalData;
       this.infiniteScroll.disabled = true;
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
+      this.isInitLike = {};
+      this.isInitComment = {};
       this.refreshImage();
-      this.initLikeMap(this.postList);
-      this.initCommentSum(this.postList);
     }
   }
 
@@ -274,6 +279,8 @@ export class ChannelsPage implements OnInit {
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
+    this.isInitLike = {};
+    this.isInitComment = {};
     this.refreshImage();
   }
 
@@ -310,6 +317,7 @@ export class ChannelsPage implements OnInit {
 
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     this.clientHeight = screen.availHeight;
+    this.clientWidth = screen.availWidth;
     this.styleObj.width = screen.width - 105 + 'px';
     this.initTitle();
     this.init();
@@ -376,6 +384,8 @@ export class ChannelsPage implements OnInit {
        await this.refreshChannelList();
         this.isLoadimage = {};
         this.isLoadVideoiamge = {};
+        this.isInitLike = {};
+        this.isInitComment = {};
         this.refreshImage();
         this.initnodeStatus(this.postList);
         this.hideComponent(null);
@@ -437,10 +447,8 @@ export class ChannelsPage implements OnInit {
     this.removeAllVideo();
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
-    if (this.curNodeId != '') {
-      this.feedService.closeSession(this.curNodeId);
-    }
-    this.curNodeId = '';
+    this.isInitLike = {};
+    this.isInitComment = {};
     this.events.publish(FeedsEvent.PublishType.updateTab);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
@@ -496,58 +504,6 @@ export class ChannelsPage implements OnInit {
 
       }
     }
-  }
-
-  initLikeMap(postList:any){
-    let sid = setTimeout(async ()=>{
-      for(let post of postList){
-    //_.forEach(postList, (post :FeedsData.PostV3)=>{
-      let destDid = post. destDid;
-      let channelId = post.channelId;
-      let postId = post.postId;
-      try{
-        let result:any = await this.hiveVaultController.getLikeByPost(
-          destDid, channelId, post.postId);
-          let list = result.find_message.items || [];
-          let index = _.find(list,(item)=>{
-                return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
-          }) || "";
-
-          if(index === ""){
-            this.likeMap[postId] = "";
-          }else{
-            this.likeMap[postId] = "like";
-          }
-          this.likeNumMap[postId] = list.length;
-      }catch(err){
-        //this.likesNum = 0;
-        this.likeMap[postId] = "";
-        this.likeNumMap[postId] = 0;
-      }
-      }
-    clearTimeout(sid);
-    sid = null;
-    },10);
-
-  }
-
-  initCommentSum(postList:any){
-   let sid = setTimeout(async ()=>{
-    for(let post of postList){
-      let destDid = post. destDid;
-      let channelId = post.channelId;
-      let postId = post.postId;
-
-      try {
-        let result =  await this.hiveVaultController.getCommentsByPost( destDid,channelId,postId);
-        this.commentNumMap[postId] = result.length;
-      } catch (error) {
-        this.commentNumMap[postId] = 0;
-      }
-    }
-    clearTimeout(sid);
-    sid = null;
-   },10);
   }
 
   getChannelName(destDid: string, channelId: string) {
@@ -711,8 +667,7 @@ export class ChannelsPage implements OnInit {
           //this.initStatus(arr);
           this.postList = this.postList.concat(arr);
           this.refreshImage();
-          this.initLikeMap(arr);
-          this.initCommentSum(arr);
+
         });
         event.target.complete();
       } else {
@@ -793,6 +748,10 @@ export class ChannelsPage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
+         //处理post like
+         this.handlePostLikeData(id, srcId, postgridindex,postgridList[postgridindex]);
+         //处理post comment
+         this.handlePostCommentData(id, srcId, postgridindex,postgridList[postgridindex]);
         //postImg
         if (mediaType === '1') {
           this.handlePostImg(id, srcId, postgridindex);
@@ -814,7 +773,9 @@ export class ChannelsPage implements OnInit {
       if (
         id != '' &&
         postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().top <= this.clientHeight
+        postImage.getBoundingClientRect().left >= 0 &&
+        postImage.getBoundingClientRect().bottom <= this.clientHeight &&
+        postImage.getBoundingClientRect().right <= this.clientWidth
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -906,7 +867,9 @@ export class ChannelsPage implements OnInit {
       if (
         id != '' &&
         video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().top <= this.clientHeight
+        video.getBoundingClientRect().left >= 0 &&
+        video.getBoundingClientRect().bottom <= this.clientHeight &&
+        video.getBoundingClientRect().right <= this.clientWidth
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -1412,11 +1375,106 @@ export class ChannelsPage implements OnInit {
     this.feedService.republishOnePost(destDid, channelId, postId);
   }
 
-  getPostLike(post: FeedsData.PostV3){
-    return 0;
+  handlePostLikeData(id: string, srcId: string, rowindex: number,postgrid: any){
+    try {
+    if (
+      id != '' &&
+      postgrid.getBoundingClientRect().top >= -100 &&
+      postgrid.getBoundingClientRect().left >= 0 &&
+      postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
+      postgrid.getBoundingClientRect().right <= this.clientWidth
+    ) {
+      let arr = srcId.split('-');
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let postId = arr[2];
+      let isInit = this.isInitLike[postId] || '';
+      if(isInit === ''){
+        this.isInitLike[postId] = "11";
+        this.initLikeData(destDid,channelId,postId);
+      }
+    }
+  } catch (error) {
+  }
   }
 
-  getPostComments(post: FeedsData.PostV3){
-  return 0;
+  handlePostCommentData(id: string, srcId: string, rowindex: number,postgrid: any){
+  try {
+  if (
+    id != '' &&
+    postgrid.getBoundingClientRect().top >= -100 &&
+    postgrid.getBoundingClientRect().left >= 0 &&
+    postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
+    postgrid.getBoundingClientRect().right <= this.clientWidth
+  ) {
+    let arr = srcId.split('-');
+    let destDid = arr[0];
+    let channelId = arr[1];
+    let postId = arr[2];
+    let isInit = this.isInitComment[postId] || '';
+    if(isInit === ''){
+      this.isInitComment[postId] = "11";
+      this.initCommentData(destDid,channelId,postId);
+    }
   }
+  } catch (error) {
+  }
+  }
+
+  initLikeData(destDid: string, channelId: string, postId: string) {
+  try{
+      this.hiveVaultController.getLikeByPost(
+      destDid, channelId, postId).then((result)=>{
+        this.isInitLike[postId] = "13";
+        let list = result.find_message.items || [];
+
+        //计算post like的数量
+        let likeList = _.filter(list,(item)=>{
+          return item.channel_id === channelId && item.post_id === postId && item.comment_id === "0";
+        }) || [];
+        this.likeNumMap[postId] = likeList.length;
+
+        //检测post like状态
+
+        let index = _.find(likeList,(item)=>{
+        return item.channel_id === channelId && item.post_id === postId && item.comment_id === "0";
+        }) || "";
+        if(index === ""){
+        this.likeMap[postId] = "";
+        }else{
+        this.likeMap[postId] = "like";
+        }
+
+      }).catch((err)=>{
+        this.likeMap[postId] = "";
+        this.likeNumMap[postId] = 0;
+        this.isInitLike[postId] = "";
+      });
+  }catch(err){
+    //this.likesNum = 0;
+    this.likeMap[postId] = "";
+    this.likeNumMap[postId] = 0;
+    this.isInitLike[postId] = "";
+  }
+  }
+
+  initCommentData(destDid: string, channelId: string, postId: string){
+  try {
+      this.hiveVaultController.getCommentsByPost(
+      destDid,channelId,postId
+      ).then((result)=>{
+      this.isInitComment[postId] = "13";
+      let commentPostList = _.filter(result,(item)=>{
+        return item.channelId === channelId && item.postId === postId && item.refcommentId === "0";
+      }) || [];
+      this.commentNumMap[postId] = commentPostList.length;
+      }).catch((err)=>{
+      this.isInitComment[postId] = "";
+      });
+  } catch (error) {
+    this.isInitComment[postId] = "";
+    this.commentNumMap[postId] = 0;
+  }
+  }
+
 }

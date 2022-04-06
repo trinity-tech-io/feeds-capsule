@@ -1209,7 +1209,14 @@ export class PostdetailPage implements OnInit {
       ).then((result)=>{
 
         let list = result.find_message.items || [];
-        let index = _.find(list,(item)=>{
+
+         //计算post like的数量
+        let likeList = _.filter(list,(item)=>{
+        return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
+        }) || [];
+        this.likesNum = likeList.length;
+
+        let index = _.find(likeList,(item)=>{
               return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
               ;
         }) || "";
@@ -1219,7 +1226,6 @@ export class PostdetailPage implements OnInit {
         }else{
           this.isLike = true;
         }
-        this.likesNum = list.length;
       }).catch((err)=>{
 
       });
@@ -1229,16 +1235,18 @@ export class PostdetailPage implements OnInit {
   }
 
   getPostComments(post: FeedsData.PostV3) {
-   let commentNum = 0;
-   try {
-     this.hiveVaultController.getCommentsByPost(
-       post.destDid,post.channelId,post.postId
-       ).then((result)=>{
-        this.commentsNum = result.length;
-       });
-   } catch (error) {
+  try {
+    this.hiveVaultController.getCommentsByPost(
+      post.destDid,post.channelId,post.postId
+      ).then((result)=>{
+      let commentPostList = _.filter(result,(item)=>{
+        return item.channelId === post.channelId && item.postId === post.postId && item.refcommentId === "0";
+      }) || [];
+      this.commentsNum = commentPostList.length;
+      });
+  } catch (error) {
 
-   }
+  }
   }
 }
 
