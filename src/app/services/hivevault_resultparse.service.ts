@@ -199,7 +199,7 @@ export class HiveVaultResultParse {
   /** parse comment result end*/
 
   /** parse like result start */
-  public static pareLikeResult(destDid: string, result: any): FeedsData.LikeV3[] {
+  public static parseLikeResult(destDid: string, result: any): FeedsData.LikeV3[] {
     try {
       /**
        * channel_id: "channelId01"

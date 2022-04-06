@@ -118,12 +118,34 @@ export class HiveVaultController {
     });
   }
 
-  syncCommentFromPost(destDid: string, channelId: string, postId: string) {
+  syncCommentFromPost(destDid: string, channelId: string, postId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
+        const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
 
+        await this.dataHelper.addCommentsV3(commentList);
+        resolve(commentList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync comment from post error', error);
+        reject(error);
+      }
+    });
   }
 
-  syncOtherPosts() {
+  syncLikeDataFromChannel(destDid: string, channelId: string): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
+        const likeList = HiveVaultResultParse.parseLikeResult(destDid, result);
 
+        await this.dataHelper.addLikesV3(likeList);
+        resolve(likeList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync comment from post error', error);
+        reject(error);
+      }
+    });
   }
 
   async queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {

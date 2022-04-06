@@ -3174,6 +3174,26 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.commentsMapV3, this.commentsMapV3);
   }
 
+  addCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!comments) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < comments.length; index++) {
+          const comment = comments[index];
+          await this.addCommentV3(comment);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add comment error', error);
+        reject(error)
+      }
+    });
+  }
+
   async updateCommentV3(comment: FeedsData.CommentV3) {
     const key = UtilService.getKey(comment.destDid, comment.postId + comment.commentId);
     this.commentsMapV3[key] = comment;
@@ -3213,7 +3233,7 @@ export class DataHelper {
       } catch (error) {
         reject(error)
       }
-    })
+    });
   }
 
   loadCommentV3Map(): Promise<{ [key: string]: FeedsData.CommentV3 }> {
@@ -3234,6 +3254,26 @@ export class DataHelper {
 
     this.likeMapV3[key] = like;
     await this.saveData(FeedsData.PersistenceKey.likeMapV3, this.likeMapV3);
+  }
+
+  async addLikesV3(likes: FeedsData.LikeV3[]) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!likes) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < likes.length; index++) {
+          const like = likes[index];
+          await this.addLikeV3(like);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add likes error', error);
+        reject(error)
+      }
+    });
   }
 
   removeLikeV3(like: FeedsData.LikeV3) {
