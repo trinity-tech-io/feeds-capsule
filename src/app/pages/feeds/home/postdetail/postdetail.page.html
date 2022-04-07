@@ -1,10 +1,5 @@
 <app-titlebar></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
-<!-- <ion-header *ngIf="connectionStatus == 1">
-  <div class="offline-header"></div>
-</ion-header> -->
-
-<ion-content>
+<ion-content (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -23,7 +18,7 @@
         <ion-col class="left-col" size="2.25">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
             <img src={{channelAvatar}}>
-            <div class="offline" [class.online]="nodeStatus[destDid] === 0"></div>
+            <!-- <div class="offline" [class.online]="nodeStatus[destDid] === 0"></div> -->
           </div>
         </ion-col>
         <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
@@ -142,7 +137,9 @@
 
     <!---------------- COMMENTS ---------------->
     <div *ngFor="let comment of captainCommentList let i=index">
-    <ion-grid  class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode">
+    <ion-grid  class="post-grid ion-activatable ripple captainComment" [class.darkPostGrid]="theme.darkMode"
+    id={{comment.destDid}}-{{comment.channelId}}-{{comment.postId}}-{{comment.commentId}}
+    >
       <ion-row class="post-row">
         <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && isOwnComment[comment.commentId]">
           <img (click)="openEditTool(comment)"
@@ -183,11 +180,11 @@
             <ion-col size="2.25" (click)="likeComment(comment)">
               <img [src]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
               <img [src]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined  ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-              <ion-label [class.liked]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined ">{{ likedCommentNum[commentId] }}</ion-label>
+              <ion-label [class.liked]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined ">{{ likedCommentNum[comment.commentId] }}</ion-label>
             </ion-col>
             <ion-col size="2.25" (click)="showComment(comment)">
               <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
-              <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode"> <ion-label>{{ comment.replayCommentSum }}</ion-label>
+              <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode"> <ion-label>{{ commentNum[comment.commentId] }}</ion-label>
             </ion-col>
             <ion-col (click)="clickComment(comment)">
               <ion-label class="status" style="right:-7px;" *ngIf="comment.status === 2">{{ 'common.edit' | translate}}</ion-label>

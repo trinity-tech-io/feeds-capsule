@@ -66,6 +66,8 @@ export class CommentlistPage implements OnInit {
   public curComment: any = {};
   public refcommentId: string = "0";
   public captainCommentList  = [];
+  public likedCommentMap: any = {};
+  public likedCommentNum: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -381,33 +383,36 @@ export class CommentlistPage implements OnInit {
     );
   }
 
-  likeComment(commentId: number) {
+  likeComment(comment: FeedsData.CommentV3) {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+    let destDid = comment.destDid;
+    let channelId = comment.channelId;
+    let postId = comment.postId;
+    let commentId = comment.commentId;
 
-    if (this.checkServerStatus(this.destDid) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
+    let  isLike  = this.likedCommentMap[commentId] || '';
+    if(isLike === ''){
+      try{
+        this.likedCommentMap[commentId] = "like";
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] +1;
+        this.hiveVaultController.like(destDid,channelId,postId,commentId);
+        }catch(err){
+          this.likedCommentMap[commentId] = "";
+          this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
+        }
+    }else{
+      try {
+        this.likedCommentMap[commentId] = "";
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
+        this.hiveVaultController.removeLike(destDid,channelId,postId,commentId);
+      } catch (error) {
+        this.likedCommentMap[postId] = "like";
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
+      }
     }
-
-    if (this.checkLikedComment(commentId)) {
-      this.feedsServiceApi.postUnlike(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        commentId,
-      );
-      return;
-    }
-
-    this.feedsServiceApi.postLike(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      commentId,
-    );
   }
 
   handleUpdateDate(updatedTime: number) {
@@ -590,6 +595,7 @@ export class CommentlistPage implements OnInit {
     this.userNameList[commentId] = this.captainComment.createrDid;
     this.updatedAt = this.captainComment['updatedAt'];
     this.checkCommentIsMine(this.captainComment);
+    this.initLikeData(this.destDid,this.channelId,this.postId,commentId);
   }
 
   menuMore() {
@@ -599,4 +605,34 @@ export class CommentlistPage implements OnInit {
   handleText(text: string) {
     return UtilService.resolveAddress(text);
   }
+
+  initLikeData(destDid: string, channelId: string, postId: string,commentId: string) {
+    try{
+        this.hiveVaultController.getLikeById(
+        destDid, channelId, postId,commentId).then((result)=>{
+          let list = result.find_message.items || [];
+
+          //计算comment like的数量
+          this.likedCommentNum[commentId] = list.length;
+
+          //检测comment like状态
+          let index = _.find(list,(item)=>{
+          return item.channel_id === channelId && item.post_id === postId && item.comment_id === commentId;
+          }) || "";
+          if(index === ""){
+          this.likedCommentMap[commentId] = "";
+          }else{
+          this.likedCommentMap[commentId] = "like";
+          }
+
+        }).catch((err)=>{
+          this.likedCommentMap[commentId] = "";
+          this.likedCommentNum[commentId] = 0;
+        });
+    }catch(err){
+      //this.likesNum = 0;
+      this.likedCommentMap[commentId] = "";
+      this.likedCommentNum[commentId] = 0;
+    }
+    }
 }

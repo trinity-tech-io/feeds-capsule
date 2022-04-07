@@ -831,4 +831,33 @@ export class HiveVaultController {
 
   restoreSubscriptions() {
   }
+
+  getLikeById(destDid: string, channelId: string, postId: string,commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryLikeById(destDid, channelId, postId,commentId);
+        console.log('getLikeById result', result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'getLikeById data error', error);
+        reject([]);
+      }
+    });
+  }
+
+  getCommentByID(destDid: string, channelId: string, postId: string,commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryCommentByID(destDid, channelId, postId,commentId);
+        console.log('getCommentByID result', result);
+        resolve(result);
+        //TODO
+      } catch (error) {
+        Logger.error(TAG, 'getCommentByID data error', error);
+        reject([]);
+      }
+    });
+  }
+
 }

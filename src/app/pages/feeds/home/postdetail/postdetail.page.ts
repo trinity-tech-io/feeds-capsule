@@ -129,6 +129,11 @@ export class PostdetailPage implements OnInit {
   public likedCommentMap: any = {};
   public likedCommentNum: any = {};
   public commentNum: any = {};
+  private clientHeight: number = 0;
+  private clientWidth: number = 0;
+  private isInitLike: any = {};
+  private isInitComment: any = {};
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -195,6 +200,7 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
+    this.refreshLikeAndComment();
     //this.totalData = this.sortCommentList();
   }
 
@@ -235,6 +241,7 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
+    this.refreshLikeAndComment();
   }
 
   async sortCommentList() {
@@ -293,6 +300,9 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
+
+    this.clientHeight = screen.availHeight;
+    this.clientWidth = screen.availWidth;
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -580,17 +590,17 @@ export class PostdetailPage implements OnInit {
     if (isLike === '') {
       try {
         this.likedCommentMap[commentId] = "like";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
-        this.hiveVaultController.like(destDid, channelId, postId, commentId);
-      } catch (err) {
-        this.likedCommentMap[postId] = "";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-      }
-    } else {
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] +1;
+        this.hiveVaultController.like(destDid,channelId,postId,commentId);
+        }catch(err){
+          this.likedCommentMap[commentId] = "";
+          this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
+        }
+    }else{
       try {
-        this.likedCommentMap[postId] = "";
+        this.likedCommentMap[commentId] = "";
         this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-        this.hiveVaultController.removeLike(destDid, channelId, postId, '0');
+        this.hiveVaultController.removeLike(destDid,channelId,postId,commentId);
       } catch (error) {
         this.likedCommentMap[postId] = "like";
         this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
@@ -1211,10 +1221,9 @@ export class PostdetailPage implements OnInit {
       ).then((result) => {
 
         let list = result.find_message.items || [];
-
-        //计算post like的数量
-        let likeList = _.filter(list, (item) => {
-          return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
+         //计算post like的数量
+        let likeList = _.filter(list,(item)=>{
+        return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
         }) || [];
         this.likesNum = likeList.length;
 
@@ -1249,6 +1258,135 @@ export class PostdetailPage implements OnInit {
     } catch (error) {
 
     }
+  }
+
+  ionScroll() {
+    this.native.throttle(this.handleLikeAndComment(), 200, this, true);
+  }
+
+  refreshLikeAndComment() {
+    let sid = setTimeout(() => {
+      this.isInitComment = {};
+      this.isInitLike = {};
+      this.handleLikeAndComment();
+      clearTimeout(sid);
+    }, 50);
+  }
+
+  handleLikeAndComment(){
+    let captainComment = document.getElementsByClassName('captainComment');
+    let captainCommentNum = document.getElementsByClassName('captainComment').length;
+    for (let captainCommentIndex = 0; captainCommentIndex < captainCommentNum; captainCommentIndex++) {
+      let srcId = captainComment[captainCommentIndex].getAttribute('id') || '';
+      if (srcId != '') {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let commentId = arr[3];
+        let id = destDid + '-' + channelId + '-' + postId+'-'+commentId;
+        //处理post like
+        this.handleCommentLikeData(id, srcId, captainCommentIndex,captainComment[captainCommentIndex]);
+        //处理post comment
+        this.handleCommentData(id, srcId, captainCommentIndex,captainComment[captainCommentIndex]);
+      }
+    }
+  }
+
+  handleCommentLikeData(id: string, srcId: string, rowindex: number,postgrid: any){
+    try {
+    if (
+      id != '' &&
+      postgrid.getBoundingClientRect().top >= -100 &&
+      postgrid.getBoundingClientRect().left >= 0 &&
+      postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
+      postgrid.getBoundingClientRect().right <= this.clientWidth
+    ) {
+      let arr = srcId.split('-');
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let postId = arr[2];
+      let commentId = arr[3];
+      let isInit = this.isInitLike[commentId] || '';
+      if(isInit === ''){
+        this.isInitLike[commentId] = "11";
+        this.initLikeData(destDid,channelId,postId,commentId);
+      }
+    }
+  } catch (error) {
+  }
+  }
+
+  handleCommentData(id: string, srcId: string, rowindex: number,postgrid: any){
+  try {
+  if (
+    id != '' &&
+    postgrid.getBoundingClientRect().top >= -100 &&
+    postgrid.getBoundingClientRect().left >= 0 &&
+    postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
+    postgrid.getBoundingClientRect().right <= this.clientWidth
+  ) {
+    let arr = srcId.split('-');
+    let destDid = arr[0];
+    let channelId = arr[1];
+    let postId = arr[2];
+    let commentId = arr[3];
+    let isInit = this.isInitComment[commentId] || '';
+    if(isInit === ''){
+      this.isInitComment[postId] = "11";
+      this.initCommentData(destDid,channelId,postId,commentId);
+    }
+  }
+  } catch (error) {
+  }
+  }
+
+  initLikeData(destDid: string, channelId: string, postId: string,commentId: string) {
+  try{
+      this.hiveVaultController.getLikeById(
+      destDid, channelId, postId,commentId).then((result)=>{
+        this.isInitLike[postId] = "13";
+        let list = result.find_message.items || [];
+
+        //计算comment like的数量
+        this.likedCommentNum[commentId] = list.length;
+
+        //检测comment like状态
+        let index = _.find(list,(item)=>{
+        return item.channel_id === channelId && item.post_id === postId && item.comment_id === commentId;
+        }) || "";
+        if(index === ""){
+        this.likedCommentMap[commentId] = "";
+        }else{
+        this.likedCommentMap[commentId] = "like";
+        }
+
+      }).catch((err)=>{
+        this.likedCommentMap[commentId] = "";
+        this.likedCommentNum[commentId] = 0;
+        this.isInitLike[commentId] = "";
+      });
+  }catch(err){
+    //this.likesNum = 0;
+    this.likedCommentMap[commentId] = "";
+    this.likedCommentNum[commentId] = 0;
+    this.isInitLike[commentId] = "";
+  }
+  }
+
+  initCommentData(destDid: string, channelId: string, postId: string,commentId: string){
+  try {
+    this.hiveVaultController.getCommentsByPost(
+        destDid,channelId,postId
+      ).then((result)=>{
+      let commentList = _.filter(result,(item)=>{
+        return item.channelId === channelId && item.postId === postId && item.refcommentId === commentId;
+      }) || [];
+      this.commentNum[commentId] = commentList.length;
+      });
+  } catch (error) {
+
+  }
   }
 }
 

@@ -48,10 +48,10 @@
       </ion-col>
       </ion-row>
      <ion-row class="bottom-row">
-        <ion-col size="1.75" (click)="likeComment(captainComment.commentId)">
-          <img [src]="checkLikedComment(captainComment.commentId) ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
-          <img [src]="checkLikedComment(captainComment.commentId) ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-           <ion-label [class.liked]="checkLikedComment(captainComment.commentId)">{{ captainComment.likes }}</ion-label>
+        <ion-col size="1.75" (click)="likeComment(captainComment)">
+          <img [src]="likedCommentMap[captainComment.commentId] != '' && likedCommentMap[captainComment.commentId] != undefined ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+          <img [src]="likedCommentMap[captainComment.commentId] != '' && likedCommentMap[captainComment.commentId] != undefined ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+           <ion-label [class.liked]="likedCommentMap[captainComment.commentId] != '' && likedCommentMap[captainComment.commentId] != undefined">{{ likedCommentNum[captainComment.commentId] }}</ion-label>
         </ion-col>
         <ion-col size="1.75" (click)="showComment(captainComment)">
           <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">

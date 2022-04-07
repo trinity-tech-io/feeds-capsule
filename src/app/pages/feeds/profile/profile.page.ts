@@ -340,28 +340,31 @@ export class ProfilePage implements OnInit {
   async sortLikeList() {
     //let likeList = this.feedService.getLikeList() || [];
     let likeList = [];
-    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List();
-    console.log("======subscribedChannel=====", subscribedChannel);
-    for (let item of subscribedChannel) {
-      //_.forEach(subscribedChannel,async (item: FeedsData.SubscribedChannelV3)=>{
-      let destDid = item.destDid;
-      let channelId = item.channelId;
-      try {
-        let result = await this.hiveVaultController.getLike(destDid, channelId);
-        let list = result.find_message.items || [].length;
-        if (list.length > 0) {
-          for (let index = 0; index < list.length; index++) {
-            let postId = list[index]['post_id'];
-            let post = await this.dataHelper.getPostV3ById(destDid, postId);
-            likeList.push(post);
-          }
-        }
+    let signInData = this.feedService.getSignInData() || {};
+    let userDid = signInData['did'] || '';
 
-      } catch (error) {
+    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List();
+    for(let item of subscribedChannel){
+        let destDid = item.destDid;
+        let channelId = item.channelId;
+        try {
+          let result =  await this.hiveVaultController.getLike(destDid,channelId);
+          let list = result.find_message.items || [];
+          if(list.length > 0){
+            for(let index = 0; index < list.length; index++){
+              let postId = list[index]['post_id'];
+              let commentId = list[index]['comment_id'];
+              let createrDid =  list[index]['creater_did'];
+              if(commentId === '0' && userDid === createrDid ){
+                let post = await this.dataHelper.getPostV3ById(destDid,postId);
+                likeList.push(post);
+              }
+            }
+          }
+        } catch (error) {
 
       }
     }
-    //});
     this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
