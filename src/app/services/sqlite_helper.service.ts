@@ -233,4 +233,29 @@ export class FeedsSqliteHelper {
     Logger.log(TAG, 'Parse post list from sql, list is', list);
     return list;
   }
+
+
+  queryCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //TODO
+        resolve(0);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //TODO
+        resolve(0);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
+        reject(error);
+      }
+    });
+  }
 }

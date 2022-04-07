@@ -7,6 +7,7 @@ import { Config } from './config';
 import { SignInData } from './FeedService';
 import { Events } from 'src/app/services/events.service';
 import { Logger } from './logger';
+import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 
 let TAG: string = 'DataHelper';
 
@@ -134,7 +135,8 @@ export class DataHelper {
   private assetPageAssetItem: FeedsData.NFTItem;
   constructor(
     private storageService: StorageService,
-    private events: Events
+    private events: Events,
+    private sqliteHelper: FeedsSqliteHelper
   ) { }
 
   //localSignInData
@@ -3316,6 +3318,18 @@ export class DataHelper {
     })
   }
 
+  getCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const num = this.sqliteHelper.queryCommentNum(destDid, channelId, postId, commentId);
+        resolve(num);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
+        reject(error);
+      }
+    });
+  }
+
   //liveV3
   async addLikeV3(like: FeedsData.LikeV3) {
     const key = UtilService.getKey(like.destDid, like.postId + like.commentId);
@@ -3366,6 +3380,18 @@ export class DataHelper {
         reject(error)
       }
     })
+  }
+
+  getLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const num = this.sqliteHelper.queryLikeNum(destDid, channelId, postId, commentId);
+        resolve(num);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
+        reject(error);
+      }
+    });
   }
 
   setPostMapV3(postMapV3: any) {
