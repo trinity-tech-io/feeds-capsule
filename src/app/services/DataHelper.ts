@@ -3029,6 +3029,26 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3);
   }
 
+  updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!channels) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < channels.length; index++) {
+          const channel = channels[index];
+          await this.updateChannelV3(channel);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update channels error', error);
+        reject(error)
+      }
+    });
+  }
+
   getChannelV3ById(destDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3353,6 +3373,42 @@ export class DataHelper {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Add likes error', error);
+        reject(error)
+      }
+    });
+  }
+
+  updateLikeV3(like: FeedsData.LikeV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!like) {
+          resolve('FINISH');
+          return;
+        }
+        //TODO
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update like error', error);
+        reject(error)
+      }
+    });
+  }
+
+  updateLikesV3(likes: FeedsData.LikeV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!likes) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < likes.length; index++) {
+          const like = likes[index];
+          await this.addLikeV3(like);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update likes error', error);
         reject(error)
       }
     });
