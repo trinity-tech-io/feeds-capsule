@@ -1912,6 +1912,12 @@ export class ProfilePage implements OnInit {
     let channelDesc = channel.intro;
     let channelSubscribes = 0;
     let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
+    if(feedAvatar.indexOf("@feeds/data/") > -1){
+      // d30054aa1d08abfb41c7225eb61f18e4@feeds/data/d30054aa1d08abfb41c7225eb61f18e4
+      let imgKey = destDid+"-"+channelId+"-myFeedsAvatar";
+       feedAvatar = document.getElementById(imgKey).getAttribute("src");
+    }
+
     if (feedAvatar.indexOf('data:image') > -1 ||
       feedAvatar.startsWith("https:")) {
       this.feedService.setSelsectIndex(0);
@@ -1957,33 +1963,9 @@ export class ProfilePage implements OnInit {
   }
 
   async createPost() {
-    // if (this.feedService.getConnectionStatus() != 0) {
-    //   this.native.toastWarn('common.connectionError');
-    //   return;
-    // }
-
-    // let bindingServer = this.feedService.getBindingServer();
-    // if (bindingServer == null || bindingServer == undefined) {
-    //   this.viewHelper.showPublisherDialog("profile");
-    //   return;
-    // }
-
-    // let nodeId = bindingServer['nodeId'];
-    // if (this.checkServerStatus(nodeId) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
-
-    // if (
-    //   !this.feedService.checkBindingServerVersion(() => {
-    //     this.feedService.hideAlertPopover();
-    //   })
-    // )
-    //   return;
 
     this.clearData();
     const channels = await this.feedService.getHiveMyChannelList()
-    console.log("create post channels ======== ", channels)
     if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
       return;
