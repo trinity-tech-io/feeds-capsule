@@ -102,6 +102,10 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryCommentByID(targetDid, channelId, postId, commentId);
   }
 
+  queryCommentByChannel(targetDid: string, channelId: string) {
+    return this.hiveVaultHelper.queryCommentByChannel(targetDid, channelId);
+  }
+
   /** Like */
   queryLikeByChannel(targetDid: string, channelId: string): Promise<any> {
     return this.hiveVaultHelper.queryLikeByChannel(targetDid, channelId);

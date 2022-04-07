@@ -716,6 +716,45 @@ export class HiveVaultHelper {
     }
     /** query comment by id end */
 
+    /** query comment by channel start */
+    private registerQueryCommentByChannelScripting() {
+        let conditionFilter = {
+            "channel_id": "$params.channel_id",
+            "user_did": "$caller_did"
+        };
+        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+        const executableFilter = {
+            "channel_id": "$params.channel_id"
+        };
+
+        let options = { "projection": { "_id": false }, "limit": 100 };
+        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
+
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
+    }
+
+    private callQueryCommentByChannel(targetDid: string, channelId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "channel_id": channelId
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, params);
+                console.log("Get comment from scripting by channel id , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Get comment from scripting by channel id error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    queryCommentByChannel(targetDid: string, channelId: string): Promise<any> {
+        return this.callQueryCommentByChannel(targetDid, channelId);
+    }
+    /** query comment by channel end */
+
     /** create comment start */
     private registerCreateCommentScripting() {
         let conditionfilter = {

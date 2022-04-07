@@ -3248,6 +3248,26 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.commentsMapV3, this.commentsMapV3);
   }
 
+  updateCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!comments) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < comments.length; index++) {
+          const comment = comments[index];
+          await this.updateCommentV3(comment);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add comment error', error);
+        reject(error)
+      }
+    });
+  }
+
   getCommentV3ById(destDid: string, postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {

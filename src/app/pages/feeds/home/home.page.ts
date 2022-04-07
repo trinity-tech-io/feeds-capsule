@@ -944,7 +944,10 @@ export class HomePage implements OnInit {
     this.isPostLoading = false;
     switch (this.tabType) {
       case 'feeds':
+        //TODO
         await this.hiveVaultController.syncAllPost();
+        this.hiveVaultController.syncAllComments();
+
         await this.initPostListData(true);
         if (event != null) event.target.complete();
         this.refreshEvent = null;

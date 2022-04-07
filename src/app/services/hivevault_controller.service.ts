@@ -98,6 +98,34 @@ export class HiveVaultController {
     });
   }
 
+  syncAllComments(): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        if (!subscribedChannels) {
+          resolve([]);
+          return;
+        }
+
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          await this.queryCommentByChannel(destDid, channelId);
+        }
+      } catch (error) {
+        Logger.error(TAG, 'Sync all comment error', error);
+        reject(error);
+      }
+    });
+  }
+
+  syncAllLikes(): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+    });
+  }
+
   syncPostFromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -282,7 +310,19 @@ export class HiveVaultController {
     });
   }
 
-  getCommentByChannel() {
+  queryCommentByChannel(targetDid: string, channelId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = this.hiveVaultApi.queryCommentByChannel(targetDid, channelId);
+        const commentList = HiveVaultResultParse.parseCommentResult(targetDid, result);
+
+        this.dataHelper.updateCommentsV3(commentList);
+        resolve(commentList);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment by channel error', error);
+        reject(error);
+      }
+    });
   }
 
   publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<any> {
