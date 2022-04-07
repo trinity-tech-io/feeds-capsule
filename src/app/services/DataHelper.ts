@@ -3108,6 +3108,26 @@ export class DataHelper {
     await this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3);
   }
 
+  updatePostsV3(posts: FeedsData.PostV3[]) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!posts) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < posts.length; index++) {
+          const post = posts[index];
+          await this.updatePostV3(post);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update posts error', error);
+        reject(error)
+      }
+    });
+  }
+
   getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {

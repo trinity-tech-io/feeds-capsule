@@ -236,10 +236,13 @@ export class HiveVaultController {
     console.log("rangeOfTimePostList >>>>>>>>>>>> ", rangeOfTimePostList)
   }
 
-  async queryPostByPostId(targetDid: string, channelId: string, postId: string) {
-    const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId)
-    const post = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-    console.log("queryPostByPostId >>>>>>>>>>>> ", post)
+  async queryPostByPostId(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId)
+      const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+
+      this.dataHelper.addPostsV3(posts);
+    });
   }
 
   getPostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
@@ -256,6 +259,9 @@ export class HiveVaultController {
     });
   }
 
+  syncPostById() {
+
+  }
 
   async downloadScripting(targetDid: string, mediaPath: string) {
     return this.hiveVaultApi.downloadScripting(targetDid, mediaPath)

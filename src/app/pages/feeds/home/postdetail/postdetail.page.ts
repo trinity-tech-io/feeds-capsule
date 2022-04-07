@@ -128,7 +128,7 @@ export class PostdetailPage implements OnInit {
   public isLike: boolean = false;
   public likedCommentMap: any = {};
   public likedCommentNum: any = {};
-  public commentNum:any = {};
+  public commentNum: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -153,16 +153,16 @@ export class PostdetailPage implements OnInit {
 
 
   async initData(isInit: boolean) {
-    let channel :FeedsData.ChannelV3 =
+    let channel: FeedsData.ChannelV3 =
       await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
     this.channelOwner = channel.destDid || ''
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     let channelAvatarUri = channel['avatar'] || '';
     this.channelAvatarUri
-    if(channelAvatarUri != ''){
+    if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
-       this.handleChannelAvatar(channelAvatarUri);
+      this.handleChannelAvatar(channelAvatarUri);
     }
     this.initPostContent();
     this.initnodeStatus();
@@ -173,16 +173,16 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  handleChannelAvatar(channelAvatarUri: string){
-    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
-    .then((result)=>{
-       this.channelAvatar = result;
-    }).catch((err)=>{
-    })
+  handleChannelAvatar(channelAvatarUri: string) {
+    let fileName: string = "channel-avatar-" + channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
+      .then((result) => {
+        this.channelAvatar = result;
+      }).catch((err) => {
+      })
   }
 
- async initRefresh() {
+  async initRefresh() {
     this.startIndex = 0;
     this.totalData = await this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
@@ -219,7 +219,7 @@ export class PostdetailPage implements OnInit {
     this.captainCommentList = _.cloneDeep(captainCommentList);
   }
 
- async refreshCommentList() {
+  async refreshCommentList() {
     this.totalData = await this.sortCommentList();
     if (
       this.startIndex != 0 &&
@@ -237,21 +237,21 @@ export class PostdetailPage implements OnInit {
     this.initOwnCommentObj();
   }
 
- async sortCommentList() {
-  let captainCommentList = [];
+  async sortCommentList() {
+    let captainCommentList = [];
     try {
       captainCommentList =
-      await this.hiveVaultController.getCommentsByPost(
-         this.destDid,
-         this.channelId,
-         this.postId,
-       ) || [];
+        await this.hiveVaultController.getCommentsByPost(
+          this.destDid,
+          this.channelId,
+          this.postId,
+        ) || [];
     } catch (error) {
 
     }
 
-    captainCommentList =  _.filter(captainCommentList,(item: FeedsData.CommentV3)=>{
-            return item.refcommentId === '0';
+    captainCommentList = _.filter(captainCommentList, (item: FeedsData.CommentV3) => {
+      return item.refcommentId === '0';
     });
 
     this.hideDeletedComments = this.feedService.getHideDeletedComments();
@@ -344,12 +344,12 @@ export class PostdetailPage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-            this.hiveVaultController.deletePost(post.postId,post.channelId).then(async (result: any)=>{
+          this.hiveVaultController.deletePost(post.postId, post.channelId).then(async (result: any) => {
             await this.hiveVaultController.getHomePostContent();
             await this.initData(true);
             this.native.hideLoading();
             this.events.publish(FeedsEvent.PublishType.updateTab);
-          }).catch((err:any)=>{
+          }).catch((err: any) => {
             this.native.hideLoading();
           })
         } catch (error) {
@@ -368,14 +368,14 @@ export class PostdetailPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       try {
         this.hiveVaultController
-        .deleteComment(comment.destDid,comment.channelId,comment.postId,comment.commentId)
-        .then(async (result:any)=>{
-          this.startIndex = 0;
-          await this.initData(false);
-          this.native.hideLoading();
-        }).catch(()=>{
-          this.native.hideLoading();
-        })
+          .deleteComment(comment.destDid, comment.channelId, comment.postId, comment.commentId)
+          .then(async (result: any) => {
+            this.startIndex = 0;
+            await this.initData(false);
+            this.native.hideLoading();
+          }).catch(() => {
+            this.native.hideLoading();
+          })
       } catch (error) {
         this.native.hideLoading();
       }
@@ -494,7 +494,7 @@ export class PostdetailPage implements OnInit {
   }
 
   indexText(text: string): string {
-    text = text.replace('did:elastos:','');
+    text = text.replace('did:elastos:', '');
     return UtilService.resolveAddress(text);
   }
 
@@ -541,12 +541,12 @@ export class PostdetailPage implements OnInit {
     return false;
   }
 
- like() {
-    if(this.isLike){
+  like() {
+    if (this.isLike) {
       try {
         this.isLike = false;
         this.likesNum = this.likesNum - 1;
-        this.hiveVaultController.removeLike(this.destDid,this.channelId,this.postId,'0');
+        this.hiveVaultController.removeLike(this.destDid, this.channelId, this.postId, '0');
       } catch (error) {
         this.isLike = true;
         this.likesNum = this.likesNum + 1;
@@ -555,14 +555,14 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    try{
+    try {
       this.isLike = true;
       this.likesNum = this.likesNum + 1;
-      this.hiveVaultController.like(this.destDid,this.channelId,this.postId,'0');
-      }catch(err){
-       this.isLike = false;
-       this.likesNum = this.likesNum - 1;
-      }
+      this.hiveVaultController.like(this.destDid, this.channelId, this.postId, '0');
+    } catch (err) {
+      this.isLike = false;
+      this.likesNum = this.likesNum - 1;
+    }
 
   }
 
@@ -576,21 +576,21 @@ export class PostdetailPage implements OnInit {
     let postId = comment.postId;
     let commentId = comment.commentId;
 
-    let  isLike  = this.likedCommentMap[commentId] || '';
-    if(isLike === ''){
-      try{
+    let isLike = this.likedCommentMap[commentId] || '';
+    if (isLike === '') {
+      try {
         this.likedCommentMap[commentId] = "like";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] +1;
-        this.hiveVaultController.like(destDid,channelId,postId,commentId);
-        }catch(err){
-          this.likedCommentMap[postId] = "";
-          this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-        }
-    }else{
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
+        this.hiveVaultController.like(destDid, channelId, postId, commentId);
+      } catch (err) {
+        this.likedCommentMap[postId] = "";
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
+      }
+    } else {
       try {
         this.likedCommentMap[postId] = "";
         this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-        this.hiveVaultController.removeLike(destDid,channelId,postId,'0');
+        this.hiveVaultController.removeLike(destDid, channelId, postId, '0');
       } catch (error) {
         this.likedCommentMap[postId] = "like";
         this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
@@ -656,30 +656,11 @@ export class PostdetailPage implements OnInit {
       let fileOriginName: string = "origin-" + imageKey.split("@")[0];
       //原图
       try {
-      this.hiveVaultController
-        .getV3Data(destDid, imageKey, fileOriginName, type, "false")
-        .then(realImg => {
-        let img = realImg || '';
-        this.isImgLoading =false;
-        if (img != '') {
-          this.viewHelper.openViewer(
-            this.titleBar,
-            realImg,
-            'common.image',
-            'PostdetailPage.postview',
-            this.appService,
-          );
-        } else {
-          this.imgDownStatus = '1'; //session down
-          this.isImgLoading = false;
-          this.isImgPercentageLoading = true;
-
-          this.hiveVaultController
-          .getV3Data(destDid, imageKey, fileOriginName, type)
-          .then(async realImg => {
+        this.hiveVaultController
+          .getV3Data(destDid, imageKey, fileOriginName, type, "false")
+          .then(realImg => {
             let img = realImg || '';
-            this.imgDownStatus = '';
-            this.isImgPercentageLoading = false;
+            this.isImgLoading = false;
             if (img != '') {
               this.viewHelper.openViewer(
                 this.titleBar,
@@ -688,21 +669,40 @@ export class PostdetailPage implements OnInit {
                 'PostdetailPage.postview',
                 this.appService,
               );
+            } else {
+              this.imgDownStatus = '1'; //session down
+              this.isImgLoading = false;
+              this.isImgPercentageLoading = true;
+
+              this.hiveVaultController
+                .getV3Data(destDid, imageKey, fileOriginName, type)
+                .then(async realImg => {
+                  let img = realImg || '';
+                  this.imgDownStatus = '';
+                  this.isImgPercentageLoading = false;
+                  if (img != '') {
+                    this.viewHelper.openViewer(
+                      this.titleBar,
+                      realImg,
+                      'common.image',
+                      'PostdetailPage.postview',
+                      this.appService,
+                    );
+                  }
+                }).catch(() => {
+                  this.imgDownStatus = '';
+                  this.isImgLoading = false;
+                });
+
             }
           }).catch(() => {
             this.imgDownStatus = '';
             this.isImgLoading = false;
           });
-
-        }
-      }).catch(()=>{
+      } catch (error) {
         this.imgDownStatus = '';
         this.isImgLoading = false;
-      });
-    } catch (error) {
-      this.imgDownStatus = '';
-      this.isImgLoading = false;
-    }
+      }
     });
   }
 
@@ -736,6 +736,8 @@ export class PostdetailPage implements OnInit {
   doRefresh(event: any) {
     let sId = setTimeout(() => {
       //this.postImage = "";
+      this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
+      this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
       this.initData(true);
       event.target.complete();
       clearTimeout(sId);
@@ -823,14 +825,14 @@ export class PostdetailPage implements OnInit {
 
   checkCommentIsMine(comment: FeedsData.CommentV3) {
     let commentId = comment.commentId;
-    let destDid  = comment.createrDid;
-    let signInData :FeedsData.SignInData = this.feedService.getSignInData() || null;
-    if(signInData === null){
+    let destDid = comment.createrDid;
+    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
+    if (signInData === null) {
       this.isOwnComment[commentId] = false;
       return false;
     }
     let ownerDid: string = signInData.did;
-    if( destDid != ownerDid){
+    if (destDid != ownerDid) {
       this.isOwnComment[commentId] = false;
       return false;
 
@@ -1154,7 +1156,7 @@ export class PostdetailPage implements OnInit {
     return obj.content;
   }
 
- async clickDashang() {
+  async clickDashang() {
     if (this.feedService.getConnectionStatus() != 0) {
       this.native.toastWarn('common.connectionError');
       return;
@@ -1162,7 +1164,7 @@ export class PostdetailPage implements OnInit {
 
     let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
     let tippingAddress = '';
-    if(tippingAddress != null){
+    if (tippingAddress != null) {
       tippingAddress = channel.tipping_address || '';
     }
     if (tippingAddress == "") {
@@ -1202,51 +1204,51 @@ export class PostdetailPage implements OnInit {
     this.feedService.republishOnePost(destDid, destDid, postId);
   }
 
- getPostLikeNum(post: FeedsData.PostV3) {
-   try{
+  getPostLikeNum(post: FeedsData.PostV3) {
+    try {
       this.hiveVaultController.getLikeByPost(
-      post.destDid, post.channelId , post.postId
-      ).then((result)=>{
+        post.destDid, post.channelId, post.postId
+      ).then((result) => {
 
         let list = result.find_message.items || [];
 
-         //计算post like的数量
-        let likeList = _.filter(list,(item)=>{
-        return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
+        //计算post like的数量
+        let likeList = _.filter(list, (item) => {
+          return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
         }) || [];
         this.likesNum = likeList.length;
 
-        let index = _.find(likeList,(item)=>{
-              return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
-              ;
+        let index = _.find(likeList, (item) => {
+          return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
+          ;
         }) || "";
 
-        if(index === ""){
+        if (index === "") {
           this.isLike = false;
-        }else{
+        } else {
           this.isLike = true;
         }
-      }).catch((err)=>{
+      }).catch((err) => {
 
       });
-   }catch(err){
-    this.likesNum = 0;
-   }
+    } catch (err) {
+      this.likesNum = 0;
+    }
   }
 
   getPostComments(post: FeedsData.PostV3) {
-  try {
-    this.hiveVaultController.getCommentsByPost(
-      post.destDid,post.channelId,post.postId
-      ).then((result)=>{
-      let commentPostList = _.filter(result,(item)=>{
-        return item.channelId === post.channelId && item.postId === post.postId && item.refcommentId === "0";
-      }) || [];
-      this.commentsNum = commentPostList.length;
+    try {
+      this.hiveVaultController.getCommentsByPost(
+        post.destDid, post.channelId, post.postId
+      ).then((result) => {
+        let commentPostList = _.filter(result, (item) => {
+          return item.channelId === post.channelId && item.postId === post.postId && item.refcommentId === "0";
+        }) || [];
+        this.commentsNum = commentPostList.length;
       });
-  } catch (error) {
+    } catch (error) {
 
-  }
+    }
   }
 }
 
