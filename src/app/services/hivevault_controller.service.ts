@@ -330,8 +330,9 @@ export class HiveVaultController {
       try {
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
-
-        // this.dataHelper.addPostV3();
+        Logger.log("new post",result);
+        //add cache
+        await this.dataHelper.addPostV3(result);
         resolve(result);
         return
       } catch (error) {

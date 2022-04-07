@@ -1024,10 +1024,6 @@ export class HomePage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
-        //处理post like
-        this.handlePostLikeData(id, srcId, postgridindex, postgridList[postgridindex]);
-        //处理post comment
-        this.handlePostCommentData(id, srcId, postgridindex, postgridList[postgridindex]);
         //post Avatar
         this.handlePostAvatar(id, srcId, postgridindex);
         //postImg
@@ -1038,6 +1034,11 @@ export class HomePage implements OnInit {
           //video
           this.handleVideo(id, srcId, postgridindex);
         }
+
+        //处理post like
+        this.handlePostLikeData(id, srcId, postgridindex, postgridList[postgridindex]);
+        //处理post comment
+        this.handlePostCommentData(id, srcId, postgridindex, postgridList[postgridindex]);
       }
     }
   }
@@ -1057,6 +1058,7 @@ export class HomePage implements OnInit {
         postAvatar.getBoundingClientRect().bottom <= this.clientHeight &&
         postAvatar.getBoundingClientRect().right <= this.clientWidth
       ) {
+
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
           postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
@@ -1074,7 +1076,7 @@ export class HomePage implements OnInit {
           let fileName: string = "channel-avatar-" + avatarUri.split("@")[0];
           //头像
           this.hiveVaultController.
-            getV3Data(destDid, avatarUri, fileName, "0",)
+            getV3Data(destDid, avatarUri, fileName, "0")
             .then(imagedata => {
               let realImage = imagedata || '';
               if (realImage != '') {
@@ -1097,7 +1099,6 @@ export class HomePage implements OnInit {
       } else {
         let postAvatarSrc = postAvatar.getAttribute('src') || '';
         if (
-          postAvatar.getBoundingClientRect().top < -100 &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != ''
         ) {
@@ -1412,7 +1413,7 @@ export class HomePage implements OnInit {
       this.postgridindex = startPos;
       this.setVisibleareaImage(startPos);
       clearTimeout(sid);
-    }, 50);
+    }, 100);
   }
 
   pauseVideo(id: string) {

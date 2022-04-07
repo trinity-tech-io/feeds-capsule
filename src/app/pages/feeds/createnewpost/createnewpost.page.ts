@@ -20,7 +20,6 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
-import { HiveVaultApi } from 'src/app/services/hivevault_api.service'
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 
@@ -231,15 +230,13 @@ export class CreatenewpostPage implements OnInit {
   post() {
     this.zone.run(async () => {
       let newPost = this.native.iGetInnerText(this.newPost);
-      // if (this.feedService.getConnectionStatus() != 0) {
-      //   this.native.toastWarn('common.connectionError');
-      //   return;
-      // }
 
-      // if (this.checkServerStatus(this.nodeId) != 0) {
-      //   this.native.toastWarn('common.connectionError1');
-      //   return;
-      // }
+      let connect = this.dataHelper.getNetworkStatus();
+      if (connect === FeedsData.ConnState.disconnected) {
+        this.native.toastWarn('common.connectionError');
+        return;
+      }
+
       if (newPost === '' && this.imgUrl === '' && this.flieUri === '') {
         this.native.toast_trans('CreatenewpostPage.tipMsg');
         return false;

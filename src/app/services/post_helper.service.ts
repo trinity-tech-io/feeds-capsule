@@ -130,6 +130,8 @@ export class PostHelperService {
             if (originMediaData) {
               const medaPath = originMediaData.medaPath;
               // this.fileHelperService.savePostData(medaPath, elementBuffer);
+              let fileOriginName: string = "origin-" + medaPath.split("@")[0];
+              await this.fileHelperService.saveV3Data(fileOriginName,element);
             }
 
             const thumbnail = await UtilService.compress(element);
@@ -138,7 +140,8 @@ export class PostHelperService {
             const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(thumbnail, thumbnailBlob.type);
             if (thumbnailMediaData) {
               const path = thumbnailMediaData.medaPath;
-              // this.fileHelperService.savePostData(path, thumbnailBlob);
+              let fileThumbnaiName: string = "thumbnail-" + path.split("@")[0];
+              await this.fileHelperService.saveV3Data(fileThumbnaiName, thumbnail);
             }
 
             if (originMediaData && thumbnailMediaData) {
@@ -155,7 +158,8 @@ export class PostHelperService {
           const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.video, videoBlob.type);
           if (originMediaData) {
             const medaPath = originMediaData.medaPath;
-            // this.fileHelperService.savePostData(medaPath, videoBlob);
+            let fileName: string = "origin-" + medaPath.split("@")[0];
+            await this.fileHelperService.saveV3Data(fileName,videoData.video);
           }
 
           const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
@@ -163,7 +167,8 @@ export class PostHelperService {
           const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.thumbnail, videoThumbBlob.type);
           if (thumbnailMediaData) {
             const medaPath = thumbnailMediaData.medaPath;
-            // this.fileHelperService.savePostData(medaPath, videoThumbBlob);
+            let fileName: string = "poster-" + medaPath.split("@")[0];
+            await this.fileHelperService.saveV3Data(fileName,videoData.thumbnail);
           }
 
           if (originMediaData && thumbnailMediaData) {

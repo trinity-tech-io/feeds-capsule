@@ -291,7 +291,20 @@ export class HiveVaultHelper {
                 const postId = UtilService.generatePostId(signinDid, channelId, content);
 
                 await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status, proof);
-                resolve(postId);
+                let postV3: FeedsData.PostV3 = {
+                    destDid: signinDid,
+                    postId: postId,
+                    channelId: channelId,
+                    createdAt: createdAt,
+                    updatedAt: updatedAt,
+                    content:JSON.parse(content),
+                    status: FeedsData.PostCommentStatus.available,
+                    type: type,
+                    tag: tag,
+                    proof: proof,
+                    memo: memo
+                }
+                resolve(postV3);
             } catch (error) {
                 Logger.error(error);
                 reject()
