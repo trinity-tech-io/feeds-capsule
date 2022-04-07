@@ -33,7 +33,6 @@ export class EditPostPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', { static: false })
   newPostIonTextarea: IonTextarea;
-  public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
@@ -96,23 +95,6 @@ export class EditPostPage implements OnInit {
     this.initTitle();
     this.initData();
 
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
-
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.pauseVideo();
       this.native.hideLoading();
@@ -146,8 +128,6 @@ export class EditPostPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
@@ -297,7 +277,6 @@ export class EditPostPage implements OnInit {
     this.unEditContent = this.postData.content.content || '';
     this.editContent = this.postData.content.content || '';
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
   }
 
   handleChannelAvatar(channelAvatarUri: string){

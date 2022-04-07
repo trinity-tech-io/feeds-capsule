@@ -13,6 +13,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import _ from 'lodash';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-editcomment',
@@ -23,7 +24,6 @@ export class EditCommentPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', { static: false })
   newPostIonTextarea: IonTextarea;
-  public connectionStatus = 1;
   public nodeStatus: any = {};
   public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
@@ -49,7 +49,8 @@ export class EditCommentPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() {
@@ -73,7 +74,6 @@ export class EditCommentPage implements OnInit {
   async ionViewWillEnter() {
     this.initTitle();
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
     let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
@@ -81,11 +81,7 @@ export class EditCommentPage implements OnInit {
     if(channelAvatarUri != ''){
        this.handleChannelAvatar(channelAvatarUri);
     }
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
+
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
@@ -130,7 +126,6 @@ export class EditCommentPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
@@ -152,7 +147,8 @@ export class EditCommentPage implements OnInit {
 
   publishComment() {
 
-    if (this.feedService.getConnectionStatus() !== 0) {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }

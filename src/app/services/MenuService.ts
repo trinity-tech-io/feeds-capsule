@@ -90,11 +90,11 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: () => {
-            if (this.feedService.getConnectionStatus() != 0) {
+            let connect = this.dataHelper.getNetworkStatus();
+            if (connect === FeedsData.ConnState.disconnected) {
               this.native.toastWarn('common.connectionError');
               return;
             }
-
             this.hiveVaultController.unSubscribeChannel(
               destDid,  channelId
               ).then(async (result)=>{
@@ -486,9 +486,10 @@ export class MenuService {
           role: 'destructive',
           icon: 'person-remove',
           handler: async () => {
-            if (this.feedService.getConnectionStatus() != 0) {
-              this.native.toastWarn('common.connectionError');
-              return;
+            let connect = this.dataHelper.getNetworkStatus();
+            if (connect === FeedsData.ConnState.disconnected) {
+            this.native.toastWarn('common.connectionError');
+            return;
             }
             await this.native.showLoading("common.waitMoment");
             try {

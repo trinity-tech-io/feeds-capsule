@@ -12,6 +12,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { StorageService } from 'src/app/services/StorageService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'slides-example',
@@ -24,7 +25,6 @@ export class NotificationPage {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
 
-  public connectionStatus = 1;
   public avatar: Avatar;
   public notificationList = [];
 
@@ -44,7 +44,7 @@ export class NotificationPage {
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
     private actionSheetController: ActionSheetController,
-    private storageService: StorageService,
+    private dataHelper: DataHelper,
     public popoverController: PopoverController,
     private feedsServiceApi: FeedsServiceApi
   ) {
@@ -70,23 +70,16 @@ export class NotificationPage {
         this.showNotificationMenu(this.notification);
       }
     });
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
   }
 
   removeEvent() {
     this.isAddNotification = false;
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
 
   ionViewWillEnter() {
     this.initTitleBar();
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.events.subscribe(FeedsEvent.PublishType.notification, () => {
       this.addEvent();
       this.isAddNotification = true;
@@ -189,9 +182,11 @@ export class NotificationPage {
   }
 
   navTo(notification: any) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     let nodeId = notification.details.nodeId;
@@ -325,9 +320,11 @@ export class NotificationPage {
   }
 
   createPost() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     let bindingServer = this.feedService.getBindingServer();

@@ -27,7 +27,6 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 })
 export class EidtchannelPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public destDid: string = '';
   public channelId: string = '';
   public channelName: string = '';
@@ -91,15 +90,8 @@ export class EidtchannelPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
       this.native.hideLoading();
@@ -125,7 +117,6 @@ export class EidtchannelPage implements OnInit {
     if (!this.isClickConfirm) {
       this.feedService.setProfileIamge(this.oldChannelAvatar);
     }
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
@@ -150,7 +141,9 @@ export class EidtchannelPage implements OnInit {
   }
 
   async confirm() {
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }

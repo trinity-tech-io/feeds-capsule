@@ -6,8 +6,8 @@ import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { PopupProvider } from '../../services/popup';
 import { CarrierService } from '../../services/CarrierService';
-import { IntentService } from 'src/app/services/IntentService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-guidemac',
@@ -24,7 +24,7 @@ export class GuidemacPage implements OnInit {
     private titleBarService: TitleBarService,
     private feedService: FeedService,
     private native: NativeService,
-    private intentService: IntentService,
+    private dataHelper: DataHelper,
     private carrier: CarrierService,
     private zone: NgZone,
     public popupProvider: PopupProvider,
@@ -51,9 +51,10 @@ export class GuidemacPage implements OnInit {
   }
 
   scanCode(){
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
     this.checkDid('scanService');
   }

@@ -28,7 +28,6 @@ import { DataHelper } from 'src/app/services/DataHelper';
 
 export class FeedinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public destDid: string = '';
   private ownerDid: string = '';
   public channelId: string = '';
@@ -101,7 +100,6 @@ export class FeedinfoPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initChannelInfo();
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     let avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
     document.getElementById("feedsInfoAvatar").setAttribute("src", avatar);
@@ -112,12 +110,6 @@ export class FeedinfoPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu, () => {
       this.clickEdit();
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
@@ -137,7 +129,6 @@ export class FeedinfoPage implements OnInit {
   removeEvents() {
     this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
@@ -194,7 +185,9 @@ export class FeedinfoPage implements OnInit {
     if (!this.isMine) {
       return;
     }
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
@@ -203,10 +196,13 @@ export class FeedinfoPage implements OnInit {
   }
 
   async subscribe() {
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');

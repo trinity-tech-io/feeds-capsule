@@ -1,8 +1,6 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Events } from 'src/app/services/events.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
-import { FeedService } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -15,16 +13,12 @@ import { LanguageService } from 'src/app/services/language.service';
 })
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public version = '2.1.2';
   public currentLanguage = '';
 
   constructor(
-    private zone: NgZone,
     private native: NativeService,
     private translate: TranslateService,
-    private events: Events,
-    private feedService: FeedService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private languageService: LanguageService
@@ -34,13 +28,6 @@ export class AboutPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
   }
 
   ionViewDidEnter() { }
@@ -89,8 +76,6 @@ export class AboutPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
   }
 
   showNftDisclaimer() {

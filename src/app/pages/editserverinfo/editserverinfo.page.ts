@@ -10,6 +10,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 
 import * as _ from 'lodash';
 import { PopupProvider } from 'src/app/services/popup';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-editserverinfo',
@@ -18,7 +19,6 @@ import { PopupProvider } from 'src/app/services/popup';
 })
 export class EditserverinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public name: string = '';
   public introduction: string = '';
   public elaAddress: string = '';
@@ -35,7 +35,8 @@ export class EditserverinfoPage implements OnInit {
     private native: NativeService,
     private zone: NgZone,
     private titleBarService: TitleBarService,
-    private popupProvider: PopupProvider
+    private popupProvider: PopupProvider,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
@@ -54,12 +55,6 @@ export class EditserverinfoPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
     });
@@ -77,7 +72,6 @@ export class EditserverinfoPage implements OnInit {
   ionViewWillLeave() {
     this.native.hideLoading();
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateCredentialFinish);
   }
 
@@ -106,7 +100,9 @@ export class EditserverinfoPage implements OnInit {
   }
 
   confirm() {
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }

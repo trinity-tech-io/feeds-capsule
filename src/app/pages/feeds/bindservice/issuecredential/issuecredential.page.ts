@@ -10,6 +10,7 @@ import { ServerpromptComponent } from 'src/app/components/serverprompt/serverpro
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { PopupProvider } from '../../../../services/popup';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-issuecredential',
@@ -19,7 +20,6 @@ import { PopupProvider } from '../../../../services/popup';
 export class IssuecredentialPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public isShowPrompt: boolean = false;
-  public connectionStatus = 1;
   public title = '05/06';
   public nodeId = '';
   public did = '';
@@ -36,6 +36,7 @@ export class IssuecredentialPage implements OnInit {
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private popupProvider: PopupProvider,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
@@ -47,16 +48,6 @@ export class IssuecredentialPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-        if (this.connectionStatus == 1) {
-          this.native.hideLoading();
-        }
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.issue_credential, () => {
       this.zone.run(() => {
         this.popover = this.popupProvider.showalertdialog(
@@ -82,7 +73,6 @@ export class IssuecredentialPage implements OnInit {
 
   ionViewWillLeave() {
     this.native.hideLoading();
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     if (this.popover != null) {
@@ -102,9 +92,10 @@ export class IssuecredentialPage implements OnInit {
   }
 
   issueCredential() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     this.showServerPrompt(this.did, this.nodeId);

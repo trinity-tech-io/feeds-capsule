@@ -4,6 +4,7 @@ import { ThemeService } from '../../services/theme.service';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-serverprompt',
@@ -22,6 +23,7 @@ export class ServerpromptComponent implements OnInit {
     private navParams: NavParams,
     private popover: PopoverController,
     private popupProvider: PopupProvider,
+    private dataHelper: DataHelper,
     public theme: ThemeService,
     public zone: NgZone,
   ) {}
@@ -49,7 +51,8 @@ export class ServerpromptComponent implements OnInit {
   }
 
   confirm() {
-    if (this.feedService.getConnectionStatus() != 0) {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }

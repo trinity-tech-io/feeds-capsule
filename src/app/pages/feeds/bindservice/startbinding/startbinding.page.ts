@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { PopupProvider } from 'src/app/services/popup';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-startbinding',
@@ -17,7 +18,6 @@ import { PopupProvider } from 'src/app/services/popup';
 export class StartbindingPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public bindPublisherAccountType: string = '';
-  public connectionStatus = 1;
   public title = '02/06';
   public nonce = '';
   public nodeId: string = '';
@@ -36,6 +36,7 @@ export class StartbindingPage implements OnInit {
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private popup: PopupProvider,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
@@ -63,15 +64,6 @@ export class StartbindingPage implements OnInit {
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-        if (this.connectionStatus == 1) {
-          this.native.hideLoading();
-        }
-      });
-    });
 
     this.events.subscribe(
       FeedsEvent.PublishType.owner_declared,
@@ -186,7 +178,6 @@ export class StartbindingPage implements OnInit {
 
   ionViewWillLeave() {
     this.native.hideLoading();
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.owner_declared);
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
@@ -196,9 +187,11 @@ export class StartbindingPage implements OnInit {
   }
 
   confirm() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     this.native

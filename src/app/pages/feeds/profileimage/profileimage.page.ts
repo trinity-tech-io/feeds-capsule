@@ -17,7 +17,6 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 })
 export class ProfileimagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
 
   public uploadedAvatar: string = null;
 
@@ -116,17 +115,9 @@ export class ProfileimagePage implements OnInit {
       this.uploadedAvatar = imgUri;
     }
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
   }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();

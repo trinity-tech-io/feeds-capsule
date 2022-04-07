@@ -30,7 +30,6 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 })
 export class FeedspreferencesPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public hideDeletedPosts: boolean = true;
   public nodeId: string = '';
   public feedId: string = "0";
@@ -73,7 +72,7 @@ export class FeedspreferencesPage implements OnInit {
     private carrierService: CarrierService,
     private menuService: MenuService,
     private pasarAssistService: PasarAssistService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
   ) { }
 
   ngOnInit() {
@@ -96,7 +95,6 @@ export class FeedspreferencesPage implements OnInit {
     this.collectibleStatus = this.feedService.getCollectibleStatus();
     let key = this.nodeId + '_' + this.feedId;
     this.curCollectibleStatus = this.collectibleStatus[key] || false;
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
     this.getPublicStatus();
     let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
@@ -123,7 +121,6 @@ export class FeedspreferencesPage implements OnInit {
   clearEvent() {
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelChannelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
@@ -185,11 +182,6 @@ export class FeedspreferencesPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
     });
@@ -342,10 +334,10 @@ export class FeedspreferencesPage implements OnInit {
 
   toggle() {
     if (!this.curFeedPublicStatus) {
-      if (this.feedService.getConnectionStatus() !== 0) {
-        this.native.toastWarn('common.connectionError');
-        this.native.hideLoading();
-        return;
+      let connectStatus = this.dataHelper.getNetworkStatus();
+      if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
       }
 
       if (!this.isShowQrcode) {
@@ -366,9 +358,10 @@ export class FeedspreferencesPage implements OnInit {
     }
 
     if (this.curFeedPublicStatus) {
-      if (this.feedService.getConnectionStatus() !== 0) {
-        this.native.toastWarn('common.connectionError');
-        return;
+      let connectStatus = this.dataHelper.getNetworkStatus();
+      if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
       }
       this.unPublicFeeds();
       return;

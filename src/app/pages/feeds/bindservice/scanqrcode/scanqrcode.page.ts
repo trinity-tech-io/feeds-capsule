@@ -12,6 +12,7 @@ import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { AppService } from '../../../../services/AppService';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-scanqrcode',
@@ -21,7 +22,6 @@ import { AppService } from '../../../../services/AppService';
 export class ScanqrcodePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public bindPublisherAccountType: string = '';
-  public connectionStatus = 1;
   public title = '01/06';
   public waitFriendsOnline = false;
   public carrierAddress: string;
@@ -41,7 +41,7 @@ export class ScanqrcodePage implements OnInit {
     private camera: CameraService,
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
-    private intentService: IntentService,
+    private dataHelper: DataHelper,
     private titleBarService: TitleBarService,
     private appService: AppService,
   ) {}
@@ -51,12 +51,6 @@ export class ScanqrcodePage implements OnInit {
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
   }
 
   initTitle() {
@@ -71,7 +65,6 @@ export class ScanqrcodePage implements OnInit {
   ionViewDidEnter() {}
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -80,9 +73,10 @@ export class ScanqrcodePage implements OnInit {
   }
 
   scanService() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
     this.checkDid('scanService');
   }
@@ -188,9 +182,10 @@ export class ScanqrcodePage implements OnInit {
   }
 
   scanImage() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
     this.checkDid('scanImage');
   }

@@ -7,6 +7,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-importdid',
@@ -15,7 +16,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 })
 export class ImportdidPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public title = '03/06';
   public nodeId = '';
   public lightThemeType: number = 2;
@@ -28,6 +28,7 @@ export class ImportdidPage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {
@@ -38,15 +39,6 @@ export class ImportdidPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-        if (this.connectionStatus == 1) {
-          this.native.hideLoading();
-        }
-      });
-    });
 
     this.events.subscribe(
       FeedsEvent.PublishType.resolveDidError,
@@ -94,7 +86,6 @@ export class ImportdidPage implements OnInit {
 
   ionViewWillLeave() {
     this.native.hideLoading();
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
     this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
@@ -110,9 +101,10 @@ export class ImportdidPage implements OnInit {
   }
 
   createNewDid() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     this.native

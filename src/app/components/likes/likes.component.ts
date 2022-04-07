@@ -88,8 +88,8 @@ export class LikesComponent implements OnInit {
   }
 
   like(destDid: string, channelId: string, postId: string) {
-
-    if (this.feedService.getConnectionStatus() != 0) {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
@@ -233,7 +233,9 @@ export class LikesComponent implements OnInit {
   }
 
   showComment(destDid: string, channelId: string, postId: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
@@ -308,7 +310,8 @@ export class LikesComponent implements OnInit {
   }
 
   async clickDashang(destDid: string, channelId: string, postId: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }

@@ -111,7 +111,6 @@ export class ProfilePage implements OnInit {
   //       "proof": "",
   //       "memo": ""
   //     }]
-  public connectionStatus = 1;
   public selectType: string = 'ProfilePage.myFeeds';
   public followers = 0;
 
@@ -490,7 +489,6 @@ export class ProfilePage implements OnInit {
     this.clientWidth = screen.availWidth;
     this.curItem = {};
     this.changeType(this.selectType);
-    this.connectionStatus = this.feedService.getConnectionStatus();
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(() => {
@@ -499,11 +497,6 @@ export class ProfilePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
 
     let signInData = this.feedService.getSignInData() || {};
 
@@ -683,7 +676,6 @@ export class ProfilePage implements OnInit {
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
 
@@ -1769,9 +1761,10 @@ export class ProfilePage implements OnInit {
     let channelId = objParm['channelId'];
     switch (buttonType) {
       case 'unfollow':
-        if (this.feedService.getConnectionStatus() != 0) {
-          this.native.toastWarn('common.connectionError');
-          return;
+        let connectStatus1 = this.dataHelper.getNetworkStatus();
+        if (connectStatus1 === FeedsData.ConnState.disconnected) {
+        this.native.toastWarn('common.connectionError');
+        return;
         }
         // if (this.checkServerStatus(destDid) != 0) {
         //   this.native.toastWarn('common.connectionError1');
@@ -1854,9 +1847,10 @@ export class ProfilePage implements OnInit {
         this.clickAvatar(destDid, channelId);
         break;
       case 'preferences':
-        if (this.feedService.getConnectionStatus() != 0) {
-          this.native.toastWarn('common.connectionError');
-          return;
+        let connectStatus = this.dataHelper.getNetworkStatus();
+        if (connectStatus === FeedsData.ConnState.disconnected) {
+        this.native.toastWarn('common.connectionError');
+        return;
         }
         this.clearData();
         this.native.navigateForward(['feedspreferences'], {

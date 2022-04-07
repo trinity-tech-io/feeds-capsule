@@ -24,7 +24,6 @@ export class CreatenewfeedPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public namelen = 0;
   public len = 0;
-  public connectionStatus = 1;
   public channelAvatar = '';
   public avatar = '';
   public curFeedPublicStatus: boolean = true;
@@ -60,7 +59,6 @@ export class CreatenewfeedPage implements OnInit {
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
     this.developerMode = this.feedService.getDeveloperMode();
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
     this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
@@ -107,12 +105,6 @@ export class CreatenewfeedPage implements OnInit {
       },
     );
 
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.createTopicSuccess,
       (createTopicSuccessData: FeedsEvent.CreateTopicSuccessData) => {
@@ -154,7 +146,6 @@ export class CreatenewfeedPage implements OnInit {
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.tipdialogCancel);
     this.events.unsubscribe(FeedsEvent.PublishType.tipdialogConfirm);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.createTopicSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);

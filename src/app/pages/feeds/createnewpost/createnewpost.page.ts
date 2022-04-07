@@ -40,7 +40,6 @@ export class CreatenewpostPage implements OnInit {
   public loadingText: string = "common.uploading";
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
-  public connectionStatus = 1;
   public nodeStatus = {};
   public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
@@ -151,25 +150,7 @@ export class CreatenewpostPage implements OnInit {
     this.channelList = await this.feedService.getHiveMyChannelList() || [];
     this.initTitle();
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.initFeed();
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
 
     this.events.subscribe(FeedsEvent.PublishType.publishPostSuccess, postId => {
       this.postId = postId;
@@ -215,8 +196,6 @@ export class CreatenewpostPage implements OnInit {
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
     }
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.publishPostSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);

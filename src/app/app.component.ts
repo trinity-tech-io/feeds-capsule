@@ -238,10 +238,10 @@ export class MyApp {
         this.initPublishedActivePanelList();
         this.native.addNetworkListener(
           () => {
-            this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
+            this.dataHelper.setNetworkStatus(FeedsData.ConnState.disconnected);
           },
           () => {
-            this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 0);
+            this.dataHelper.setNetworkStatus(FeedsData.ConnState.connected);
           },
         );
         this.initDisclaimer();

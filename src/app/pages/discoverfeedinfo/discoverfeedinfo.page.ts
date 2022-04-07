@@ -37,7 +37,6 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 export class DiscoverfeedinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
-  public connectionStatus = 1;
   public feedInfo: any = {};
   public popover: any = '';
   public qrcodeString: string = null;
@@ -82,16 +81,8 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
-
     this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu,()=>{
       this.clickAvatar();
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
@@ -151,7 +142,6 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
     this.events.publish(FeedsEvent.PublishType.search);
   }
@@ -193,10 +183,13 @@ export class DiscoverfeedinfoPage implements OnInit {
   }
 
   async subscribeV3(channelId :string, channelName: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');

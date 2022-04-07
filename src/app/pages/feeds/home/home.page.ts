@@ -26,13 +26,12 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarService } from 'src/app/services/TitleBarService';
-import { StorageService } from 'src/app/services/StorageService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { NFTPersistenceHelper } from 'src/app/services/nft_persistence_helper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import _, { result } from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { HttpService } from '../../../services/HttpService';
 import { DataHelper } from 'src/app/services/DataHelper';
@@ -55,7 +54,6 @@ export class HomePage implements OnInit {
   @ViewChild(IonRefresher, { static: false }) refresher: IonRefresher;
   private homeTittleBar: HTMLElement;
   private homeTab: HTMLElement;
-  public connectionStatus = 1;
   public postList: any = [];
   public nodeStatus: any = {};
   public startIndex = 0;
@@ -170,6 +168,7 @@ export class HomePage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   public isPostLoading: boolean = true;
+  private isInitPostList: boolean = true;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -187,7 +186,6 @@ export class HomePage implements OnInit {
     public popoverController: PopoverController,
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
-    private storageService: StorageService,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
     private nftPersistenceHelper: NFTPersistenceHelper,
@@ -201,17 +199,23 @@ export class HomePage implements OnInit {
     private hiveVaultController: HiveVaultController
   ) { }
 
+  ngOnInit() {
+
+    this.hiveVaultController.getHomePostContent();
+    this.dataHelper.loadChannelV3Map();
+  }
+
   async initPostListData(scrollToTop: boolean, homePostContent?: string) {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
     // TODO 首页订阅频道请求
     homePostContent = homePostContent || '';
     if (homePostContent === '') {
-      try {
-        const result = await this.hiveVaultController.getHomePostContent();
-      } catch (error) {
-        this.isPostLoading = false;
-      }
+      // try {
+      //   const result = await this.hiveVaultController.getHomePostContent();
+      // } catch (error) {
+      //   this.isPostLoading = false;
+      // }
     }
 
     this.totalData = await this.sortPostList();
@@ -223,8 +227,6 @@ export class HomePage implements OnInit {
       this.infiniteScroll.disabled = false;
     } else {
       this.postList = this.totalData;
-      let post: FeedsData.PostV3 = this.postList[0];
-
       this.infiniteScroll.disabled = true;
     }
     if (scrollToTop) {
@@ -238,6 +240,7 @@ export class HomePage implements OnInit {
     this.refreshImage(0);
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
+    this.isInitPostList = false;
   }
 
   async sortPostList() {
@@ -275,16 +278,8 @@ export class HomePage implements OnInit {
     this.isInitLike = {};
     this.isInitComment = {};
     this.refreshImage(0);
-    this.initnodeStatus(this.postList);
     this.dataHelper.resetNewPost();
-  }
-
-  addConnectionChangedEvent() {
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
+    this.isInitPostList = false;
   }
 
   getElaUsdPrice() {
@@ -296,7 +291,6 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.dataHelper.loadChannelV3Map();
     this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
@@ -304,7 +298,6 @@ export class HomePage implements OnInit {
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.styleObj.width = screen.width - 105 + 'px';
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
@@ -318,7 +311,9 @@ export class HomePage implements OnInit {
 
     switch (this.tabType) {
       case 'feeds':
-        this.refreshPostList();
+        if(this.isInitPostList){
+          this.refreshPostList();
+        }
         break;
       case 'pasar':
         if (this.searchText != "" || this.searchText != null) {
@@ -332,9 +327,6 @@ export class HomePage implements OnInit {
       this.addCommonEvents();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.addConnectionChanged, () => {
-      this.addConnectionChangedEvent();
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.mintNft, () => {
       this.refreshPasarList();
@@ -375,19 +367,17 @@ export class HomePage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
       this.clearData();
       this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
-      this.events.unsubscribe(FeedsEvent.PublishType.addConnectionChanged);
       this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
       this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
-      this.zone.run(async () => {
-        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+      this.zone.run(() => {
         if (isInit) {
-          await this.initPostListData(true);
+          this.initPostListData(true);
           return;
         }
-        await this.refreshPostList();
+        this.refreshPostList();
       });
     });
 
@@ -495,8 +485,6 @@ export class HomePage implements OnInit {
       this.initTitleBar();
     });
 
-    this.addConnectionChangedEvent();
-
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment) => {
       Logger.log(TAG, "======= Receive getCommentFinish ========");
@@ -571,7 +559,6 @@ export class HomePage implements OnInit {
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.mintNft);
     this.events.unsubscribe(FeedsEvent.PublishType.nftBuyOrder);
-    this.events.unsubscribe(FeedsEvent.PublishType.addConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
     this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
@@ -601,7 +588,6 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
@@ -690,9 +676,6 @@ export class HomePage implements OnInit {
     } else {
       return UtilService.moreNanme(channel['owner_name'], 40);
     }
-  }
-
-  ngOnInit() {
   }
 
   like(destDid: string, channelId: string, postId: string) {
@@ -847,17 +830,6 @@ export class HomePage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  initnodeStatus(arr) {
-    for (let index = 0; index < arr.length; index++) {
-      let nodeId = arr[index]['nodeId'];
-      let status = this.checkServerStatus(nodeId);
-      this.nodeStatus[nodeId] = status;
-
-      let post = arr[index];
-      this.feedService.readChannel(post.nodeId + post.channel_id);
-    }
-  }
-
   moreName(name: string) {
     return UtilService.moreNanme(name);
   }
@@ -891,7 +863,6 @@ export class HomePage implements OnInit {
               this.postList = this.postList.concat(arr);
               this.refreshImage(len - 1);
               this.infiniteScroll.disabled = true;
-              this.initnodeStatus(arr);
               event.target.complete();
             });
           }
@@ -1004,9 +975,11 @@ export class HomePage implements OnInit {
 
 
   showComment(destDid: string, channelId: string, postId: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     // if (this.checkServerStatus(destDid) != 0) {
@@ -1414,6 +1387,7 @@ export class HomePage implements OnInit {
     }
   }
 
+
   ionScroll() {
 
     this.native.throttle(this.handleScroll(), 200, this, true);
@@ -1766,9 +1740,11 @@ export class HomePage implements OnInit {
   }
 
   async clickDashang(destDid: string, channelId: string, postId: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;

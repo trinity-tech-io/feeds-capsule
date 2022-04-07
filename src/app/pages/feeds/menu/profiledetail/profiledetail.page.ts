@@ -16,6 +16,7 @@ import { PopoverController } from '@ionic/angular';
 import { IntentService } from 'src/app/services/IntentService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 type ProfileDetail = {
   type: string;
@@ -30,7 +31,6 @@ type ProfileDetail = {
 export class ProfiledetailPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
-  public connectionStatus = 1;
   public avatar: string = '';
   public name = '';
   public description = '';
@@ -74,7 +74,8 @@ export class ProfiledetailPage implements OnInit {
     private popoverController: PopoverController,
     private intentService: IntentService,
     private ipfsService: IPFSService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() { }
@@ -136,7 +137,6 @@ export class ProfiledetailPage implements OnInit {
   async ionViewWillEnter() {
     this.walletAddress =
       this.nftContractControllerService.getAccountAddress() || '';
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
 
@@ -159,12 +159,6 @@ export class ProfiledetailPage implements OnInit {
       if (pageName === "profiledetail") {
         this.handleDialog(dialogName, dialogbutton, pageName);
       }
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
     });
 
     this.events.subscribe(
@@ -200,7 +194,6 @@ export class ProfiledetailPage implements OnInit {
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
     this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
@@ -366,10 +359,6 @@ export class ProfiledetailPage implements OnInit {
   }
 
   async deleteFeedSource() {
-    if (this.connectionStatus != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
 
     this.actionSheet = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -421,9 +410,10 @@ export class ProfiledetailPage implements OnInit {
       return;
     }
 
-    if (this.feedService.getConnectionStatus() !== 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (this.feedService.getServerStatusFromId(this.nodeId) !== 0) {

@@ -41,7 +41,6 @@ export class ChannelsPage implements OnInit {
   public isShowPrompt: boolean = false;
   public popover: any;
   public nodeStatus: any = {};
-  public connectionStatus: number = 1;
   public channelAvatar: string = './assets/icon/reserve.svg';
   public channelAvatarUri: string = '';
   public channelName: string = '';
@@ -157,10 +156,13 @@ export class ChannelsPage implements OnInit {
   ) { }
 
   async subscribe() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
+
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');
@@ -178,9 +180,10 @@ export class ChannelsPage implements OnInit {
   }
 
   tip() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (this.tippingAddress == "") {
@@ -193,9 +196,11 @@ export class ChannelsPage implements OnInit {
   }
 
   async unsubscribe() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     this.menuService.showUnsubscribeMenuWithoutName(
@@ -212,7 +217,6 @@ export class ChannelsPage implements OnInit {
   }
 
   async init() {
-    this.connectionStatus = this.feedService.getConnectionStatus();
     await this.initChannelData();
     this.initRefresh();
     //this.initStatus(this.postList);
@@ -322,12 +326,6 @@ export class ChannelsPage implements OnInit {
     this.initTitle();
     this.init();
 
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
       () => {
@@ -432,7 +430,6 @@ export class ChannelsPage implements OnInit {
     this.videoPercent = 0;
     this.videoRotateNum['transform'] = 'rotate(0deg)';
 
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
@@ -475,9 +472,10 @@ export class ChannelsPage implements OnInit {
 
   like(destDid: string, channelId: string, postId: string) {
 
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     // let post = this.feedService.getPostFromId(destDid, channelId, postId);
@@ -709,9 +707,11 @@ export class ChannelsPage implements OnInit {
   }
 
   showComment(destDid: string, channelId: string, postId: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     // if (this.checkServerStatus(destDid) != 0) {
@@ -1360,9 +1360,11 @@ export class ChannelsPage implements OnInit {
   }
 
   clickDashang(destDid: string, channelId: string, postId: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (this.tippingAddress == "") {

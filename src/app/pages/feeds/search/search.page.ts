@@ -39,7 +39,6 @@ export class SearchPage implements OnInit {
   @ViewChild(IonRefresher, { static: true }) ionRefresher: IonRefresher;
   @ViewChild('searchbar', { static: false }) searchbar: IonSearchbar;
 
-  public connectionStatus = 1;
   public nodeStatus: any = {};
   public popover: any = '';
   public curAddingItem = {};
@@ -126,12 +125,6 @@ export class SearchPage implements OnInit {
       this.initTile();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.friendConnectionChanged,
       (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
@@ -195,7 +188,6 @@ export class SearchPage implements OnInit {
       this.popover = '';
     }
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
@@ -231,7 +223,6 @@ export class SearchPage implements OnInit {
       this.refreshDiscoverSquareFeedAvatar();
     }
     this.developerMode = this.feedService.getDeveloperMode();
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.unfollowedFeed = this.getUnfollowedFeed();
     this.discoverSquareList = this.filterdiscoverSquareList(
       this.discoverSquareList,
@@ -247,9 +238,10 @@ export class SearchPage implements OnInit {
   }
 
   subscribe(nodeId: string, id: string) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (this.checkServerStatus(nodeId) != 0) {
@@ -385,9 +377,10 @@ export class SearchPage implements OnInit {
   }
 
   discover() {
-    if (this.feedService.getConnectionStatus() !== 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
     this.native.go('discoverfeed');
   }
@@ -778,9 +771,10 @@ export class SearchPage implements OnInit {
   }
 
   createPost() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     let bindingServer = this.feedService.getBindingServer();

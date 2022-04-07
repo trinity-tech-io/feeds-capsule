@@ -203,9 +203,10 @@ export class SubscriptionsPage implements OnInit {
     let channelId = objParm['channelId'];
     switch (buttonType) {
       case 'unfollow':
-        if (this.feedService.getConnectionStatus() != 0) {
-          this.native.toastWarn('common.connectionError');
-          return;
+        let connect = this.dataHelper.getNetworkStatus();
+        if (connect === FeedsData.ConnState.disconnected) {
+        this.native.toastWarn('common.connectionError');
+        return;
         }
         // if (this.checkServerStatus(destDid) != 0) {
         //   this.native.toastWarn('common.connectionError1');
@@ -253,9 +254,10 @@ export class SubscriptionsPage implements OnInit {
         this.clickAvatar(destDid, channelId);
         break;
       case 'preferences':
-        if (this.feedService.getConnectionStatus() != 0) {
-          this.native.toastWarn('common.connectionError');
-          return;
+        let connectStatus = this.dataHelper.getNetworkStatus();
+        if (connectStatus === FeedsData.ConnState.disconnected) {
+        this.native.toastWarn('common.connectionError');
+        return;
         }
 
         this.native.navigateForward(['feedspreferences'], {

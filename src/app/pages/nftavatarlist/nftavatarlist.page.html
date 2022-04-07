@@ -1,5 +1,5 @@
 <app-titlebar></app-titlebar>
-<ion-content>
+<ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
     <ion-row *ngIf="isLoading">
     <ion-col size="12" class="loading">
     <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>

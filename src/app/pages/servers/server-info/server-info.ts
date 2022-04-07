@@ -20,6 +20,7 @@ import { IntentService } from 'src/app/services/IntentService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 class Attribute {
   constructor(
@@ -37,7 +38,6 @@ class Attribute {
 export class ServerInfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
-  public connectionStatus = 1;
   public buttonDisabled: boolean = true;
 
   public isOwner: string = 'false';
@@ -83,7 +83,8 @@ export class ServerInfoPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private intentService: IntentService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() { }
@@ -134,12 +135,6 @@ export class ServerInfoPage implements OnInit {
 
     this.feedPublicStatus = this.feedService.getFeedPublicStatus();
 
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
 
     this.events.subscribe(
       FeedsEvent.PublishType.serverConnectionChanged,
@@ -188,7 +183,6 @@ export class ServerInfoPage implements OnInit {
     }
 
     this.native.hideLoading();
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.login_finish);
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
@@ -291,10 +285,6 @@ export class ServerInfoPage implements OnInit {
   } */
 
   async deleteFeedSource() {
-    if (this.connectionStatus != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
 
     this.actionSheet = await this.actionSheetController.create({
       cssClass: 'editPost',
@@ -335,9 +325,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   clickEdit() {
-    if (this.feedService.getConnectionStatus() !== 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (this.feedService.getServerStatusFromId(this.nodeId) !== 0) {
@@ -365,9 +357,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   clickPublicFeeds(channel: any) {
-    if (this.feedService.getConnectionStatus() !== 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (!this.isShowQrcode) {
@@ -422,9 +416,11 @@ export class ServerInfoPage implements OnInit {
   }
 
   unPublicFeeds(channel: any) {
-    if (this.feedService.getConnectionStatus() !== 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     if (!this.isShowQrcode) {

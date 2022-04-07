@@ -25,7 +25,7 @@
     <p class="sortName" (click)="changeSortType(2,$event)"><span>{{"HomePage.priceHightoLow" | translate}}</span> <img src="assets/images/sort-check.svg" *ngIf="sortType===2"><p>
   </div>
 </ion-row>
-<ion-content [ngClass]="{'contentTop':tabType==='feeds'}" (ionScroll)="ionScroll()" [scrollEvents]="true">
+<ion-content [ngClass]="{'contentTop':tabType==='feeds'}" (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"

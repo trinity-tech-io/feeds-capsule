@@ -200,6 +200,12 @@ export class NativeService {
       online();
     });
 
+    if(this.network.type === 'none') {
+        offline();
+    }else{
+        online();
+    }
+
     // stop connect watch
     // connectSubscription.unsubscribe();
   }

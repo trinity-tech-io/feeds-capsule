@@ -15,9 +15,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 let TAG: string = 'Feeds-commentlist';
 
@@ -30,7 +31,6 @@ export class CommentlistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
-  public connectionStatus: number = 1;
 
   public destDid: string = '';
   public channelId: string = "";
@@ -84,7 +84,8 @@ export class CommentlistPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private dataHelper: DataHelper
   ) { }
 
   initData(isInit: boolean) {
@@ -176,15 +177,7 @@ export class CommentlistPage implements OnInit {
     this.dstyleObj.width = screen.width - 105 + 'px';
     await this.getCaptainComment();
     this.initData(true);
-    this.connectionStatus = this.feedService.getConnectionStatus();
     //this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received connectionChanged event, Connection change to ', status);
-        this.connectionStatus = status;
-      });
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.commentDataUpdate, () => {
       this.zone.run(() => {
@@ -282,7 +275,6 @@ export class CommentlistPage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.commentDataUpdate);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
 
@@ -330,10 +322,12 @@ export class CommentlistPage implements OnInit {
     this.channelAvatar = '';
     this.refcommentId = comment.commentId;
 
-    if (this.feedService.getConnectionStatus() != 0) {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
     this.hideComment = false;
   }
 
@@ -354,40 +348,14 @@ export class CommentlistPage implements OnInit {
     );
   }
 
-  like() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if (this.checkServerStatus(this.destDid) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    if (this.checkMyLike()) {
-      this.feedsServiceApi.postUnlike(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        0,
-      );
-      return;
-    }
-
-    this.feedsServiceApi.postLike(
-      this.destDid,
-      this.channelId,
-      this.postId,
-      0,
-    );
-  }
-
   likeComment(comment: FeedsData.CommentV3) {
-    if (this.feedService.getConnectionStatus() != 0) {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
     let destDid = comment.destDid;
     let channelId = comment.channelId;
     let postId = comment.postId;

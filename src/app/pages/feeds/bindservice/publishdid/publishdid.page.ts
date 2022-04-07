@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-publishdid',
@@ -15,7 +16,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 })
 export class PublishdidPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public connectionStatus = 1;
   public title = '04/06';
   public payload: string = '';
   public nodeId = '';
@@ -30,6 +30,8 @@ export class PublishdidPage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
+    private dataHelper: DataHelper
+
   ) {}
 
   ngOnInit() {
@@ -42,18 +44,11 @@ export class PublishdidPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.connectionStatus = this.feedService.getConnectionStatus();
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
   }
 
   ionViewDidEnter() {}
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
 
   initTitle() {
@@ -66,9 +61,10 @@ export class PublishdidPage implements OnInit {
   }
 
   publishDid() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     this.doPublishDid();

@@ -73,31 +73,8 @@ export class MyfeedsComponent implements OnInit {
   checkDid() {
     this.feedService.setProfileIamge('assets/images/profile-1.svg');
     this.feedService.setSelsectIndex(1);
-    // if (this.feedService.getConnectionStatus() != 0) {
-    //   this.native.toastWarn('common.connectionError');
-    //   return;
-    // }
 
-    // let bindServer = this.feedç√Service.getBindingServer();
-
-    // if (bindServer != null && bindServer != undefined) {
-    //   if (this.feedService.getConnectionStatus() != 0) {
-    //     this.native.toastWarn('common.connectionError');
-    //     return;
-    //   }
-
-    //   if (
-    //     !this.feedService.checkBindingServerVersion(() => {
-    //       this.feedService.hideAlertPopover();
-    //     })
-    //   )
-    //     return;
-
-    // console.log("点击了创建feeds 按钮 ====== ")
-      this.native.navigateForward(['/createnewfeed'], '');
-    // } else {
-      // this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-    // }
+    this.native.navigateForward(['/createnewfeed'], '');
   }
 
   clickFollowing() {

@@ -19,7 +19,6 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
-import { result } from 'lodash';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -32,7 +31,6 @@ export class PostdetailPage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
   public postImage: string = 'assets/images/loading.png';
-  public connectionStatus: number = 1;
   public nodeStatus: any = {};
   public avatar: string = '';
 
@@ -312,15 +310,7 @@ export class PostdetailPage implements OnInit {
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';
     this.initData(true);
-    this.connectionStatus = this.feedService.getConnectionStatus();
     // this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
-
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received connectionChanged event, Connection change to ', status);
-        this.connectionStatus = status;
-      });
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, () => {
       this.zone.run(() => {
@@ -442,7 +432,6 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPostDetail);
 
@@ -523,9 +512,10 @@ export class PostdetailPage implements OnInit {
     //   return;
     // }
 
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     this.pauseVideo();
@@ -577,9 +567,10 @@ export class PostdetailPage implements OnInit {
   }
 
   likeComment(comment: FeedsData.CommentV3) {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
     let destDid = comment.destDid;
     let channelId = comment.channelId;
@@ -1167,9 +1158,10 @@ export class PostdetailPage implements OnInit {
   }
 
   async clickDashang() {
-    if (this.feedService.getConnectionStatus() != 0) {
-      this.native.toastWarn('common.connectionError');
-      return;
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
     }
 
     let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;

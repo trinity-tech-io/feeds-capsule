@@ -31,13 +31,10 @@ export class IntroducePage implements OnInit {
 
   ionViewWillEnter() {
     this.bindPublisherAccountType = this.feedService.getBindPublisherAccountType();
-    this.connectionStatus = this.feedService.getConnectionStatus();
     this.initTile();
-    this.addEvent();
   }
 
   ionViewWillLeave() {
-    this.removeEvent();
     this.events.publish(FeedsEvent.PublishType.search);
   }
 
@@ -47,18 +44,6 @@ export class IntroducePage implements OnInit {
       this.translate.instant('IntroducePage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-  }
-
-  addEvent() {
-    this.events.subscribe(FeedsEvent.PublishType.connectionChanged, status => {
-      this.zone.run(() => {
-        this.connectionStatus = status;
-      });
-    });
-  }
-
-  removeEvent() {
-    this.events.unsubscribe(FeedsEvent.PublishType.connectionChanged);
   }
 
   next() {

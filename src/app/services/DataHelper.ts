@@ -94,7 +94,7 @@ export class DataHelper {
   private clipProfileIamge = '';
 
   private carrierStatus = FeedsData.ConnState.disconnected;
-  private networkStatus = FeedsData.ConnState.disconnected;
+  private networkStatus = FeedsData.ConnState.connected;
   private connectionStatus = FeedsData.ConnState.disconnected;
   private lastConnectionStatus = FeedsData.ConnState.disconnected;
   private isLogging: { [nodeId: string]: boolean } = {};
