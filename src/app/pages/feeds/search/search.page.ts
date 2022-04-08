@@ -1181,11 +1181,11 @@ export class SearchPage implements OnInit {
     this.displayName = (await this.dataHelper.getSigninData()).name;
     this.toBeSubscribeddestDid = feedsUrl.destDid;
     this.toBeSubscribedChannelId = feedsUrl.channelId;
-
+    let channelName = decodeURIComponent(feedsUrl.channelName);
     this.confirmdialog = await this.popupProvider.showConfirmdialog(
       this,
       'common.confirmDialog',
-      this.translate.instant('SearchPage.follow') + feedsUrl.channelName + '?',
+      this.translate.instant('SearchPage.follow') + channelName + '?',
       this.cancelButton,
       this.okButton,
       './assets/images/finish.svg',
