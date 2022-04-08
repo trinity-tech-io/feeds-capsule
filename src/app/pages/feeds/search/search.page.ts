@@ -1205,12 +1205,15 @@ export class SearchPage implements OnInit {
     if (that.confirmdialog != null) {
       await that.confirmdialog.dismiss();
       that.confirmdialog = null;
-      that.native.showLoading();
+      await that.native.showLoading("common.waitMoment");
       try {
         await that.hiveVaultController.getChannelInfoById(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId);
         await that.hiveVaultController.subscribeChannel(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId, that.displayName);
+        that.native.hideLoading();
         that.native.toast('common.subscribeSuccess');
+
       } catch (error) {
+        that.native.hideLoading();
         that.native.toastWarn('common.subscribeFail');
       } finally {
         that.native.hideLoading();

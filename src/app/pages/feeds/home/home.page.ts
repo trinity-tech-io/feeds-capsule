@@ -1047,9 +1047,6 @@ export class HomePage implements OnInit {
     // 13 存在 12不存在
     let isload = this.isLoadAvatarImage[id] || '';
     let postAvatar = document.getElementById(id + 'homeChannelAvatar') || null;
-    if (postAvatar === null) {
-      return;
-    }
     try {
       if (
         id != '' &&
