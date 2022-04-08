@@ -940,30 +940,44 @@ export class HiveVaultController {
   restoreSubscriptions() {
   }
 
-  getLikeById(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+  getLikeById(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeById(destDid, channelId, postId, commentId);
-        console.log('getLikeById result', result);
-        resolve(result);
-        //TODO
+        Logger.log(TAG, 'Get like by id result', result);
+
+        if (result) {
+          const likeList = HiveVaultResultParse.parseLikeResult(destDid, result);
+          await this.dataHelper.updateLikesV3(likeList);
+          resolve(likeList);
+        } else {
+          Logger.error(TAG, 'Get like by id error');
+          reject('Get like by id error');
+        }
       } catch (error) {
-        Logger.error(TAG, 'getLikeById data error', error);
-        reject([]);
+        Logger.error(TAG, 'Get like by id error', error);
+        reject(error);
       }
     });
   }
 
-  getCommentByID(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+  getCommentByID(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryCommentByID(destDid, channelId, postId, commentId);
-        console.log('getCommentByID result', result);
-        resolve(result);
-        //TODO
+        Logger.log(TAG, 'Get comment by id result', result)
+
+        if (result) {
+          const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
+          await this.dataHelper.updateCommentsV3(commentList);
+          resolve(commentList);
+        } else {
+          Logger.error(TAG, 'Get comment by id error');
+          reject('Get comment by id error');
+        }
       } catch (error) {
-        Logger.error(TAG, 'getCommentByID data error', error);
-        reject([]);
+        Logger.error(TAG, 'Get comment by id data error', error);
+        reject(error);
       }
     });
   }

@@ -671,6 +671,13 @@ export class FeedsSqliteHelper {
     });
   }
 
+  updateLike(likeV3: FeedsData.LikeV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      //TODO
+      resolve('SUCCESS');
+    });
+  }
+
   test() {
     let testdb: SQLiteObject;
     this.sqlite.create({
@@ -771,4 +778,6 @@ export class FeedsSqliteHelper {
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
   }
+
+
 }
