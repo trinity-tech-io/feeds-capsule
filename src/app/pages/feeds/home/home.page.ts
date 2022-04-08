@@ -200,9 +200,8 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
-
-    this.hiveVaultController.getHomePostContent();
-    this.dataHelper.loadChannelV3Map();
+   this.hiveVaultController.getHomePostContent();
+   this.dataHelper.loadChannelV3Map();
   }
 
   async initPostListData(scrollToTop: boolean, homePostContent?: string) {
@@ -815,8 +814,13 @@ export class HomePage implements OnInit {
   }
 
   getChannelName(destDid: string, channelId: string) {
+
     const key = UtilService.getKey(destDid, channelId);
-    return this.dataHelper.channelsMapV3[key].name;
+    let channel = this.dataHelper.channelsMapV3[key] || null;
+    if(channel === null){
+      return '';
+    }
+    return channel.name;
   }
 
   checkServerStatus(nodeId: string) {
@@ -1057,8 +1061,8 @@ export class HomePage implements OnInit {
           let destDid: string = arr[0];
           let channelId: string = arr[1];
 
-          const key = UtilService.getKey(destDid, channelId);
-          let channel: FeedsData.ChannelV3 = this.dataHelper.channelsMapV3[key] || null;
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid,channelId) || null;
+
           let avatarUri = "";
           if (channel != null) {
             avatarUri = channel.avatar;

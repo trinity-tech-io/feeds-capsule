@@ -506,7 +506,11 @@ export class ChannelsPage implements OnInit {
 
   getChannelName(destDid: string, channelId: string) {
     const key = UtilService.getKey(destDid, channelId);
-    return this.dataHelper.channelsMapV3[key].name;
+    let channel = this.dataHelper.channelsMapV3[key] || null;
+    if(channel === null){
+      return "";
+    }
+    return channel.name;
   }
 
   getContentText(content: string): string {

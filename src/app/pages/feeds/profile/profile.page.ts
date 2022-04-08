@@ -913,7 +913,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  setMyFeedsVisibleareaImage() {
+  async setMyFeedsVisibleareaImage() {
     let ionRowMyfeeds = document.getElementsByClassName("ionRowMyfeeds") || null;
     let len = ionRowMyfeeds.length;
     for (let itemIndex = 0; itemIndex < len; itemIndex++) {
@@ -937,8 +937,7 @@ export class ProfilePage implements OnInit {
             this.myFeedsIsLoadimage[id] = '11';
             let destDid = arr[0];
             let channelId = arr[1];
-            const key = UtilService.getKey(destDid, channelId);
-            let channel: FeedsData.ChannelV3 = this.dataHelper.channelsMapV3[key] || null;
+            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
             let avatarUri = "";
             if (channel != null) {
               avatarUri = channel.avatar;
@@ -1253,7 +1252,7 @@ export class ProfilePage implements OnInit {
           let channelId: string = arr[1];
 
           const key = UtilService.getKey(destDid, channelId);
-          let channel: FeedsData.ChannelV3 = this.dataHelper.channelsMapV3[key] || null;
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid,channelId) || null;
           let avatarUri = "";
           if (channel != null) {
             avatarUri = channel.avatar;

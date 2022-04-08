@@ -334,7 +334,7 @@ export class SubscriptionsPage implements OnInit {
     this.native.throttle(this.setFollowingVisibleareaImage(), 200, this, true);
   }
 
-  setFollowingVisibleareaImage() {
+  async setFollowingVisibleareaImage() {
     let ionRowFollowing = document.getElementsByClassName("ionRowFollowing") || null;
     let len = ionRowFollowing.length;
     for (let itemIndex = 0; itemIndex < len; itemIndex++) {
@@ -358,8 +358,7 @@ export class SubscriptionsPage implements OnInit {
             this.followingIsLoadimage[id] = '11';
             let destDid = arr[0];
             let channelId = arr[1];
-            const key = UtilService.getKey(destDid, channelId);
-            let channel: FeedsData.ChannelV3 = this.dataHelper.channelsMapV3[key] || null;
+            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
             let avatarUri = "";
             if (channel != null) {
               avatarUri = channel.avatar;
