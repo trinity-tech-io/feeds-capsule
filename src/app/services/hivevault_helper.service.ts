@@ -281,7 +281,7 @@ export class HiveVaultHelper {
         })
     }
 
-    private insertPostData(channelId: string, tag: string, content: string, type: string, status: number, memo: string, proof: string): Promise<any> {
+    private insertPostData(channelId: string, tag: string, content: string, type: string, status: number, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
@@ -291,20 +291,8 @@ export class HiveVaultHelper {
                 const postId = UtilService.generatePostId(signinDid, channelId, content);
 
                 await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status, proof);
-                let postV3: FeedsData.PostV3 = {
-                    destDid: signinDid,
-                    postId: postId,
-                    channelId: channelId,
-                    createdAt: createdAt,
-                    updatedAt: updatedAt,
-                    content:JSON.parse(content),
-                    status: FeedsData.PostCommentStatus.available,
-                    type: type,
-                    tag: tag,
-                    proof: proof,
-                    memo: memo
-                }
-                resolve(postV3);
+
+                resolve({ targetDid: signinDid, postId: postId, createdAt: createdAt, updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(error);
                 reject()
@@ -312,7 +300,7 @@ export class HiveVaultHelper {
         });
     }
 
-    publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<any> {
+    publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
         return this.insertPostData(channelId, tag, content, type, status, memo, proof);
     }
     /** publish post end */

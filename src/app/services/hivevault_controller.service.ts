@@ -325,15 +325,30 @@ export class HiveVaultController {
     });
   }
 
-  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<any> {
+  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
-        Logger.log("new post",result);
+        Logger.log("new post", result);
+
+        let postV3: FeedsData.PostV3 = {
+          destDid: result.targetDid,
+          postId: result.postId,
+          channelId: channelId,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+          content: content,
+          status: FeedsData.PostCommentStatus.available,
+          type: type,
+          tag: tag,
+          proof: proof,
+          memo: memo
+        }
+
         //add cache
-        await this.dataHelper.addPostV3(result);
-        resolve(result);
+        await this.dataHelper.addPostV3(postV3);
+        resolve(postV3);
         return
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);
@@ -833,10 +848,10 @@ export class HiveVaultController {
   restoreSubscriptions() {
   }
 
-  getLikeById(destDid: string, channelId: string, postId: string,commentId: string): Promise<any> {
+  getLikeById(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.queryLikeById(destDid, channelId, postId,commentId);
+        const result = await this.hiveVaultApi.queryLikeById(destDid, channelId, postId, commentId);
         console.log('getLikeById result', result);
         resolve(result);
         //TODO
@@ -847,10 +862,10 @@ export class HiveVaultController {
     });
   }
 
-  getCommentByID(destDid: string, channelId: string, postId: string,commentId: string): Promise<any> {
+  getCommentByID(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.queryCommentByID(destDid, channelId, postId,commentId);
+        const result = await this.hiveVaultApi.queryCommentByID(destDid, channelId, postId, commentId);
         console.log('getCommentByID result', result);
         resolve(result);
         //TODO
