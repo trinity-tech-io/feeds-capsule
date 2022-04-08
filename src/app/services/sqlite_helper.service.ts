@@ -324,7 +324,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscriptionV3): Promise<string> {
+  insertSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -357,11 +357,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionChannelDataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscriptionChannelDataByChannelId(channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE dest_did=? & channel_id=?';
-        const params = [destDid, channelId];
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?';
+        const params = [channelId];
         const result = await this.executeSql(statement, params);
         const subscriptionChannelList = this.parseSubscriptionChannelData(result);
 
@@ -376,9 +376,11 @@ export class FeedsSqliteHelper {
 
   removeSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const statement = 'DELETE * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE dest_did=? & channel_id=?'
-      const params = [subscribedChannelV3.destDid, subscribedChannelV3.channelId];
+      const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?'
+      const params = [subscribedChannelV3.channelId];
       const result = await this.executeSql(statement, params);
+      Logger.log(TAG, 'remove subscription channel result is', result);
+      resolve('SUCCESS');
     });
   }
 
@@ -434,11 +436,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionDataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3[]> {
+  querySubscriptionDataByChannelId(channelId: string): Promise<FeedsData.SubscriptionV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE dest_did=? & channel_id=?';
-        const params = [destDid, channelId];
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?';
+        const params = [channelId];
         const result = await this.executeSql(statement, params);
         const subscriptionList = this.parseSubscriptionData(result);
 
@@ -453,9 +455,11 @@ export class FeedsSqliteHelper {
 
   removeSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const statement = 'DELETE * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE dest_did=? & channel_id=?'
-      const params = [subscriptionV3.destDid, subscriptionV3.channelId];
+      const statement = 'DELETE * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?'
+      const params = [subscriptionV3.channelId];
       const result = await this.executeSql(statement, params);
+      Logger.log(TAG, 'remove subscription result is', result);
+      resolve('SUCCESS');
     });
   }
 
@@ -501,7 +505,7 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
-          + ' SET content=? WHERE comment_id=? & refcomment_id=?'; // 条件是否使用refcomment_id
+          + ' SET content=? WHERE comment_id=?'; // 条件是否使用refcomment_id
         const params = [commentV3.destDid, commentV3.commentId, commentV3.channelId, commentV3.postId, commentV3.refcommentId, JSON.stringify(commentV3.content), commentV3.createdAt];
         + '(dest_did, comment_id, channel_id, post_id, refcomment_id, content, created_at) VALUES'
 
@@ -541,6 +545,21 @@ export class FeedsSqliteHelper {
         resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'query comment Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?'
+        const params = [commentId];
+        const result = await this.executeSql(statement, params);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
         reject(error);
       }
     });
@@ -596,11 +615,28 @@ export class FeedsSqliteHelper {
     });
   }
 
+  queryLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_LIKE + ' WHERE comment_id=?'
+        const params = [commentId];
+        const result = await this.executeSql(statement, params);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
+        reject(error);
+      }
+    });
+  }
+
   removeLike(likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const statement = 'DELETE * FROM ' + this.TABLE_LIKE + ' WHERE dest_did=? & post_id=? & comment_id=? & channel_id=?'
       const params = [likeV3.destDid, likeV3.postId, likeV3.commentId, likeV3.channelId];
       const result = await this.executeSql(statement, params);
+      Logger.log(TAG, 'remove like result is', result);
+      resolve('SUCCESS');
     });
   }
 
@@ -650,29 +686,6 @@ export class FeedsSqliteHelper {
     return list;
   }
 
-  queryCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        //TODO
-        resolve(0);
-      } catch (error) {
-        Logger.error(TAG, 'Query comment num error', error);
-        reject(error);
-      }
-    });
-  }
-
-  queryLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        //TODO
-        resolve(0);
-      } catch (error) {
-        Logger.error(TAG, 'Query comment num error', error);
-        reject(error);
-      }
-    });
-  }
   parseChannelData(result: any): FeedsData.ChannelV3[] {
     Logger.log(TAG, 'Parse channel result from sql, result is', result);
     let list = [];
