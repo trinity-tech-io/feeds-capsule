@@ -74,12 +74,12 @@ export class EditCommentPage implements OnInit {
   async ionViewWillEnter() {
     this.initTitle();
 
-    let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let channel: any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';
-    if(channelAvatarUri != ''){
-       this.handleChannelAvatar(channelAvatarUri);
+    if (channelAvatarUri != '') {
+      this.handleChannelAvatar(channelAvatarUri);
     }
 
 
@@ -116,13 +116,13 @@ export class EditCommentPage implements OnInit {
   ionViewDidEnter() {
   }
 
-  handleChannelAvatar(channelAvatarUri: string){
-    let fileName:string = channelAvatarUri.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
-    .then((result)=>{
-       this.channelAvatar = result;
-    }).catch((err)=>{
-    })
+  handleChannelAvatar(channelAvatarUri: string) {
+    let fileName: string = channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
+      .then((result) => {
+        this.channelAvatar = result;
+      }).catch((err) => {
+      })
   }
 
   ionViewWillLeave() {
@@ -174,18 +174,14 @@ export class EditCommentPage implements OnInit {
       });
   }
 
-  private editComment() {
+  private async editComment() {
     try {
-      this.hiveVaultController.updateComment(
-        this.destDid,
-        this.channelId,
-        this.postId,
-        this.commentId,
-        this.newComment)
-        .then(()=>{
+      const originComment = await this.dataHelper.getCommentV3ById(this.destDid, this.postId, this.commentId);
+      this.hiveVaultController.updateComment(originComment, this.newComment)
+        .then(() => {
           this.native.hideLoading();
           this.native.pop();
-        }).catch((err)=>{
+        }).catch((err) => {
           this.native.hideLoading();
         })
     } catch (error) {

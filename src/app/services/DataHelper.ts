@@ -3152,7 +3152,7 @@ export class DataHelper {
 
   deletePostV3(channelId: string, postId: string) {
     return new Promise(async (resolve, reject) => {
-      this.sqliteHelper.deletePostData(channelId, postId);
+      this.sqliteHelper.deletePostData(postId);
     });
   }
 

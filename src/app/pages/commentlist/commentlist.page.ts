@@ -65,7 +65,7 @@ export class CommentlistPage implements OnInit {
   public channelOwner: string = '';
   public curComment: any = {};
   public refcommentId: string = "0";
-  public captainCommentList  = [];
+  public captainCommentList = [];
   public likedCommentMap: any = {};
   public likedCommentNum: any = {};
   constructor(
@@ -96,7 +96,7 @@ export class CommentlistPage implements OnInit {
     }
   }
 
- initRefresh() {
+  initRefresh() {
     this.startIndex = 0;
     this.totalData = this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
@@ -119,7 +119,7 @@ export class CommentlistPage implements OnInit {
     });
   }
 
- refreshCommentList() {
+  refreshCommentList() {
     this.totalData = this.sortCommentList();
     if (
       this.startIndex != 0 &&
@@ -137,9 +137,9 @@ export class CommentlistPage implements OnInit {
     this.initOwnCommentObj();
   }
 
- sortCommentList() {
+  sortCommentList() {
     let replayCommentList = [];
-    replayCommentList =  _.filter(this.captainCommentList,(item: FeedsData.CommentV3)=>{
+    replayCommentList = _.filter(this.captainCommentList, (item: FeedsData.CommentV3) => {
       return item.refcommentId === this.commentId;
     });
     this.commentsNum = replayCommentList.length;
@@ -153,7 +153,7 @@ export class CommentlistPage implements OnInit {
     return replayCommentList;
   }
 
- ngOnInit() {
+  ngOnInit() {
     this.acRoute.queryParams.subscribe(async data => {
       this.destDid = data.destDid;
       this.channelId = data.channelId;
@@ -167,7 +167,7 @@ export class CommentlistPage implements OnInit {
     });
   }
 
- async ionViewWillEnter() {
+  async ionViewWillEnter() {
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -223,14 +223,14 @@ export class CommentlistPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       try {
         this.hiveVaultController
-        .deleteComment(comment.destDid,comment.channelId,comment.postId,comment.commentId)
-        .then(async (result:any)=>{
-        await this.getCaptainComment();
-        this.initData(false);
-        this.native.hideLoading();
-        }).catch(()=>{
-          this.native.hideLoading();
-        })
+          .deleteComment(comment.destDid, comment.channelId, comment.postId, comment.commentId)
+          .then(async (result: any) => {
+            await this.getCaptainComment();
+            this.initData(false);
+            this.native.hideLoading();
+          }).catch(() => {
+            this.native.hideLoading();
+          })
       } catch (error) {
         this.native.hideLoading();
       }
@@ -361,21 +361,21 @@ export class CommentlistPage implements OnInit {
     let postId = comment.postId;
     let commentId = comment.commentId;
 
-    let  isLike  = this.likedCommentMap[commentId] || '';
-    if(isLike === ''){
-      try{
+    let isLike = this.likedCommentMap[commentId] || '';
+    if (isLike === '') {
+      try {
         this.likedCommentMap[commentId] = "like";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] +1;
-        this.hiveVaultController.like(destDid,channelId,postId,commentId);
-        }catch(err){
-          this.likedCommentMap[commentId] = "";
-          this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-        }
-    }else{
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
+        this.hiveVaultController.like(destDid, channelId, postId, commentId);
+      } catch (err) {
+        this.likedCommentMap[commentId] = "";
+        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
+      }
+    } else {
       try {
         this.likedCommentMap[commentId] = "";
         this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-        this.hiveVaultController.removeLike(destDid,channelId,postId,commentId);
+        this.hiveVaultController.removeLike(destDid, channelId, postId, commentId);
       } catch (error) {
         this.likedCommentMap[postId] = "like";
         this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
@@ -456,7 +456,7 @@ export class CommentlistPage implements OnInit {
     let ownerDid: string = signInData.did;
     if (createrDid != ownerDid) {
       isOwnComment = false;
-    }else{
+    } else {
       isOwnComment = true;
     }
     this.isOwnComment[commentId] = isOwnComment;
@@ -542,15 +542,15 @@ export class CommentlistPage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
- async getCaptainComment() {
+  async getCaptainComment() {
     let captainCommentList = [];
     try {
       captainCommentList =
-      await this.hiveVaultController.getCommentsByPost(
-         this.destDid,
-         this.channelId,
-         this.postId,
-       ) || [];
+        await this.hiveVaultController.getCommentsByPost(
+          this.destDid,
+          this.channelId,
+          this.postId,
+        ) || [];
     } catch (error) {
       captainCommentList = [];
     }
@@ -563,7 +563,7 @@ export class CommentlistPage implements OnInit {
     this.userNameList[commentId] = this.captainComment.createrDid;
     this.updatedAt = this.captainComment['updatedAt'];
     this.checkCommentIsMine(this.captainComment);
-    this.initLikeData(this.destDid,this.channelId,this.postId,commentId);
+    this.initLikeData(this.destDid, this.channelId, this.postId, commentId);
   }
 
   menuMore() {
@@ -574,33 +574,33 @@ export class CommentlistPage implements OnInit {
     return UtilService.resolveAddress(text);
   }
 
-  initLikeData(destDid: string, channelId: string, postId: string,commentId: string) {
-    try{
-        this.hiveVaultController.getLikeById(
-        destDid, channelId, postId,commentId).then((result)=>{
-          let list = result.find_message.items || [];
+  initLikeData(destDid: string, channelId: string, postId: string, commentId: string) {
+    try {
+      this.hiveVaultController.getLikeById(
+        destDid, channelId, postId, commentId).then((likeList) => {
+          let list = likeList || [];
 
           //计算comment like的数量
           this.likedCommentNum[commentId] = list.length;
 
           //检测comment like状态
-          let index = _.find(list,(item)=>{
-          return item.channel_id === channelId && item.post_id === postId && item.comment_id === commentId;
+          let index = _.find(list, (item) => {
+            return item.channelId === channelId && item.postId === postId && item.commentId === commentId;
           }) || "";
-          if(index === ""){
-          this.likedCommentMap[commentId] = "";
-          }else{
-          this.likedCommentMap[commentId] = "like";
+          if (index === "") {
+            this.likedCommentMap[commentId] = "";
+          } else {
+            this.likedCommentMap[commentId] = "like";
           }
 
-        }).catch((err)=>{
+        }).catch((err) => {
           this.likedCommentMap[commentId] = "";
           this.likedCommentNum[commentId] = 0;
         });
-    }catch(err){
+    } catch (err) {
       //this.likesNum = 0;
       this.likedCommentMap[commentId] = "";
       this.likedCommentNum[commentId] = 0;
     }
-    }
+  }
 }

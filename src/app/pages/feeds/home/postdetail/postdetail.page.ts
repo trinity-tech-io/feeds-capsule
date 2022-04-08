@@ -1336,16 +1336,16 @@ export class PostdetailPage implements OnInit {
   initLikeData(destDid: string, channelId: string, postId: string, commentId: string) {
     try {
       this.hiveVaultController.getLikeById(
-        destDid, channelId, postId, commentId).then((result) => {
+        destDid, channelId, postId, commentId).then((likeList) => {
           this.isInitLike[postId] = "13";
-          let list = result.find_message.items || [];
+          let list = likeList || [];
 
           //计算comment like的数量
           this.likedCommentNum[commentId] = list.length;
 
           //检测comment like状态
           let index = _.find(list, (item) => {
-            return item.channel_id === channelId && item.post_id === postId && item.comment_id === commentId;
+            return item.channelId === channelId && item.postId === postId && item.commentId === commentId;
           }) || "";
           if (index === "") {
             this.likedCommentMap[commentId] = "";
