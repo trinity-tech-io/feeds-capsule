@@ -64,7 +64,7 @@ export class MenuService {
           icon: 'share',
           handler: async () => {
             let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
-            let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid,this.channelId) || null;
+            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid,this.channelId) || null;
             let signInData: SignInData = this.feedService.getSignInData() || null;
             let ownerDid = signInData.did || "";
             let postContent = '';
@@ -161,7 +161,7 @@ export class MenuService {
           icon: 'share',
           handler: async () => {
             let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
-            let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid,this.channelId) || null;
+            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid,this.channelId) || null;
             let signInData: SignInData = this.feedService.getSignInData() || null;
             let ownerDid = signInData.did || "";
             let postContent = '';
@@ -564,7 +564,7 @@ export class MenuService {
       case 'sharepost':
 
         let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
-        let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid,this.channelId) || null;
+        let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid,this.channelId) || null;
         let signInData: SignInData = this.feedService.getSignInData() || null;
         let ownerDid = signInData.did || "";
         let postContent = '';

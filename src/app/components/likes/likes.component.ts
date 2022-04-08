@@ -316,7 +316,7 @@ export class LikesComponent implements OnInit {
       return;
     }
 
-    let channel :FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid,channelId) || null;
+    let channel :FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid,channelId) || null;
     let tippingAddress = '';
     if(tippingAddress != null){
       tippingAddress = channel.tipping_address || '';

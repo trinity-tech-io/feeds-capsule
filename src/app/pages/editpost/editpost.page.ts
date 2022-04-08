@@ -254,7 +254,7 @@ export class EditPostPage implements OnInit {
 
 
   async initData() {
-    let channel: any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let channel: any = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';

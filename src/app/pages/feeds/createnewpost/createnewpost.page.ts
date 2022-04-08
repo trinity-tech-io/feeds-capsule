@@ -116,7 +116,7 @@ export class CreatenewpostPage implements OnInit {
 
       //const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
       const item = await this.feedService.getHiveMyChannelList() || [];
-      currentFeed = await this.feedService.getChannelFromIdV3(item[0].destDid, item[0].channelId);
+      currentFeed = await this.dataHelper.getChannelV3ById(item[0].destDid, item[0].channelId);
       this.feedService.setCurrentChannel(currentFeed);
     }
 

@@ -156,7 +156,7 @@ export class SubscriptionsPage implements OnInit {
     for (let item of subscribedChannel) {
       let destDid = item.destDid;
       let channelId = item.channelId;
-      let channel: any = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
+      let channel: any = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       if (channel != null) {
         list.push(channel);
       }
@@ -241,7 +241,7 @@ export class SubscriptionsPage implements OnInit {
         //share channel
         await this.native.showLoading("common.generateSharingLink");
         try {
-          let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
           let signInData: SignInData = this.feedService.getSignInData() || null;
           let ownerDid = signInData.did || "";
           const sharedLink = await this.intentService.createShareLink(destDid, channelId, "0", ownerDid, channel);
@@ -280,7 +280,7 @@ export class SubscriptionsPage implements OnInit {
   }
 
   async clickAvatar(destDid: string, channelId: string) {
-    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId);
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId);
     let followStatus = this.checkFollowStatus(destDid, channelId);
     let channelName = channel.name;
     let channelDesc = channel.intro;

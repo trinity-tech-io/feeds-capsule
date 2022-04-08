@@ -159,7 +159,7 @@ export class CommentlistPage implements OnInit {
       this.channelId = data.channelId;
       this.postId = data.postId;
       this.commentId = data.commentId;
-      let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+      let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
       if (channel != null) {
         this.channelOwner = UtilService.resolveAddress(channel.destDid);
       }

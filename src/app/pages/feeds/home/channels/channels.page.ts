@@ -289,7 +289,7 @@ export class ChannelsPage implements OnInit {
   }
 
   async initChannelData() {
-    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     await this.checkFollowStatus(this.destDid, this.channelId);
     if (channel == null || channel == undefined) return;
     this.channelName = channel.name;

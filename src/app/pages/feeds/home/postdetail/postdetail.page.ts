@@ -157,7 +157,7 @@ export class PostdetailPage implements OnInit {
 
   async initData(isInit: boolean) {
     let channel: FeedsData.ChannelV3 =
-      await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+      await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     this.channelOwner = channel.destDid || ''
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
@@ -323,7 +323,7 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, () => {
       this.zone.run(async () => {
         Logger.log(TAG, 'Received refreshPostDetail event');
-        let post: any = this.feedService.getChannelFromIdV3(
+        let post: any = this.dataHelper.getChannelV3ById(
           this.destDid,
           this.postId,
         ) || null;
@@ -1164,7 +1164,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     let tippingAddress = '';
     if (tippingAddress != null) {
       tippingAddress = channel.tipping_address || '';

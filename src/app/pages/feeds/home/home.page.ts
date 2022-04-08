@@ -168,7 +168,7 @@ export class HomePage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   public isPostLoading: boolean = true;
-  private isInitPostList: boolean = true;
+  //private isInitPostList: boolean = true;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -240,7 +240,7 @@ export class HomePage implements OnInit {
     this.refreshImage(0);
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
-    this.isInitPostList = false;
+    //this.isInitPostList = false;
   }
 
   async sortPostList() {
@@ -279,7 +279,7 @@ export class HomePage implements OnInit {
     this.isInitComment = {};
     this.refreshImage(0);
     this.dataHelper.resetNewPost();
-    this.isInitPostList = false;
+    //this.isInitPostList = false;
   }
 
   getElaUsdPrice() {
@@ -311,9 +311,9 @@ export class HomePage implements OnInit {
 
     switch (this.tabType) {
       case 'feeds':
-        if (this.isInitPostList) {
+        //if (this.isInitPostList) {
           this.refreshPostList();
-        }
+        //}
         break;
       case 'pasar':
         if (this.searchText != "" || this.searchText != null) {
@@ -640,13 +640,6 @@ export class HomePage implements OnInit {
 
   ionViewWillUnload() { }
 
-  getChannel(destDid: string, channelId: string): any {
-    return this.feedService.getChannelFromId(destDid, channelId);
-  }
-  // 新增
-  getChannelV3(destDid: string, channelId: string): any {
-    return this.feedService.getChannelFromIdV3(destDid, channelId);
-  }
   getContentText(content: string): string {
     return this.feedsServiceApi.parsePostContentText(content);
   }
@@ -1744,7 +1737,7 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     let tippingAddress = '';
     if (tippingAddress != null) {
       tippingAddress = channel.tipping_address || '';

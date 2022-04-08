@@ -80,7 +80,7 @@ export class EidtchannelPage implements OnInit {
 
  async getChannelTipAddress() {
 
-    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId) || null;
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     let tippingAddress = '';
     if(tippingAddress != null){
       tippingAddress = channel.tipping_address || '';

@@ -1800,7 +1800,7 @@ export class ProfilePage implements OnInit {
           this.hideSharMenuComponent = false;
           await this.native.showLoading("common.generateSharingLink");
           try {
-            let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(myDestDid, myChannelId) || null;
+            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(myDestDid, myChannelId) || null;
             let signInData: SignInData = this.feedService.getSignInData() || null;
             let ownerDid = signInData.did || "";
             const sharedLink = await this.intentService.createShareLink(myDestDid, myChannelId, myPostId, ownerDid, channel);
@@ -1817,7 +1817,7 @@ export class ProfilePage implements OnInit {
           channelId = this.curItem['channelId'];
           let postId = this.curItem['postId'];
           let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-          let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
           let signInData: SignInData = this.feedService.getSignInData() || null;
           let ownerDid = signInData.did || "";
           let postContent = '';
@@ -1897,7 +1897,7 @@ export class ProfilePage implements OnInit {
   }
 
   async clickAvatar(destDid: string, channelId: string) {
-    let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId);
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId);
     let followStatus = await this.checkFollowStatus(destDid, channelId);
     let channelName = channel.name;
     let channelDesc = channel.intro;
