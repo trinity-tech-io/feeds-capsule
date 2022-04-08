@@ -419,9 +419,11 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
-        const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatarAddress)
+        const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatarAddress);
         const insertResult = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft, memo, category, proof)
-
+        //add cache
+        let fileName = avatarHiveURL.split('@')[0];
+        await this.fileHelperService.saveV3Data(fileName,avatarAddress);
         //TODO add category、proof、memo
         let channelV3: FeedsData.ChannelV3 = {
           destDid: insertResult.destDid,
@@ -466,6 +468,9 @@ export class HiveVaultController {
 
         if (avatarAddress) {
           avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatarAddress);
+              //add cache
+          let fileName = avatarHiveURL.split('@')[0];
+          await this.fileHelperService.saveV3Data(fileName,avatarAddress);
         } else {
           avatarHiveURL = originChannel.avatar;
         }

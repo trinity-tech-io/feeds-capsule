@@ -117,7 +117,7 @@ export class EditCommentPage implements OnInit {
   }
 
   handleChannelAvatar(channelAvatarUri: string){
-    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+    let fileName:string = channelAvatarUri.split("@")[0];
     this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
     .then((result)=>{
        this.channelAvatar = result;

@@ -56,13 +56,8 @@ export class CreatenewpostPage implements OnInit {
   public transcode: number = 0;
   public duration: any = 0;
 
-  private postId = 0;
-  private sessionState = -1;
-
   public totalProgress: number = 0;
-  private throwMsgTransDataLimit = 4 * 1000 * 1000;
-  private transDataChannel: FeedsData.TransDataChannel =
-    FeedsData.TransDataChannel.MESSAGE;
+
   public fullScreenmodal: any = '';
 
   public channelList = [];
@@ -71,6 +66,7 @@ export class CreatenewpostPage implements OnInit {
   public pictureMenu: any = null;
   // 视频data
   private videoData: FeedsData.videoData = null;
+  private isUpdateHomePage: boolean = false;
   constructor(
     private platform: Platform,
     private events: Events,
@@ -135,7 +131,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   handleChannelAvatar(channelAvatarUri: string, destDid: string) {
-    let fileName: string = "channel-avatar-" + channelAvatarUri.split("@")[0];
+    let fileName: string = channelAvatarUri.split("@")[0];
     this.hiveVaultController.getV3Data(destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         this.channelAvatar = result;
@@ -151,58 +147,22 @@ export class CreatenewpostPage implements OnInit {
 
     this.initFeed();
 
-    this.events.subscribe(FeedsEvent.PublishType.publishPostSuccess, postId => {
-      this.postId = postId;
-      this.zone.run(() => {
-        if (this.imgUrl === '' && this.posterImg === '') {
-          this.zone.run(() => {
-            this.navCtrl.pop().then(() => {
-              this.events.publish(FeedsEvent.PublishType.updateTab, true);
-            });
-          });
-          return;
-        }
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       this.pauseVideo();
       this.hideFullScreen();
     });
 
-    this.initnodeStatus();
-
-    this.feedService.checkBindingServerVersion(() => {
-      this.zone.run(() => {
-        this.navCtrl.pop().then(() => {
-          this.feedService.hideAlertPopover();
-        });
-      });
-    });
   }
 
   ionViewWillLeave() {
+
     this.isLoading = false;
     this.hideSwitchFeed = false;
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
     }
-    this.events.unsubscribe(FeedsEvent.PublishType.publishPostSuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-
-
     this.hideFullScreen();
 
     this.imgUrl = '';
@@ -214,6 +174,9 @@ export class CreatenewpostPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.search);
     this.events.publish(FeedsEvent.PublishType.homeCommonEvents);//添加删除的home event与其它页面相同的页面
+    if(this.isUpdateHomePage){
+      this.events.publish(FeedsEvent.PublishType.updateTab, true);
+    }
   }
 
   ionViewDidEnter() { }
@@ -263,65 +226,8 @@ export class CreatenewpostPage implements OnInit {
     });
   }
 
-  prepareTempPost() { }
-
   async sendPost() {
     await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, TAG)
-  }
-
-  async publishPostThrowMsg(tempPostId: string) {
-    let videoSize = this.flieUri.length;
-    let imgSize = this.imgUrl.length;
-
-    // 大数据走session
-    if (
-      videoSize > this.throwMsgTransDataLimit ||
-      imgSize > this.throwMsgTransDataLimit
-    ) {
-      this.transDataChannel = FeedsData.TransDataChannel.SESSION;
-      let memo: FeedsData.SessionMemoData = {
-        feedId: this.channelId,
-        postId: "0",
-        commentId: 0,
-        tempId: tempPostId,
-      };
-      this.feedService.restoreSession(this.nodeId, memo);
-    } else {
-      this.transDataChannel = FeedsData.TransDataChannel.MESSAGE;
-    }
-
-    let content = '';
-    if (this.flieUri != '') {
-      let videoThumbs: FeedsData.VideoThumb = {
-        videoThumb: this.posterImg,
-        duration: this.duration,
-        videoSize: videoSize,
-      };
-      content = this.feedService.createContent(this.newPost, null, videoThumbs);
-    }
-
-    if (this.imgUrl != '') {
-      let imageThumb = await UtilService.compress(this.imgUrl);
-      let imgThumbs: FeedsData.ImgThumb[] = [];
-      let imgThumb: FeedsData.ImgThumb = {
-        index: 0,
-        imgThumb: imageThumb,
-        imgSize: imgSize,
-      };
-      imgThumbs.push(imgThumb);
-      content = this.feedService.createContent(this.newPost, imgThumbs, null);
-    }
-
-    this.feedsServiceApi.declarePost(
-      this.nodeId,
-      this.channelId,
-      content,
-      false,
-      tempPostId,
-      this.transDataChannel,
-      this.imgUrl,
-      this.flieUri,
-    );
   }
 
   addImg(type: number) {
@@ -357,11 +263,6 @@ export class CreatenewpostPage implements OnInit {
 
   checkServerStatus(nodeId: string) {
     return this.feedService.getServerStatusFromId(nodeId);
-  }
-
-  initnodeStatus() {
-    let status = this.checkServerStatus(this.nodeId);
-    this.nodeStatus[this.nodeId] = status;
   }
 
   pressName(channelName: string) {
@@ -575,12 +476,12 @@ export class CreatenewpostPage implements OnInit {
 
   backHome() {
     this.navCtrl.pop().then(() => {
-      this.events.publish(FeedsEvent.PublishType.updateTab, true);
       this.newPost = '';
       this.imgUrl = '';
       this.posterImg = '';
       this.flieUri = '';
       this.isPublishing = false;
+      this.isUpdateHomePage = true;
     });
   }
 

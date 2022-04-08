@@ -177,7 +177,7 @@ export class PostdetailPage implements OnInit {
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
-    let fileName: string = "channel-avatar-" + channelAvatarUri.split("@")[0];
+    let fileName: string = channelAvatarUri.split("@")[0];
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         this.channelAvatar = result;
@@ -654,7 +654,7 @@ export class PostdetailPage implements OnInit {
       let imageKey = elements.originMediaPath;
       let type = elements.type;
       //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-      let fileOriginName: string = "origin-" + imageKey.split("@")[0];
+      let fileOriginName: string = imageKey.split("@")[0];
       //原图
       try {
         this.hiveVaultController
@@ -723,7 +723,7 @@ export class PostdetailPage implements OnInit {
     let thumbnailKey = elements.thumbnailPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName: string = "thumbnail-" + thumbnailKey.split("@")[0];
+    let fileName: string = thumbnailKey.split("@")[0];
     this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
       .then((cacheResult) => {
         let thumbImage = cacheResult || "";
@@ -853,7 +853,7 @@ export class PostdetailPage implements OnInit {
     let thumbnailKey = elements.thumbnailPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName: string = "poster-" + thumbnailKey.split("@")[0];
+    let fileName: string = thumbnailKey.split("@")[0];
     this.hiveVaultController
       .getV3Data(this.destDid, thumbnailKey, fileName, type)
       .then(imagedata => {
@@ -902,7 +902,7 @@ export class PostdetailPage implements OnInit {
     let originKey = elements.originMediaPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName: string = "origin-" + originKey.split("@")[0];
+    let fileName: string = originKey.split("@")[0];
 
     this.hiveVaultController
       .getV3Data(this.destDid, originKey, fileName, type, "false")

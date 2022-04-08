@@ -1073,7 +1073,7 @@ export class HomePage implements OnInit {
           if (channel != null) {
             avatarUri = channel.avatar;
           }
-          let fileName: string = "channel-avatar-" + avatarUri.split("@")[0];
+          let fileName: string = avatarUri.split("@")[0];
           //头像
           this.hiveVaultController.
             getV3Data(destDid, avatarUri, fileName, "0")
@@ -1155,7 +1155,7 @@ export class HomePage implements OnInit {
       let imageKey = elements.originMediaPath;
       let type = elements.type;
       //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-      let fileOriginName: string = "origin-" + imageKey.split("@")[0];
+      let fileOriginName: string = imageKey.split("@")[0];
       //原图
       this.hiveVaultController
         .getV3Data(destDid, imageKey, fileOriginName, type, "false")
@@ -1251,9 +1251,8 @@ export class HomePage implements OnInit {
             return;
           }
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-          let fileOriginName: string = "origin-" + imageKey.split("@")[0];
-          let fileThumbnaiName: string = "thumbnail-" + thumbnailKey.split("@")[0];
-
+          let fileOriginName: string =  imageKey.split("@")[0];
+          let fileThumbnaiName: string = thumbnailKey.split("@")[0];
 
           //原图
           this.hiveVaultController.
@@ -1340,7 +1339,7 @@ export class HomePage implements OnInit {
           //let imageKey = elements.originMediaPath;
           let type = elements.type;
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-          let fileName: string = "poster-" + videoThumbnailKey.split("@")[0];
+          let fileName: string = videoThumbnailKey.split("@")[0];
           this.hiveVaultController
             .getV3Data(destDid, videoThumbnailKey, fileName, type)
             .then(imagedata => {
@@ -1541,7 +1540,7 @@ export class HomePage implements OnInit {
     let originKey = elements.originMediaPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName: string = "origin-" + originKey.split("@")[0];
+    let fileName: string =  originKey.split("@")[0];
     this.hiveVaultController
       .getV3Data(destDid, originKey, fileName, type, "false")
       .then((videoResult: string) => {

@@ -364,7 +364,7 @@ export class SubscriptionsPage implements OnInit {
             if (channel != null) {
               avatarUri = channel.avatar;
             }
-            let fileName: string = "channel-avatar-" + avatarUri.split("@")[0];
+            let fileName: string = avatarUri.split("@")[0];
             this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
               this.zone.run(() => {
                 this.followingIsLoadimage[id] = '13';

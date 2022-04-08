@@ -130,7 +130,7 @@ export class PostHelperService {
             if (originMediaData) {
               const medaPath = originMediaData.medaPath;
               // this.fileHelperService.savePostData(medaPath, elementBuffer);
-              let fileOriginName: string = "origin-" + medaPath.split("@")[0];
+              let fileOriginName: string =  medaPath.split("@")[0];
               await this.fileHelperService.saveV3Data(fileOriginName,element);
             }
 
@@ -140,7 +140,7 @@ export class PostHelperService {
             const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(thumbnail, thumbnailBlob.type);
             if (thumbnailMediaData) {
               const path = thumbnailMediaData.medaPath;
-              let fileThumbnaiName: string = "thumbnail-" + path.split("@")[0];
+              let fileThumbnaiName: string = path.split("@")[0];
               await this.fileHelperService.saveV3Data(fileThumbnaiName, thumbnail);
             }
 
@@ -158,7 +158,7 @@ export class PostHelperService {
           const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.video, videoBlob.type);
           if (originMediaData) {
             const medaPath = originMediaData.medaPath;
-            let fileName: string = "origin-" + medaPath.split("@")[0];
+            let fileName: string = medaPath.split("@")[0];
             await this.fileHelperService.saveV3Data(fileName,videoData.video);
           }
 
@@ -167,7 +167,7 @@ export class PostHelperService {
           const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.thumbnail, videoThumbBlob.type);
           if (thumbnailMediaData) {
             const medaPath = thumbnailMediaData.medaPath;
-            let fileName: string = "poster-" + medaPath.split("@")[0];
+            let fileName: string = medaPath.split("@")[0];
             await this.fileHelperService.saveV3Data(fileName,videoData.thumbnail);
           }
 

@@ -52,7 +52,7 @@ export class SwitchfeedComponent implements OnInit {
   handleChannelAvatar(channelAvatarUri: string,destDid: string): Promise<string>{
     return new Promise(async (resolve, reject) => {
       try {
-        let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
+        let fileName:string = channelAvatarUri.split("@")[0];
         this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
         .then((result)=>{
            let channelAvatar = result || '';
