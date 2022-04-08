@@ -970,7 +970,7 @@ declare namespace FeedsData {
     tipping_address: string,
     nft: string,
     category: string,
-    proof: string
+    proof: string,
     memo: string,
   }
 

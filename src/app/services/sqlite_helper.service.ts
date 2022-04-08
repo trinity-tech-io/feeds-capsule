@@ -102,7 +102,7 @@ export class FeedsSqliteHelper {
         const statement = 'create table ' + this.TABLE_POST
           + '('
           + 'post_id VARCHAR(64), dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
-          + 'content BLOB, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT'
+          + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT'
           + ')';
 
         const result = await this.executeSql(statement);
@@ -213,7 +213,7 @@ export class FeedsSqliteHelper {
         const statement = 'create table ' + this.TABLE_CHANNEL
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64), channel_name VARCHAR(64), intro TEXT, created_at REAL(64), updated_at REAL(64),'
-          + 'avatarAddress TEXT, tippingAddress TEXT, type VARCHAR(64), proof VARCHAR(64),nft TEXT, memo TEXT, category TEXT'
+          + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT'
           + ')';
         const result = await this.executeSql(statement);
         console.log('creteChannelTable-------------------', result);
@@ -229,10 +229,10 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
-          + '(dest_did, channel_id, channel_name, intro, created_at, updated_at, avatarAddress, tippingAddress, type, proof, nft, memo, category) VALUES'
+          + '(dest_did, channel_id, channel_name, intro, created_at, updated_at, avatar_address, tipping_address, type, proof, nft, memo, category) VALUES'
           + '(?,?,?,?,?,?,?,?,?,?,?,?,?)';
-
-        const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
+          
+          const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
           , JSON.stringify(channelV3.avatar), channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category];
 
         const result = await this.executeSql(statement, params);
@@ -359,7 +359,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelList(): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelData(): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
@@ -468,6 +468,38 @@ export class FeedsSqliteHelper {
       }
     });
   }
+  
+  querySubscriptionNumByChannelId(channelId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?'
+        const params = [channelId];
+        const num = await this.executeSql(statement, params);
+
+        console.log('queryData num -------------------', num);
+        resolve(num);
+      } catch (error) {
+        Logger.error(TAG, 'query subscription num By ID  error', error);
+        reject(error);
+      }
+    });
+  }
+
+  updateSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'UPDATE ' + this.TABLE_SUBSCRIPTION
+          + ' SET display_name=? WHERE channel_id=?';
+        const params = [subscriptionV3.destDid, subscriptionV3.channelId, subscriptionV3.userDid, subscriptionV3.createdAt, subscriptionV3.displayName];
+        const result = await this.executeSql(statement, params);
+        Logger.log(TAG, 'update channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'update channel data error', error);
+        reject(error);
+      }
+    });
+  }
 
   deleteSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -501,11 +533,11 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
-          + '(dest_did, comment_id, channel_id, post_id, refcomment_id, content, created_at) VALUES'
-          + '(?,?,?,?,?,?,?)';
-
+          + '(dest_did, comment_id, channel_id, post_id, refcomment_id, content, status, created_at, updated_at, proof, memo, creater_did) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?,?)';
+  
         const params = [commentV3.destDid, commentV3.commentId, commentV3.channelId, commentV3.postId, commentV3.refcommentId, JSON.stringify(commentV3.content)
-          , commentV3.createdAt];
+          , commentV3.status, commentV3.createdAt, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.createrDid];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'Insert comment Data result is', result);
@@ -602,7 +634,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table ' + this.TABLE_LIKE
           + '('
-          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64)'
+          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT'
           + ')';
         const result = await this.executeSql(statement);
         console.log('create like table-------------------', result);
@@ -618,8 +650,8 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
-          + '(dest_did, channel_id, post_id, comment_id, created_at) VALUES'
-          + '(?,?,?,?,?)';
+          + '(dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo) VALUES'
+          + '(?,?,?,?,?,?,?,?)';
         const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt];
 
         const result = await this.executeSql(statement, params);
@@ -718,8 +750,22 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      list.push(element);
+      let postV3: FeedsData.PostV3 = {
+        destDid: element['dest_did'],
+        postId: element['post_id'],
+        channelId: element['channel_id'],
+        createdAt: element['created_at'],
+        updatedAt: element['updated_at'],
+        content: element['content'],// string 转mediaDataV3
+        status: element['status'],// PostCommentStatus
+        type: element['type'],
+        tag: element['tag'],
+        proof: element['proof'],
+        memo: element['memo'],
+      }
+      list.push(postV3);
     }
+
     Logger.log(TAG, 'Parse post list from sql, list is', list);
     return list;
   }
@@ -729,7 +775,23 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      list.push(element);
+      let channelV3: FeedsData.ChannelV3 = {
+        destDid: element['dest_did'],
+        channelId: element['channel_id'],
+        createdAt: element['created_at'],
+        updatedAt: element['updated_at'],
+        name: element['channel_name'],
+        intro: element['intro'],
+        avatar: element['avatar_address'],
+        type: element['type'],
+        tipping_address: element['tipping_address'],
+        nft: element['nft'],
+        category: element['category'],
+        proof: element['proof'],
+        memo: element['memo']
+      }
+
+      list.push(channelV3);
     }
     Logger.log(TAG, 'Parse channel list from sql, list is', list);
     return list;
@@ -740,7 +802,21 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      list.push(element);
+      let commentV3: FeedsData.CommentV3 = {
+        destDid: element['dest_did'],
+        commentId: element['comment_id'],
+        channelId: element['channel_id'],
+        postId: element['post_id'],
+        refcommentId: element['refcomment_id'],
+        content: element['content'],
+        status: element['status'],//PostCommentStatus
+        createdAt: element['created_at'],
+        updatedAt: element['updated_at'],
+        proof: element['proof'],
+        memo: element['memo'],
+        createrDid: element['creater_did'],
+      }
+      list.push(commentV3);
     }
     Logger.log(TAG, 'Parse comment list from sql, list is', list);
     return list;
@@ -751,7 +827,17 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      list.push(element);
+      let likeV3: FeedsData.LikeV3 = {
+        destDid: element['dest_did'],
+        postId: element['post_id'],
+        commentId: element['comment_id'],
+        channelId: element['channel_id'],
+        createdAt: element['created_at'],
+        createrDid: element['creater_did'],
+        proof: element['proof'],
+        memo: element['memo'],
+      }
+      list.push(likeV3);
     }
     Logger.log(TAG, 'Parse like list from sql, list is', list);
     return list;
@@ -762,7 +848,11 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      list.push(element);
+      let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+        destDid: element['dest_did'],
+        channelId: element['channel_id']
+      }
+      list.push(subscribedChannel);
     }
     Logger.log(TAG, 'Parse subscription channel list from sql, list is', list);
     return list;
@@ -773,7 +863,14 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      list.push(element);
+      let subscriptionV3: FeedsData.SubscriptionV3 = {
+        destDid: element['dest_did'],
+        channelId: element['channel_id'],
+        userDid: element['user_did'],
+        createdAt: element['created_at'],
+        displayName: element['display_name'],
+      }
+      list.push(subscriptionV3);
     }
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
