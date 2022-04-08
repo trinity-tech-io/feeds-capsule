@@ -29,7 +29,6 @@ export class MyfeedsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log("MyfeedsComponent")
   }
 
   moreName(name: string) {
@@ -59,7 +58,6 @@ export class MyfeedsComponent implements OnInit {
   }
 
   handleClientNumber(destDid: string) {
-    console.log("destDid ====== ", destDid)
     return 0;
   }
 

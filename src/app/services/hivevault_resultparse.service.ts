@@ -24,7 +24,6 @@ export class HiveVaultResultParse {
        */
       const posts = result;
       let parseResult = [];
-      console.log('result ===== ', posts);
       if (posts) {
         posts.forEach(post => {
           if (post) {

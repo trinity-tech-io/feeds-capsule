@@ -1147,7 +1147,6 @@ export class HiveVaultHelper {
                 const result = await this.hiveService.downloadEssAvatarTransactionId()
                 const transaction_id = result["download"]["transaction_id"]
                 let dataBuffer = await this.hiveService.downloadScripting(transaction_id)
-                console.log("downloadEssAvatarData  dataBuffer ===== ", dataBuffer)
                 const rawImage = await rawImageToBase64DataUrl(dataBuffer)
                 resolve(rawImage);
             }
@@ -1187,7 +1186,6 @@ export class HiveVaultHelper {
             try {
                 const dataBase64 = bufferData.toString()
                 const hash = SparkMD5.hash(dataBase64);
-                console.log("dataBase64 ======= ", dataBase64)
                 const remoteName = 'feeds/data/' + hash;
                 await this.hiveService.uploadScriptWithBuffer(remoteName, bufferData);
                 const scriptName = hash

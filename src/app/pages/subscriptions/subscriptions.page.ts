@@ -156,12 +156,12 @@ export class SubscriptionsPage implements OnInit {
     for (let item of subscribedChannel) {
       let destDid = item.destDid;
       let channelId = item.channelId;
-      let channel: any = await this.feedService.getChannelFromIdV3(destDid, channelId) || "";
+      let channel: any = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;
       if (channel != null) {
         list.push(channel);
       }
-      return list;
     }
+    return list;
   }
   initnodeStatus(list: any) {
     list = list || [];

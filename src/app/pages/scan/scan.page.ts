@@ -134,7 +134,7 @@ async hideCamera() {
       document.body.removeAttribute("style");
       clearTimeout(sid);
       sid = null;
-    },100);
+    },200);
   }
 
   stopScanning() {

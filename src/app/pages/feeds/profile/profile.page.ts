@@ -370,7 +370,6 @@ export class ProfilePage implements OnInit {
         return item.status != 1;
       });
     }
-    console.log("====likeList======", JSON.stringify(likeList));
     return likeList;
   }
 
@@ -651,9 +650,7 @@ export class ProfilePage implements OnInit {
 
 
     this.totalLikeList = await this.sortLikeList() || [];
-    console.log("=======this.totalLikeList========", this.totalLikeList);
     this.likeSum = this.totalLikeList.length;
-    console.log("=======this.likeSum========", this.likeSum);
   }
 
   ionViewWillLeave() {

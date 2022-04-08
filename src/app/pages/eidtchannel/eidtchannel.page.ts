@@ -177,7 +177,6 @@ export class EidtchannelPage implements OnInit {
   editChannelInfo() {
     try {
       this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-      console.log("======this.avatar======",this.channelAvatar);
       let tippingAddress = this.tippingAddress || '';
       this.hiveVaultController.updateChannel(
         this.channelId,
