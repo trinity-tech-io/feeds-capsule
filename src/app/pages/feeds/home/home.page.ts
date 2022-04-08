@@ -494,8 +494,8 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
       Logger.log(TAG, "======= Receive editPostFinish ========")
-      this.zone.run(async () => {
-        await this.refreshPostList("unHomePostContent");
+      this.zone.run(() => {
+          this.refreshPostList();
       });
     });
 

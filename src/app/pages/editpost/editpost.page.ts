@@ -14,12 +14,10 @@ import { ThemeService } from '../../services/theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from 'src/app/services/AppService';
-import { UtilService } from 'src/app/services/utilService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import _ from 'lodash';
-import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
@@ -60,14 +58,12 @@ export class EditPostPage implements OnInit {
   private postData: FeedsData.PostV3 = null;
   public mediaType: FeedsData.MediaType;
   private originPostData: FeedsData.PostV3 = null;
-
+  private isUpdateTab: boolean = false;
   constructor(
     private events: Events,
     private native: NativeService,
-    private navCtrl: NavController,
     private acRoute: ActivatedRoute,
     private zone: NgZone,
-    private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
     public modalController: ModalController,
@@ -118,15 +114,6 @@ export class EditPostPage implements OnInit {
       this.hideFullScreen();
     });
 
-    this.initnodeStatus();
-
-    this.feedService.checkBindingServerVersion(() => {
-      this.zone.run(() => {
-        this.navCtrl.pop().then(() => {
-          this.feedService.hideAlertPopover();
-        });
-      });
-    });
   }
 
   ionViewWillLeave() {
@@ -139,6 +126,10 @@ export class EditPostPage implements OnInit {
     this.native.hideLoading();
     this.hideFullScreen();
     this.removeVideo();
+    if(this.isUpdateTab) {
+      this.events.publish(FeedsEvent.PublishType.updateTab);
+      this.events.publish(FeedsEvent.PublishType.editPostFinish);
+    }
   }
 
   removeVideo() {
@@ -219,15 +210,6 @@ export class EditPostPage implements OnInit {
       'EditPostPage.title',
       this.appService,
     );
-  }
-
-  checkServerStatus(destDid: string) {
-    return this.feedService.getServerStatusFromId(destDid);
-  }
-
-  initnodeStatus() {
-    let status = this.checkServerStatus(this.destDid);
-    this.nodeStatus[this.destDid] = status;
   }
 
   pressName(channelName: string) {
@@ -432,9 +414,7 @@ export class EditPostPage implements OnInit {
         TAG,
       ).then((result) => {
         this.zone.run(async () => {
-          await this.hiveVaultController.getHomePostContent();
-          this.events.publish(FeedsEvent.PublishType.updateTab);
-          this.events.publish(FeedsEvent.PublishType.editPostFinish);
+          this.isUpdateTab = true;
           this.native.hideLoading();
           this.native.pop();
         });

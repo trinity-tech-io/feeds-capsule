@@ -3127,7 +3127,7 @@ export class DataHelper {
   async updatePostV3(post: FeedsData.PostV3) {
     const key = UtilService.getKey(post.destDid, post.postId);
     this.postMapV3[key] = post;
-    await this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3);
+    await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
   }
 
   updatePostsV3(posts: FeedsData.PostV3[]) {
