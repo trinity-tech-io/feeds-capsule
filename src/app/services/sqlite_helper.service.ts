@@ -82,7 +82,7 @@ export class FeedsSqliteHelper {
       try {
         await this.cretePostTable();
         await this.createChannelTable();
-        await this.createSubscriptionChannelTable();
+        await this.createSubscribedChannelTable();
         await this.createSubscriptionTable();
         await this.createCommentTable();
         await this.createLikeTable();
@@ -323,7 +323,7 @@ export class FeedsSqliteHelper {
   }
 
   // subscription channel 本地存储使用
-  private createSubscriptionChannelTable(): Promise<any> {
+  private createSubscribedChannelTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -340,7 +340,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  insertSubscribedChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -359,7 +359,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionChannelList(): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelList(): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
@@ -373,7 +373,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionChannelDataByChannelId(channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelDataByChannelId(channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?';
@@ -390,7 +390,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  deleteSubscribedChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?'
       const params = [subscribedChannelV3.channelId];
