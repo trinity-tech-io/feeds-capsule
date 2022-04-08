@@ -853,19 +853,20 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
     }
 
-    private callUpdateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    private callUpdateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
+                const updatedAt = UtilService.getCurrentTimeNum();
                 const params = {
                     "channel_id": channelId,
                     "post_id": postId,
                     "comment_id": commentId,
                     "content": content,
-                    "updated_at": UtilService.getCurrentTimeNum()
+                    "updated_at": updatedAt
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_COMMENT, params);
                 console.log("Get comment from scripting by comment id , result is", result);
-                resolve(result);
+                resolve({ updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(TAG, 'Get comment from scripting by comment id error:', error);
                 reject(error);
@@ -873,7 +874,7 @@ export class HiveVaultHelper {
         });
     }
 
-    updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+    updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
         return this.callUpdateComment(targetDid, channelId, postId, commentId, content);
     }
     /** update comment end */

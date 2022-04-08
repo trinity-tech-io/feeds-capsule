@@ -762,14 +762,19 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const commentResult = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
-        const parseResult = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
 
-        //TODO
-        // this.dataHelper.updateCommentV3()
-        console.log('getCommentsByPost parseResult', parseResult);
-        resolve(parseResult);
+        Logger.log('Query comment by id result is', commentResult);
+        if (commentResult) {
+          const parseResult = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
+          console.log('getCommentsByPost parseResult', parseResult);
+
+          this.dataHelper.updateCommentsV3(parseResult);
+          resolve(parseResult);
+        } else {
+          reject('Query comment by post error');
+        }
       } catch (error) {
-        Logger.error(TAG, 'Get comments by post error', error);
+        Logger.error(TAG, 'Query comments by post error', error);
         reject(error);
       }
     });
@@ -872,18 +877,38 @@ export class HiveVaultController {
     });
   }
 
-  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
-    Logger.log(TAG, "updateComment", targetDid, channelId, postId, commentId);
+  updateComment(originComment: FeedsData.CommentV3, content: string): Promise<FeedsData.CommentV3> {
+    Logger.log(TAG, "updateComment", originComment, content);
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.updateComment(targetDid, channelId, postId, commentId, content);
-        Logger.log(TAG, "updateComment result", result);
-        resolve(result);
-        //TODO
-      } catch (error) {
-        Logger.error(TAG, 'updateComment data error', error);
-        reject('');
+        const result = await this.hiveVaultApi.updateComment(originComment.destDid, originComment.channelId, originComment.postId, originComment.commentId, content);
+        Logger.log(TAG, 'Update comment result', result);
+        if (result) {
+          const comment: FeedsData.CommentV3 = {
+            destDid: originComment.destDid,
+            commentId: originComment.commentId,
 
+            channelId: originComment.channelId,
+            postId: originComment.postId,
+            refcommentId: originComment.refcommentId,
+            content: content,
+            status: FeedsData.PostCommentStatus.edited,
+            updatedAt: result.updatedAt,
+            createdAt: originComment.createdAt,
+            proof: '',
+            memo: originComment.memo,
+
+            createrDid: originComment.createrDid
+          }
+
+          this.dataHelper.updateCommentV3(comment);
+          resolve(comment);
+        } else {
+          reject('Update comment error');
+        }
+      } catch (error) {
+        Logger.error(TAG, 'Update comment data error', error);
+        reject(error);
       }
     });
   }

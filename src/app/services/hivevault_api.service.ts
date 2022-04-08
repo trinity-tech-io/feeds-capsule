@@ -86,7 +86,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.createComment(targetDid, channelId, postId, refcommentId, content);
   }
 
-  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<any> {
+  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
     return this.hiveVaultHelper.updateComment(targetDid, channelId, postId, commentId, content);
   }
 
