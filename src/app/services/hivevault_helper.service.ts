@@ -770,7 +770,7 @@ export class HiveVaultHelper {
             "post_id": "$params.post_id",
             "refcomment_id": "$params.refcomment_id",
             "content": "$params.content",
-            "status": 0,
+            "status": FeedsData.PostCommentStatus.available,
             "created_at": "$params.created_at",
             "updated_at": "$params.created_at",
             "creater_did": "$caller_did"
@@ -787,7 +787,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
     }
 
-    private callCreateComment(targetDid: string, commentId: string, channelId: string, postId: string, refcommentId: string, content: string) {
+    private callCreateComment(targetDid: string, commentId: string, channelId: string, postId: string, refcommentId: string, content: string, createdAt: number) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -796,7 +796,7 @@ export class HiveVaultHelper {
                     "post_id": postId,
                     "refcomment_id": refcommentId,
                     "content": content,
-                    "created_at": UtilService.getCurrentTimeNum()
+                    "created_at": createdAt
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_COMMENT, params);
                 console.log("Create comment from scripting , result is", result);
@@ -808,13 +808,15 @@ export class HiveVaultHelper {
         });
     }
 
-    createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<any> {
+    createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<{ commentId: string, createrDid: string, createdAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
                 const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
-                const result = await this.callCreateComment(targetDid, commentId, channelId, postId, refcommentId, content);
-                resolve(result);
+                const createdAt = UtilService.getCurrentTimeNum();
+                const result = await this.callCreateComment(targetDid, commentId, channelId, postId, refcommentId, content, createdAt);
+
+                resolve({ commentId: commentId, createrDid: signinDid, createdAt: createdAt });
             } catch (error) {
                 reject(error);
             }

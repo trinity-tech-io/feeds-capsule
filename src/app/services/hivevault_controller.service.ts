@@ -722,15 +722,38 @@ export class HiveVaultController {
     });
   }
 
-  createComment(destDid: string, channelId: string, postId: string, refcommentId: string, content: any): Promise<string> {
+  createComment(destDid: string, channelId: string, postId: string, refcommentId: string, content: any): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.createComment(destDid, channelId, postId, refcommentId, content);
-        console.log('createComment result', result);
-        resolve('SUCCESS');
+        Logger.log('createComment result', result);
+
+        if (result) {
+          const comment: FeedsData.CommentV3 = {
+            destDid: destDid,
+            commentId: result.commentId,
+
+            channelId: channelId,
+            postId: postId,
+            refcommentId: refcommentId,
+            content: content,
+            status: FeedsData.PostCommentStatus.available,
+            updatedAt: result.createdAt,
+            createdAt: result.createdAt,
+            proof: '',
+            memo: '',
+
+            createrDid: result.createrDid
+          }
+
+          this.dataHelper.addCommentV3(comment);
+          resolve(comment);
+        } else {
+          reject('Create comment error');
+        }
       } catch (error) {
         Logger.error(TAG, 'Create comment error', error);
-        reject('');
+        reject(error);
       }
     });
   }
