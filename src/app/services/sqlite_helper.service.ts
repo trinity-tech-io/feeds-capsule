@@ -566,15 +566,21 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteCommentData(commentId: string) {
+  deleteCommentData(commentId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const statement = 'DELETE FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?'
-      const params = [commentId];
-      const result = await this.executeSql(statement, params);
-      Logger.log(TAG, 'remove comment data result is', result);
-      resolve('SUCCESS');
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?'
+        const params = [commentId];
+        const result = await this.executeSql(statement, params);
+        Logger.log(TAG, 'Remove comment data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Remove comment from sql error', error);
+        reject(error);
+      }
     });
   }
+
   queryCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {

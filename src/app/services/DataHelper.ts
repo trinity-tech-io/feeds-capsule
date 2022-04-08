@@ -3356,6 +3356,18 @@ export class DataHelper {
     });
   }
 
+  deleteCommentV3(commentId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = this.sqliteHelper.deleteCommentData(commentId);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Query comment num error', error);
+        reject(error);
+      }
+    });
+  }
+
   //liveV3
   async addLikeV3(like: FeedsData.LikeV3) {
     const key = UtilService.getKey(like.destDid, like.postId + like.commentId);

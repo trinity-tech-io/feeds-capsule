@@ -913,17 +913,22 @@ export class HiveVaultController {
     });
   }
 
-  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ commentId: string }> {
     Logger.log(TAG, "deleteComment", targetDid, channelId, postId, commentId);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
-        Logger.log(TAG, "deleteComment result", result);
-        resolve(result);
-        //TODO
+        Logger.log(TAG, "Delete comment result", result);
+
+        if (result) {
+          this.dataHelper.deleteCommentV3(commentId);
+          resolve({ commentId: commentId });
+        } else {
+          reject('Delete comment error');
+        }
       } catch (error) {
-        Logger.error(TAG, 'deleteComment data error', error);
-        reject('');
+        Logger.error(TAG, 'Delete comment data error', error);
+        reject(error);
       }
     });
   }
