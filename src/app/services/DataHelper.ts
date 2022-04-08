@@ -2865,8 +2865,9 @@ export class DataHelper {
       channelId: channelId
     }
 
-    this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChannel
-    await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
+    await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel)
+    // this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChannel
+    // await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
   }
 
   async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
@@ -2880,18 +2881,8 @@ export class DataHelper {
   getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let list: FeedsData.SubscribedChannelV3[] = []
-        this.subscribedChannelMapV3 = await this.loadData(FeedsData.PersistenceKey.subscribedChannelsV3Map) || {}
-        let keys: string[] = Object.keys(this.subscribedChannelMapV3)
-
-        for (const key in keys) {
-          let subscribedChannel = this.subscribedChannelMapV3[keys[key]]
-          if (subscribedChannel == null) continue
-          // TODO是否添加其他判断条件
-          list.push(subscribedChannel)
-        }
-
-        const resultList = await this.filterSubscribedChannelV3(list, subscribedChannelType);
+        let subscribedList = await this.sqliteHelper.querySubscribedChannelData()
+        const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
         resolve(resultList)
       } catch (error) {
         reject(error)
@@ -2920,32 +2911,37 @@ export class DataHelper {
   }
 
 
-  getSubscribedChannelV3ByKey(destDid: string, channelId: string): FeedsData.SubscribedChannelV3 {
-    if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return null;
-
-    let key = destDid + "#" + channelId;
-    return this.subscribedChannelMapV3[key];
-  }
-
-  loadSubscribedChannelV3Map(): Promise<{ [key: string]: FeedsData.SubscribedChannelV3 }> {
+  getSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        this.subscribedChannelMapV3 = await this.loadData(FeedsData.PersistenceKey.subscribedChannelsV3Map);
-        // TODO 增加判空
-        resolve(this.subscribedChannelMapV3);
-
+        let queryList = await this.sqliteHelper.querySubscribedChannelDataByChannelId(channelId)
+        resolve(queryList[0])
       } catch (error) {
         reject(error);
       }
-    });
+    })
   }
+
+  // loadSubscribedChannelV3Map(): Promise<{ [key: string]: FeedsData.SubscribedChannelV3 }> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       this.subscribedChannelMapV3 = await this.loadData(FeedsData.PersistenceKey.subscribedChannelsV3Map);
+  //       // TODO 增加判空
+  //       resolve(this.subscribedChannelMapV3);
+  //       this.subscribedChannelMapV3 = await this.loadData(FeedsData.PersistenceKey.subscribedChannelsV3Map);
+
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
 
   //subscriptionV3
   addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        //TODO saveData
+        await this.sqliteHelper.insertSubscriptionData(subscription)
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Add subscription error', error);
@@ -2974,19 +2970,55 @@ export class DataHelper {
     });
   }
 
-  updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3) {
+  updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.sqliteHelper.updateSubscriptionData(subscription);
+        resolve('FINISH');
+      }
+      catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    })
   }
 
-  getSubscriptionV3NumByChannelId(destDid: string, channelId: string): number {
-    return 0;
+  getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.sqliteHelper.querySubscriptionNumByChannelId(channelId);
+        resolve(result);
+      }
+      catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    })
   }
 
-  getSubscriptionV3DataByChannelId(destDid: string, channelId: string): FeedsData.SubscriptionV3 {
-    return null;
+  getSubscriptionV3DataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.sqliteHelper.querySubscriptionDataByChannelId(channelId);
+        resolve(result[0]);
+      }
+      catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    })
   }
+  // 废弃
+  loadSubscriptionsV3Map(): Promise<{ [key: string]: Promise<FeedsData.SubscriptionV3> }> {
+    return new Promise(async (resolve, reject) => {
+      try {
 
-  loadSubscriptionsV3Map(): Promise<{ [key: string]: FeedsData.SubscriptionV3 }> {
-    return null;
+      }
+      catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    })
   }
   //TODO later
   // getSubscriptionListByUserDid(userDid: string): FeedsData.SubscriptionV3[] {
@@ -2994,13 +3026,8 @@ export class DataHelper {
   // }
 
   //ChannelV3
-  addChannelV3(channel: FeedsData.ChannelV3) {
-    const key = UtilService.getKey(channel.destDid, channel.channelId);
-    this.channelsMapV3[key] = channel;
-    this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3).then(map => {
-      this.loadChannelV3Map();
-    })
-      .catch(err => { });
+  async addChannelV3(channel: FeedsData.ChannelV3) {
+    await this.sqliteHelper.insertChannelData(channel)
   }
 
   addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
@@ -3024,9 +3051,7 @@ export class DataHelper {
 
   async updateChannelV3(channel: FeedsData.ChannelV3) {
     // update 的时候更新updateTime
-    const key = UtilService.getKey(channel.destDid, channel.channelId);
-    this.channelsMapV3[key] = channel;
-    await this.saveData(FeedsData.PersistenceKey.channelsMapV3, this.channelsMapV3);
+    await this.sqliteHelper.updateChannelData(channel)
   }
 
   updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
@@ -3052,12 +3077,8 @@ export class DataHelper {
   getChannelV3ById(destDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        this.channelsMapV3 = await this.loadData(FeedsData.PersistenceKey.channelsMapV3);
-        const key = UtilService.getKey(destDid, channelId);
-        // TODO 检测是否为nil
-        let result = this.channelsMapV3[key];
-        resolve(result);
-
+        const result = await this.sqliteHelper.queryChannelDataByChannelId(channelId)
+        resolve(result[0]);
       } catch (error) {
         reject(error);
       }
@@ -3068,14 +3089,7 @@ export class DataHelper {
   loadMyChannelV3List(userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let list: FeedsData.ChannelV3[] = []
-        this.channelsMapV3 = await this.loadData(FeedsData.PersistenceKey.channelsMapV3) || {}
-        let keys: string[] = Object.keys(this.channelsMapV3)
-        for (const key in keys) {
-          let channel = this.channelsMapV3[keys[key]]
-          if (channel == null) continue
-          if (channel.destDid == userDid) list.push(channel)
-        }
+        const list = await this.sqliteHelper.queryMyChannel(userDid)
         resolve(list)
       } catch (error) {
         reject(error)
@@ -3089,7 +3103,6 @@ export class DataHelper {
         this.channelsMapV3 =
           (await this.loadData(FeedsData.PersistenceKey.channelsMapV3)) || {};
         resolve(this.channelsMapV3)
-
       } catch (error) {
         reject(error)
       }
@@ -3098,10 +3111,7 @@ export class DataHelper {
 
   //postV3
   async addPostV3(post: FeedsData.PostV3) {
-    const key = UtilService.getKey(post.destDid, post.postId);
-
-    this.postMapV3[key] = post;
-    await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
+    await this.sqliteHelper.insertPostData(post)
   }
 
   addPostsV3(posts: FeedsData.PostV3[]): Promise<string> {
@@ -3125,9 +3135,11 @@ export class DataHelper {
   }
 
   async updatePostV3(post: FeedsData.PostV3) {
-    const key = UtilService.getKey(post.destDid, post.postId);
-    this.postMapV3[key] = post;
-    await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
+    // const key = UtilService.getKey(post.destDid, post.postId);
+    // this.postMapV3[key] = post;
+    // await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
+
+    await this.sqliteHelper.updatePostData(post)
   }
 
   updatePostsV3(posts: FeedsData.PostV3[]) {
@@ -3159,12 +3171,8 @@ export class DataHelper {
   getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-
-        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3);
-        const key = UtilService.getKey(destDid, postId);
-        // TODO 检测是否为nil
-        let result = this.postMapV3[key];
-        resolve(result);
+        const result = this.sqliteHelper.queryPostDataByID(postId)
+        resolve(result[0]);
 
       } catch (error) {
         reject(error);
@@ -3175,25 +3183,9 @@ export class DataHelper {
   getPostListV3FromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-
-        let postList: FeedsData.PostV3[] = [];
-        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3);
-        let keys: string[] = Object.keys(this.postMapV3);
-        for (const key of keys) {
-          let post: FeedsData.PostV3 = null;
-          if (key.indexOf(destDid) > -1) {
-            post = this.postMapV3[key];
-            if (post.channelId === channelId) {
-              postList.push(post)
-            } else {
-              continue;
-            }
-          } else {
-            continue;
-          }
-        }
+        const result = await this.sqliteHelper.queryPostDataByChannelId(channelId)
         let sortList = [];
-        sortList = _.sortBy(postList, (item: any) => {
+        sortList = _.sortBy(result, (item: any) => {
           return -item.createdAt;
         });
         resolve(sortList);
@@ -3207,18 +3199,7 @@ export class DataHelper {
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-
-        let list: FeedsData.PostV3[] = []
-        //if(JSON.stringify(this.postMapV3) === "{}") {
-        this.postMapV3 = await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {}
-        //}
-        let keys: string[] = Object.keys(this.postMapV3)
-        for (const key in keys) {
-          let post = this.postMapV3[keys[key]]
-          if (post == null) continue
-          // TODO是否添加其他判断条件
-          list.push(post)
-        }
+        const list = await this.sqliteHelper.queryPostData()
         let sortList = [];
         sortList = _.sortBy(list, (item: any) => {
           return -item.createdAt;
@@ -3229,7 +3210,7 @@ export class DataHelper {
       }
     })
   }
-
+  // 废弃
   loadPostV3Map(): Promise<{ [key: string]: FeedsData.PostV3 }> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3244,10 +3225,7 @@ export class DataHelper {
 
   //commentV3
   async addCommentV3(comment: FeedsData.CommentV3) {
-    const key = UtilService.getKey(comment.destDid, comment.postId + comment.commentId);
-
-    this.addCommentV3[key] = comment;
-    await this.saveData(FeedsData.PersistenceKey.commentsMapV3, this.commentsMapV3);
+    await this.sqliteHelper.insertCommentData(comment)
   }
 
   addCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
@@ -3271,9 +3249,7 @@ export class DataHelper {
   }
 
   async updateCommentV3(comment: FeedsData.CommentV3) {
-    const key = UtilService.getKey(comment.destDid, comment.postId + comment.commentId);
-    this.commentsMapV3[key] = comment;
-    await this.saveData(FeedsData.PersistenceKey.commentsMapV3, this.commentsMapV3);
+    await this.sqliteHelper.updateCommentData(comment)
   }
 
   updateCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
@@ -3299,12 +3275,8 @@ export class DataHelper {
   getCommentV3ById(destDid: string, postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-
-        this.commentsMapV3 = await this.loadData(FeedsData.PersistenceKey.commentsMapV3);
-        const key = UtilService.getKey(destDid, postId + commentId);
-        // TODO 检测是否为nil
-        let result = this.commentsMapV3[key];
-        resolve(result);
+        const result = await this.sqliteHelper.queryCommentById(postId, commentId)
+        resolve(result[0]);
       } catch (error) {
         reject(error);
       }
@@ -3315,16 +3287,7 @@ export class DataHelper {
   getCommentV3List(destDid: string, postId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let list: FeedsData.CommentV3[] = []
-        this.commentsMapV3 = await this.loadData(FeedsData.PersistenceKey.commentsMapV3) || {}
-        let keys: string[] = Object.keys(this.commentsMapV3)
-
-        for (const key in keys) {
-          let post = this.commentsMapV3[keys[key]]
-          if (post == null) continue
-          // TODO是否添加其他判断条件
-          list.push(post)
-        }
+        const list = await this.sqliteHelper.queryCommentById(postId, '0')
         resolve(list)
       } catch (error) {
         reject(error)
@@ -3370,10 +3333,7 @@ export class DataHelper {
 
   //liveV3
   async addLikeV3(like: FeedsData.LikeV3) {
-    const key = UtilService.getKey(like.destDid, like.postId + like.commentId);
-
-    this.likeMapV3[key] = like;
-    await this.saveData(FeedsData.PersistenceKey.likeMapV3, this.likeMapV3);
+    await this.sqliteHelper.insertLike(like)
   }
 
   async addLikesV3(likes: FeedsData.LikeV3[]) {
@@ -3435,12 +3395,30 @@ export class DataHelper {
     });
   }
 
-  removeLikeV3(like: FeedsData.LikeV3) {
-
+  removeLikeV3(like: FeedsData.LikeV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.sqliteHelper.deleteLike(like)
+        resolve('FINISH')
+      }
+      catch (error) {
+        Logger.error(TAG, 'remove likes error', error);
+        reject(error)
+      }
+    })
   }
 
-  getLikeV3ById(destDid: string, postId: string, commentId: string): FeedsData.LikeV3 {
-    return null;
+  getLikeV3ById(destDid: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.sqliteHelper.queryLikeDataById(postId, commentId)
+        resolve(result)
+      }
+      catch (error) {
+        Logger.error(TAG, 'remove likes error', error);
+        reject(error)
+      }
+    })
   }
 
   getLikeV3List(destDid: string, postId: string): FeedsData.LikeV3[] {

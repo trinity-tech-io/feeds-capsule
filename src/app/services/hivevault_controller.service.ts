@@ -553,7 +553,9 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
         if (result) {
-          this.dataHelper.addSubscribedChannelV3(targetDid, channelId);
+          await this.dataHelper.addSubscribedChannelV3(targetDid, channelId);
+          const result = await this.dataHelper.getSubscribedChannelV3List();
+          console.log("result ===== ", result)
           resolve({ targetDid: targetDid, channelId: channelId });
         } else {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;
