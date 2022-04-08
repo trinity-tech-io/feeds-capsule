@@ -811,13 +811,41 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
+
+      // content
+      const contentData = element['content']
+      const contentDatas = JSON.parse(contentData)
+
+      //mediaDataV3
+      const mediaDataV3Data = contentDatas['mediaData']
+      const mediaDataV3Datas = JSON.parse(mediaDataV3Data)
+
+      let mediaDataV3: FeedsData.mediaDataV3 = {
+        kind: mediaDataV3Datas['kind'],       //"image/video/audio"
+        originMediaPath: mediaDataV3Datas['originMediaPath'],
+        type: mediaDataV3Datas['type'],           //"image/jpg",
+        size: mediaDataV3Datas['size'],           //origin file size
+        thumbnailPath: mediaDataV3Datas['thumbnailPath'],   //"thumbnailCid"
+        duration: mediaDataV3Datas['duration'],
+        imageIndex: mediaDataV3Datas['imageIndex'],
+        additionalInfo: mediaDataV3Datas['additionalInfo'],
+        memo: mediaDataV3Datas['memo'],
+      }
+
+      let postContentV3: FeedsData.postContentV3 = {
+        version: contentDatas['version'],
+        content: contentDatas['content'],
+        mediaData: [mediaDataV3],// 已经上传的到hive(size/type/scriptName@path)
+        mediaType: contentDatas['mediaType'],
+      }
+
       let postV3: FeedsData.PostV3 = {
         destDid: element['dest_did'],
         postId: element['post_id'],
         channelId: element['channel_id'],
         createdAt: element['created_at'],
         updatedAt: element['updated_at'],
-        content: element['content'],// string 转mediaDataV3
+        content: postContentV3,// string 转mediaDataV3
         status: element['status'],// PostCommentStatus
         type: element['type'],
         tag: element['tag'],
