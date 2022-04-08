@@ -930,7 +930,7 @@ export class ProfilePage implements OnInit {
         if (
           id != '' &&
           avatarImage.getBoundingClientRect().top >= -100 &&
-          avatarImage.getBoundingClientRect().top <= this.clientHeight
+          avatarImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             let arr = id.split("-");
@@ -1003,7 +1003,7 @@ export class ProfilePage implements OnInit {
         if (
           id != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().top <= this.clientHeight
+          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
@@ -1155,7 +1155,7 @@ export class ProfilePage implements OnInit {
       if (
         id != '' &&
         postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().top <= this.clientHeight
+        postImage.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1241,7 +1241,7 @@ export class ProfilePage implements OnInit {
       if (
         id != '' &&
         postAvatar.getBoundingClientRect().top >= -100 &&
-        postAvatar.getBoundingClientRect().top <= this.clientHeight
+        postAvatar.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
@@ -1310,7 +1310,7 @@ export class ProfilePage implements OnInit {
       if (
         id != '' &&
         video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().top <= this.clientHeight
+        video.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -2456,9 +2456,7 @@ export class ProfilePage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -2479,9 +2477,7 @@ export class ProfilePage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];

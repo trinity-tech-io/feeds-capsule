@@ -856,7 +856,7 @@ export class SearchPage implements OnInit {
         if (
           feedsUrlHash != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().top <= this.clientHeight
+          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             this.pasarGridisLoadimage[feedsUrlHash] = '12';
@@ -1085,7 +1085,7 @@ export class SearchPage implements OnInit {
         if (
           avatarUri != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().top <= this.clientHeight
+          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             this.channelCollectionsAvatarisLoad[tokenId] = '12';

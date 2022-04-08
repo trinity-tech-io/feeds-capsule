@@ -336,7 +336,7 @@ export class ProfilenftimagePage implements OnInit {
         if (
           avatarUri != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().top <= this.clientHeight
+          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             this.profileNftImagePagePostisLoad[avatarUri] = '12';

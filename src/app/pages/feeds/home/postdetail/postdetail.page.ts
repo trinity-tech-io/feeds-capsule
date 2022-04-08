@@ -1290,9 +1290,7 @@ export class PostdetailPage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -1314,9 +1312,7 @@ export class PostdetailPage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];

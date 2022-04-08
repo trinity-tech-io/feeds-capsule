@@ -351,7 +351,7 @@ export class SubscriptionsPage implements OnInit {
         if (
           id != '' &&
           avatarImage.getBoundingClientRect().top >= -100 &&
-          avatarImage.getBoundingClientRect().top <= this.clientHeight
+          avatarImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             let arr = id.split("-");

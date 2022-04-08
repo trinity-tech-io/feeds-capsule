@@ -1048,9 +1048,7 @@ export class HomePage implements OnInit {
       if (
         id != '' &&
         postAvatar.getBoundingClientRect().top >= -100 &&
-        postAvatar.getBoundingClientRect().left >= 0 &&
-        postAvatar.getBoundingClientRect().bottom <= this.clientHeight &&
-        postAvatar.getBoundingClientRect().right <= this.clientWidth
+        postAvatar.getBoundingClientRect().bottom <= this.clientHeight
       ) {
 
         if (isload === '') {
@@ -1220,9 +1218,7 @@ export class HomePage implements OnInit {
       if (
         id != '' &&
         postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().left >= 0 &&
-        postImage.getBoundingClientRect().bottom <= this.clientHeight &&
-        postImage.getBoundingClientRect().right <= this.clientWidth
+        postImage.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1312,9 +1308,7 @@ export class HomePage implements OnInit {
       if (
         id != '' &&
         video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().left >= 0 &&
-        video.getBoundingClientRect().bottom <= this.clientHeight &&
-        video.getBoundingClientRect().right <= this.clientWidth
+        video.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -2188,9 +2182,7 @@ export class HomePage implements OnInit {
         if (
           id != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().left >= 0 &&
-          thumbImage.getBoundingClientRect().bottom <= this.clientHeight &&
-          thumbImage.getBoundingClientRect().right <= this.clientWidth
+          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             // if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
@@ -2263,9 +2255,7 @@ export class HomePage implements OnInit {
         if (
           id != '' &&
           thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().left >= 0 &&
-          thumbImage.getBoundingClientRect().bottom <= this.clientHeight &&
-          thumbImage.getBoundingClientRect().right <= this.clientWidth
+          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
         ) {
           if (isload === "") {
             //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
@@ -2391,9 +2381,7 @@ export class HomePage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -2414,9 +2402,7 @@ export class HomePage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];

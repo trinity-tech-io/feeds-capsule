@@ -779,9 +779,7 @@ export class ChannelsPage implements OnInit {
       if (
         id != '' &&
         postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().left >= 0 &&
-        postImage.getBoundingClientRect().bottom <= this.clientHeight &&
-        postImage.getBoundingClientRect().right <= this.clientWidth
+        postImage.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -873,9 +871,7 @@ export class ChannelsPage implements OnInit {
       if (
         id != '' &&
         video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().left >= 0 &&
-        video.getBoundingClientRect().bottom <= this.clientHeight &&
-        video.getBoundingClientRect().right <= this.clientWidth
+        video.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -1388,9 +1384,7 @@ export class ChannelsPage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -1411,9 +1405,7 @@ export class ChannelsPage implements OnInit {
       if (
         id != '' &&
         postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().left >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight &&
-        postgrid.getBoundingClientRect().right <= this.clientWidth
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
