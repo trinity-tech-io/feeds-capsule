@@ -10,6 +10,8 @@ export class FeedsSqliteHelper {
   private readonly TABLE_CHANNEL: string = 'channeltest';
   private readonly TABLE_COMMENT: string = 'commenttest';
   private readonly TABLE_LIKE: string = 'liketest';
+  private readonly TABLE_SUBSCRIPTION_CHANNEL: string = 'subscriptionchanneltest';
+  private readonly TABLE_SUBSCRIPTION: string = 'subscriptiontest';
 
   private readonly LIMIT: number = 2;
 
@@ -80,6 +82,8 @@ export class FeedsSqliteHelper {
       try {
         await this.cretePostTable();
         await this.createChannelTable();
+        await this.createSubscriptionChannelTable();
+        await this.createSubscriptionTable();
         await this.createCommentTable();
         await this.createLikeTable();
 
@@ -302,6 +306,159 @@ export class FeedsSqliteHelper {
     });
   }
 
+  // subscription channel 本地存储使用
+  private createSubscriptionChannelTable(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table ' + this.TABLE_SUBSCRIPTION_CHANNEL
+          + '('
+          + 'dest_did VARCHAR(64), channel_id VARCHAR(64)'
+          + ')';
+        const result = await this.executeSql(statement);
+        console.log('Create subscription table-------------------', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create subscriptionChannel table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscriptionV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION_CHANNEL
+          + '(dest_did, channel_id) VALUES'
+          + '(?,?)';
+
+        const params = [subscribedChannelV3.destDid, subscribedChannelV3.channelId];
+
+        const result = await this.executeSql(statement, params);
+        Logger.log(TAG, 'Insert subscription Data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Insert subscriptionChannel table date error', error);
+        reject(error);
+      }
+    });
+  }
+
+  querySubscriptionChannelList(): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
+        const result = await this.executeSql(statement);
+        const subscribedChannelList = this.parseSubscriptionChannelData(result);
+        resolve(subscribedChannelList);
+      } catch (error) {
+        Logger.error(TAG, 'query subscriptionChannel Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  querySubscriptionChannelDataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE dest_did=? & channel_id=?';
+        const params = [destDid, channelId];
+        const result = await this.executeSql(statement, params);
+        const subscriptionChannelList = this.parseSubscriptionChannelData(result);
+
+        console.log('queryData-------------------', subscriptionChannelList);
+        resolve(subscriptionChannelList);
+      } catch (error) {
+        Logger.error(TAG, 'query subscriptionChannel Data By ID  error', error);
+        reject(error);
+      }
+    });
+  }
+
+  removeSubscriptionChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const statement = 'DELETE * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE dest_did=? & channel_id=?'
+      const params = [subscribedChannelV3.destDid, subscribedChannelV3.channelId];
+      const result = await this.executeSql(statement, params);
+    });
+  }
+
+  // SubscriptionV3
+  private createSubscriptionTable(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table ' + this.TABLE_SUBSCRIPTION
+          + '('
+          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), user_did VARCHAR(64), created_at VARCHAR(64), display_name VARCHAR(64)'
+          + ')';
+
+        const result = await this.executeSql(statement);
+        console.log('Create subscription table-------------------', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create subscription table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION
+          + '(dest_did, channel_id, user_did, created_at, display_name) VALUES'
+          + '(?,?,?,?,?)';
+
+        const params = [subscriptionV3.destDid, subscriptionV3.channelId, subscriptionV3.userDid, subscriptionV3.createdAt, subscriptionV3.displayName];
+
+        const result = await this.executeSql(statement, params);
+        Logger.log(TAG, 'Insert subscription Data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Insert subscription table date error', error);
+        reject(error);
+      }
+    });
+  }
+
+  querySubscriptionList(): Promise<FeedsData.SubscriptionV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION;
+        const result = await this.executeSql(statement);
+        const subscriptionList = this.parseSubscriptionData(result);
+        resolve(subscriptionList);
+      } catch (error) {
+        Logger.error(TAG, 'query subscription Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  querySubscriptionDataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE dest_did=? & channel_id=?';
+        const params = [destDid, channelId];
+        const result = await this.executeSql(statement, params);
+        const subscriptionList = this.parseSubscriptionData(result);
+
+        console.log('queryData-------------------', subscriptionList);
+        resolve(subscriptionList);
+      } catch (error) {
+        Logger.error(TAG, 'query subscription Data By ID  error', error);
+        reject(error);
+      }
+    });
+  }
+
+  removeSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const statement = 'DELETE * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE dest_did=? & channel_id=?'
+      const params = [subscriptionV3.destDid, subscriptionV3.channelId];
+      const result = await this.executeSql(statement, params);
+    });
+  }
+
   // comment
   private createCommentTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
@@ -344,7 +501,7 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
-          + ' SET content=? WHERE comment_id=?'; // 条件是否使用refcomment_id
+          + ' SET content=? WHERE comment_id=? & refcomment_id=?'; // 条件是否使用refcomment_id
         const params = [commentV3.destDid, commentV3.commentId, commentV3.channelId, commentV3.postId, commentV3.refcommentId, JSON.stringify(commentV3.content), commentV3.createdAt];
         + '(dest_did, comment_id, channel_id, post_id, refcomment_id, content, created_at) VALUES'
 
@@ -441,7 +598,9 @@ export class FeedsSqliteHelper {
 
   removeLike(likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
-
+      const statement = 'DELETE * FROM ' + this.TABLE_LIKE + ' WHERE dest_did=? & post_id=? & comment_id=? & channel_id=?'
+      const params = [likeV3.destDid, likeV3.postId, likeV3.commentId, likeV3.channelId];
+      const result = await this.executeSql(statement, params);
     });
   }
 
@@ -544,6 +703,28 @@ export class FeedsSqliteHelper {
       list.push(element);
     }
     Logger.log(TAG, 'Parse like list from sql, list is', list);
+    return list;
+  }
+
+  parseSubscriptionChannelData(result: any): FeedsData.SubscribedChannelV3[] {
+    Logger.log(TAG, 'Parse subscription channel result from sql, result is', result);
+    let list = [];
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      list.push(element);
+    }
+    Logger.log(TAG, 'Parse subscription channel list from sql, list is', list);
+    return list;
+  }
+
+  parseSubscriptionData(result: any): FeedsData.SubscriptionV3[] {
+    Logger.log(TAG, 'Parse subscription result from sql, result is', result);
+    let list = [];
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      list.push(element);
+    }
+    Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
   }
 }
