@@ -668,9 +668,9 @@ export class HiveVaultController {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
         const channelsResult = await this.hiveVaultApi.querySelfChannels();
-        Logger.log('Query self channels result', channelsResult);
+        Logger.log(TAG, 'Query self channels result', channelsResult);
         if (channelsResult) {
-          const parseResult = HiveVaultResultParse.parseChannelResult(channelsResult, did);
+          const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
           console.log('parseResult', parseResult);
           await this.dataHelper.updateChannelsV3(parseResult);
           resolve(parseResult);
@@ -921,17 +921,18 @@ export class HiveVaultController {
     });
   }
 
-  deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ commentId: string }> {
-    Logger.log(TAG, "deleteComment", targetDid, channelId, postId, commentId);
+  deleteComment(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
+    Logger.log(TAG, "Delete comment", comment);
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.deleteComment(targetDid, channelId, postId, commentId);
+        const result = await this.hiveVaultApi.deleteComment(comment.destDid, comment.channelId, comment.postId, comment.commentId);
         Logger.log(TAG, "Delete comment result", result);
 
         if (result) {
-          this.dataHelper.deleteCommentV3(commentId);
-          resolve({ commentId: commentId });
+          await this.dataHelper.deleteCommentV3(comment);
+          resolve(comment);
         } else {
+          Logger.error(TAG, 'Delete comment data error');
           reject('Delete comment error');
         }
       } catch (error) {

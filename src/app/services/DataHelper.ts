@@ -3261,8 +3261,16 @@ export class DataHelper {
     });
   }
 
-  async updateCommentV3(comment: FeedsData.CommentV3) {
-    await this.sqliteHelper.updateCommentData(comment)
+  updateCommentV3(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.sqliteHelper.updateCommentData(comment)
+        resolve(comment);
+      } catch (error) {
+        Logger.error(TAG, 'Update comment error', error);
+        reject(error);
+      }
+    });
   }
 
   updateCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
@@ -3332,11 +3340,11 @@ export class DataHelper {
     });
   }
 
-  deleteCommentV3(commentId: string): Promise<any> {
+  deleteCommentV3(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = this.sqliteHelper.deleteCommentData(commentId);
-        resolve(result);
+        const result = await this.updateCommentV3(comment);
+        resolve(comment);
       } catch (error) {
         Logger.error(TAG, 'Query comment num error', error);
         reject(error);

@@ -28,6 +28,7 @@ import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 
 let TAG: string = 'app-component';
 
@@ -89,6 +90,7 @@ export class MyApp {
     private keyboard: Keyboard,
     private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
+    private sqliteHelper: FeedsSqliteHelper
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -130,6 +132,7 @@ export class MyApp {
   initializeApp() {
     this.platform.ready()
       .then(async () => {
+        this.sqliteHelper.createTables();
         return await this.dataHelper.loadApiProvider();
       })
       .then(async (api) => {
@@ -149,19 +152,19 @@ export class MyApp {
 
         this.platform.backButton.subscribeWithPriority(99999, async () => {
           this.backButtoncount++;
-          if(this.backButtoncount === 2){
+          if (this.backButtoncount === 2) {
             this.backButtoncount = 0;
 
             //ess登陆框
-            let sveltekqf8ju = document.getElementsByClassName("svelte-kqf8ju")|| [];
-            if(sveltekqf8ju.length > 0){
+            let sveltekqf8ju = document.getElementsByClassName("svelte-kqf8ju") || [];
+            if (sveltekqf8ju.length > 0) {
               sveltekqf8ju[0].click();
               return;
             }
 
             //nft loading
-            let nftloading:HTMLElement = document.querySelector("app-nftloading")|| null;
-            if(nftloading != null){
+            let nftloading: HTMLElement = document.querySelector("app-nftloading") || null;
+            if (nftloading != null) {
               return;
             }
 
@@ -170,37 +173,37 @@ export class MyApp {
               return;
             }
 
-          //评论框
-          let comment:HTMLElement = document.querySelector("app-comment")|| null;
-          if(comment != null){
-            let commentMask:HTMLElement = document.getElementById("commentMask") || null;
-           if(commentMask != null){
-            commentMask.click();
-           }
-            return;
-           }
-         //频道选择框 app-switchfeed
-         let switchfeed:HTMLElement = document.querySelector("app-switchfeed")|| null;
-         if(switchfeed != null){
-           let switchfeedMask:HTMLElement = document.getElementById("switchfeedMask") || null;
-          if(switchfeedMask != null){
-            switchfeedMask.click();
-          }
-           return;
-          }
+            //评论框
+            let comment: HTMLElement = document.querySelector("app-comment") || null;
+            if (comment != null) {
+              let commentMask: HTMLElement = document.getElementById("commentMask") || null;
+              if (commentMask != null) {
+                commentMask.click();
+              }
+              return;
+            }
+            //频道选择框 app-switchfeed
+            let switchfeed: HTMLElement = document.querySelector("app-switchfeed") || null;
+            if (switchfeed != null) {
+              let switchfeedMask: HTMLElement = document.getElementById("switchfeedMask") || null;
+              if (switchfeedMask != null) {
+                switchfeedMask.click();
+              }
+              return;
+            }
 
-          //分享菜单了 app-sharemenu
-          let sharemenu:HTMLElement = document.querySelector("app-sharemenu") || null;
-          if(sharemenu != null){
-            let sharemenuMask:HTMLElement = document.getElementById("sharemenuMask") || null;
-           if(sharemenuMask!= null){
-            sharemenuMask.click();
-            sharemenu.remove();
-           }
-            return;
-           }
+            //分享菜单了 app-sharemenu
+            let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
+            if (sharemenu != null) {
+              let sharemenuMask: HTMLElement = document.getElementById("sharemenuMask") || null;
+              if (sharemenuMask != null) {
+                sharemenuMask.click();
+                sharemenu.remove();
+              }
+              return;
+            }
 
-           const menu = await this.menuController.getOpen();
+            const menu = await this.menuController.getOpen();
             if (menu) {
               await this.menuController.close();
               return;
@@ -218,7 +221,7 @@ export class MyApp {
             }
             const modal = await this.modalController.getTop();
             if (modal) {
-             await modal.dismiss();
+              await modal.dismiss();
               return;
             }
             this.appService.handleBack();

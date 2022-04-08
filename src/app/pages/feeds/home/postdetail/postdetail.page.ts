@@ -368,7 +368,7 @@ export class PostdetailPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       try {
         this.hiveVaultController
-          .deleteComment(comment.destDid, comment.channelId, comment.postId, comment.commentId)
+          .deleteComment(comment)
           .then(async (result: any) => {
             this.startIndex = 0;
             await this.initData(false);

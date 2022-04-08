@@ -55,7 +55,7 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'Exec sql statement is ', statement);
         Logger.log(TAG, 'Exec sql params is ', params);
         db = await this.getSqliteObj();
-        await db.open();
+        // await db.open();
         const result = await db.executeSql(statement, params);
         if (result) {
           resolve(result);
@@ -67,17 +67,17 @@ export class FeedsSqliteHelper {
         Logger.error(TAG, 'Excutesql error', error);
         reject(error);
       } finally {
-        try {
-          if (db) {
-            // await db.close();
-          }
-        } catch (error) {
-        }
+        // try {
+        //   if (db) {
+        //     await db.close();
+        //   }
+        // } catch (error) {
+        // }
       }
     });
   }
 
-  createTables(): Promise<any> {
+  createTables(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.cretePostTable();
@@ -248,8 +248,8 @@ export class FeedsSqliteHelper {
         const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
           + '(dest_did, channel_id, channel_name, intro, created_at, updated_at, avatar_address, tipping_address, type, proof, nft, memo, category) VALUES'
           + '(?,?,?,?,?,?,?,?,?,?,?,?,?)';
-          
-          const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
+
+        const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
           , JSON.stringify(channelV3.avatar), channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category];
 
         const result = await this.executeSql(statement, params);
@@ -485,7 +485,7 @@ export class FeedsSqliteHelper {
       }
     });
   }
-  
+
   querySubscriptionNumByChannelId(channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -552,7 +552,7 @@ export class FeedsSqliteHelper {
         const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
           + '(dest_did, comment_id, channel_id, post_id, refcomment_id, content, status, created_at, updated_at, proof, memo, creater_did) VALUES'
           + '(?,?,?,?,?,?,?,?,?,?,?,?)';
-  
+
         const params = [commentV3.destDid, commentV3.commentId, commentV3.channelId, commentV3.postId, commentV3.refcommentId, JSON.stringify(commentV3.content)
           , commentV3.status, commentV3.createdAt, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.createrDid];
 
@@ -566,7 +566,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateCommentData(commentV3: FeedsData.CommentV3) {
+  updateCommentData(commentV3: FeedsData.CommentV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
