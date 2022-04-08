@@ -69,7 +69,7 @@ export class FeedsSqliteHelper {
       } finally {
         try {
           if (db) {
-            await db.close();
+            // await db.close();
           }
         } catch (error) {
         }
@@ -99,7 +99,7 @@ export class FeedsSqliteHelper {
   private cretePostTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table ' + this.TABLE_POST
+        const statement = 'create table if not exists ' + this.TABLE_POST
           + '('
           + 'post_id VARCHAR(64), dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
           + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT'
@@ -227,7 +227,7 @@ export class FeedsSqliteHelper {
   private createChannelTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table ' + this.TABLE_CHANNEL
+        const statement = 'create table if not exists ' + this.TABLE_CHANNEL
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64), channel_name VARCHAR(64), intro TEXT, created_at REAL(64), updated_at REAL(64),'
           + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT'
@@ -316,7 +316,7 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
-          + ' SET channel_name=?, intro=?, created_at=?, updated_at=?, avatarAddress=?, tippingAddress=?, type=?, proof=?, nft=?, memo=?, category=? WHERE channel_id=?';
+          + ' SET channel_name=?, intro=?, created_at=?, updated_at=?, avatar_address=?, tipping_address=?, type=?, proof=?, nft=?, memo=?, category=? WHERE channel_id=?';
         const params = [channelV3.name, JSON.stringify(channelV3.intro), channelV3.createdAt, channelV3.updatedAt, channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, channelV3.channelId];
 
         const result = await this.executeSql(statement, params);
@@ -343,7 +343,7 @@ export class FeedsSqliteHelper {
   private createSubscribedChannelTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table ' + this.TABLE_SUBSCRIPTION_CHANNEL
+        const statement = 'create table if not exists ' + this.TABLE_SUBSCRIPTION_CHANNEL
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64)'
           + ')';
@@ -421,7 +421,7 @@ export class FeedsSqliteHelper {
   private createSubscriptionTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table ' + this.TABLE_SUBSCRIPTION
+        const statement = 'create table if not exists ' + this.TABLE_SUBSCRIPTION
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64), user_did VARCHAR(64), created_at VARCHAR(64), display_name VARCHAR(64)'
           + ')';
@@ -532,7 +532,7 @@ export class FeedsSqliteHelper {
   private createCommentTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table ' + this.TABLE_COMMENT
+        const statement = 'create table if not exists ' + this.TABLE_COMMENT
           + '('
           + 'dest_did VARCHAR(64), comment_id VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, created_at REAL(64)'
           + ')';
@@ -665,7 +665,7 @@ export class FeedsSqliteHelper {
   private createLikeTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table ' + this.TABLE_LIKE
+        const statement = 'create table if not exists ' + this.TABLE_LIKE
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT'
           + ')';

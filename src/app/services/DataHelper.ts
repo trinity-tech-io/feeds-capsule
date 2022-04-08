@@ -2857,6 +2857,9 @@ export class DataHelper {
     return this.publishedActivePanelList;
   }
 
+  async createTables() {
+    return await this.sqliteHelper.createTables()
+  }
   //// New data type
   // subscribedChannelV3 本地存储订阅列表
   async addSubscribedChannelV3(destDid: string, channelId: string) {
@@ -2864,8 +2867,7 @@ export class DataHelper {
       destDid: destDid,
       channelId: channelId
     }
-
-    await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel)
+    return await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel)
     // this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChannel
     // await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
   }
@@ -3027,7 +3029,7 @@ export class DataHelper {
 
   //ChannelV3
   async addChannelV3(channel: FeedsData.ChannelV3) {
-    await this.sqliteHelper.insertChannelData(channel)
+    return await this.sqliteHelper.insertChannelData(channel)
   }
 
   addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
@@ -3051,7 +3053,7 @@ export class DataHelper {
 
   async updateChannelV3(channel: FeedsData.ChannelV3) {
     // update 的时候更新updateTime
-    await this.sqliteHelper.updateChannelData(channel)
+    return await this.sqliteHelper.updateChannelData(channel)
   }
 
   updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
