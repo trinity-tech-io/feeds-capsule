@@ -18,7 +18,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import  _ from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
@@ -59,6 +59,8 @@ export class EditPostPage implements OnInit {
   public fullScreenmodal: any = '';
   private postData: FeedsData.PostV3 = null;
   public mediaType: FeedsData.MediaType;
+  private originPostData: FeedsData.PostV3 = null;
+
   constructor(
     private events: Events,
     private native: NativeService,
@@ -204,8 +206,8 @@ export class EditPostPage implements OnInit {
       return false;
     }
 
-   await this.native.showLoading('common.waitMoment');
-   this.updatePost();
+    await this.native.showLoading('common.waitMoment');
+    this.updatePost();
 
   }
   //todo
@@ -239,28 +241,29 @@ export class EditPostPage implements OnInit {
     let thumbnailKey = elements.thumbnailPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName:string = "thumbnail-"+thumbnailKey.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid,thumbnailKey,fileName,type)
-    .then((cacheResult)=>{
-      let thumbImage = cacheResult || "";
-      if(thumbImage != ""){
-        this.imgUrl  = thumbImage;
-      }
-    }).catch(()=>{
-    })
+    let fileName: string = "thumbnail-" + thumbnailKey.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
+      .then((cacheResult) => {
+        let thumbImage = cacheResult || "";
+        if (thumbImage != "") {
+          this.imgUrl = thumbImage;
+        }
+      }).catch(() => {
+      })
   }
 
 
   async initData() {
-    let channel :any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
+    let channel: any = await this.feedService.getChannelFromIdV3(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';
-    if(channelAvatarUri != ''){
-        this.handleChannelAvatar(channelAvatarUri);
+    if (channelAvatarUri != '') {
+      this.handleChannelAvatar(channelAvatarUri);
     }
-    let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId);
+    let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId);
     this.postData = post;
+    this.originPostData = _.cloneDeep(this.postData);
     this.mediaType = post.content.mediaType;
 
     if (this.mediaType === FeedsData.MediaType.containsImg) {
@@ -270,7 +273,7 @@ export class EditPostPage implements OnInit {
 
     if (this.mediaType === FeedsData.MediaType.containsVideo) {
       this.isShowVideo = true;
-      this.duration =  post.content.mediaData[0].duration;
+      this.duration = post.content.mediaData[0].duration;
       this.initVideo(post);
     }
 
@@ -279,13 +282,13 @@ export class EditPostPage implements OnInit {
 
   }
 
-  handleChannelAvatar(channelAvatarUri: string){
-    let fileName:string = "channel-avatar-"+channelAvatarUri.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid,channelAvatarUri,fileName,"0")
-    .then((result)=>{
+  handleChannelAvatar(channelAvatarUri: string) {
+    let fileName: string = "channel-avatar-" + channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
+      .then((result) => {
         this.channelAvatar = result;
-    }).catch((err)=>{
-    })
+      }).catch((err) => {
+      })
   }
 
 
@@ -296,27 +299,27 @@ export class EditPostPage implements OnInit {
     let thumbnailKey = elements.thumbnailPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName:string = "poster-"+thumbnailKey.split("@")[0];
+    let fileName: string = "poster-" + thumbnailKey.split("@")[0];
 
     this.hiveVaultController
-    .getV3Data(this.destDid, thumbnailKey, fileName, type)
-    .then((idata: string) => {
-      let imgageData: string = idata || '';
-      if (imgageData != '') {
-        this.zone.run(() => {
-          this.isShowVideo = true;
-          this.posterImg = imgageData;
-          let id = this.destDid + this.channelId + this.postId;
-          let sid = setTimeout(() => {
-            let video = document.getElementById(id + 'videoeditpost');
-            video.setAttribute('poster', imgageData);
-            this.setFullScreen(id);
-            this.setOverPlay(id);
-            clearTimeout(sid);
-          }, 0);
-        });
-      }
-    });
+      .getV3Data(this.destDid, thumbnailKey, fileName, type)
+      .then((idata: string) => {
+        let imgageData: string = idata || '';
+        if (imgageData != '') {
+          this.zone.run(() => {
+            this.isShowVideo = true;
+            this.posterImg = imgageData;
+            let id = this.destDid + this.channelId + this.postId;
+            let sid = setTimeout(() => {
+              let video = document.getElementById(id + 'videoeditpost');
+              video.setAttribute('poster', imgageData);
+              this.setFullScreen(id);
+              this.setOverPlay(id);
+              clearTimeout(sid);
+            }, 0);
+          });
+        }
+      });
   }
 
   setFullScreen(id: string) {
@@ -356,7 +359,7 @@ export class EditPostPage implements OnInit {
             document.getElementById(id + 'sourceeditpost') || '';
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
-              this.getVideo();
+            this.getVideo();
           }
         });
       };
@@ -370,17 +373,17 @@ export class EditPostPage implements OnInit {
     let originKey = elements.originMediaPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName:string = "origin-"+originKey.split("@")[0];
+    let fileName: string = "origin-" + originKey.split("@")[0];
 
     this.hiveVaultController
       .getV3Data(this.destDid, originKey, fileName, type)
-    .then((videodata: string) => {
-      this.zone.run(() => {
-        let videoData = videodata || '';
-        this.flieUri = videoData;
-        this.loadVideo(videoData);
+      .then((videodata: string) => {
+        this.zone.run(() => {
+          let videoData = videodata || '';
+          this.flieUri = videoData;
+          this.loadVideo(videoData);
+        });
       });
-    });
   }
 
   loadVideo(videoData: string) {
@@ -418,29 +421,27 @@ export class EditPostPage implements OnInit {
     video.load();
   }
 
-
   updatePost() {
     try {
       let content = _.cloneDeep(this.postData.content);
       content.content = this.editContent;
       this.hiveVaultController.updatePost(
-        this.postId,this.channelId,
+        this.originPostData,
+        content,
         "public",
         TAG,
-        JSON.stringify(content),
-        FeedsData.PostCommentStatus.edited
-        ).then((result)=>{
-          this.zone.run(async () => {
-            await this.hiveVaultController.getHomePostContent();
-            this.events.publish(FeedsEvent.PublishType.updateTab);
-            this.events.publish(FeedsEvent.PublishType.editPostFinish);
-            this.native.hideLoading();
-            this.native.pop();
-          });
-        }).catch((err)=>{
-         this.pauseVideo();
-         this.native.hideLoading();
+      ).then((result) => {
+        this.zone.run(async () => {
+          await this.hiveVaultController.getHomePostContent();
+          this.events.publish(FeedsEvent.PublishType.updateTab);
+          this.events.publish(FeedsEvent.PublishType.editPostFinish);
+          this.native.hideLoading();
+          this.native.pop();
         });
+      }).catch((err) => {
+        this.pauseVideo();
+        this.native.hideLoading();
+      });
     } catch (error) {
       this.pauseVideo();
       this.native.hideLoading();

@@ -45,7 +45,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
   }
 
-  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
+  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: FeedsData.postContentV3, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
     return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
   }
 

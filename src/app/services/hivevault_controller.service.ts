@@ -357,12 +357,31 @@ export class HiveVaultController {
     });
   }
 
-  public updatePost(postId: string, channelId: string, newType: string = 'public', newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<any> {
+  public updatePost(originPost: FeedsData.PostV3, newContent: FeedsData.postContentV3, newType: string = 'public', newTag: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const newUpdateAt = UtilService.getCurrentTimeNum();
-        const result = await this.hiveVaultApi.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof)
-        resolve(result)
+        const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, newUpdateAt, newMemo, newProof);
+        if (result) {
+          let postV3: FeedsData.PostV3 = {
+            destDid: originPost.destDid,
+            postId: originPost.postId,
+            channelId: originPost.channelId,
+            createdAt: originPost.createdAt,
+            updatedAt: newUpdateAt,
+            content: newContent,
+            status: newStatus,
+            type: newType,
+            tag: newTag,
+            proof: newProof,
+            memo: newMemo
+          };
+
+          await this.dataHelper.updatePostV3(postV3);
+          resolve(postV3);
+        } else {
+          resolve(null);
+        }
       } catch (error) {
         Logger.error(TAG, 'Update post error', error);
         reject(error);
