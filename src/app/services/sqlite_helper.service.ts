@@ -91,7 +91,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-// Post
+  // Post
   private cretePostTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -192,7 +192,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deletePostData(postId: string) {
+  deletePostData(channelId: string, postId: string) {
 
   }
 

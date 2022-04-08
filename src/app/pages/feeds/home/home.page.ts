@@ -311,7 +311,7 @@ export class HomePage implements OnInit {
 
     switch (this.tabType) {
       case 'feeds':
-        if(this.isInitPostList){
+        if (this.isInitPostList) {
           this.refreshPostList();
         }
         break;
@@ -504,7 +504,7 @@ export class HomePage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          this.hiveVaultController.deletePost(post.postId, post.channelId).then(async (result: any) => {
+          this.hiveVaultController.deletePost(post.channelId, post.postId).then(async (result: any) => {
             await this.hiveVaultController.getHomePostContent();
             this.refreshPostList("unHomePostContent");
             this.native.hideLoading();
@@ -978,8 +978,8 @@ export class HomePage implements OnInit {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
 
     // if (this.checkServerStatus(destDid) != 0) {
@@ -1743,8 +1743,8 @@ export class HomePage implements OnInit {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
 
     let channel: FeedsData.ChannelV3 = await this.feedService.getChannelFromIdV3(destDid, channelId) || null;

@@ -818,18 +818,22 @@ export class HiveVaultController {
 
   }
 
-  deletePost(postId: string, channelId: string): Promise<any> {
+  deletePost(channelId: string, postId: string): Promise<{ channelId: string, postId: string }> {
     Logger.log(TAG, "deletePost", postId, channelId);
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.deletePost(postId, channelId);;
-        Logger.log(TAG, "deletePost result", result);
-        resolve(result);
-        //TODO
+
+        if (result) {
+          this.dataHelper.deletePostV3(channelId, postId);
+          resolve({ channelId: channelId, postId: postId });
+        } else {
+          reject('Delete post error');
+        }
+
       } catch (error) {
         Logger.error(TAG, 'deletePost data error', error);
-        reject('');
-
+        reject(error);
       }
     });
   }

@@ -3150,6 +3150,12 @@ export class DataHelper {
     });
   }
 
+  deletePostV3(channelId: string, postId: string) {
+    return new Promise(async (resolve, reject) => {
+      this.sqliteHelper.deletePostData(channelId, postId);
+    });
+  }
+
   getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
