@@ -32,26 +32,8 @@ export class AppService {
   }
 
   handleBack() {
-    let isFirstBindFeedService =
-      localStorage.getItem('org.elastos.dapp.feeds.isFirstBindFeedService') ||
-      '';
-    let bindingServer = this.feedService.getBindingServer() || null;
-    if (
-      (this.router.url.indexOf('/bindservice/scanqrcode') > -1 &&
-        isFirstBindFeedService === '' &&
-        bindingServer === null) ||
-      (this.router.url.indexOf('/bindservice/learnpublisheraccount') > -1 &&
-        isFirstBindFeedService === '' &&
-        bindingServer === null) ||
-      (this.router.url.indexOf('/bindservice/startbinding') > -1 &&
-        isFirstBindFeedService === '' &&
-        bindingServer === null) ||
-      this.router.url.indexOf('/bindservice/importdid') > -1 ||
-      this.router.url.indexOf('/bindservice/publishdid') > -1 ||
-      this.router.url.indexOf('/bindservice/issuecredential') > -1
-    ) {
-      this.createDialog();
-    } else if (this.router.url === "/tabs/search" || this.router.url === "/tabs/profile") {
+
+    if (this.router.url === "/tabs/search" || this.router.url === "/tabs/profile") {
       navigator['app'].exitApp();
     } else if (this.router.url === "/tabs/home" ||
       this.router.url === "/tabs/notification" ||

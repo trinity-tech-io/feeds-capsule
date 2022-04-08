@@ -81,17 +81,6 @@ export class SigninPage implements OnInit {
     });
     this.feedService.signIn().then(isSuccess => {
       if (isSuccess) {
-        //add first bind FeedService logic
-        this.native.hideLoading();
-        let isFirstBindFeedService =
-          localStorage.getItem(
-            'org.elastos.dapp.feeds.isFirstBindFeedService',
-          ) || '';
-        let bindingServer = this.feedService.getBindingServer() || null;
-        if (isFirstBindFeedService === '' && bindingServer === null) {
-          this.native.navigateForward('bindservice/learnpublisheraccount', {});
-          return;
-        }
         this.native.setRootRouter('/tabs/home');
         return;
       }
