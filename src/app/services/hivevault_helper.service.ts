@@ -351,7 +351,7 @@ export class HiveVaultHelper {
     /** update post end */
 
     /** delete post , Not use now */
-    private deleteDataFromPostDB(postId: string, channelId: string, updatedAt: number): Promise<any> {
+    private deleteDataFromPostDB(postId: string, channelId: string, updatedAt: number): Promise<{ updatedAt: number, status: number }> {
         return new Promise(async (resolve, reject) => {
             const doc =
             {
@@ -364,7 +364,7 @@ export class HiveVaultHelper {
             try {
                 const result = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
                 Logger.log(TAG, 'Delete post result', result);
-                resolve(result);
+                resolve({ updatedAt: updatedAt, status: FeedsData.PostCommentStatus.deleted });
             } catch (error) {
                 Logger.error(TAG, 'Delete data from postDB error', error);
                 reject(error);
@@ -373,7 +373,7 @@ export class HiveVaultHelper {
     }
 
     /** delete post start */
-    private deletePostData(postId: string, channelId: string): Promise<any> {
+    private deletePostData(postId: string, channelId: string): Promise<{ updatedAt: number, status: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const updatedAt = UtilService.getCurrentTimeNum();
@@ -388,7 +388,7 @@ export class HiveVaultHelper {
         });
     }
 
-    deletePost(postId: string, channelId: string): Promise<any> {
+    deletePost(postId: string, channelId: string): Promise<{ updatedAt: number, status: number }> {
         return this.deletePostData(postId, channelId);
     }
     /** delete post end */

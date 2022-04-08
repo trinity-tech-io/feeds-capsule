@@ -339,12 +339,12 @@ export class PostdetailPage implements OnInit {
       this.initData(true);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: any) => {
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: FeedsData.PostV3) => {
       Logger.log(TAG, 'Received deletePostFinish event');
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          this.hiveVaultController.deletePost(post.channelId, post.postId).then(async (result: any) => {
+          this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.hiveVaultController.getHomePostContent();
             await this.initData(true);
             this.native.hideLoading();

@@ -49,7 +49,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
   }
 
-  deletePost(postId: string, channelId: string) {
+  deletePost(postId: string, channelId: string): Promise<{ updatedAt: number, status: number }> {
     return this.hiveVaultHelper.deletePost(postId, channelId);
   }
 

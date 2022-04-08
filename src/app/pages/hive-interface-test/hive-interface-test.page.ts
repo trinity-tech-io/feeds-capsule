@@ -103,7 +103,7 @@ export class HiveInterfaceTestPage implements OnInit {
     //TODO
     // this.hiveVaultApi.deletePost('');
     // alert('deletePost');
-    this.hiveVaultController.deletePost('channelId01', '90d7fa220d1e2e97be2b1c7cc00fc0563f953a39ea25ef40d9ae8f40af23cd36');
+    // this.hiveVaultController.deletePost('channelId01', '90d7fa220d1e2e97be2b1c7cc00fc0563f953a39ea25ef40d9ae8f40af23cd36');
   }
 
   queryPostByChannelId() {

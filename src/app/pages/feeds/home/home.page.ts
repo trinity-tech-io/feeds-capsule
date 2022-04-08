@@ -200,8 +200,8 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
-   this.hiveVaultController.getHomePostContent();
-   this.dataHelper.loadChannelV3Map();
+    this.hiveVaultController.getHomePostContent();
+    this.dataHelper.loadChannelV3Map();
   }
 
   async initPostListData(scrollToTop: boolean, homePostContent?: string) {
@@ -311,7 +311,7 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         //if (this.isInitPostList) {
-          this.refreshPostList();
+        this.refreshPostList();
         //}
         break;
       case 'pasar':
@@ -494,16 +494,16 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
       Logger.log(TAG, "======= Receive editPostFinish ========")
       this.zone.run(() => {
-          this.refreshPostList();
+        this.refreshPostList();
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: any) => {
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: FeedsData.PostV3) => {
       Logger.log(TAG, "=======Receive  deletePostFinish========")
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          this.hiveVaultController.deletePost(post.channelId, post.postId).then(async (result: any) => {
+          this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.hiveVaultController.getHomePostContent();
             this.refreshPostList("unHomePostContent");
             this.native.hideLoading();
@@ -817,7 +817,7 @@ export class HomePage implements OnInit {
 
     const key = UtilService.getKey(destDid, channelId);
     let channel = this.dataHelper.channelsMapV3[key] || null;
-    if(channel === null){
+    if (channel === null) {
       return '';
     }
     return channel.name;
@@ -1061,7 +1061,7 @@ export class HomePage implements OnInit {
           let destDid: string = arr[0];
           let channelId: string = arr[1];
 
-          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid,channelId) || null;
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
 
           let avatarUri = "";
           if (channel != null) {
@@ -1245,7 +1245,7 @@ export class HomePage implements OnInit {
             return;
           }
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-          let fileOriginName: string =  imageKey.split("@")[0];
+          let fileOriginName: string = imageKey.split("@")[0];
           let fileThumbnaiName: string = thumbnailKey.split("@")[0];
 
           //原图
@@ -1534,7 +1534,7 @@ export class HomePage implements OnInit {
     let originKey = elements.originMediaPath;
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-    let fileName: string =  originKey.split("@")[0];
+    let fileName: string = originKey.split("@")[0];
     this.hiveVaultController
       .getV3Data(destDid, originKey, fileName, type, "false")
       .then((videoResult: string) => {

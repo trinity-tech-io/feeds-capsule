@@ -3109,6 +3109,16 @@ export class DataHelper {
     })
   }
 
+  getSelfChannelListV3(): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        resolve([])
+      } catch (error) {
+        reject(error)
+      }
+    });
+  }
+
   //postV3
   async addPostV3(post: FeedsData.PostV3) {
     await this.sqliteHelper.insertPostData(post)
@@ -3162,9 +3172,10 @@ export class DataHelper {
     });
   }
 
-  deletePostV3(channelId: string, postId: string) {
+  deletePostV3(posts: FeedsData.PostV3) {
     return new Promise(async (resolve, reject) => {
-      this.sqliteHelper.deletePostData(postId);
+      // this.sqliteHelper.deletePostData(postId);
+      this.updatePostV3(posts);
     });
   }
 
