@@ -423,7 +423,7 @@ export class HiveVaultController {
         const insertResult = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft, memo, category, proof)
         //add cache
         let fileName = avatarHiveURL.split('@')[0];
-        await this.fileHelperService.saveV3Data(fileName,avatarAddress);
+        await this.fileHelperService.saveV3Data(fileName, avatarAddress);
         //TODO add category、proof、memo
         let channelV3: FeedsData.ChannelV3 = {
           destDid: insertResult.destDid,
@@ -449,7 +449,7 @@ export class HiveVaultController {
     });
   }
 
-  async updateChannel(channelId: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', proof: string = '', category: string = '', memo: string = ''): Promise<string> {
+  async updateChannel(channelId: string, channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', proof: string = '', category: string = '', memo: string = ''): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
@@ -468,9 +468,9 @@ export class HiveVaultController {
 
         if (avatarAddress) {
           avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatarAddress);
-              //add cache
+          //add cache
           let fileName = avatarHiveURL.split('@')[0];
-          await this.fileHelperService.saveV3Data(fileName,avatarAddress);
+          await this.fileHelperService.saveV3Data(fileName, avatarAddress);
         } else {
           avatarHiveURL = originChannel.avatar;
         }
@@ -534,8 +534,13 @@ export class HiveVaultController {
           memo: finalMemo,
         }
 
-        await this.dataHelper.updateChannelV3(channelV3);
-        resolve('FINISH');
+        if (result) {
+          await this.dataHelper.updateChannelV3(channelV3);
+          resolve(channelV3);
+        } else {
+          reject('Update channel error');
+        }
+
       } catch (error) {
         Logger.error(TAG, 'Update channel error', error);
         reject(error)
@@ -543,15 +548,13 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<string> {
+  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<{ targetDid: string, channelId: string }> {
     return new Promise(async (resolve, reject) => {
       try {
-
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
-        await this.dataHelper.addSubscribedChannelV3(targetDid, channelId) // 存储这个
-
         if (result) {
-          resolve('SUCCESS');
+          this.dataHelper.addSubscribedChannelV3(targetDid, channelId);
+          resolve({ targetDid: targetDid, channelId: channelId });
         } else {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;
           Logger.error(TAG, errorMsg);
@@ -659,13 +662,15 @@ export class HiveVaultController {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
         const channelsResult = await this.hiveVaultApi.querySelfChannels();
-        console.log('channelsResult', channelsResult);
-        const parseResult = HiveVaultResultParse.parseChannelResult(channelsResult, did);
-        console.log('parseResult', parseResult);
-
-        await this.dataHelper.addChannelsV3(parseResult);
-
-        resolve(parseResult);
+        Logger.log('Query self channels result', channelsResult);
+        if (channelsResult) {
+          const parseResult = HiveVaultResultParse.parseChannelResult(channelsResult, did);
+          console.log('parseResult', parseResult);
+          await this.dataHelper.updateChannelsV3(parseResult);
+          resolve(parseResult);
+        } else {
+          reject('Sync self channels error');
+        }
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);
         reject(error);
@@ -678,13 +683,16 @@ export class HiveVaultController {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
         const postResult = await this.hiveVaultApi.querySelfPosts();
-        console.log('postResult', postResult);
-        const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+        Logger.log('Query self posts result', postResult);
 
-        await this.dataHelper.addPostsV3(parseResult);
-        console.log('parseResult', parseResult);
-
-        resolve(parseResult);
+        if (postResult) {
+          const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+          await this.dataHelper.updatePostsV3(parseResult);
+          console.log('parseResult', parseResult);
+          resolve(parseResult);
+        } else {
+          reject('Sync self posts error');
+        }
       } catch (error) {
         Logger.error(TAG, 'Sync self post', error);
         reject(error);
@@ -697,15 +705,18 @@ export class HiveVaultController {
       try {
         const did = (await this.dataHelper.getSigninData()).did;
         const postResult = await this.hiveVaultApi.querySelfPostsByChannel(channelId);
-        console.log('postResult', postResult);
-        const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+        Logger.log('Query self post result', postResult);
+        if (postResult) {
+          const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+          await this.dataHelper.addPostsV3(parseResult);
+          console.log('parseResult', parseResult);
+          resolve(parseResult);
+        } else {
+          reject('Sync self posts by channel error');
+        }
 
-        await this.dataHelper.addPostsV3(parseResult);
-        console.log('parseResult', parseResult);
-
-        resolve(parseResult);
       } catch (error) {
-        Logger.error(TAG, 'Sync self post', error);
+        Logger.error(TAG, 'Sync self post by channel', error);
         reject(error);
       }
     });
