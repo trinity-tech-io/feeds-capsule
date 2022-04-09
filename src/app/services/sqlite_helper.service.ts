@@ -250,7 +250,7 @@ export class FeedsSqliteHelper {
           + '(?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
         const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
-          , JSON.stringify(channelV3.avatar), channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category];
+          , channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'Insert channel Data result is', result);
