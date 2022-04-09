@@ -310,7 +310,7 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'query self channel with userDid result is', channelList);
         resolve(channelList);
       } catch (error) {
-        Logger.error(TAG, 'query Channel Data By ID  error', error);
+        Logger.error(TAG, 'query Channel Data with user error', error);
         reject(error);
       }
     });
