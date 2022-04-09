@@ -110,13 +110,11 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async initFeed() {
-    let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentChannel() ;
+    let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentChannel();
 
     if (currentFeed == null) {
-
-      //const item = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.MY_CHANNEL);
-      const item = await this.feedService.getHiveMyChannelList() || [];
-      currentFeed = await this.dataHelper.getChannelV3ById(item[0].destDid, item[0].channelId);
+      const selfChannelList = this.dataHelper.getSelfChannelListV3();
+      currentFeed = await this.dataHelper.getChannelV3ById(selfChannelList[0].destDid, selfChannelList[0].channelId);
       this.feedService.setCurrentChannel(currentFeed);
     }
 
@@ -142,7 +140,7 @@ export class CreatenewpostPage implements OnInit {
   async ionViewWillEnter() {
     this.imgUrl = this.feedService.getSelsectNftImage();
     this.feedService.setSelsectNftImage(this.imgUrl);
-    this.channelList = await this.feedService.getHiveMyChannelList() || [];
+    this.channelList = await this.dataHelper.getSelfChannelListV3() || [];
     this.initTitle();
 
     this.initFeed();
@@ -174,7 +172,7 @@ export class CreatenewpostPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.search);
     this.events.publish(FeedsEvent.PublishType.homeCommonEvents);//添加删除的home event与其它页面相同的页面
-    if(this.isUpdateHomePage){
+    if (this.isUpdateHomePage) {
       this.events.publish(FeedsEvent.PublishType.updateTab, true);
     }
   }
@@ -213,10 +211,10 @@ export class CreatenewpostPage implements OnInit {
         //show dialog
         this.isLoading = true;
         try {
-         await this.sendPost();
-         this.isLoading = false;
-            //dismiss dialog
-         this.backHome();
+          await this.sendPost();
+          this.isLoading = false;
+          //dismiss dialog
+          this.backHome();
         } catch (error) {
           this.isLoading = false;
           this.isPublishing = false;

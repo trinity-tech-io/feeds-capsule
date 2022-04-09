@@ -44,6 +44,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_DELETE_COMMENT = "script_delete_comment";
     public static readonly SCRIPT_QUERY_COMMENT_BY_POSTID = "script_query_comment_by_postid";
     public static readonly SCRIPT_QUERY_COMMENT_BY_COMMENTID = "script_query_comment_by_commentid";
+    public static readonly SCRIPT_QUERY_COMMENT_BY_CHANNELID = "script_query_comment_by_channelid";
 
     public static readonly SCRIPT_CREATE_LIKE = "script_add_like";
     public static readonly SCRIPT_REMOVE_LIKE = "script_remove_like";
@@ -81,6 +82,7 @@ export class HiveVaultHelper {
                 await this.registerQueryCommentByPostIdScripting();
                 await this.registerUpdateCommentScripting();
                 await this.registerDeleteCommentScripting();
+                await this.registerQueryCommentByChannelScripting();
 
                 // //like
                 await this.registerCreateLikeScripting();
@@ -732,7 +734,7 @@ export class HiveVaultHelper {
         let options = { "projection": { "_id": false }, "limit": 100 };
         const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
 
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
     }
 
     private callQueryCommentByChannel(targetDid: string, channelId: string): Promise<any> {
@@ -741,7 +743,7 @@ export class HiveVaultHelper {
                 const params = {
                     "channel_id": channelId
                 }
-                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, params);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, params);
                 console.log("Get comment from scripting by channel id , result is", result);
                 resolve(result);
             } catch (error) {

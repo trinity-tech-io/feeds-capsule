@@ -352,13 +352,7 @@ export class FeedService {
     if (bindingServer == null || bindingServer == undefined) return [];
     return this.dataHelper.getMyChannelList(bindingServer.nodeId);
   }
-  async getHiveMyChannelList() {
-    // let channlesKey = (await this.dataHelper.getSigninData()).did + HiveService.CHANNEL
-    // return this.dataHelper.getMyChannelList(channlesKey);
-    // TODO 需要加载我的channel
-    const userDid = (await this.dataHelper.getSigninData()).did
-    return await this.dataHelper.loadMyChannelV3List(userDid);
-  }
+
   getUnreadNumber(nodeChannelId: string): number {
     return this.dataHelper.getUnreadNumber(nodeChannelId);
   }

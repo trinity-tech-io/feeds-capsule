@@ -3091,8 +3091,7 @@ export class DataHelper {
   loadMyChannelV3List(userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const list = await this.sqliteHelper.queryMyChannel(userDid)
-        resolve(list)
+        //TODO
       } catch (error) {
         reject(error)
       }
@@ -3114,7 +3113,9 @@ export class DataHelper {
   getSelfChannelListV3(): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        resolve([])
+        const selfDid = (await this.getSigninData()).did;
+        const selfChannelList = await this.sqliteHelper.queryChannelWithDid(selfDid) || [];
+        resolve(selfChannelList);
       } catch (error) {
         reject(error)
       }

@@ -271,9 +271,13 @@ export class ProfilePage implements OnInit {
     console.log("ProfilePage")
   }
 
-  async initMyFeeds() {
-    // 频道
-    this.channels = await this.feedService.getHiveMyChannelList() || [];
+  async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
+    if (channels) {
+      this.channels = channels;
+    } else {
+      this.channels = await this.dataHelper.getSelfChannelListV3() || [];
+    }
+
     this.myFeedsSum = this.channels.length;
     let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
     this.followers = followedList.length;
@@ -343,24 +347,24 @@ export class ProfilePage implements OnInit {
     let userDid = signInData['did'] || '';
 
     let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List();
-    for(let item of subscribedChannel){
-        let destDid = item.destDid;
-        let channelId = item.channelId;
-        try {
-          let result =  await this.hiveVaultController.getLike(destDid,channelId);
-          let list = result.find_message.items || [];
-          if(list.length > 0){
-            for(let index = 0; index < list.length; index++){
-              let postId = list[index]['post_id'];
-              let commentId = list[index]['comment_id'];
-              let createrDid =  list[index]['creater_did'];
-              if(commentId === '0' && userDid === createrDid ){
-                let post = await this.dataHelper.getPostV3ById(destDid,postId);
-                likeList.push(post);
-              }
+    for (let item of subscribedChannel) {
+      let destDid = item.destDid;
+      let channelId = item.channelId;
+      try {
+        let result = await this.hiveVaultController.getLike(destDid, channelId);
+        let list = result.find_message.items || [];
+        if (list.length > 0) {
+          for (let index = 0; index < list.length; index++) {
+            let postId = list[index]['post_id'];
+            let commentId = list[index]['comment_id'];
+            let createrDid = list[index]['creater_did'];
+            if (commentId === '0' && userDid === createrDid) {
+              let post = await this.dataHelper.getPostV3ById(destDid, postId);
+              likeList.push(post);
             }
           }
-        } catch (error) {
+        }
+      } catch (error) {
 
       }
     }
@@ -768,9 +772,9 @@ export class ProfilePage implements OnInit {
     //this.updateWalletAddress(null);
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
-        let sId1 = setTimeout(() => {
-          this.hiveVaultController.syncSelfChannel();
-          this.initMyFeeds();
+        let sId1 = setTimeout(async () => {
+          const selfchannels = await this.hiveVaultController.syncSelfChannel();
+          await this.initMyFeeds(selfchannels);
           event.target.complete();
           clearTimeout(sId1);
         }, 500);
@@ -1252,7 +1256,7 @@ export class ProfilePage implements OnInit {
           let channelId: string = arr[1];
 
           const key = UtilService.getKey(destDid, channelId);
-          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid,channelId) || null;
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
           let avatarUri = "";
           if (channel != null) {
             avatarUri = channel.avatar;
@@ -1759,8 +1763,8 @@ export class ProfilePage implements OnInit {
       case 'unfollow':
         let connectStatus1 = this.dataHelper.getNetworkStatus();
         if (connectStatus1 === FeedsData.ConnState.disconnected) {
-        this.native.toastWarn('common.connectionError');
-        return;
+          this.native.toastWarn('common.connectionError');
+          return;
         }
         // if (this.checkServerStatus(destDid) != 0) {
         //   this.native.toastWarn('common.connectionError1');
@@ -1845,8 +1849,8 @@ export class ProfilePage implements OnInit {
       case 'preferences':
         let connectStatus = this.dataHelper.getNetworkStatus();
         if (connectStatus === FeedsData.ConnState.disconnected) {
-        this.native.toastWarn('common.connectionError');
-        return;
+          this.native.toastWarn('common.connectionError');
+          return;
         }
         this.clearData();
         this.native.navigateForward(['feedspreferences'], {
@@ -1902,10 +1906,10 @@ export class ProfilePage implements OnInit {
     let channelDesc = channel.intro;
     let channelSubscribes = 0;
     let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
-    if(feedAvatar.indexOf("@feeds/data/") > -1){
+    if (feedAvatar.indexOf("@feeds/data/") > -1) {
       // d30054aa1d08abfb41c7225eb61f18e4@feeds/data/d30054aa1d08abfb41c7225eb61f18e4
-      let imgKey = destDid+"-"+channelId+"-myFeedsAvatar";
-       feedAvatar = document.getElementById(imgKey).getAttribute("src");
+      let imgKey = destDid + "-" + channelId + "-myFeedsAvatar";
+      feedAvatar = document.getElementById(imgKey).getAttribute("src");
     }
 
     if (feedAvatar.indexOf('data:image') > -1 ||
@@ -1955,7 +1959,7 @@ export class ProfilePage implements OnInit {
   async createPost() {
 
     this.clearData();
-    const channels = await this.feedService.getHiveMyChannelList()
+    const channels = await this.dataHelper.getSelfChannelListV3() || []
     if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
       return;

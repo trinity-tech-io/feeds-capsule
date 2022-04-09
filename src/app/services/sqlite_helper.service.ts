@@ -282,6 +282,8 @@ export class FeedsSqliteHelper {
     });
   }
 
+
+
   queryChannelDataByChannelId(channelId: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -299,19 +301,14 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryMyChannel(userDid: string): Promise<FeedsData.ChannelV3[]> {
+  queryChannelWithDid(userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL
-        const result = await this.executeSql(statement)
+        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + 'WHERE dest_did=?'
+        const result = await this.executeSql(statement, [userDid]);
         const channelList = this.parseChannelData(result)
-        let list = [];
-        channelList.forEach(channel => {
-          if (channel.destDid = userDid) list.push(channel)
-        })
-
-        Logger.log(TAG, 'query my channel result is', channelList);
-        resolve(list);
+        Logger.log(TAG, 'query self channel with userDid result is', channelList);
+        resolve(channelList);
       } catch (error) {
         Logger.error(TAG, 'query Channel Data By ID  error', error);
         reject(error);
@@ -405,7 +402,7 @@ export class FeedsSqliteHelper {
         const params = [channelId];
         const result = await this.executeSql(statement, params);
         const subscriptionChannelList = this.parseSubscriptionChannelData(result);
-        
+
         Logger.log(TAG, 'query subscribed channel data by channel id result is', subscriptionChannelList);
         resolve(subscriptionChannelList);
       } catch (error) {

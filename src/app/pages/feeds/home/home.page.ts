@@ -1878,7 +1878,7 @@ export class HomePage implements OnInit {
     this.pauseAllVideo();
     this.clearData();
 
-    const channels = await this.feedService.getHiveMyChannelList()
+    const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
       return;
