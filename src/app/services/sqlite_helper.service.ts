@@ -14,6 +14,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION: string = 'subscriptiontest';
 
   private readonly LIMIT: number = 2;
+  public isOpen: boolean = false;
 
   private sqliteObject: SQLiteObject = null;
   constructor(private sqlite: SQLite) {
@@ -55,7 +56,11 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'Exec sql statement is ', statement);
         Logger.log(TAG, 'Exec sql params is ', params);
         db = await this.getSqliteObj();
-        // await db.open();
+
+        if (this.isOpen == false) {
+          await db.open();
+          this.isOpen = true;
+        }
         const result = await db.executeSql(statement, params);
         if (result) {
           resolve(result);
@@ -106,7 +111,7 @@ export class FeedsSqliteHelper {
           + ')';
 
         const result = await this.executeSql(statement);
-        console.log('cretePostTable-------------------', result);
+        Logger.log(TAG, 'crete post table result: ', result)
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create post table error', error);
@@ -123,7 +128,7 @@ export class FeedsSqliteHelper {
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
-        Logger.error(TAG, 'Create post table error', error);
+        Logger.error(TAG, 'query post data error', error);
         reject(error);
       }
     });
@@ -137,7 +142,7 @@ export class FeedsSqliteHelper {
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
-        Logger.error(TAG, 'Create post table error', error);
+        Logger.error(TAG, 'query post data by time error', error);
         reject(error);
       }
     });
@@ -150,8 +155,7 @@ export class FeedsSqliteHelper {
         const params = [postId];
         const result = await this.executeSql(statement, params);
         const postList = this.parsePostData(result);
-
-        console.log('queryData-------------------', postList);
+        Logger.log(TAG, 'query post data by id result: ', postList)
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'query post table error', error);
@@ -168,7 +172,7 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(statement, params);
         const postList = this.parsePostData(result);
 
-        console.log('queryData-------------------', postList);
+        Logger.log(TAG, 'query post data by channel id result: ', postList)
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'query post table error', error);
@@ -190,7 +194,7 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'InsertData result is', result);
         resolve('SUCCESS');
       } catch (error) {
-        Logger.error(TAG, 'Create post table error', error);
+        Logger.error(TAG, 'insert post data error', error);
         reject(error);
       }
     });
@@ -202,12 +206,12 @@ export class FeedsSqliteHelper {
         const statement = 'UPDATE ' + this.TABLE_POST
           + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=? WHERE post_id=?';
         const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, postV3.postId];
-
         const result = await this.executeSql(statement, params);
-        Logger.log(TAG, 'InsertData result is', result);
+
+        Logger.log(TAG, 'update post data result: ', result)
         resolve('SUCCESS');
       } catch (error) {
-        Logger.error(TAG, 'Create post table error', error);
+        Logger.error(TAG, 'update post data error', error);
         reject(error);
       }
     });
@@ -218,7 +222,8 @@ export class FeedsSqliteHelper {
       const statement = 'DELETE FROM ' + this.TABLE_POST + ' WHERE post_id=?'
       const params = [postId];
       const result = await this.executeSql(statement, params);
-      Logger.log(TAG, 'remove post data result is', result);
+
+      Logger.log(TAG, 'delete post data result: ', result)
       resolve('SUCCESS');
     });
   }
@@ -233,7 +238,8 @@ export class FeedsSqliteHelper {
           + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT'
           + ')';
         const result = await this.executeSql(statement);
-        console.log('creteChannelTable-------------------', result);
+
+        Logger.log(TAG, 'create cahnnel table result: ', result)
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create channel table error', error);
@@ -284,7 +290,7 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(statement, params);
         const channelList = this.parseChannelData(result);
 
-        console.log('queryData-------------------', channelList);
+        Logger.log(TAG, 'query channel data by channel id result is', channelList);
         resolve(channelList);
       } catch (error) {
         Logger.error(TAG, 'query Channel Data By ID  error', error);
@@ -303,7 +309,8 @@ export class FeedsSqliteHelper {
         channelList.forEach(channel => {
           if (channel.destDid = userDid) list.push(channel)
         })
-        console.log('queryData-------------------', channelList);
+
+        Logger.log(TAG, 'query my channel result is', channelList);
         resolve(list);
       } catch (error) {
         Logger.error(TAG, 'query Channel Data By ID  error', error);
@@ -318,8 +325,8 @@ export class FeedsSqliteHelper {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
           + ' SET channel_name=?, intro=?, created_at=?, updated_at=?, avatar_address=?, tipping_address=?, type=?, proof=?, nft=?, memo=?, category=? WHERE channel_id=?';
         const params = [channelV3.name, JSON.stringify(channelV3.intro), channelV3.createdAt, channelV3.updatedAt, channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, channelV3.channelId];
-
         const result = await this.executeSql(statement, params);
+
         Logger.log(TAG, 'update channel data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -334,7 +341,8 @@ export class FeedsSqliteHelper {
       const statement = 'DELETE FROM ' + this.TABLE_CHANNEL + ' WHERE channel_id=?'
       const params = [channelId];
       const result = await this.executeSql(statement, params);
-      Logger.log(TAG, 'remove channel data result is', result);
+
+      Logger.log(TAG, 'delete channel data result is', result);
       resolve('SUCCESS');
     });
   }
@@ -348,7 +356,7 @@ export class FeedsSqliteHelper {
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64)'
           + ')';
         const result = await this.executeSql(statement);
-        console.log('Create subscription table-------------------', result);
+        Logger.log(TAG, 'Create subscribed channel table result is', result);
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create subscriptionChannel table error', error);
@@ -397,8 +405,8 @@ export class FeedsSqliteHelper {
         const params = [channelId];
         const result = await this.executeSql(statement, params);
         const subscriptionChannelList = this.parseSubscriptionChannelData(result);
-
-        console.log('queryData-------------------', subscriptionChannelList);
+        
+        Logger.log(TAG, 'query subscribed channel data by channel id result is', subscriptionChannelList);
         resolve(subscriptionChannelList);
       } catch (error) {
         Logger.error(TAG, 'query subscriptionChannel Data By ID  error', error);
@@ -427,7 +435,7 @@ export class FeedsSqliteHelper {
           + ')';
 
         const result = await this.executeSql(statement);
-        console.log('Create subscription table-------------------', result);
+        Logger.log(TAG, 'Create subscribed  table result is', result);
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create subscription table error', error);
@@ -477,7 +485,7 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(statement, params);
         const subscriptionList = this.parseSubscriptionData(result);
 
-        console.log('queryData-------------------', subscriptionList);
+        Logger.log(TAG, 'query subscription data by channel id result is', result);
         resolve(subscriptionList);
       } catch (error) {
         Logger.error(TAG, 'query subscription Data By ID  error', error);
@@ -493,7 +501,7 @@ export class FeedsSqliteHelper {
         const params = [channelId];
         const num = await this.executeSql(statement, params);
 
-        console.log('queryData num -------------------', num);
+        Logger.log(TAG, 'query subscription Num by channel id result is', num);
         resolve(num);
       } catch (error) {
         Logger.error(TAG, 'query subscription num By ID  error', error);
@@ -537,7 +545,7 @@ export class FeedsSqliteHelper {
           + 'dest_did VARCHAR(64), comment_id VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, created_at REAL(64)'
           + ')';
         const result = await this.executeSql(statement);
-        console.log('create Comment table-------------------', result);
+        Logger.log(TAG, 'create Comment table result is', result);
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create Comment table error', error);
@@ -591,7 +599,7 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(statement, params);
         const commentList = this.parseCommentData(result);
 
-        console.log('queryData-------------------', commentList);
+        Logger.log(TAG, 'query comment by commentId result is', commentList);
         resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'query comment Data By ID  error', error);
@@ -608,7 +616,7 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(statement, params);
         const commentList = this.parseCommentData(result);
 
-        console.log('queryData-------------------', commentList);
+        Logger.log(TAG, 'query comment by Id result is', commentList);
         resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'query comment Data By ID  error', error);
@@ -670,7 +678,7 @@ export class FeedsSqliteHelper {
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT'
           + ')';
         const result = await this.executeSql(statement);
-        console.log('create like table-------------------', result);
+        Logger.log(TAG, 'create like table result is', result);
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create like table error', error);
@@ -815,27 +823,29 @@ export class FeedsSqliteHelper {
       // content
       const contentData = element['content']
       const contentDatas = JSON.parse(contentData)
-
       //mediaDataV3
-      const mediaDataV3Data = contentDatas['mediaData']
-      const mediaDataV3Datas = JSON.parse(mediaDataV3Data)
+      const mediaDataV3Data = contentDatas['mediaData'][0]
+      let mediaDataV3Array = []
 
-      let mediaDataV3: FeedsData.mediaDataV3 = {
-        kind: mediaDataV3Datas['kind'],       //"image/video/audio"
-        originMediaPath: mediaDataV3Datas['originMediaPath'],
-        type: mediaDataV3Datas['type'],           //"image/jpg",
-        size: mediaDataV3Datas['size'],           //origin file size
-        thumbnailPath: mediaDataV3Datas['thumbnailPath'],   //"thumbnailCid"
-        duration: mediaDataV3Datas['duration'],
-        imageIndex: mediaDataV3Datas['imageIndex'],
-        additionalInfo: mediaDataV3Datas['additionalInfo'],
-        memo: mediaDataV3Datas['memo'],
+      if (mediaDataV3Data != undefined) {
+        const mediaDataV3: FeedsData.mediaDataV3 = {
+          kind: mediaDataV3Data['kind'],       //"image/video/audio"
+          originMediaPath: mediaDataV3Data['originMediaPath'],
+          type: mediaDataV3Data['type'],           //"image/jpg",
+          size: mediaDataV3Data['size'],           //origin file size
+          thumbnailPath: mediaDataV3Data['thumbnailPath'],   //"thumbnailCid"
+          duration: mediaDataV3Data['duration'],
+          imageIndex: mediaDataV3Data['imageIndex'],
+          additionalInfo: mediaDataV3Data['additionalInfo'],
+          memo: mediaDataV3Data['memo'],
+        }
+        mediaDataV3Array.push(mediaDataV3)
       }
 
       let postContentV3: FeedsData.postContentV3 = {
         version: contentDatas['version'],
         content: contentDatas['content'],
-        mediaData: [mediaDataV3],// 已经上传的到hive(size/type/scriptName@path)
+        mediaData: mediaDataV3Array,// 已经上传的到hive(size/type/scriptName@path)
         mediaType: contentDatas['mediaType'],
       }
 

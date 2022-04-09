@@ -445,7 +445,7 @@ export class HiveVaultController {
           memo: memo,
         }
         //console.log("create channelId ==== ", channelId)
-        await this.dataHelper.updateChannelV3(channelV3);
+        await this.dataHelper.addChannelV3(channelV3);
         resolve(channelV3.channelId)
       } catch (error) {
         reject(error)
