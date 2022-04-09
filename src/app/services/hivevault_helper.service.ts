@@ -1254,7 +1254,7 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const appid = Config.APPLICATION_DID;
-                Logger.log('Call script params is targetDid:', targetDid, 'scriptName:', scriptName, 'params:', params);
+                Logger.log(TAG, 'Call script params is targetDid:', targetDid, 'scriptName:', scriptName, 'params:', params);
                 // let callerDid = (await this.dataHelper.getSigninData()).did;
                 let result = await this.hiveService.callScript(scriptName, params, targetDid, appid)
                 Logger.log('Call script result is', result);

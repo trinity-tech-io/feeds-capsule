@@ -672,7 +672,7 @@ export class HiveVaultController {
         if (channelsResult) {
           const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
           console.log('parseResult', parseResult);
-          await this.dataHelper.updateChannelsV3(parseResult);
+          await this.dataHelper.addChannelsV3(parseResult);
           resolve(parseResult);
         } else {
           reject('Sync self channels error');

@@ -3080,6 +3080,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.sqliteHelper.queryChannelDataByChannelId(channelId)
+        console.log('getChannelV3ById = ', result);
         resolve(result[0]);
       } catch (error) {
         reject(error);

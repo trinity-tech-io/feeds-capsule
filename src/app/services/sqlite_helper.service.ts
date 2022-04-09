@@ -514,7 +514,7 @@ export class FeedsSqliteHelper {
           + ' SET display_name=? WHERE channel_id=?';
         const params = [subscriptionV3.displayName, subscriptionV3.channelId];
         const result = await this.executeSql(statement, params);
-        Logger.log(TAG, 'update channel data result is', result);
+        Logger.log(TAG, 'update subscription data result is', result);
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'update channel data error', error);
