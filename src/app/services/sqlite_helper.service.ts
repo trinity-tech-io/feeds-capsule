@@ -539,7 +539,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_COMMENT
           + '('
-          + 'dest_did VARCHAR(64), comment_id VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, created_at REAL(64)'
+          + 'dest_did VARCHAR(64), comment_id VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, status INTEGER, created_at REAL(64), updated_at REAL(64), proof TEXT, memo TEXT, creater_did VARCHAR(64)'
           + ')';
         const result = await this.executeSql(statement);
         Logger.log(TAG, 'create Comment table result is', result);
