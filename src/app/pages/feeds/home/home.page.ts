@@ -597,6 +597,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
     // this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
+    this.removeAllAvatar();
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
@@ -1434,7 +1435,7 @@ export class HomePage implements OnInit {
       if (value === '13') {
         let videoElement: any = document.getElementById(id + 'video') || '';
         if (videoElement != '') {
-          //videoElement.setAttribute('poster',""); // empty source
+           videoElement.setAttribute('poster',"./assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'source') || '';
         if (source != '') {
@@ -1473,6 +1474,19 @@ export class HomePage implements OnInit {
     if (this.fullScreenmodal != '') {
       this.modalController.dismiss();
       this.fullScreenmodal = '';
+    }
+  }
+
+  removeAllAvatar() {
+    let avatarImageIds = this.isLoadAvatarImage;
+    for (let key in avatarImageIds) {
+      let value = avatarImageIds[key] || '';
+      if (value === '13') {
+        let htmlElement: HTMLElement = document.getElementById(key + 'homeChannelAvatar') || null;
+        if (htmlElement != null) {
+          htmlElement.setAttribute('src',"./assets/icon/reserve.svg");
+        }
+      }
     }
   }
 
