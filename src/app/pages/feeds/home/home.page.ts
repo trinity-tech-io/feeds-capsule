@@ -168,6 +168,7 @@ export class HomePage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   public isPostLoading: boolean = true;
+  private hannelNameMap: any = {};
   //private isInitPostList: boolean = true;
   constructor(
     private platform: Platform,
@@ -788,7 +789,7 @@ export class HomePage implements OnInit {
     return obj.content;
   }
 
-  menuMore(post: FeedsData.PostV3) {
+ async menuMore(post: FeedsData.PostV3) {
 
     let destDid = post.destDid;
     let signInData: SignInData = this.feedService.getSignInData() || null;
@@ -796,7 +797,7 @@ export class HomePage implements OnInit {
       return;
     }
     let ownerDid = signInData.did || '';
-    let channelName = this.getChannelName(post.destDid, post.channelId);
+    let channelName = await this.getChannelName(post.destDid, post.channelId);
     if (ownerDid != '' && ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
         post.destDid,
@@ -814,10 +815,9 @@ export class HomePage implements OnInit {
     }
   }
 
-  getChannelName(destDid: string, channelId: string) {
+ async getChannelName(destDid: string, channelId: string) {
 
-    const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key] || null;
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     if (channel === null) {
       return '';
     }
@@ -972,7 +972,7 @@ export class HomePage implements OnInit {
   }
 
 
-  showComment(destDid: string, channelId: string, postId: string) {
+  async showComment(destDid: string, channelId: string, postId: string) {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
@@ -994,7 +994,7 @@ export class HomePage implements OnInit {
     this.channelId = channelId;
     this.destDid = destDid;
     this.channelAvatar = this.parseAvatar(destDid, channelId);
-    this.channelName = this.getChannelName(destDid, channelId);
+    this.channelName = await this.getChannelName(destDid, channelId);
     this.onlineStatus = this.nodeStatus[destDid];
     this.hideComment = false;
   }
@@ -1059,11 +1059,12 @@ export class HomePage implements OnInit {
 
           let destDid: string = arr[0];
           let channelId: string = arr[1];
-
+          let postId: string = arr[2];
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
 
           let avatarUri = "";
           if (channel != null) {
+            this.hannelNameMap[postId] = channel.name;
             avatarUri = channel.avatar;
           }
           let fileName: string = avatarUri.split("@")[0];

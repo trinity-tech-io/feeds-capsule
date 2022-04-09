@@ -38,6 +38,7 @@ export class LikesComponent implements OnInit {
   @Input() likeMap: any = {};
   @Input() likeNumMap: any = {};
   @Input() commentNumMap: any = {};
+  @Input() channelNameMap: any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
@@ -68,23 +69,8 @@ export class LikesComponent implements OnInit {
   }
 
 
-
-  channelName(destDid: string, channelId: string) {
-    const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key] || null;
-    if(channel === null){
-      return "";
-    }
-    return channel.name;
-  }
-
-  channelOwnerName(destDid: string, channelId: string) {
-        return;
-  }
-
-  getChannelName(destDid: string, channelId: string) {
-    const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key] || null;
+  async getChannelName(destDid: string, channelId: string) {
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     if(channel === null){
       return "";
     }
@@ -216,8 +202,8 @@ export class LikesComponent implements OnInit {
     return obj.content;
   }
 
-  menuMore(destDid: string, channelId: string, postId: string) {
-    let channelName =  this.getChannelName(destDid, channelId) || '';
+ async menuMore(destDid: string, channelId: string, postId: string) {
+    let channelName = await this.getChannelName(destDid, channelId) || '';
     this.fromChild.emit({
       destDid: destDid,
       channelId: channelId,
@@ -227,8 +213,8 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  pressName(destDid: string, channelId: string) {
-    let name  = this.getChannelName(destDid,channelId);
+ async pressName(destDid: string, channelId: string) {
+    let name  = await this.getChannelName(destDid,channelId);
     if (name != '') {
       if (name != '' && name.length > 15) {
         this.viewHelper.createTip(name);
@@ -240,7 +226,7 @@ export class LikesComponent implements OnInit {
 
   }
 
-  showComment(destDid: string, channelId: string, postId: string) {
+  async showComment(destDid: string, channelId: string, postId: string) {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
@@ -252,14 +238,14 @@ export class LikesComponent implements OnInit {
     //   this.native.toastWarn('common.connectionError1');
     //   return;
     // }
-
+   let channelName = await this.getChannelName(destDid,channelId);
     this.commentParams.emit({
       destDid: destDid,
       channelId: channelId,
       postId: postId,
       onlineStatus: this.nodeStatus[destDid],
       channelAvatar: this.parseAvatar(destDid, channelId),
-      channelName: this.channelName(destDid, channelId),
+      channelName: channelName,
     });
   }
 

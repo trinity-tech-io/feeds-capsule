@@ -80,8 +80,11 @@
         <ion-col class="content-col" size="10">
           <ion-row class="top-row">
             <ion-col class="left-col" size="11">
-              <ion-label (click)="navTo(post.destDid, post.channelId, post.postId)">
-                {{ getChannelName(post.destDid, post.channelId) }}
+              <ion-label  *ngIf="hannelNameMap[post.postId] === '' || hannelNameMap[post.postId] === undefined">
+                ......
+              </ion-label>
+              <ion-label (click)="navTo(post.destDid, post.channelId, post.postId)" *ngIf="hannelNameMap[post.postId] != '' && hannelNameMap[post.postId] != undefined">
+                {{ hannelNameMap[post.postId] }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
             </ion-col>

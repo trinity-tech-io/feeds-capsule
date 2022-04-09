@@ -49,68 +49,6 @@ export class ProfilePage implements OnInit {
   public startIndex: number = 0;
   public pageNumber: number = 5;
   public likeList = []; //like page
-  // public likeList = [{
-  //       "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-  //       "postId": "5362a545e0827d2ab5727b1150e8d443d5c3e5025331b517d1237084c4debd55",
-  //       "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-  //       "createdAt": 1648134945251,
-  //       "updatedAt": 1648134945251,
-  //       "content": {
-  //         "version": "3.0",
-  //         "mediaData": [{}],
-  //         "content": "tedyyhh2",
-  //         "mediaType": 0
-  //       },
-  //       "status": 0,
-  //       "type": "public",
-  //       "tag": "Feeds-createpost",
-  //       "proof": "",
-  //       "memo": ""
-  //     }, {
-  //       "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-  //       "postId": "e9c6325cb0b665cef5ef8a1787359526bad5f15b5c334d3f9276fe3bba9d858a",
-  //       "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-  //       "createdAt": 1648134094614,
-  //       "updatedAt": 1648134094614,
-  //       "content": {
-  //         "version": "3.0",
-  //         "mediaData": [{}],
-  //         "content": "test1",
-  //         "mediaType": 0
-  //       },
-  //       "status": 0,
-  //       "type": "public",
-  //       "tag": "Feeds-createpost",
-  //       "proof": "",
-  //       "memo": ""
-  //     }, {
-  //       "destDid": "did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr",
-  //       "postId": "c6f7347ce5c1c9c659f84eb180029d7e782dc24fc59ee48039cfab6c50cee9fa",
-  //       "channelId": "3670bb86341836129a2d1fa66922d282c0ac34b5ae37bff005480f03ac9f474d",
-  //       "createdAt": 1648100775192,
-  //       "updatedAt": 1648100775192,
-  //       "content": {
-  //         "version": "3.0",
-  //         "mediaData": [{
-  //           "kind": "video",
-  //           "originMediaPath": "dfd40415a98266e540c1591429904982@feeds/data/dfd40415a98266e540c1591429904982",
-  //           "type": "2",
-  //           "size": 6879178,
-  //           "thumbnailPath": "6b34929dda14c9670913dfba56202c24@feeds/data/6b34929dda14c9670913dfba56202c24",
-  //           "duration": 9.365,
-  //           "imageIndex": 0,
-  //           "additionalInfo": {},
-  //           "memo": {}
-  //         }],
-  //         "content": "tesyuhhhhhhbvvv",
-  //         "mediaType": 2
-  //       },
-  //       "status": 0,
-  //       "type": "public",
-  //       "tag": "Feeds-createpost",
-  //       "proof": "",
-  //       "memo": ""
-  //     }]
   public selectType: string = 'ProfilePage.myFeeds';
   public followers = 0;
 
@@ -237,6 +175,7 @@ export class ProfilePage implements OnInit {
   private likeMap: any = {};
   private likeNumMap: any = {};
   private commentNumMap: any = {};
+  private channelNameMap: any = {};
 
   constructor(
     private feedService: FeedService,
@@ -1254,12 +1193,13 @@ export class ProfilePage implements OnInit {
 
           let destDid: string = arr[0];
           let channelId: string = arr[1];
-
+          let postId: string = arr[2];
           const key = UtilService.getKey(destDid, channelId);
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
           let avatarUri = "";
           if (channel != null) {
             avatarUri = channel.avatar;
+            this.channelNameMap[postId] = channel.name || '';
           }
           let fileName: string = avatarUri.split("@")[0];
           //头像

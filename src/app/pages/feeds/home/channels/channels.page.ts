@@ -131,7 +131,7 @@ export class ChannelsPage implements OnInit {
   private likeMap: any = {};
   private likeNumMap: any = {};
   private commentNumMap: any = {};
-
+  private hannelNameMap: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -502,15 +502,6 @@ export class ChannelsPage implements OnInit {
 
       }
     }
-  }
-
-  getChannelName(destDid: string, channelId: string) {
-    const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key] || null;
-    if(channel === null){
-      return "";
-    }
-    return channel.name;
   }
 
   getContentText(content: string): string {

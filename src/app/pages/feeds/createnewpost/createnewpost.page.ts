@@ -174,6 +174,8 @@ export class CreatenewpostPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.homeCommonEvents);//添加删除的home event与其它页面相同的页面
     if (this.isUpdateHomePage) {
       this.events.publish(FeedsEvent.PublishType.updateTab, true);
+    }else{
+      this.events.publish(FeedsEvent.PublishType.updateTab,false);
     }
   }
 

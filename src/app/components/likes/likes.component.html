@@ -19,8 +19,11 @@
       <ion-col class="content-col" size="9.5">
         <ion-row class="top-row">
           <ion-col class="left-col" size="11" (press)="pressName(post.destDid, post.channelId)" (click)="navTo(post.destDid, post.channelId,post.postId)" [style.touch-action]="'pan-y'">
-            <ion-label>
-              {{ channelName(post.destDid, post.channelId) }}
+            <ion-label  *ngIf="channelNameMap[post.postId] === '' || channelNameMap[post.postId] === undefined">
+              ......
+            </ion-label>
+            <ion-label  *ngIf="channelNameMap[post.postId] === '' && channelNameMap[post.postId] === undefined">
+              {{ hannelNameMap[post.postId] }}
               <span> {{ handleDisplayTime(post.createdAt) }}</span>
             </ion-label>
           </ion-col>
