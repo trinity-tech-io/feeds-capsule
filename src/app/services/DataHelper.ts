@@ -3185,9 +3185,8 @@ export class DataHelper {
   getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = this.sqliteHelper.queryPostDataByID(postId)
+        const result = await this.sqliteHelper.queryPostDataByID(postId)
         resolve(result[0]);
-
       } catch (error) {
         reject(error);
       }

@@ -113,7 +113,7 @@ export class CreatenewpostPage implements OnInit {
     let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentChannel();
 
     if (currentFeed == null) {
-      const selfChannelList = this.dataHelper.getSelfChannelListV3();
+      const selfChannelList = await this.dataHelper.getSelfChannelListV3();
       currentFeed = await this.dataHelper.getChannelV3ById(selfChannelList[0].destDid, selfChannelList[0].channelId);
       this.feedService.setCurrentChannel(currentFeed);
     }

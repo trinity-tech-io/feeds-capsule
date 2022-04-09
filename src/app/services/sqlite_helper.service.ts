@@ -295,7 +295,7 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'query channel data by channel id result is', channelList);
         resolve(channelList);
       } catch (error) {
-        Logger.error(TAG, 'query Channel Data By ID  error', error);
+        Logger.error(TAG, 'query channel data by channel id error', error);
         reject(error);
       }
     });
@@ -304,7 +304,7 @@ export class FeedsSqliteHelper {
   queryChannelWithDid(userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + 'WHERE dest_did=?'
+        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + ' WHERE dest_did=?'
         const result = await this.executeSql(statement, [userDid]);
         const channelList = this.parseChannelData(result)
         Logger.log(TAG, 'query self channel with userDid result is', channelList);
