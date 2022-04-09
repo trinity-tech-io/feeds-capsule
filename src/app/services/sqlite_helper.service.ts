@@ -554,7 +554,7 @@ export class FeedsSqliteHelper {
   insertCommentData(commentV3: FeedsData.CommentV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
+        const statement = 'INSERT INTO ' + this.TABLE_COMMENT
           + '(dest_did, comment_id, channel_id, post_id, refcomment_id, content, status, created_at, updated_at, proof, memo, creater_did) VALUES'
           + '(?,?,?,?,?,?,?,?,?,?,?,?)';
 
@@ -574,7 +574,7 @@ export class FeedsSqliteHelper {
   updateCommentData(commentV3: FeedsData.CommentV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'UPDATE ' + this.TABLE_CHANNEL
+        const statement = 'UPDATE ' + this.TABLE_COMMENT
           + ' SET content=?, status=?, updated_at=?, proof=?, memo=? WHERE comment_id=?'; // 条件是否使用refcomment_id
         const params = [JSON.stringify(commentV3.content), commentV3.status, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.channelId];
 
@@ -687,7 +687,7 @@ export class FeedsSqliteHelper {
   insertLike(likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
+        const statement = 'INSERT INTO ' + this.TABLE_LIKE
           + '(dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo) VALUES'
           + '(?,?,?,?,?,?,?,?)';
         const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt];

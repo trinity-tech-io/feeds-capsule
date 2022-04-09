@@ -684,6 +684,8 @@ export class HiveVaultController {
     });
   }
 
+  syncSubscripedChannel(): Promise<>
+
   syncSelfPosts(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
