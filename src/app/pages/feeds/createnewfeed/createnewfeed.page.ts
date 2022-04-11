@@ -14,6 +14,8 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { HiveService } from 'src/app/services/HiveService'
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
+import { UtilService } from 'src/app/services/utilService';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -160,14 +162,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    // let feedList = this.feedService.getMyChannelList() || [];
-
-    // if (feedList.length >= 5) {
-    //   this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
-    //   return;
-    // }
-
-   await this.processCreateChannel(name, desc);
+    await this.processCreateChannel(name, desc);
   }
 
   async processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement) {
@@ -210,7 +205,30 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    await this.uploadChannel(name.value, desc.value);
+    const signinDid = (await this.dataHelper.getSigninData()).did;
+    const channelId = UtilService.generateChannelId(signinDid,name.value);
+
+    try {
+
+      const selfchannels =  await this.hiveVaultController.syncSelfChannel() || [];
+
+      if (selfchannels.length >= 5) {
+      this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
+      return;
+      }
+
+      const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
+                    return channel.destDid === signinDid && channel.channelId === channelId;
+            });
+      if(list.length > 0){
+        this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
+          return;
+      }
+      await this.uploadChannel(name.value, desc.value);
+    } catch (error) {
+
+    }
+
   }
 
   async uploadChannel(name: string, desc: string) {
