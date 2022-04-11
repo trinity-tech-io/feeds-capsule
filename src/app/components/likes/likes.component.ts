@@ -167,13 +167,12 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  parseAvatar(destDid: string, channelId: string): string {
+  async parseAvatar(destDid: string, channelId: string): Promise<string> {
 
-    const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key];
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
 
-    if (channel == null || channel == undefined) return './assets/icon/reserve.svg';
-    return this.feedService.parseChannelAvatar(this.dataHelper.channelsMapV3[key].avatar);
+    if (channel === null) return './assets/icon/reserve.svg';
+    return channel.avatar;
   }
 
   handleDisplayTime(createTime: number) {
@@ -244,7 +243,7 @@ export class LikesComponent implements OnInit {
       channelId: channelId,
       postId: postId,
       onlineStatus: this.nodeStatus[destDid],
-      channelAvatar: this.parseAvatar(destDid, channelId),
+      channelAvatar: await this.parseAvatar(destDid, channelId),
       channelName: channelName,
     });
   }

@@ -698,17 +698,14 @@ export class HomePage implements OnInit {
     this.feedspage.search();
   }
 
-  parseAvatar(destDid: string, channelId: string): string {
+  async parseAvatar(destDid: string, channelId: string): Promise<string> {
 
     const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key];
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
 
-    if (channel == null || channel == undefined) return './assets/icon/reserve.svg';
-    return this.feedService.parseChannelAvatar(this.dataHelper.channelsMapV3[key].avatar);
+    if (channel === null) return './assets/icon/reserve.svg';
+    return channel.avatar;
 
-    // let channel = this.getChannelV3(nodeId, channelId);
-    // if (channel == null || channel == undefined) return '';
-    //return this.feedService.parseChannelAvatar(channel.avatar);
   }
 
   handleDisplayTime(createTime: number) {
@@ -944,7 +941,7 @@ export class HomePage implements OnInit {
     this.postId = postId;
     this.channelId = channelId;
     this.destDid = destDid;
-    this.channelAvatar = this.parseAvatar(destDid, channelId);
+    this.channelAvatar = await this.parseAvatar(destDid, channelId);
     this.channelName = await this.getChannelName(destDid, channelId);
     this.onlineStatus = this.nodeStatus[destDid];
     this.hideComment = false;
