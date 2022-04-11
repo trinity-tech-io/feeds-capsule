@@ -9,7 +9,6 @@ import { TitleBarComponent } from './../components/titlebar/titlebar.component';
 import { MorenameComponent } from './../components/morename/morename.component';
 import { PaypromptComponent } from './../components/payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
-import { GuidedialogComponent } from './../components/guidedialog/guidedialog.component';
 import { PublisherdialogComponent } from './../components/publisherdialog/publisherdialog.component';
 import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from './logger';
@@ -213,22 +212,6 @@ export class ViewHelper {
         title: this.translate.instant(title),
         assItem: assItem,
         menuType: type,
-      },
-    });
-    popover.onWillDismiss().then(() => {
-      Logger.log(TAG, 'Promote dismiss');
-      popover = null;
-    });
-    return await popover.present();
-  }
-
-  async showGuideDialog(pageName?: string) {
-    let popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass: 'PaypromptComponent',
-      component: GuidedialogComponent,
-      componentProps: {
-        pageName: pageName
       },
     });
     popover.onWillDismiss().then(() => {

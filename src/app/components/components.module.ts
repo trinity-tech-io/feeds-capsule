@@ -30,7 +30,6 @@ import { AddassetComponent } from './addasset/addasset.component';
 import { AssetitemComponent } from './assetitem/assetitem.component';
 import { NewassetitemComponent } from './newassetitem/newassetitem.component';
 import { ChannelcardComponent } from './channelcard/channelcard.component';
-import { GuidedialogComponent } from './guidedialog/guidedialog.component'
 import { PublisherdialogComponent } from './publisherdialog/publisherdialog.component';
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -89,7 +88,6 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     NftloadingComponent,
     NfttransferdialogComponent,
     NftdisclaimerComponent,
-    GuidedialogComponent,
     PublisherdialogComponent
   ],
   exports: [
@@ -117,7 +115,6 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     NewassetitemComponent,
     ChannelcardComponent,
     NftloadingComponent,
-    GuidedialogComponent,
     PublisherdialogComponent
   ],
 

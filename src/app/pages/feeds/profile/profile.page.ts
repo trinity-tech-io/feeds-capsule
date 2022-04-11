@@ -211,6 +211,7 @@ export class ProfilePage implements OnInit {
   }
 
   async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
+    try {
     if (channels) {
       this.channels = channels;
     } else {
@@ -222,6 +223,9 @@ export class ProfilePage implements OnInit {
     this.followers = followedList.length;
     this.initnodeStatus(this.channels);
     this.refreshMyFeedsVisibleareaImage();
+  } catch (error) {
+
+  }
   }
 
   initLike() {
@@ -567,8 +571,7 @@ export class ProfilePage implements OnInit {
 
     this.addProflieEvent();
 
-    this.channels = this.feedService.getMyChannelList() || [];
-    this.myFeedsSum = this.channels.length;
+    this.initMyFeeds();
 
     if (!this.collectiblesList || this.collectiblesList.length == 0) {
       await this.getCollectiblesList();

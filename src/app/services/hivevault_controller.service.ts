@@ -8,6 +8,7 @@ import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
 
 import { FileHelperService } from './FileHelperService';
+import _ from 'lodash';
 
 const TAG = 'HiveVaultController';
 let eventBus: Events = null;
@@ -673,8 +674,14 @@ export class HiveVaultController {
         if (channelsResult) {
           const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
           console.log('parseResult', parseResult);
-          await this.dataHelper.addChannelsV3(parseResult);
-          resolve(parseResult);
+          const list = await this.dataHelper.getSelfChannelListV3() || [];
+          const newList  =  _.differenceWith(parseResult,list,_.isEqual) || [];
+          if(newList.length === 0){
+            resolve(parseResult);
+          }else{
+            await this.dataHelper.addChannelsV3(newList);
+            resolve(parseResult);
+          }
         } else {
           reject('Sync self channels error');
         }
