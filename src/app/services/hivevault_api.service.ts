@@ -119,7 +119,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryLikeByPost(targetDid, channelId, postId);
   }
 
-  addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+  addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
     return this.hiveVaultHelper.addLike(targetDid, channelId, postId, commentId);
   }
 

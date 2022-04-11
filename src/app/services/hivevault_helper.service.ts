@@ -1076,7 +1076,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
     }
 
-    private callAddLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    private callAddLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const createdAt = UtilService.getCurrentTimeNum();
@@ -1088,7 +1088,7 @@ export class HiveVaultHelper {
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_LIKE, params);
                 console.log("Add like from scripting , result is", result);
-                resolve(result);
+                resolve({ createdAt: createdAt });
             } catch (error) {
                 Logger.error(TAG, 'Add like from scripting , error:', error);
                 reject(error);
@@ -1096,7 +1096,7 @@ export class HiveVaultHelper {
         });
     }
 
-    addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
         return this.callAddLike(targetDid, channelId, postId, commentId);
     }
     /** add like end */

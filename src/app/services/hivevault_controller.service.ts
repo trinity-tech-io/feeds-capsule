@@ -783,11 +783,14 @@ export class HiveVaultController {
 
         Logger.log('Query comment by id result is', commentResult);
         if (commentResult) {
-          const parseResult = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
+          const comments = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
           console.log('getCommentsByPost parseResult', parseResult);
 
-          this.dataHelper.updateCommentsV3(parseResult);
-          resolve(parseResult);
+          //TODO
+          //1.query
+          //2.if null add else update ,toast warn
+          await this.dataHelper.addCommentsV3(comments);
+          resolve(comments);
         } else {
           reject('Query comment by post error');
         }
@@ -798,16 +801,32 @@ export class HiveVaultController {
     });
   }
 
-  like(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
+  like(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId);
-        console.log('like result', result);
-
         //TODO
-        // this.dataHelper.addLikeV3();
-        console.log('like result is', result);
-        resolve(result);
+        //1.query
+        //2.if null add else update ,toast warn
+        const result = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId);
+        Logger.log('like result', result);
+        const createrDid = (await this.dataHelper.getSigninData()).did;
+        if (result) {
+          const like: FeedsData.LikeV3 = {
+            destDid: destDid,
+            postId: postId,
+            commentId: commentId,
+
+            channelId: channelId,
+            createdAt: result.createdAt,
+            createrDid: createrDid,
+            proof: '',
+            memo: ''
+          }
+          await this.dataHelper.addLikeV3(like);
+          resolve(like);
+        } else {
+          reject('Like error');
+        }
       } catch (error) {
         Logger.error(TAG, 'Like error', error);
         reject(error);
@@ -815,12 +834,31 @@ export class HiveVaultController {
     });
   }
 
-  removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+  removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
-        console.log('remove like result', result);
-        resolve(result);
+        const createrDid = (await this.dataHelper.getSigninData()).did;
+
+        Logger.log('Remove like result', result);
+        if (result) {
+          const like: FeedsData.LikeV3 = {
+            destDid: destDid,
+            postId: postId,
+            commentId: commentId,
+
+            channelId: channelId,
+            createdAt: UtilService.getCurrentTimeNum(),
+            createrDid: createrDid,
+            proof: '',
+            memo: ''
+          }
+          await this.dataHelper.removeLikeV3(like);
+          resolve(like);
+        } else {
+          const errorMsg = 'Remove like error';
+          reject(errorMsg);
+        }
         //TODO
         // this.dataHelper.removeLikeV3();
       } catch (error) {
@@ -830,14 +868,19 @@ export class HiveVaultController {
     });
   }
 
-  getLike(destDid: string, channelId: string): Promise<any> {
+  getLike(destDid: string, channelId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
-        console.log('get like result', result);
-        resolve(result);
-        //TODO
-        // this.dataHelper.removeLikeV3();
+        Logger.log('Get like result', result);
+        if (result) {
+          const likes = HiveVaultResultParse.parseLikeResult(destDid, result);
+          await this.dataHelper.addLikesV3(likes);
+          resolve(likes);
+        } else {
+          const errorMSG = 'Get like error';
+          reject(errorMSG);
+        }
       } catch (error) {
         reject([]);
         Logger.error(TAG, 'Get like data error', error);
@@ -845,13 +888,19 @@ export class HiveVaultController {
     });
   }
 
-  getLikeByPost(destDid: string, channelId: string, postId: string): Promise<any> {
+  getLikeByPost(destDid: string, channelId: string, postId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeByPost(destDid, channelId, postId);
-        console.log('getLikeByPost result', result);
-        resolve(result);
-        //TODO
+        Logger.log('Get like result', result);
+        if (result) {
+          const likes = HiveVaultResultParse.parseLikeResult(destDid, result);
+          await this.dataHelper.addLikesV3(likes);
+          resolve(likes);
+        } else {
+          const errorMSG = 'Get like error';
+          reject(errorMSG);
+        }
       } catch (error) {
         Logger.error(TAG, 'getLikeByPost data error', error);
         reject([]);
