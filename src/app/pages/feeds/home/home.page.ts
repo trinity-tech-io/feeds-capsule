@@ -863,12 +863,18 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         //TODO
+        try {
         await this.hiveVaultController.syncAllPost();
-        this.hiveVaultController.syncAllComments();
+        await this.hiveVaultController.syncAllComments();
 
         await this.initPostListData(true);
         if (event != null) event.target.complete();
         this.refreshEvent = null;
+        } catch (error) {
+          if (event != null) event.target.complete();
+          this.refreshEvent = null;
+        }
+
         break;
       case 'pasar':
         this.elaPrice = this.feedService.getElaUsdPrice();

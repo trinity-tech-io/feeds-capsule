@@ -101,6 +101,7 @@ export class HiveVaultController {
 
           await this.queryCommentByChannel(destDid, channelId);
         }
+        resolve([]);
       } catch (error) {
         Logger.error(TAG, 'Sync all comment error', error);
         reject(error);
@@ -307,7 +308,7 @@ export class HiveVaultController {
   queryCommentByChannel(targetDid: string, channelId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = this.hiveVaultApi.queryCommentByChannel(targetDid, channelId);
+        const result = await this.hiveVaultApi.queryCommentByChannel(targetDid, channelId);
         Logger.log(TAG, 'Query comment from channel, result is', result);
         if (result) {
           const commentList = HiveVaultResultParse.parseCommentResult(targetDid, result);
