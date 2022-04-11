@@ -282,8 +282,7 @@ export class ProfilePage implements OnInit {
   async sortLikeList() {
     //let likeList = this.feedService.getLikeList() || [];
     let likeList = [];
-    let signInData = this.feedService.getSignInData() || {};
-    let userDid = signInData['did'] || '';
+    let userDid = (await this.dataHelper.getSigninData()).did;
 
     let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List();
     for (let item of subscribedChannel) {
@@ -440,7 +439,7 @@ export class ProfilePage implements OnInit {
     });
 
 
-    let signInData = this.feedService.getSignInData() || {};
+    let signInData = await this.dataHelper.getSigninData();
 
     this.name = signInData['nickname'] || signInData['name'] || '';
     this.description = signInData['description'] || '';
@@ -770,7 +769,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  showMenuMore(item: any) {
+ async showMenuMore(item: any) {
     this.pauseAllVideo();
     this.curItem = item;
     switch (item['tabType']) {
@@ -781,7 +780,7 @@ export class ProfilePage implements OnInit {
         this.isPreferences = true;
         this.isShowUnfollow = false;
         this.channelName = item.channelName;
-        this.qrCodeString = this.getQrCodeString(item);
+        this.qrCodeString = await this.getQrCodeString(item);
         this.hideSharMenuComponent = true;
         break;
       case 'myfollow':
@@ -791,11 +790,11 @@ export class ProfilePage implements OnInit {
         this.isPreferences = false;
         this.isShowUnfollow = true;
         this.channelName = item.channelName;
-        this.qrCodeString = this.getQrCodeString(item);
+        this.qrCodeString = await this.getQrCodeString(item);
         this.hideSharMenuComponent = true;
         break;
       case 'mylike':
-        this.qrCodeString = this.getQrCodeString(item);
+        this.qrCodeString = await this.getQrCodeString(item);
         this.isShowTitle = false;
         this.isShowInfo = false;
         this.isPreferences = false;
@@ -1724,8 +1723,7 @@ export class ProfilePage implements OnInit {
           await this.native.showLoading("common.generateSharingLink");
           try {
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(myDestDid, myChannelId) || null;
-            let signInData: SignInData = this.feedService.getSignInData() || null;
-            let ownerDid = signInData.did || "";
+            let ownerDid = (await this.dataHelper.getSigninData()).did;
             const sharedLink = await this.intentService.createShareLink(myDestDid, myChannelId, myPostId, ownerDid, channel);
             const title = this.intentService.createShareChannelTitle(myDestDid, myChannelId, channel) || "";
             this.intentService.share(title, sharedLink);
@@ -1741,8 +1739,7 @@ export class ProfilePage implements OnInit {
           let postId = this.curItem['postId'];
           let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          let signInData: SignInData = this.feedService.getSignInData() || null;
-          let ownerDid = signInData.did || "";
+          let ownerDid = (await this.dataHelper.getSigninData()).did;
           let postContent = '';
           if (post != null) {
             postContent = post.content.content || "";
@@ -1792,14 +1789,13 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  getQrCodeString(feed: any) {
+  async getQrCodeString(feed: any) {
     let destDid = feed['destDid'];
     this.shareDestDid = destDid;
     let channelName = feed['channelName'] || '';
     let channelId = feed['channelId'] || '';
     this.shareChannelId = channelId;
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    let ownerDid: string = signInData.did || "";
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     let qrcodeString = "feeds://v3/" + ownerDid + "/" + channelId + '/' + encodeURIComponent(channelName);
     return qrcodeString;
   }
@@ -1844,8 +1840,7 @@ export class ProfilePage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(feedAvatar);
     }
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    let ownerDid: string = signInData.did || "";
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     this.feedService.setChannelInfo({
       destDid: destDid,
       channelId: channelId,

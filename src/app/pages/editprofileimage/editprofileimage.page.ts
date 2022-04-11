@@ -43,13 +43,8 @@ export class EditprofileimagePage implements OnInit {
 
   async ngOnInit() {
     this.initTitle();
-    let signInData: SignInData = this.feedService.getSignInData();
-    if (!signInData)
-      return;
-
-    this.userDid = signInData.did;
+    this.userDid = (await this.dataHelper.getSigninData()).did;
     this.avatar = await this.feedService.getUserAvatar(this.userDid);
-
   }
 
   ionViewWillEnter() {

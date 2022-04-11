@@ -418,15 +418,11 @@ export class CommentlistPage implements OnInit {
     return status;
   }
 
-  checkCommentIsMine(comment: FeedsData.CommentV3) {
+  async checkCommentIsMine(comment: FeedsData.CommentV3) {
     let commentId = comment.commentId;
     let createrDid = comment.createrDid;
     let isOwnComment = false;
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    if (signInData === null) {
-      isOwnComment = false;
-    }
-    let ownerDid: string = signInData.did;
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     if (createrDid != ownerDid) {
       isOwnComment = false;
     } else {

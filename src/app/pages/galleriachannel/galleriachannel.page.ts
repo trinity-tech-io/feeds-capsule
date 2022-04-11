@@ -704,8 +704,7 @@ export class GalleriachannelPage implements OnInit {
     let urlArr = this.feedsUrl.replace("feeds://", "").split("/");
     channelCollections.did = urlArr[0];
     channelCollections.userAddr = accAddress;
-    const signinData = this.feedService.getSignInData();
-    channelCollections.ownerDid = signinData.did;
+    channelCollections.ownerDid = (await this.dataHelper.getSigninData()).did;
     channelCollections.type = 'feeds-channel';
     channelCollections.status = '1';
 

@@ -115,7 +115,7 @@ export class SubscriptionsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
-  showMenuMore(item: any) {
+ async showMenuMore(item: any) {
     this.curItem = item;
     this.isShowTitle = true;
     this.isShowInfo = true;
@@ -123,7 +123,7 @@ export class SubscriptionsPage implements OnInit {
     this.isPreferences = false;
     this.isShowUnfollow = true;
     this.channelName = item.channelName;
-    this.qrCodeString = this.getQrCodeString(item);
+    this.qrCodeString = await this.getQrCodeString(item);
     this.hideSharMenuComponent = true;
   }
 
@@ -186,14 +186,13 @@ export class SubscriptionsPage implements OnInit {
     }, 500);
   }
 
-  getQrCodeString(channel: any) {
+  async getQrCodeString(channel: any) {
     let destDid = channel['destDid'];
     this.shareDestDid = destDid;
     let channelId = channel['channelId'] || '';
     this.shareChannelId = channelId;
     let name = channel['channelName'] || '';
-    let signInData: SignInData = this.feedService.getSignInData() || null;
-    let ownerDid = signInData.did || "";
+    let ownerDid = (await this.dataHelper.getSigninData()).did;
     return "feeds://v3/" + ownerDid + "/" + channelId + '/' + encodeURIComponent(name);
   }
 
@@ -242,8 +241,7 @@ export class SubscriptionsPage implements OnInit {
         await this.native.showLoading("common.generateSharingLink");
         try {
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          let signInData: SignInData = this.feedService.getSignInData() || null;
-          let ownerDid = signInData.did || "";
+          let ownerDid = (await this.dataHelper.getSigninData()).did;
           const sharedLink = await this.intentService.createShareLink(destDid, channelId, "0", ownerDid, channel);
           this.intentService.share(this.intentService.createShareChannelTitle(destDid, channelId, channel), sharedLink);
         } catch (error) {
@@ -298,8 +296,7 @@ export class SubscriptionsPage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(feedAvatar);
     }
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    let ownerDid: string = signInData.did || "";
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     this.feedService.setChannelInfo({
       destDid: destDid,
       channelId: channelId,

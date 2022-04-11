@@ -64,8 +64,7 @@ export class GuideubuntuPage implements OnInit {
 
  async checkDid(clickType: string) {
     await this.native.showLoading('common.waitMoment');
-    let signInData = this.feedService.getSignInData() || {};
-    let did = signInData['did'];
+    let did = (await this.dataHelper.getSigninData()).did;
     this.feedService.checkDIDDocument(did).then(isOnSideChain => {
       if (!isOnSideChain) {
         //show one button dialog

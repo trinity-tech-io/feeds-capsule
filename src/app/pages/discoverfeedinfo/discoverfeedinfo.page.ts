@@ -190,8 +190,7 @@ export class DiscoverfeedinfoPage implements OnInit {
       return;
     }
 
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did
+    let userDid = (await this.dataHelper.getSigninData()).did
     await this.native.showLoading('common.waitMoment');
     try {
       await this.hiveVaultController.subscribeChannel(

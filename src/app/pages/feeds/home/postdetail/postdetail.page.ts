@@ -575,8 +575,8 @@ export class PostdetailPage implements OnInit {
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
   }
 
-  menuMore() {
-    let isMine = this.checkChannelIsMine();
+  async menuMore() {
+    let isMine = await this.checkChannelIsMine();
     this.pauseVideo();
     if (isMine === 1 && this.postStatus != 1) {
       this.menuService.showPostDetailMenu(
@@ -778,13 +778,9 @@ export class PostdetailPage implements OnInit {
     return status;
   }
 
-  checkChannelIsMine() {
+  async checkChannelIsMine() {
 
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    if (signInData === null) {
-      return 0;
-    }
-    let ownerDid: string = signInData.did;
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     if (this.destDid != ownerDid) {
       return 0;
     }
@@ -795,19 +791,13 @@ export class PostdetailPage implements OnInit {
     this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
-  checkCommentIsMine(comment: FeedsData.CommentV3) {
+  async checkCommentIsMine(comment: FeedsData.CommentV3) {
     let commentId = comment.commentId;
     let destDid = comment.createrDid;
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    if (signInData === null) {
-      this.isOwnComment[commentId] = false;
-      return false;
-    }
-    let ownerDid: string = signInData.did;
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     if (destDid != ownerDid) {
       this.isOwnComment[commentId] = false;
       return false;
-
     }
     this.isOwnComment[commentId] = true;
   }

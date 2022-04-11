@@ -112,13 +112,11 @@ export class AssetdetailsPage implements OnInit {
     private httpService: HttpService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     //this.activatedRoute.queryParams.subscribe(queryParams => {
      let queryParams = this.dataHelper.getAssetPageAssetItem();
       this.assItem = _.cloneDeep(queryParams);
-      let signInData = this.feedService.getSignInData() || null;
-      let did = signInData['did'] || null;
-
+      let did = (await this.dataHelper.getSigninData()).did;
       this.imageType = queryParams.type || "";
       this.owner = queryParams.name || '';
       this.name = queryParams.name || '';

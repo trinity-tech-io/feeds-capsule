@@ -40,10 +40,10 @@ export class EditserverinfoPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(data => {
+    this.activatedRoute.queryParams.subscribe(async data => {
       this.oldServerInfo = data;
       let item = _.cloneDeep(data);
-      let signInData = this.feedService.getSignInData() || {};
+      let signInData = (await this.dataHelper.getSigninData()).name || {};
       this.name = signInData['name'] || '';
       this.introduction = item['introduction'] || '';
       this.elaAddress = item['elaAddress'] || '';

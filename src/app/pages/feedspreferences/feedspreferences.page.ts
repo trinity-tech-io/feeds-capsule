@@ -412,8 +412,7 @@ export class FeedspreferencesPage implements OnInit {
     channelCollections.panelId = "";
     channelCollections.tokenId = tokenInfo[0];
     channelCollections.type = "feeds-channel";
-    const signinData = this.feedService.getSignInData();
-    channelCollections.ownerDid = signinData.did;
+    channelCollections.ownerDid = (await this.dataHelper.getSigninData()).did;
 
     let tokenUri = tokenInfo[3]; //tokenUri
     tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
@@ -500,8 +499,7 @@ export class FeedspreferencesPage implements OnInit {
     channelCollections.avatar = item.avatar;
     channelCollections.entry = item.entry;
     channelCollections.ownerDid = item.tokenDid.did;
-    let didJsON = this.feedService.getSignInData() || {};
-    channelCollections.ownerName = didJsON["name"];
+    channelCollections.ownerName = (await this.dataHelper.getSigninData()).name;
     let url: string = channelCollections.entry.url;
     let urlArr = url.replace("feeds://", "").split("/");
     channelCollections.did = urlArr[0];

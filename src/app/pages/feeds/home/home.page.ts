@@ -741,11 +741,7 @@ export class HomePage implements OnInit {
  async menuMore(post: FeedsData.PostV3) {
 
     let destDid = post.destDid;
-    let signInData: SignInData = this.feedService.getSignInData() || null;
-    if (signInData === null) {
-      return;
-    }
-    let ownerDid = signInData.did || '';
+    let ownerDid = (await this.dataHelper.getSigninData()).did;
     let channelName = await this.getChannelName(post.destDid, post.channelId);
     if (ownerDid != '' && ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(

@@ -216,7 +216,7 @@ export class SearchPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       this.initData('', false);
     } else {
-      this.channelCollectionPageList = this.filterChannelCollection();
+      this.channelCollectionPageList = await this.filterChannelCollection();
       this.refreshChannelCollectionAvatar();
       this.httpAllData = _.cloneDeep(discoverfeeds);
       this.discoverSquareList = _.cloneDeep(discoverfeeds);
@@ -1132,11 +1132,10 @@ export class SearchPage implements OnInit {
     }, 100);
   }
 
-  filterChannelCollection() {
+  async filterChannelCollection() {
     let publishedActivePanelList = this.dataHelper.getPublishedActivePanelList();
     let channelCollectionList = _.cloneDeep(publishedActivePanelList);
-    const signinData = this.feedService.getSignInData();
-    let ownerDid = signinData.did;
+    let ownerDid = (await this.dataHelper.getSigninData()).did;
     let channelCollectionPageList = [];
     channelCollectionPageList = _.filter(channelCollectionList, (item: FeedsData.ChannelCollections) => {
       return item.ownerDid != ownerDid;

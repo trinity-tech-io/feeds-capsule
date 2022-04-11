@@ -65,8 +65,7 @@ export class MenuService {
           handler: async () => {
             let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid,this.channelId) || null;
-            let signInData: SignInData = this.feedService.getSignInData() || null;
-            let ownerDid = signInData.did || "";
+            let ownerDid = (await this.dataHelper.getSigninData()).did;
             let postContent = '';
             if (post != null) {
               postContent = post.content.content || "";
@@ -162,8 +161,7 @@ export class MenuService {
           handler: async () => {
             let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid,this.channelId) || null;
-            let signInData: SignInData = this.feedService.getSignInData() || null;
-            let ownerDid = signInData.did || "";
+            let ownerDid = (await this.dataHelper.getSigninData()).did;
             let postContent = '';
             if (post != null) {
               postContent = post.content.content || "";
@@ -558,8 +556,7 @@ export class MenuService {
 
         let post: any = await this.dataHelper.getPostV3ById(this.destDid,this.postId) || null;
         let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid,this.channelId) || null;
-        let signInData: SignInData = this.feedService.getSignInData() || null;
-        let ownerDid = signInData.did || "";
+        let ownerDid = (await this.dataHelper.getSigninData()).did;
         let postContent = '';
         if (post != null) {
           postContent = post.content.content || "";

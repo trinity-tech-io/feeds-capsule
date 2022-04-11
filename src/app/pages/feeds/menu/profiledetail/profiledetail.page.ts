@@ -140,7 +140,7 @@ export class ProfiledetailPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
 
-    let signInData = this.feedService.getSignInData() || {};
+    let signInData = await this.dataHelper.getSigninData();
     this.name = signInData['nickname'] || signInData['name'] || '';
     this.description = signInData['description'] || '';
     this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');

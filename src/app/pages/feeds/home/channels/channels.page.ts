@@ -169,7 +169,6 @@ export class ChannelsPage implements OnInit {
     try {
       await this.hiveVaultController.subscribeChannel(
         userDid, this.channelId, this.channelName);
-      await this.hiveVaultController.getHomePostContent();
       this.initRefresh();
       this.followStatus = true;
       this.native.hideLoading();
@@ -312,9 +311,9 @@ export class ChannelsPage implements OnInit {
       })
   }
 
-  ionViewWillEnter() {
+ async ionViewWillEnter() {
 
-    this.isMine = this.checkChannelIsMine();
+    this.isMine = await this.checkChannelIsMine();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -575,11 +574,11 @@ export class ChannelsPage implements OnInit {
     return obj.content;
   }
 
-  menuMore(post: FeedsData.PostV3) {
+ async menuMore(post: FeedsData.PostV3) {
     // if (!this.feedService.checkPostIsAvalible(post)) return;
 
     this.pauseAllVideo();
-    let isMine = this.checkChannelIsMine();
+    let isMine = await this.checkChannelIsMine();
     if (isMine === 1 && post.status != 1) {
       this.menuService.showPostDetailMenu(
         post.destDid,
@@ -653,12 +652,9 @@ export class ChannelsPage implements OnInit {
     }, 500);
   }
 
-  checkChannelIsMine() {
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    if (signInData === null) {
-      return 0;
-    }
-    let ownerDid: string = signInData.did;
+  async checkChannelIsMine() {
+
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     if (this.destDid != ownerDid) {
       return 0;
     }
@@ -1278,7 +1274,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  clickAvatar() {
+  async clickAvatar() {
     if (this.channelAvatar.indexOf('data:image') > -1 ||
       this.channelAvatar.startsWith('https:')) {
       this.feedService.setSelsectIndex(0);
@@ -1291,8 +1287,7 @@ export class ChannelsPage implements OnInit {
       this.feedService.setSelsectIndex(index);
       this.feedService.setProfileIamge(this.channelAvatar);
     }
-    let signInData: FeedsData.SignInData = this.feedService.getSignInData() || null;
-    let ownerDid: string = signInData.did || "";
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     this.feedService.setChannelInfo({
       destDid: this.destDid,
       channelId: this.channelId,
