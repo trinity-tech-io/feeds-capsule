@@ -690,12 +690,13 @@ export class ProfilePage implements OnInit {
     //this.updateWalletAddress(null);
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
-        let sId1 = setTimeout(async () => {
-          const selfchannels = await this.hiveVaultController.syncSelfChannel();
-          await this.initMyFeeds(selfchannels);
-          event.target.complete();
-          clearTimeout(sId1);
-        }, 500);
+          try {
+           const selfchannels = await this.hiveVaultController.syncSelfChannel();
+           await this.initMyFeeds(selfchannels);
+           event.target.complete();
+          } catch (error) {
+            event.target.complete();
+          }
         break;
       case 'ProfilePage.collectibles':
         // await this.getCollectiblesList();
