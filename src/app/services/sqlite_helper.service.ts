@@ -321,7 +321,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
           + ' SET channel_name=?, intro=?, created_at=?, updated_at=?, avatar_address=?, tipping_address=?, type=?, proof=?, nft=?, memo=?, category=? WHERE channel_id=?';
-        const params = [channelV3.name, JSON.stringify(channelV3.intro), channelV3.createdAt, channelV3.updatedAt, channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, channelV3.channelId];
+        const params = [channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt, channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, channelV3.channelId];
         const result = await this.executeSql(statement, params);
 
         Logger.log(TAG, 'update channel data result is', result);
@@ -666,7 +666,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  // like 
+  // like
   private createLikeTable(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
