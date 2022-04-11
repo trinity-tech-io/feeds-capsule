@@ -756,11 +756,13 @@ export class UtilService {
   }
 
   public static generatePostId(did: string, channelId: string, postContent: string) {
-    return UtilService.SHA256(did + channelId + postContent);
+    const currentTime = UtilService.getCurrentTimeNum() / (1000 * 10);
+    return UtilService.SHA256(did + channelId + postContent + currentTime);
   }
 
   public static generateCommentId(did: string, postId: string, refCommentId: string, commentContent: string) {
-    return UtilService.SHA256(did + postId + refCommentId + commentContent);
+    const currentTime = UtilService.getCurrentTimeNum() / (1000 * 10);
+    return UtilService.SHA256(did + postId + refCommentId + commentContent + currentTime);
   }
 
   public static getKey(did: string, id: string) {
