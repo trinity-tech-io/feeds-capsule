@@ -253,7 +253,7 @@ export class ServerInfoPage implements OnInit {
     }
 
     this.serverDetails.push({
-      type: 'IssuecredentialPage.elaaddress',
+      type: 'ServerInfoPage.elaaddress',
       details:
         server.elaAddress || this.translate.instant('DIDdata.Notprovided'),
     });

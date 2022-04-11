@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
 
-import { ServerpromptComponent } from './serverprompt/serverprompt.component';
 import { PaypromptComponent } from './payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 import { TipdialogComponent } from './tipdialog/tipdialog.component';
@@ -70,7 +69,6 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     PaypromptComponent,
     NftdialogComponent,
     PreviewqrcodeComponent,
-    ServerpromptComponent,
     MyfeedsComponent,
     FollowingComponent,
     ChannelcollectionsitemComponent,
@@ -102,7 +100,6 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     PaypromptComponent,
     NftdialogComponent,
     PreviewqrcodeComponent,
-    ServerpromptComponent,
     MyfeedsComponent,
     FollowingComponent,
     ChannelcollectionsitemComponent,
@@ -131,7 +128,6 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     ConfirmdialogComponent,
     MorenameComponent,
     TipdialogComponent,
-    ServerpromptComponent,
     PaypromptComponent,
     NftdialogComponent,
     PreviewqrcodeComponent,

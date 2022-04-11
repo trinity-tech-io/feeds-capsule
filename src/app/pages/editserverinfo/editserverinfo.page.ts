@@ -135,12 +135,12 @@ export class EditserverinfoPage implements OnInit {
 
   checkParms() {
     if (this.name === '') {
-      this.native.toast_trans('IssuecredentialPage.serverName');
+      this.native.toast_trans('ServerInfoPage.serverName');
       return false;
     }
 
     if (this.introduction === '') {
-      this.native.toast_trans('IssuecredentialPage.serverDes');
+      this.native.toast_trans('ServerInfoPage.serverDes');
       return false;
     }
 

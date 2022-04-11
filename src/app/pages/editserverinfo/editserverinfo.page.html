@@ -4,18 +4,18 @@
     <ion-grid class="container" [class.darkContainer]="theme.darkMode">
         <ion-list>
             <ion-item lines="none">
-                <ion-label position="stacked">{{ 'IssuecredentialPage.serverName' | translate }}</ion-label>
-                <ion-input clearInput [placeholder]="'IssuecredentialPage.inputName' | translate" [(ngModel)] ="name"></ion-input>
+                <ion-label position="stacked">{{ 'ServerInfoPage.serverName' | translate }}</ion-label>
+                <ion-input clearInput [placeholder]="'ServerInfoPage.inputName' | translate" [(ngModel)] ="name"></ion-input>
             </ion-item>
             <ion-item lines="none">
-                <ion-label position="stacked">{{'IssuecredentialPage.serverDes' | translate }}</ion-label>
-                <ion-input clearInput [placeholder]="'IssuecredentialPage.inputServerDes' | translate" [(ngModel)] ="introduction"></ion-input>
+                <ion-label position="stacked">{{'ServerInfoPage.serverDes' | translate }}</ion-label>
+                <ion-input clearInput [placeholder]="'ServerInfoPage.inputServerDes' | translate" [(ngModel)] ="introduction"></ion-input>
             </ion-item>
             <ion-item lines="none">
                 <ion-row>
                     <ion-col>
-                        <ion-label position="stacked">{{ 'IssuecredentialPage.elaaddress' | translate }}</ion-label>
-                        <ion-input clearInput [placeholder]="'IssuecredentialPage.inputElaAddress' | translate" [(ngModel)] ="elaAddress"></ion-input>
+                        <ion-label position="stacked">{{ 'ServerInfoPage.elaaddress' | translate }}</ion-label>
+                        <ion-input clearInput [placeholder]="'ServerInfoPage.inputElaAddress' | translate" [(ngModel)] ="elaAddress"></ion-input>
                     </ion-col>
                     <img src="./assets/images/scan-light.svg" *ngIf="!theme.darkMode&&elaAddress===''" (click)="clickScan()">
                     <img src="./assets/images/scan-dark.svg" *ngIf="theme.darkMode&&elaAddress===''" (click)="clickScan()">

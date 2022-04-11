@@ -315,7 +315,7 @@ export class ProfiledetailPage implements OnInit {
     }
 
     this.serverDetails.push({
-      type: 'IssuecredentialPage.elaaddress',
+      type: 'ServerInfoPage.elaaddress',
       details:
         bindingServer.elaAddress ||
         this.translate.instant('DIDdata.Notprovided'),

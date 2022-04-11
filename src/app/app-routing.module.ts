@@ -31,43 +31,6 @@ const routes: Routes = [
     loadChildren:
       './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule',
   },
-
-  {
-    path: 'bindservice/learnpublisheraccount',
-    loadChildren:
-      './pages/feeds/bindservice/learnpublisheraccount/learnpublisheraccount.module#LearnpublisheraccountPageModule',
-  },
-  {
-    path: 'bindservice/introduce',
-    loadChildren:
-      './pages/feeds/bindservice/introduce/introduce.module#IntroducePageModule',
-  },
-  {
-    path: 'bindservice/scanqrcode',
-    loadChildren:
-      './pages/feeds/bindservice/scanqrcode/scanqrcode.module#ScanqrcodePageModule',
-  },
-  {
-    path: 'bindservice/importdid/:nodeId',
-    loadChildren:
-      './pages/feeds/bindservice/importdid/importdid.module#ImportdidPageModule',
-  },
-  {
-    path: 'bindservice/publishdid/:nodeId/:did/:payload',
-    loadChildren:
-      './pages/feeds/bindservice/publishdid/publishdid.module#PublishdidPageModule',
-  },
-  {
-    path: 'bindservice/issuecredential/:nodeId/:did',
-    loadChildren:
-      './pages/feeds/bindservice/issuecredential/issuecredential.module#IssuecredentialPageModule',
-  },
-  {
-    path: 'bindservice/startbinding/:nodeId/:nonce/:address/:did/:feedsUrl',
-    loadChildren:
-      './pages/feeds/bindservice/startbinding/startbinding.module#StartbindingPageModule',
-  },
-
   {
     path: 'channels/:destDid/:channelId',
     loadChildren:
