@@ -10,15 +10,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 // import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 import { } from '@elastosfoundation/hive-js-sdk'
 import { isEqual, isNil, reject, values } from 'lodash';
-import { on } from 'process';
-import { VideoService } from './video.service';
-import { stringify } from 'querystring';
-import { Events } from 'src/app/services/events.service';
-
-import { FileHelperService } from 'src/app/services/FileHelperService';
 let TAG: string = 'Feeds-HiveService';
-
-let eventBus: Events = null;
 
 @Injectable()
 export class HiveService {
@@ -35,14 +27,13 @@ export class HiveService {
   private tarDID: string
   private tarAppDID: string
   private avatarParam: string
+  private vaults: { [key: string]: VaultServices } = {}
 
   constructor(
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
     private dataHelper: DataHelper,
-    private events: Events,
   ) {
-    eventBus = events;
   }
 
   public async creatAppContext(appInstanceDocumentString: string, userDidString: string): Promise<AppContext> {
@@ -95,17 +86,14 @@ export class HiveService {
     })
   }
 
-  async creatVault() {
+  async creatVault(userDid: string) {
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did
       let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
-      const userDID = DID.from(userDid)
       const context = await this.creatAppContext(appinstanceDocument, userDid)
-      const userDIDDocument = await userDID.resolve()
-      let provider = this.parseUserDIDDocument(userDid, userDIDDocument)
-      this.vault = new VaultServices(context, provider)
+      const vault = new VaultServices(context)
+      this.vaults[userDid] = vault
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
-      return this.vault
+      return vault
     }
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
@@ -151,30 +139,44 @@ export class HiveService {
     return provider
   }
 
-  async getVault(): VaultServices {
-    if (this.vault == null || this.vault == undefined) {
-      await this.creatVault()
+  async getVault(userDid: string): VaultServices {
+    let vault = values[userDid]
+    if (vault == undefined) {
+      vault = await this.creatVault(userDid)
     }
     Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
-    return this.vault
+    return vault
+  }
+
+  async getMyVault(): VaultServices {
+    const userDid = (await this.dataHelper.getSigninData()).did
+    let vault = values[userDid]
+    console.log("vault ========= ", vault)
+    if (vault == undefined) {
+      vault = await this.creatVault(userDid)
+      const userDID = DID.from(userDid)
+      const userDIDDocument = await userDID.resolve()
+      this.parseUserDIDDocument(userDid, userDIDDocument)
+    }
+    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
+    return vault
   }
 
   async getDatabaseService() {
-    return (await this.getVault()).getDatabaseService()
+    return (await this.getMyVault()).getDatabaseService()
   }
 
-  async getScriptingService() {
-    return (await this.getVault()).getScriptingService()
+  async getScriptingService(userDid: string) {
+    return (await this.getVault(userDid)).getScriptingService()
   }
 
   async getFilesService() {
-    return (await this.getVault()).getFilesService()
+    return (await this.getMyVault()).getFilesService()
   }
 
   async createCollection(channelName: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
         const databaseService = await this.getDatabaseService()
         const result = await databaseService.createCollection(channelName);
         resolve(result)
@@ -188,7 +190,8 @@ export class HiveService {
   registerScript(scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let scriptingService = await this.getScriptingService()
+        let userDid = (await this.dataHelper.getSigninData()).did
+        let scriptingService = await this.getScriptingService(userDid)
         await scriptingService.registerScript(scriptName, executable,
           condition, allowAnonymousUser, allowAnonymousApp)
         resolve()
@@ -200,7 +203,7 @@ export class HiveService {
   }
 
   async callScript(scriptName: string, document: any, targetDid: string, appid: string): Promise<any> {
-    let scriptingService = await this.getScriptingService()
+    let scriptingService = await this.getScriptingService(targetDid)
     let result = await scriptingService.callScript<any>(scriptName, document, targetDid, appid)
     return result
   }
@@ -210,7 +213,8 @@ export class HiveService {
   }
 
   async uploadScriting(transactionId: string, data: string) {
-    const scriptingService = await this.getScriptingService()
+    let userDid = (await this.dataHelper.getSigninData()).did
+    const scriptingService = await this.getScriptingService(userDid)
     return scriptingService.uploadFile(transactionId, data)
   }
 
@@ -220,7 +224,8 @@ export class HiveService {
       if (avatarParam === null) {
         return
       }
-      const scriptingService = await this.getScriptingService()
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const scriptingService = await this.getScriptingService(userDid)
       const avatarScriptName = this.avatarScriptName
       const tarDID = this.tarDID
       const tarAppDID = this.tarAppDID
@@ -231,9 +236,9 @@ export class HiveService {
     }
   }
 
-  async downloadScripting(transaction_id: string) {
+  async downloadScripting(targetDid: string, transaction_id: string) {
     try {
-      const scriptingService = await this.getScriptingService()
+      const scriptingService = await this.getScriptingService(targetDid)
       return await scriptingService.downloadFile(transaction_id)
     } catch (error) {
       console.log("scriptingService.downloadFile error: ==== ", error)
@@ -245,9 +250,9 @@ export class HiveService {
     return await fileService.download(remotePath)
   }
 
-  async getUploadDataFromScript(transactionId: string, img: any) {
+  async getUploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const scriptingService = await this.getScriptingService()
+      const scriptingService = await this.getScriptingService(targetDid)
       return scriptingService.uploadFile(transactionId, img)
     }
     catch (error) {
@@ -255,9 +260,9 @@ export class HiveService {
     }
   }
 
-  async uploadDataFromScript(transactionId: string, img: any) {
+  async uploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const scriptingService = await this.getScriptingService()
+      const scriptingService = await this.getScriptingService(targetDid)
       return scriptingService.uploadFile(transactionId, img)
     }
     catch (error) {

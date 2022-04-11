@@ -1147,9 +1147,10 @@ export class HiveVaultHelper {
     private downloadEssAvatarData(): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
+                let userDid = (await this.dataHelper.getSigninData()).did
                 const result = await this.hiveService.downloadEssAvatarTransactionId()
                 const transaction_id = result["download"]["transaction_id"]
-                let dataBuffer = await this.hiveService.downloadScripting(transaction_id)
+                let dataBuffer = await this.hiveService.downloadScripting(userDid, transaction_id)
                 const rawImage = await rawImageToBase64DataUrl(dataBuffer)
                 resolve(rawImage);
             }
@@ -1217,7 +1218,7 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
-                const data = await this.downloadScriptingDataWithString(transaction_id);
+                const data = await this.downloadScriptingDataWithString(targetDid, transaction_id);
                 // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
 
                 resolve(data);
@@ -1238,14 +1239,14 @@ export class HiveVaultHelper {
         return transaction_id
     }
 
-    private async downloadScriptingDataWithString(transactionID: string) {
-        let dataBuffer = await this.hiveService.downloadScripting(transactionID)
+    private async downloadScriptingDataWithString(targetDid: string, transactionID: string) {
+        let dataBuffer = await this.hiveService.downloadScripting(targetDid, transactionID)
         let jsonString = dataBuffer.toString();
         return jsonString
     }
 
-    private async downloadScriptingDataWithBuffer(transactionID: string) {
-        let dataBuffer = await this.hiveService.downloadScripting(transactionID)
+    private async downloadScriptingDataWithBuffer(targetDid: string, transactionID: string) {
+        let dataBuffer = await this.hiveService.downloadScripting(targetDid, transactionID)
         // let jsonString = dataBuffer.toString();
         return dataBuffer
     }
