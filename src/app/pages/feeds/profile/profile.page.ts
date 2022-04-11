@@ -497,9 +497,20 @@ export class ProfilePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, () => {
-      this.zone.run(() => {
-        this.refreshLikeList();
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
+      this.zone.run(async () => {
+        await this.native.showLoading('common.waitMoment');
+        try {
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
+          this.hiveVaultController.deletePost(post).then(async (result: any) => {
+          this.refreshLikeList();
+          this.native.hideLoading();
+          }).catch((err: any) => {
+            this.native.hideLoading();
+          })
+        } catch (error) {
+          this.native.hideLoading();
+        }
       });
     });
 
@@ -508,33 +519,6 @@ export class ProfilePage implements OnInit {
         this.menuService.hideActionSheet();
         this.showMenuMore(this.curItem);
       }
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
-      this.zone.run(() => {
-        this.refreshLikeList();
-        this.isLoadimage = {};
-        this.isLoadVideoiamge = {};
-        this.isLoadAvatarImage = {};
-        this.isInitLike = {};
-        this.isInitComment = {};
-        this.refreshImage();
-        this.initnodeStatus(this.likeList);
-        this.hideComponent(null);
-        this.native.hideLoading();
-      });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
@@ -621,11 +605,6 @@ export class ProfilePage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
-
-
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);

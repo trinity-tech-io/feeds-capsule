@@ -16,9 +16,9 @@ declare namespace FeedsEvent {
     networkStatusChanged = 'feeds:networkStatusChanged',
 
     ////////
-    rpcRequestError = 'rpcRequest:error',
-    rpcResponseError = 'rpcResponse:error',
-    rpcRequestSuccess = 'rpcRequest:success',
+    //rpcRequestError = 'rpcRequest:error',
+    //rpcResponseError = 'rpcResponse:error',
+    //rpcRequestSuccess = 'rpcRequest:success',
 
     jrpcReceiveMessage = 'jrpc:receiveMessage',
     jwtReceiveJWTMessage = 'jwt:receiveJWTMessage',

@@ -339,13 +339,13 @@ export class PostdetailPage implements OnInit {
       this.initData(true);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: FeedsData.PostV3) => {
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: FeedsData.PostV3) => {
       Logger.log(TAG, 'Received deletePostFinish event');
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
-            await this.hiveVaultController.getHomePostContent();
             await this.initData(true);
             this.native.hideLoading();
             this.events.publish(FeedsEvent.PublishType.updateTab);
@@ -382,30 +382,6 @@ export class PostdetailPage implements OnInit {
 
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received rpcRequest error event');
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received rpcResponse error event');
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received rpcRequest success event');
-        this.startIndex = 0;
-        this.initRefresh();
-        this.native.hideLoading();
-        this.hideComment = true;
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       Logger.log(TAG, 'Received openRightMenu event');
       this.isImgLoading = false;
@@ -437,11 +413,6 @@ export class PostdetailPage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
-
-
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);

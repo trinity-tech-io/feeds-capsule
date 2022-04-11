@@ -93,8 +93,6 @@ export class HomePage implements OnInit {
 
   public popover: any = '';
 
-  public curNodeId: string = '';
-
   public hideDeletedPosts: boolean = false;
 
   public isPress: boolean = false;
@@ -205,18 +203,10 @@ export class HomePage implements OnInit {
     this.dataHelper.loadChannelV3Map();
   }
 
-  async initPostListData(scrollToTop: boolean, homePostContent?: string) {
+  async initPostListData(scrollToTop: boolean) {
+
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
-    // TODO 首页订阅频道请求
-    homePostContent = homePostContent || '';
-    if (homePostContent === '') {
-      // try {
-      //   const result = await this.hiveVaultController.getHomePostContent();
-      // } catch (error) {
-      //   this.isPostLoading = false;
-      // }
-    }
 
     this.totalData = await this.sortPostList();
     if (this.totalData.length - this.pageNumber > 0) {
@@ -254,10 +244,9 @@ export class HomePage implements OnInit {
     return postList;
   }
 
-  async refreshPostList(homePostContent?: string) {
-    homePostContent = homePostContent || '';
+  async refreshPostList() {
     if (this.startIndex === 0) {
-      this.initPostListData(false, homePostContent);
+      this.initPostListData(false);
       return;
     }
     this.isPostLoading = false;
@@ -339,23 +328,12 @@ export class HomePage implements OnInit {
       await this.refreshLocalPasarData();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.addRpcRequestError, () => {
-      this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.addRpcResponseError, () => {
-      this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-        this.native.hideLoading();
-      });
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
       Logger.log(TAG, "revice unfollowFeedsFinish event");
       this.zone.run(async () => {
         this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-        await this.refreshPostList("unHomePostContent");
+        await this.refreshPostList();
       });
     });
 
@@ -367,11 +345,10 @@ export class HomePage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
       this.clearData();
       this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
-      this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
-      this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
+      Logger.log(TAG, "======= Receive updateTab========");
       this.zone.run(() => {
         if (isInit) {
           this.initPostListData(true);
@@ -499,14 +476,14 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: FeedsData.PostV3) => {
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
       Logger.log(TAG, "=======Receive  deletePostFinish========")
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          this.hiveVaultController.deletePost(post).then(async (result: any) => {
-            await this.hiveVaultController.getHomePostContent();
-            this.refreshPostList("unHomePostContent");
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
+          this.hiveVaultController.deletePost(post).then((result: any) => {
+            this.refreshPostList();
             this.native.hideLoading();
           }).catch((err: any) => {
             this.native.hideLoading();
@@ -517,23 +494,6 @@ export class HomePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.native.hideLoading();
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
-      this.zone.run(() => {
-        this.refreshPostList();
-        this.hideComponent(null);
-        this.native.hideLoading();
-      });
-    });
   }
 
   addBinaryEvevnt() {
@@ -549,18 +509,13 @@ export class HomePage implements OnInit {
 
       this.hideFullScreen();
       this.pauseAllVideo();
-      if (this.curNodeId != '') {
-        this.feedService.closeSession(this.curNodeId);
-        this.curNodeId = '';
-      }
+
     });
   }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.mintNft);
     this.events.unsubscribe(FeedsEvent.PublishType.nftBuyOrder);
-    this.events.unsubscribe(FeedsEvent.PublishType.addRpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.addRpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
     this.events.unsubscribe(FeedsEvent.PublishType.hideAdult);
     this.events.unsubscribe(FeedsEvent.PublishType.pasarListGrid);
@@ -578,9 +533,6 @@ export class HomePage implements OnInit {
       this.popover = null;
     }
 
-    if (this.curNodeId != '') {
-      this.feedService.closeSession(this.curNodeId);
-    }
     this.isLoading = false;
     this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
@@ -592,12 +544,9 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
-    // this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
+
     this.removeAllAvatar();
     this.removeImages();
     this.removeAllVideo();
@@ -606,7 +555,6 @@ export class HomePage implements OnInit {
     this.isLoadVideoiamge = {};
     this.isInitLike = {};
     this.isInitComment = {};
-    this.curNodeId = '';
 
     let isImgPercentageLoadingkeys: string[] = Object.keys(this.isImgPercentageLoading) || [];
     for (let index = 0; index < isImgPercentageLoadingkeys.length; index++) {
@@ -674,7 +622,8 @@ export class HomePage implements OnInit {
 
   like(destDid: string, channelId: string, postId: string) {
 
-    if (this.feedService.getConnectionStatus() != 0) {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
@@ -1678,7 +1627,6 @@ export class HomePage implements OnInit {
       this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
       this.videoPercent = 0;
       this.videoRotateNum['transform'] = 'rotate(0deg)';
-      this.curNodeId = '';
       let arr = this.cacheGetBinaryRequestKey.split('-');
       let nodeId = arr[0];
       let channelId: any = arr[1];
@@ -1821,17 +1769,12 @@ export class HomePage implements OnInit {
           this.popover = null;
         }
 
-        if (this.curNodeId != '') {
-          this.feedService.closeSession(this.curNodeId);
-        }
-
         this.removeImages();
         this.removeAllVideo();
         this.isLoadimage = {};
         this.isLoadVideoiamge = {};
         this.isInitLike = {};
         this.isInitComment = {};
-        this.curNodeId = '';
         this.isImgPercentageLoading[this.imgDownStatusKey] = false;
         this.isImgLoading[this.imgDownStatusKey] = false;
         this.imgDownStatus[this.imgDownStatusKey] = '';
@@ -1865,30 +1808,12 @@ export class HomePage implements OnInit {
   }
 
   async create() {
-    // if (this.feedService.getConnectionStatus() != 0) {
-    //   this.native.toastWarn('common.connectionError');
-    //   return;
-    // }
 
-    // let bindingServer = this.feedService.getBindingServer();
-    // if (bindingServer == null || bindingServer == undefined) {
-    //   //this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-    //   this.viewHelper.showPublisherDialog("home");
-    //   return;
-    // }
-
-    // let nodeId = bindingServer['nodeId'];
-    // if (this.checkServerStatus(nodeId) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
-
-    // if (
-    //   !this.feedService.checkBindingServerVersion(() => {
-    //     this.feedService.hideAlertPopover();
-    //   })
-    // )
-    //   return;
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
 
     this.pauseAllVideo();
     this.clearData();
@@ -1920,28 +1845,6 @@ export class HomePage implements OnInit {
   async connectWallet() {
     await this.walletConnectControllerService.connect();
   }
-
-  // async getPaserList() {
-  //   this.pasarList = [];
-  //   this.nftPersistenceHelper.setPasarList(this.pasarList);
-  //   let openOrderCount = await this.nftContractControllerService
-  //     .getPasar()
-  //     .getOpenOrderCount();
-
-  //   if (openOrderCount === '0')
-  //     return
-
-  //   this.pasarListCount = parseInt(openOrderCount);
-  //   let maxNum = parseInt(openOrderCount);
-
-  //   for (let index = this.pasarListCount - 1; index > (this.pasarListCount - 8); index--) {
-  //     const item: FeedsData.NFTItem = await this.getOpenOrderByIndex(index);
-  //     this.pasarList.push(item);
-  //     this.pasarList = this.nftContractHelperService.sortData(this.pasarList, SortType.CREATE_TIME);
-  //   }
-
-  //   this.nftPersistenceHelper.setPasarList(this.pasarList);
-  // }
 
   async getOpenOrderByIndex(index: number): Promise<FeedsData.NFTItem> {
     return new Promise(async (resolve, reject) => {

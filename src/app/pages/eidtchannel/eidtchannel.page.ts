@@ -92,10 +92,6 @@ export class EidtchannelPage implements OnInit {
     this.initTitle();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.native.hideLoading();
-    });
   }
 
   initTitle() {
@@ -117,7 +113,6 @@ export class EidtchannelPage implements OnInit {
     if (!this.isClickConfirm) {
       this.feedService.setProfileIamge(this.oldChannelAvatar);
     }
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }

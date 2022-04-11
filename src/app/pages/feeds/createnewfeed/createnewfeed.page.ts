@@ -61,17 +61,6 @@ export class CreatenewfeedPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.channelAvatar = this.feedService.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.tipdialogCancel, () => {
       this.popover.dismiss();
@@ -147,8 +136,6 @@ export class CreatenewfeedPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.tipdialogCancel);
     this.events.unsubscribe(FeedsEvent.PublishType.tipdialogConfirm);
     this.events.unsubscribe(FeedsEvent.PublishType.createTopicSuccess);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.publish(FeedsEvent.PublishType.addRpcRequestError);
     this.events.publish(FeedsEvent.PublishType.addRpcResponseError);
     this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
@@ -166,10 +153,12 @@ export class CreatenewfeedPage implements OnInit {
   }
   // 创建频道
   async createChannel(name: HTMLInputElement, desc: HTMLInputElement) {
-    // if (this.feedService.getConnectionStatus() != 0) {
-    //   this.native.toastWarn('common.connectionError');
-    //   return;
-    // }
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
 
     // let feedList = this.feedService.getMyChannelList() || [];
 

@@ -237,30 +237,6 @@ export class CommentlistPage implements OnInit {
 
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received rpcRequest error event');
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received rpcResponse error event');
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
-      this.zone.run(() => {
-        Logger.log(TAG, 'Received rpcRequest success event');
-        this.startIndex = 0;
-        this.initRefresh();
-        this.native.hideLoading();
-        this.hideComment = true;
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       Logger.log(TAG, 'Received openRightMenu event');
     });
@@ -280,9 +256,6 @@ export class CommentlistPage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
     this.events.publish(FeedsEvent.PublishType.updateTab);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);

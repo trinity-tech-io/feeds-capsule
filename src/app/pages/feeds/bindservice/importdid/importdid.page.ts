@@ -74,12 +74,6 @@ export class ImportdidPage implements OnInit {
         });
       },
     );
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
   }
 
   ionViewDidEnter() {}
@@ -88,7 +82,6 @@ export class ImportdidPage implements OnInit {
     this.native.hideLoading();
     this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
     this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
   }
 
   initTitle() {

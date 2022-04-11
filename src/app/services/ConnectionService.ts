@@ -1189,7 +1189,7 @@ export class ConnectionService {
     isShowOfflineToast: boolean = true,
   ) {
     if (!this.checkServerConnection(nodeId)) {
-      this.events.publish(FeedsEvent.PublishType.rpcRequestError);
+      //this.events.publish(FeedsEvent.PublishType.rpcRequestError);
       return;
     }
     this.jsonRPCService.request(
@@ -1200,7 +1200,7 @@ export class ConnectionService {
       version,
       () => { },
       error => {
-        this.events.publish(FeedsEvent.PublishType.rpcRequestError);
+        //this.events.publish(FeedsEvent.PublishType.rpcRequestError);
       },
     );
   }

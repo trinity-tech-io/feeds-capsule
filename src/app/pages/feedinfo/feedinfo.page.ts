@@ -112,10 +112,6 @@ export class FeedinfoPage implements OnInit {
       this.clickEdit();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.native.hideLoading();
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
       () => {
@@ -129,7 +125,6 @@ export class FeedinfoPage implements OnInit {
   removeEvents() {
     this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
     this.events.publish(FeedsEvent.PublishType.notification);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.search);

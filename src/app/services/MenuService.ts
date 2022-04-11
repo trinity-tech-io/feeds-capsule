@@ -547,13 +547,6 @@ export class MenuService {
 
     switch (clickName) {
       case 'editPost':
-        // if (
-        //   !this.feedService.checkBindingServerVersion(() => {
-        //     this.feedService.hideAlertPopover();
-        //   })
-        // )
-        //   return;
-
         this.native.go('/editpost', {
           destDid: destDid,
           channelId: channelId,
@@ -617,7 +610,7 @@ export class MenuService {
   if (this.popover != null) {
     this.popover.dismiss();
   }
-  that.events.publish(FeedsEvent.PublishType.deletePostFinish,{'channelId':that.channelId,'postId':that.postId});
+  that.events.publish(FeedsEvent.PublishType.deletePostFinish,{'destDid': that.destDid,'channelId': that.channelId,'postId': that.postId});
   }
 
   async showPictureMenu(

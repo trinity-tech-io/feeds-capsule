@@ -157,12 +157,6 @@ export class StartbindingPage implements OnInit {
         });
       },
     );
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
   }
 
   initTitle() {
@@ -183,7 +177,6 @@ export class StartbindingPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.resolveDidError);
     this.events.unsubscribe(FeedsEvent.PublishType.resolveDidSucess);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
   }
 
   confirm() {

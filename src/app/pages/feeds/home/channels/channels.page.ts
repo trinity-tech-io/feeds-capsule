@@ -348,10 +348,11 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (post: FeedsData.PostV3) => {
+    this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.hiveVaultController.getHomePostContent();
             await this.refreshChannelList();
@@ -362,32 +363,6 @@ export class ChannelsPage implements OnInit {
         } catch (error) {
           this.native.hideLoading();
         }
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestSuccess, () => {
-      this.zone.run(async () => {
-        await this.refreshChannelList();
-        this.isLoadimage = {};
-        this.isLoadVideoiamge = {};
-        this.isInitLike = {};
-        this.isInitComment = {};
-        this.refreshImage();
-        this.initnodeStatus(this.postList);
-        this.hideComponent(null);
-        this.native.hideLoading();
       });
     });
 
@@ -433,10 +408,6 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
-
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestSuccess);
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);

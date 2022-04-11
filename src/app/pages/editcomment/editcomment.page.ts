@@ -87,18 +87,6 @@ export class EditCommentPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.friendConnectionChanged,
       (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
@@ -127,8 +115,6 @@ export class EditCommentPage implements OnInit {
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
   }
 

@@ -62,11 +62,6 @@ export class IssuecredentialPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.native.hideLoading();
-      });
-    });
   }
 
   ionViewDidEnter() {}
@@ -74,7 +69,6 @@ export class IssuecredentialPage implements OnInit {
   ionViewWillLeave() {
     this.native.hideLoading();
     this.events.unsubscribe(FeedsEvent.PublishType.issue_credential);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     if (this.popover != null) {
       this.popoverController.dismiss();
     }

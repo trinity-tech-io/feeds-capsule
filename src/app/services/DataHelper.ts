@@ -3177,9 +3177,16 @@ export class DataHelper {
   }
 
   deletePostV3(posts: FeedsData.PostV3) {
+
     return new Promise(async (resolve, reject) => {
       // this.sqliteHelper.deletePostData(postId);
-      this.updatePostV3(posts);
+    try {
+      await this.updatePostV3(posts);
+      resolve('FINISH');
+    } catch (error) {
+     resolve('FINISH');
+    }
+
     });
   }
 
@@ -3213,7 +3220,8 @@ export class DataHelper {
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const list = await this.sqliteHelper.queryPostData()
+        let list = [];
+        list = await this.sqliteHelper.queryPostData()
         let sortList = [];
         sortList = _.sortBy(list, (item: any) => {
           return -item.createdAt;

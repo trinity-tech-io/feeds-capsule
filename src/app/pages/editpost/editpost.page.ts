@@ -5,9 +5,8 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { NavController, ModalController, IonTextarea } from '@ionic/angular';
+import { ModalController, IonTextarea } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { ThemeService } from '../../services/theme.service';
@@ -93,18 +92,6 @@ export class EditPostPage implements OnInit {
     this.initTitle();
     this.initData();
 
-    this.events.subscribe(FeedsEvent.PublishType.rpcRequestError, () => {
-      this.pauseVideo();
-      this.native.hideLoading();
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.rpcResponseError, () => {
-      this.zone.run(() => {
-        this.pauseVideo();
-        this.native.hideLoading();
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
     });
@@ -118,8 +105,6 @@ export class EditPostPage implements OnInit {
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcRequestError);
-    this.events.unsubscribe(FeedsEvent.PublishType.rpcResponseError);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
 
     this.imgUrl = '';
@@ -127,7 +112,6 @@ export class EditPostPage implements OnInit {
     this.hideFullScreen();
     this.removeVideo();
     if(this.isUpdateTab) {
-      this.events.publish(FeedsEvent.PublishType.updateTab);
       this.events.publish(FeedsEvent.PublishType.editPostFinish);
     }
   }

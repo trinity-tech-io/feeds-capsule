@@ -554,7 +554,7 @@ export class FeedService {
   }
 
   handleError(nodeId: string, error: any) {
-    eventBus.publish(FeedsEvent.PublishType.rpcResponseError);
+    //eventBus.publish(FeedsEvent.PublishType.rpcResponseError);
     if (typeof error == 'string')
       this.native.toastWarn(
         this.formatInfoService.formatErrorMsg(nodeId, error),
@@ -2163,7 +2163,7 @@ export class FeedService {
       return;
     }
 
-    eventBus.publish(FeedsEvent.PublishType.rpcRequestSuccess);
+    //eventBus.publish(FeedsEvent.PublishType.rpcRequestSuccess);
   }
 
   handlePostLikeResult(nodeId: string, request: any, error: any) {
