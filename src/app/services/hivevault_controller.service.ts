@@ -296,7 +296,7 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
         const channelList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
-        console.log("=======channelList======="+JSON.stringify(channelList));
+        console.log("=======channelList=======" + JSON.stringify(channelList));
         await this.dataHelper.addChannelsV3(channelList)
         resolve(channelList);
       } catch (error) {
@@ -559,7 +559,11 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
         if (result) {
-          await this.dataHelper.addSubscribedChannelV3(targetDid, channelId);
+          let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+            destDid: targetDid,
+            channelId: channelId
+          }
+          await this.dataHelper.addSubscribedChannelV3(subscribedChannel);
           const result = await this.dataHelper.getSubscribedChannelV3List();
           console.log("result ===== ", result)
           resolve({ targetDid: targetDid, channelId: channelId });
@@ -675,10 +679,10 @@ export class HiveVaultController {
           const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
           console.log('parseResult', parseResult);
           const list = await this.dataHelper.getSelfChannelListV3() || [];
-          const newList  =  _.differenceWith(parseResult,list,_.isEqual) || [];
-          if(newList.length === 0){
+          const newList = _.differenceWith(parseResult, list, _.isEqual) || [];
+          if (newList.length === 0) {
             resolve(parseResult);
-          }else{
+          } else {
             await this.dataHelper.addChannelsV3(newList);
             resolve(parseResult);
           }
@@ -855,15 +859,28 @@ export class HiveVaultController {
     });
   }
 
-  unSubscribeChannel(destDid: string, channelId: string): Promise<any> {
+  unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
         console.log('getLikeByPost result', result);
-        resolve(result);
-        //TODO
+
+        if (result) {
+          const subscribedChannel: FeedsData.SubscribedChannelV3 = {
+            destDid: destDid,
+            channelId: channelId
+          }
+          //1.query
+          //2.remove
+          await this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
+          resolve(subscribedChannel);
+        } else {
+          const errorMsg = 'Unsubscribe channel error';
+          Logger.error(TAG, errorMsg);
+          reject(errorMsg);
+        }
       } catch (error) {
-        Logger.error(TAG, 'getLikeByPost data error', error);
+        Logger.error(TAG, 'Unsubscribe channel error', error);
         reject([]);
       }
     });

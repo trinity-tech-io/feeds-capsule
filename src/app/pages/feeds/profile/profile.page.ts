@@ -212,20 +212,20 @@ export class ProfilePage implements OnInit {
 
   async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
     try {
-    if (channels) {
-      this.channels = channels;
-    } else {
-      this.channels = await this.dataHelper.getSelfChannelListV3() || [];
+      if (channels) {
+        this.channels = channels;
+      } else {
+        this.channels = await this.dataHelper.getSelfChannelListV3() || [];
+      }
+
+      this.myFeedsSum = this.channels.length;
+      let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
+      this.followers = followedList.length;
+      this.initnodeStatus(this.channels);
+      this.refreshMyFeedsVisibleareaImage();
+    } catch (error) {
+
     }
-
-    this.myFeedsSum = this.channels.length;
-    let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
-    this.followers = followedList.length;
-    this.initnodeStatus(this.channels);
-    this.refreshMyFeedsVisibleareaImage();
-  } catch (error) {
-
-  }
   }
 
   initLike() {
@@ -504,10 +504,10 @@ export class ProfilePage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
-          this.refreshLikeList();
-          this.native.hideLoading();
+            this.refreshLikeList();
+            this.native.hideLoading();
           }).catch((err: any) => {
             this.native.hideLoading();
           })
@@ -692,13 +692,13 @@ export class ProfilePage implements OnInit {
     //this.updateWalletAddress(null);
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
-          try {
-           const selfchannels = await this.hiveVaultController.syncSelfChannel();
-           await this.initMyFeeds(selfchannels);
-           event.target.complete();
-          } catch (error) {
-            event.target.complete();
-          }
+        try {
+          const selfchannels = await this.hiveVaultController.syncSelfChannel();
+          await this.initMyFeeds(selfchannels);
+          event.target.complete();
+        } catch (error) {
+          event.target.complete();
+        }
         break;
       case 'ProfilePage.collectibles':
         // await this.getCollectiblesList();
@@ -772,7 +772,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
- async showMenuMore(item: any) {
+  async showMenuMore(item: any) {
     this.pauseAllVideo();
     this.curItem = item;
     switch (item['tabType']) {
@@ -1701,7 +1701,6 @@ export class ProfilePage implements OnInit {
               destDid: destDid,
               channelId: channelId
             };
-            await this.dataHelper.removeSubscribedChannelV3(channel);
             await this.hiveVaultController.getHomePostContent();
             this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
             this.native.hideLoading();

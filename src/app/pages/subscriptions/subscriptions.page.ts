@@ -115,7 +115,7 @@ export class SubscriptionsPage implements OnInit {
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
   }
 
- async showMenuMore(item: any) {
+  async showMenuMore(item: any) {
     this.curItem = item;
     this.isShowTitle = true;
     this.isShowInfo = true;
@@ -204,8 +204,8 @@ export class SubscriptionsPage implements OnInit {
       case 'unfollow':
         let connect = this.dataHelper.getNetworkStatus();
         if (connect === FeedsData.ConnState.disconnected) {
-        this.native.toastWarn('common.connectionError');
-        return;
+          this.native.toastWarn('common.connectionError');
+          return;
         }
         // if (this.checkServerStatus(destDid) != 0) {
         //   this.native.toastWarn('common.connectionError1');
@@ -220,7 +220,6 @@ export class SubscriptionsPage implements OnInit {
               destDid: destDid,
               channelId: channelId
             };
-            await this.dataHelper.removeSubscribedChannelV3(channel);
             await this.hiveVaultController.getHomePostContent();
             this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
             this.native.hideLoading();
@@ -254,8 +253,8 @@ export class SubscriptionsPage implements OnInit {
       case 'preferences':
         let connectStatus = this.dataHelper.getNetworkStatus();
         if (connectStatus === FeedsData.ConnState.disconnected) {
-        this.native.toastWarn('common.connectionError');
-        return;
+          this.native.toastWarn('common.connectionError');
+          return;
         }
 
         this.native.navigateForward(['feedspreferences'], {

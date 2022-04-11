@@ -2862,28 +2862,18 @@ export class DataHelper {
   }
   //// New data type
   // subscribedChannelV3 本地存储订阅列表
-  async addSubscribedChannelV3(destDid: string, channelId: string) {
-    let subscribedChannel: FeedsData.SubscribedChannelV3 = {
-      destDid: destDid,
-      channelId: channelId
-    }
-    return await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel)
-    // this.subscribedChannelMapV3[destDid + '#' + channelId] = subscribedChannel
-    // await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3)
+  async addSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+    return await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel);
   }
 
   async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
-    if (this.subscribedChannelMapV3 == null || this.subscribedChannelMapV3 == undefined) return;
-    let key = subscribedChannel.destDid + "#" + subscribedChannel.channelId;
-    this.subscribedChannelMapV3[key] = null;
-    delete this.subscribedChannelMapV3[key];
-    await this.saveData(FeedsData.PersistenceKey.subscribedChannelsV3Map, this.subscribedChannelMapV3);
+    return this.sqliteHelper.deleteSubscribedChannelData(subscribedChannel);
   }
 
   getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let subscribedList = await this.sqliteHelper.querySubscribedChannelData()
+        let subscribedList = await this.sqliteHelper.querySubscribedChannelData();
         const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
         resolve(resultList)
       } catch (error) {
@@ -2893,23 +2883,32 @@ export class DataHelper {
   }
 
   private async filterSubscribedChannelV3(list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {
-
-    const signinDid = (await this.getSigninData()).did;
-    switch (subscribedChannelType) {
-      case FeedsData.SubscribedChannelType.ALL_CHANNEL:
-        return list;
-      case FeedsData.SubscribedChannelType.MY_CHANNEL:
-        return _.filter(list, subscribedChannel => {
-          return subscribedChannel.destDid == signinDid;
-        });
-
-      case FeedsData.SubscribedChannelType.OTHER_CHANNEL:
-        return _.filter(list, subscribedChannel => {
-          return subscribedChannel.destDid != signinDid;
-        });
-      default:
-        return list;
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const signinDid = (await this.getSigninData()).did;
+        switch (subscribedChannelType) {
+          case FeedsData.SubscribedChannelType.ALL_CHANNEL:
+            resolve(list);
+            return;
+          case FeedsData.SubscribedChannelType.MY_CHANNEL:
+            const myChannelList = _.filter(list, subscribedChannel => {
+              return subscribedChannel.destDid == signinDid;
+            });
+            resolve(myChannelList);
+            return;
+          case FeedsData.SubscribedChannelType.OTHER_CHANNEL:
+            const otherChannelList = _.filter(list, subscribedChannel => {
+              return subscribedChannel.destDid != signinDid;
+            });
+            resolve(otherChannelList);
+            return;
+          default:
+            return list;
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
 
@@ -3180,12 +3179,12 @@ export class DataHelper {
 
     return new Promise(async (resolve, reject) => {
       // this.sqliteHelper.deletePostData(postId);
-    try {
-      await this.updatePostV3(posts);
-      resolve('FINISH');
-    } catch (error) {
-     resolve('FINISH');
-    }
+      try {
+        await this.updatePostV3(posts);
+        resolve('FINISH');
+      } catch (error) {
+        resolve('FINISH');
+      }
 
     });
   }
