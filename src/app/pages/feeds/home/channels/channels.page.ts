@@ -581,17 +581,18 @@ export class ChannelsPage implements OnInit {
   }
 
   doRefresh(event: any) {
-    let sId = setTimeout(() => {
+     try {
       this.images = {};
       this.startIndex = 0;
       //TODO
       this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
       this.init();
-      //this.initStatus(this.postList);
       event.target.complete();
       this.refreshImage();
-      clearTimeout(sId);
-    }, 500);
+     } catch (error) {
+      event.target.complete();
+
+     }
   }
 
   loadData(event: any) {

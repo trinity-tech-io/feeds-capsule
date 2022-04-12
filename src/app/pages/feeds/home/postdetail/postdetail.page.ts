@@ -39,7 +39,7 @@ export class PostdetailPage implements OnInit {
   public channelWName: string = '';
   public channelOwner: string = '';
   public channelWOwner: string = '';
-  public postContent: FeedsData.postContentV3 = null;
+  public postContent: string = null;
   public updatedTime: number = 0;
   public likesNum: number = 0;
   public commentsNum: number = 0;
@@ -238,6 +238,7 @@ export class PostdetailPage implements OnInit {
 
   async sortCommentList() {
     let captainCommentList = [];
+    if(this.postCommentList.length === 0){
     try {
       captainCommentList =
         await this.hiveVaultController.getCommentsByPost(
@@ -249,7 +250,8 @@ export class PostdetailPage implements OnInit {
     } catch (error) {
 
     }
-
+      }
+    captainCommentList = this.postCommentList;
     captainCommentList = _.filter(captainCommentList, (item: FeedsData.CommentV3) => {
       return item.refcommentId === '0';
     });
@@ -274,7 +276,7 @@ export class PostdetailPage implements OnInit {
   }
 
   async initPostContent() {
-    let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId);
+    let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.destDid, this.postId);
     this.post = post;
     this.postStatus = post.status || 0;
     this.mediaType = post.content.mediaType;
@@ -684,15 +686,19 @@ export class PostdetailPage implements OnInit {
       })
   }
 
-  doRefresh(event: any) {
-    let sId = setTimeout(() => {
+  async doRefresh(event: any) {
       //this.postImage = "";
-      this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
-      this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
-      this.initData(true);
-      event.target.complete();
-      clearTimeout(sId);
-    }, 500);
+      try {
+       await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
+       await this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
+       this.initData(true);
+        event.target.complete();
+      } catch (error) {
+        event.target.complete();
+
+      }
+
+
   }
 
   loadData(event: any) {
@@ -1141,15 +1147,24 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  getPostComments(post: FeedsData.PostV3) {
+  getCommentsNum(post: FeedsData.PostV3) {
+    let commentPostList = _.filter(this.postCommentList, (item) => {
+      return item.channelId === post.channelId && item.postId === post.postId && item.refcommentId === "0";
+    }) || [];
+    this.commentsNum = commentPostList.length;
+  }
+
+  async getPostComments(post: FeedsData.PostV3) {
+    if(this.postCommentList.length > 0){
+      this.getCommentsNum(post);
+      return;
+    }
     try {
       this.hiveVaultController.getCommentsByPost(
         post.destDid, post.channelId, post.postId
       ).then((result) => {
-        let commentPostList = _.filter(result, (item) => {
-          return item.channelId === post.channelId && item.postId === post.postId && item.refcommentId === "0";
-        }) || [];
-        this.commentsNum = commentPostList.length;
+        this.postCommentList = _.cloneDeep(result);
+        this.getCommentsNum(post);
       });
     } catch (error) {
 

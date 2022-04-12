@@ -707,14 +707,16 @@ export class HiveVaultController {
         if (channelsResult) {
           const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
           console.log('parseResult', parseResult);
-          const list = await this.dataHelper.getSelfChannelListV3() || [];
-          const newList = _.differenceWith(parseResult, list, _.isEqual) || [];
-          if (newList.length === 0) {
-            resolve(parseResult);
-          } else {
-            await this.dataHelper.addChannelsV3(newList);
-            resolve(parseResult);
+          for(let channelIndex = 0; channelIndex < parseResult.length; channelIndex++){
+                let item = parseResult[channelIndex];
+                let channel = await this.dataHelper.getChannelV3ById(item.destDid,item.channelId) || null;
+                if(channel === null){
+                  await this.dataHelper.addChannelV3(item);
+                }else{
+                  await this.dataHelper.updateChannelV3(item);
+                }
           }
+          resolve(parseResult);
         } else {
           reject('Sync self channels error');
         }
@@ -755,7 +757,15 @@ export class HiveVaultController {
         Logger.log('Query self post result', postResult);
         if (postResult) {
           const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
-          await this.dataHelper.addPostsV3(parseResult);
+          for(let postIndex = 0; postIndex < parseResult.length; postIndex++) {
+              let item = parseResult[postIndex];
+              let post = this.dataHelper.getPostV3ById(item.destDid, item.channelId) || null;
+              if(post === null){
+                await this.dataHelper.addPostV3(item);
+              }else {
+                await this.dataHelper.updatePostV3(item);
+              }
+          }
           console.log('parseResult', parseResult);
           resolve(parseResult);
         } else {
@@ -818,7 +828,15 @@ export class HiveVaultController {
           //TODO
           //1.query
           //2.if null add else update ,toast warn
-          await this.dataHelper.addCommentsV3(comments);
+          for(let commentIndex = 0; commentIndex< comments.length; commentIndex++){
+            let item = comments[commentIndex];
+            let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
+            if(comment === ''){
+              await this.dataHelper.addCommentV3(item);
+            }else{
+              await this.dataHelper.updateCommentV3(item);
+            }
+          }
           resolve(comments);
         } else {
           reject('Query comment by post error');
