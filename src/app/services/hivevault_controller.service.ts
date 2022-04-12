@@ -64,6 +64,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        console.log("===subscribedChannels===",subscribedChannels)
         if (subscribedChannels.length === 0) {
           resolve([]);
           return;
@@ -1068,6 +1069,30 @@ export class HiveVaultController {
         }
       } catch (error) {
         Logger.error(TAG, 'Get comment by id data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  removePostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryPostByChannelId(targetDid, channelId);
+        Logger.log(TAG, 'Get post from channel result is', result);
+        if (result) {
+          const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+          for(let postIndex = 0; postIndex < postList.length; postIndex++){
+                let postId =  postList[postIndex].postId;
+                await this.dataHelper.deletePostData(postId);
+          }
+          resolve(postList);
+        } else {
+          const errorMsg = 'remove post from channel error';
+          Logger.error(TAG, errorMsg);
+          reject(errorMsg);
+        }
+      } catch (error) {
+        Logger.error(TAG, error);
         reject(error);
       }
     });

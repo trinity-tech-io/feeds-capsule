@@ -220,7 +220,7 @@ export class SubscriptionsPage implements OnInit {
               destDid: destDid,
               channelId: channelId
             };
-            await this.hiveVaultController.getHomePostContent();
+            await this.hiveVaultController.removePostListByChannel(destDid, channelId);
             this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
             this.native.hideLoading();
           }).catch(() => {

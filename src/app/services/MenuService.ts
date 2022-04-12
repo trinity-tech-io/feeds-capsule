@@ -110,8 +110,7 @@ export class MenuService {
                     destDid: destDid,
                     channelId: channelId
                   };
-
-                  await this.hiveVaultController.getHomePostContent();
+                  await this.hiveVaultController.removePostListByChannel(destDid, channelId);
                   this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
                   this.native.hideLoading();
                 }).catch(() => {
@@ -259,7 +258,7 @@ export class MenuService {
                 channelId: channelId
               };
 
-              await this.hiveVaultController.getHomePostContent();
+              await this.hiveVaultController.removePostListByChannel(destDid, channelId);
               this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
               this.native.hideLoading();
             }).catch(() => {
@@ -308,7 +307,7 @@ export class MenuService {
                   channelId: channelId
                 };
 
-                await this.hiveVaultController.getHomePostContent();
+                await this.hiveVaultController.removePostListByChannel(destDid, channelId);
                 this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
                 this.native.hideLoading();
               }).catch(() => {
@@ -498,8 +497,7 @@ export class MenuService {
                   destDid: destDid,
                   channelId: channelId
                 };
-
-                await this.hiveVaultController.getHomePostContent();
+                await this.hiveVaultController.removePostListByChannel(destDid,channelId);
                 this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
                 this.native.hideLoading();
               }).catch(() => {

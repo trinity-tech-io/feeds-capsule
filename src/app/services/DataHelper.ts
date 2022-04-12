@@ -3485,4 +3485,9 @@ export class DataHelper {
   getPostMapV3() {
     return this.postMapV3;
   }
+
+  //postV3
+  async deletePostData(postId: string) {
+    await this.sqliteHelper.deletePostData(postId);
+  }
 }

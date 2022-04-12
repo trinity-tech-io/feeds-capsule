@@ -169,6 +169,8 @@ export class ChannelsPage implements OnInit {
     try {
       await this.hiveVaultController.subscribeChannel(
         userDid, this.channelId, this.channelName);
+      await this.hiveVaultController.getPostListByChannel(
+        userDid, this.channelId);
       this.initRefresh();
       this.followStatus = true;
       this.native.hideLoading();
@@ -353,7 +355,6 @@ export class ChannelsPage implements OnInit {
         try {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
-            await this.hiveVaultController.getHomePostContent();
             await this.refreshChannelList();
             this.native.hideLoading();
           }).catch((err: any) => {

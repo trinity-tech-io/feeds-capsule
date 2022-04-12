@@ -199,8 +199,7 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.hiveVaultController.getHomePostContent();
-    this.dataHelper.loadChannelV3Map();
+
   }
 
   async initPostListData(scrollToTop: boolean) {
