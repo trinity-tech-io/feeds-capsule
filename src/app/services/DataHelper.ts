@@ -3596,4 +3596,5 @@ export class DataHelper {
   getSelsectIndex() {
     return this.selsectIndex;
   }
+
 }

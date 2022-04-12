@@ -38,7 +38,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
-
+import { CommonPageService } from 'src/app/services/common.page.service';
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -534,7 +534,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
 
-    this.removeAllAvatar();
+    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
@@ -970,7 +970,7 @@ export class HomePage implements OnInit {
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadAvatarImage[id] || '';
-    let postAvatar = document.getElementById(id + 'homeChannelAvatar') || null;
+    let postAvatar = document.getElementById(id + '-homeChannelAvatar') || null;
     try {
       if (
         id != '' &&
@@ -1401,19 +1401,6 @@ export class HomePage implements OnInit {
     if (this.fullScreenmodal != '') {
       this.modalController.dismiss();
       this.fullScreenmodal = '';
-    }
-  }
-
-  removeAllAvatar() {
-    let avatarImageIds = this.isLoadAvatarImage;
-    for (let key in avatarImageIds) {
-      let value = avatarImageIds[key] || '';
-      if (value === '13') {
-        let htmlElement: HTMLElement = document.getElementById(key + 'homeChannelAvatar') || null;
-        if (htmlElement != null) {
-          htmlElement.setAttribute('src',"./assets/icon/reserve.svg");
-        }
-      }
     }
   }
 

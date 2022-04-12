@@ -28,6 +28,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveService } from 'src/app/services/HiveService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FeedService } from 'src/app/services/FeedService';
+import { CommonPageService } from 'src/app/services/common.page.service';
 
 let TAG: string = 'Feeds-profile';
 
@@ -607,6 +608,7 @@ export class ProfilePage implements OnInit {
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
+    CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage,'myFeedsAvatar')
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
@@ -614,6 +616,7 @@ export class ProfilePage implements OnInit {
     this.isLoadAvatarImage = {};
     this.isInitLike = {};
     this.isInitComment = {};
+    this.myFeedsIsLoadimage = {};
     this.curItem = {};
     this.curPostId = '';
   }
@@ -1126,7 +1129,7 @@ export class ProfilePage implements OnInit {
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadAvatarImage[id] || '';
-    let postAvatar = document.getElementById(id + 'likeChannelAvatar');
+    let postAvatar = document.getElementById(id + '-likeChannelAvatar');
     try {
       if (
         id != '' &&

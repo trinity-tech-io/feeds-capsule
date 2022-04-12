@@ -1,7 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavController, IonTextarea } from '@ionic/angular';
+import { IonTextarea } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { ThemeService } from '../../services/theme.service';
@@ -9,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import _ from 'lodash';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
@@ -41,14 +39,10 @@ export class EditCommentPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
-    private navCtrl: NavController,
-    private zone: NgZone,
-    private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
     private dataHelper: DataHelper
   ) { }
@@ -74,7 +68,7 @@ export class EditCommentPage implements OnInit {
   async ionViewWillEnter() {
     this.initTitle();
 
-    let channel: any = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
     this.channelName = channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';
@@ -117,7 +111,7 @@ export class EditCommentPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  publishComment() {
+  async publishComment() {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
@@ -136,19 +130,14 @@ export class EditCommentPage implements OnInit {
       return false;
     }
 
-    this.native
-      .showLoading('common.waitMoment', isDismiss => { })
-      .then(() => {
-        this.editComment();
-      })
-      .catch(() => {
-        this.native.hideLoading();
-      });
+    await this.native.showLoading('common.waitMoment');
+    this.editComment();
   }
 
   private async editComment() {
     try {
       const originComment = await this.dataHelper.getCommentV3ById(this.destDid, this.postId, this.commentId);
+      console.log('===originComment==',originComment);
       this.hiveVaultController.updateComment(originComment, this.newComment)
         .then(() => {
           this.native.hideLoading();

@@ -158,7 +158,6 @@ export class PostdetailPage implements OnInit {
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     let channelAvatarUri = channel['avatar'] || '';
-    this.channelAvatarUri
     if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
       this.handleChannelAvatar(channelAvatarUri);
@@ -305,7 +304,6 @@ export class PostdetailPage implements OnInit {
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';
     this.initData(true);
-    // this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, () => {
       this.zone.run(() => {
@@ -487,6 +485,13 @@ export class PostdetailPage implements OnInit {
   }
 
   like() {
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     if (this.isLike) {
       try {
         this.isLike = false;
@@ -512,11 +517,13 @@ export class PostdetailPage implements OnInit {
   }
 
   likeComment(comment: FeedsData.CommentV3) {
+
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
     let destDid = comment.destDid;
     let channelId = comment.channelId;
     let postId = comment.postId;
