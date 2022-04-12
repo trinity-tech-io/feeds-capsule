@@ -2984,6 +2984,26 @@ export class DataHelper {
     })
   }
 
+  updateSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!subscriptions) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < subscriptions.length; index++) {
+          const subscription = subscriptions[index];
+          await this.updateSubscriptionV3Data(subscription);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    });
+  }
+
   getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3000,8 +3020,13 @@ export class DataHelper {
   getSubscriptionV3DataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.querySubscriptionDataByChannelId(channelId);
-        resolve(result[0]);
+        const result = await this.sqliteHelper.querySubscriptionDataByChannelId(channelId) || [];
+
+        if (result) {
+          resolve(result[0]);
+        } else {
+          resolve(null);
+        }
       }
       catch (error) {
         Logger.error(TAG, 'Update subscriptions error', error);

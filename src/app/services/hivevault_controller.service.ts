@@ -233,14 +233,29 @@ export class HiveVaultController {
     });
   }
 
-  getSubscriptionInfoByChannel(targetDid: string, channelId: string) {
+  getSubscriptionInfoByChannel(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
-        const subscriptionList = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        Logger.log(TAG, 'Query subscription info result is', result);
+        if (result) {
+          const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
 
-        this.dataHelper.addSubscriptionsV3Data(subscriptionList);
-        resolve(subscriptionList);
+          if (!subscriptions || subscriptions.length == 0) {
+            resolve(null);
+            return;
+          }
+
+          const channel = this.dataHelper.getSubscriptionV3DataByChannelId(targetDid, channelId);
+          if (channel) {
+            this.dataHelper.addSubscriptionV3Data(subscriptions[0]);
+          } else {
+            this.dataHelper.updateSubscriptionV3Data(subscriptions[0])
+          }
+          resolve(subscriptions[0]);
+        } else {
+          resolve(null);
+        }
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
@@ -270,14 +285,14 @@ export class HiveVaultController {
         Logger.log(TAG, 'Get post from channel result is', result);
         if (result) {
           const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-          for(let postIndex = 0; postIndex < postList.length; postIndex++){
-                let postId =  postList[postIndex].postId;
-                let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(targetDid,postId) || null;
-                if(post === null){
-                await this.dataHelper.addPostV3(postList[postIndex]);
-                }else {
-                await this.dataHelper.updatePostV3(postList[postIndex]);
-                }
+          for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+            let postId = postList[postIndex].postId;
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(targetDid, postId) || null;
+            if (post === null) {
+              await this.dataHelper.addPostV3(postList[postIndex]);
+            } else {
+              await this.dataHelper.updatePostV3(postList[postIndex]);
+            }
           }
           resolve(postList);
         } else {
@@ -563,19 +578,28 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<{ targetDid: string, channelId: string }> {
+  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
+        const quryResult = this.getSubscriptionInfoByChannel(targetDid, channelId);
+        if (quryResult) {
+          resolve(quryResult);
+          return;
+        }
+
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
         if (result) {
           let subscribedChannel: FeedsData.SubscribedChannelV3 = {
             destDid: targetDid,
             channelId: channelId
           }
-          await this.dataHelper.addSubscribedChannelV3(subscribedChannel);
-          const result = await this.dataHelper.getSubscribedChannelV3List();
-          console.log("result ===== ", result)
-          resolve({ targetDid: targetDid, channelId: channelId });
+
+          const localResult = await this.dataHelper.getSubscriptionV3DataByChannelId(targetDid, channelId);
+          if (!localResult) {
+            await this.dataHelper.addSubscribedChannelV3(subscribedChannel);
+          }
+
+          resolve(subscribedChannel);
         } else {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;
           Logger.error(TAG, errorMsg);
