@@ -161,4 +161,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.querySelfPostsByChannel(channelId);
   }
 
+  queryUserDisplayName(targetDid: string, channelId: string, userDid: string): Promise<any> {
+    return this.hiveVaultHelper.querySelfPostsByChannel(channelId);
+  }
 }

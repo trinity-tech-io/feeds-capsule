@@ -143,6 +143,8 @@ export class DataHelper {
   private didMapper: { [address: string]: FeedsData.DidObj } = {};
   private bidPageAssetItem: FeedsData.NFTItem;
   private assetPageAssetItem: FeedsData.NFTItem;
+
+  private userDisplayNameMap: { [destDid_channel_userdid: string]: string } = {};
   constructor(
     private storageService: StorageService,
     private events: Events,
@@ -3602,10 +3604,17 @@ export class DataHelper {
     this.postCommentList = postCommentList;
   }
 
-  getPostCommentList(){
+  getPostCommentList() {
     return this.postCommentList;
   }
 
+  getUserDisplayName(targetDid: string, channelId: string, userDid: string) {
+    const key = targetDid + '-' + channelId + '-' + userDid;
+    return this.userDisplayNameMap[key];
+  }
 
-
+  cacheUserDisplayName(targetDid: string, channelId: string, userDid: string, name: string) {
+    const key = targetDid + '-' + channelId + '-' + userDid;
+    this.userDisplayNameMap[key] = name;
+  }
 }

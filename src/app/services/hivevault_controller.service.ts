@@ -1136,4 +1136,8 @@ export class HiveVaultController {
     });
   }
 
+  getDisplayName(targetDid: string, channelId: string, userDid: string) {
+    getDisplayName
+  }
+
 }
