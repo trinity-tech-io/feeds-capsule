@@ -274,6 +274,8 @@ export class HiveVaultController {
                 let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(targetDid,postId) || null;
                 if(post === null){
                 await this.dataHelper.addPostV3(postList[postIndex]);
+                }else {
+                await this.dataHelper.updatePostV3(postList[postIndex]);
                 }
           }
           resolve(postList);
