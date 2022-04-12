@@ -64,7 +64,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-        console.log("===subscribedChannels===",subscribedChannels)
+        console.log("===subscribedChannels===", subscribedChannels)
         if (subscribedChannels.length === 0) {
           resolve([]);
           return;
@@ -448,6 +448,15 @@ export class HiveVaultController {
   createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = ''): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        //check local store
+        const targetDid = (await this.dataHelper.getSigninData()).did;
+        const channelId = UtilService.generateChannelId(targetDid, channelName);
+        const localChannel = await this.dataHelper.getChannelV3ById(targetDid, channelId);
+        if (localChannel) {
+          Logger.error(TAG, 'Channel already exist');
+          reject('Already exist')
+        }
+
         // 处理avatar
         const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatarAddress);
         const insertResult = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft, memo, category, proof)
@@ -470,7 +479,7 @@ export class HiveVaultController {
           proof: proof,
           memo: memo,
         }
-        //console.log("create channelId ==== ", channelId)
+
         await this.dataHelper.addChannelV3(channelV3);
         resolve(channelV3.channelId)
       } catch (error) {
@@ -1105,9 +1114,9 @@ export class HiveVaultController {
         Logger.log(TAG, 'Get post from channel result is', result);
         if (result) {
           const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-          for(let postIndex = 0; postIndex < postList.length; postIndex++){
-                let postId =  postList[postIndex].postId;
-                await this.dataHelper.deletePostData(postId);
+          for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+            let postId = postList[postIndex].postId;
+            await this.dataHelper.deletePostData(postId);
           }
           resolve(postList);
         } else {
