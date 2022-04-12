@@ -1173,15 +1173,15 @@ export class PostdetailPage implements OnInit {
         post.destDid, post.channelId, post.postId
       ).then((result) => {
 
-        let list = result.find_message.items || [];
+        let list = result || [];
         //计算post like的数量
         let likeList = _.filter(list, (item) => {
-          return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
+          return item.channelId === post.channelId && item.postId === post.postId && item.commentId === "0";
         }) || [];
         this.likesNum = likeList.length;
 
         let index = _.find(likeList, (item) => {
-          return item.channel_id === post.channelId && item.post_id === post.postId && item.comment_id === "0";
+          return item.channelId === post.channelId && item.postId === post.postId && item.commentId === "0";
           ;
         }) || "";
 

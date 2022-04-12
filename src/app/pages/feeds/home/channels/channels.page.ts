@@ -1383,18 +1383,18 @@ export class ChannelsPage implements OnInit {
       this.hiveVaultController.getLikeByPost(
         destDid, channelId, postId).then((result) => {
           this.isInitLike[postId] = "13";
-          let list = result.find_message.items || [];
+          let list = result || [];
 
           //计算post like的数量
           let likeList = _.filter(list, (item) => {
-            return item.channel_id === channelId && item.post_id === postId && item.comment_id === "0";
+            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
           }) || [];
           this.likeNumMap[postId] = likeList.length;
 
           //检测post like状态
 
           let index = _.find(likeList, (item) => {
-            return item.channel_id === channelId && item.post_id === postId && item.comment_id === "0";
+            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
           }) || "";
           if (index === "") {
             this.likeMap[postId] = "";

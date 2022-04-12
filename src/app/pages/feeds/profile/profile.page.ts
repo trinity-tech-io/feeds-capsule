@@ -294,12 +294,12 @@ export class ProfilePage implements OnInit {
       let channelId = item.channelId;
       try {
         let result = await this.hiveVaultController.getLike(destDid, channelId);
-        let list = result.find_message.items || [];
+        let list = result || [];
         if (list.length > 0) {
           for (let index = 0; index < list.length; index++) {
-            let postId = list[index]['post_id'];
-            let commentId = list[index]['comment_id'];
-            let createrDid = list[index]['creater_did'];
+            let postId = list[index].postId;
+            let commentId = list[index].commentId;
+            let createrDid = list[index].createrDid;
             if (commentId === '0' && userDid === createrDid) {
               let post = await this.dataHelper.getPostV3ById(destDid, postId);
               likeList.push(post);
@@ -2419,18 +2419,18 @@ export class ProfilePage implements OnInit {
       this.hiveVaultController.getLikeByPost(
         destDid, channelId, postId).then((result) => {
           this.isInitLike[postId] = "13";
-          let list = result.find_message.items || [];
+          let list = result || [];
 
           //计算post like的数量
           let likeList = _.filter(list, (item) => {
-            return item.channel_id === channelId && item.post_id === postId && item.comment_id === "0";
+            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
           }) || [];
           this.likeNumMap[postId] = likeList.length;
 
           //检测post like状态
 
           let index = _.find(likeList, (item) => {
-            return item.channel_id === channelId && item.post_id === postId && item.comment_id === "0";
+            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
           }) || "";
           if (index === "") {
             this.likeMap[postId] = "";

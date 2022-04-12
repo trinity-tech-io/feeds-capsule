@@ -269,7 +269,13 @@ export class HiveVaultController {
         Logger.log(TAG, 'Get post from channel result is', result);
         if (result) {
           const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-          this.dataHelper.updatePostsV3(postList);
+          for(let postIndex = 0; postIndex < postList.length; postIndex++){
+                let postId =  postList[postIndex].postId;
+                let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(targetDid,postId) || null;
+                if(post === null){
+                await this.dataHelper.addPostV3(postList[postIndex]);
+                }
+          }
           resolve(postList);
         } else {
           const errorMsg = 'Get post from channel error';
@@ -784,7 +790,7 @@ export class HiveVaultController {
         Logger.log('Query comment by id result is', commentResult);
         if (commentResult) {
           const comments = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
-          console.log('getCommentsByPost parseResult', parseResult);
+          console.log('getCommentsByPost parseResult', comments);
 
           //TODO
           //1.query
