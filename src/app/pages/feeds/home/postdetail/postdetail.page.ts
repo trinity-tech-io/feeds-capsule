@@ -129,7 +129,7 @@ export class PostdetailPage implements OnInit {
   private clientWidth: number = 0;
   private isInitLike: any = {};
   private isInitComment: any = {};
-
+  private postCommentList: FeedsData.CommentV3[] = [];
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -245,6 +245,7 @@ export class PostdetailPage implements OnInit {
           this.channelId,
           this.postId,
         ) || [];
+      this.postCommentList = _.cloneDeep(captainCommentList);
     } catch (error) {
 
     }
@@ -455,8 +456,11 @@ export class PostdetailPage implements OnInit {
   }
 
   indexText(text: string): string {
-    text = text.replace('did:elastos:', '');
-    return UtilService.resolveAddress(text);
+    text = text || "";
+    if(text != ''){
+      text = text.replace('did:elastos:', '');
+      return UtilService.resolveAddress(text);
+    }
   }
 
   showComment(comment: FeedsData.CommentV3) {
@@ -1090,12 +1094,15 @@ export class PostdetailPage implements OnInit {
       }
     }
     let commentId: string = comment.commentId;
+    let createrDid: string  = comment.createrDid
+    this.dataHelper.setPostCommentList(this.postCommentList);
     this.native.navigateForward(['commentlist'], {
       queryParams: {
         destDid: this.destDid,
         channelId: this.channelId,
         postId: this.postId,
         commentId: commentId,
+        createrDid: createrDid
       },
     });
   }

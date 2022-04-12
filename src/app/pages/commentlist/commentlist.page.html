@@ -1,5 +1,4 @@
 <app-titlebar></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
 <ion-content>
 
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
@@ -23,10 +22,10 @@
           </div>
         </ion-col>
         <ion-col class="mid-col" size="8">
-          <ion-label>
-            {{ indexText(captainComment.createrDid,20,20) }}
+          <ion-label (press)="pressContent(captainComment.createrDid)" [style.touch-action]="'pan-y'">
+            {{ indexText(captainComment.createrDid) }}
           </ion-label>
-            <p><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(channelOwner,20,20) }}</p>
+            <p (press)="pressContent(createrDid)" [style.touch-action]="'pan-y'"><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(createrDid) }}</p>
         </ion-col>
        <ion-col class="right-col" size="1.5"  *ngIf="captainComment.status != 1 && isOwnComment[captainComment.commentId]">
           <img (click)="menuMore()"
@@ -81,16 +80,16 @@
             </ion-col>
             <ion-col class="content-col" size="8">
               <ion-row class="top-row">
-                <ion-col class="left-col" size="10.5" (press)="userName(replayComment.user_name)" [style.touch-action]="'pan-y'">
-                  <ion-label >
-                    @{{ indexText(replayComment.createrDid,20,20) }}
+                <ion-col class="left-col" size="10.5" (press)="pressContent(replayComment.createrDid)" [style.touch-action]="'pan-y'">
+                  <ion-label>
+                    @{{ indexText(replayComment.createrDid) }}
                     <span> {{handleDisplayTime(replayComment.createdAt) }}</span>
                   </ion-label>
                 </ion-col>
               </ion-row>
 
               <ion-label>
-                <p (press)="userNameList[replayComment.refcommentId]" [style.touch-action]="'pan-y'"><span style="color:#7624fe;" [style.touch-action]="'pan-y'">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(userNameList[replayComment.refcommentId],20,20)}}</p>
+                <p (press)="userNameList[replayComment.refcommentId]" [style.touch-action]="'pan-y'"><span style="color:#7624fe;" [style.touch-action]="'pan-y'">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ indexText(userNameList[replayComment.refcommentId])}}</p>
               </ion-label>
               <h2 *ngIf="replayComment.status === 1">
                 <pre>{{'CommentlistPage.replydeleted' | translate}}</pre>

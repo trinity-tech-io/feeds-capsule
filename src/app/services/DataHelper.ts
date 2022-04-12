@@ -14,6 +14,7 @@ let TAG: string = 'DataHelper';
 @Injectable()
 export class DataHelper {
   // TODO new add
+  private postCommentList: FeedsData.CommentV3[] = null;
   private selsectIndex = 1;
   private collectibleStatus: any = {};
   private whiteListData: FeedsData.WhiteItem[] = [];
@@ -3596,5 +3597,15 @@ export class DataHelper {
   getSelsectIndex() {
     return this.selsectIndex;
   }
+
+  setPostCommentList(postCommentList: FeedsData.CommentV3[]) {
+    this.postCommentList = postCommentList;
+  }
+
+  getPostCommentList(){
+    return this.postCommentList;
+  }
+
+
 
 }

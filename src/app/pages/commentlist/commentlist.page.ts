@@ -62,12 +62,12 @@ export class CommentlistPage implements OnInit {
   public captainComment: any = {};
   public avatar: string = '';
   public updatedAt: number = 0;
-  public channelOwner: string = '';
   public curComment: any = {};
   public refcommentId: string = "0";
-  public captainCommentList = [];
+  private postCommentList: FeedsData.CommentV3[]  = [];
   public likedCommentMap: any = {};
   public likedCommentNum: any = {};
+  public createrDid: string = '';
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -139,7 +139,7 @@ export class CommentlistPage implements OnInit {
 
   sortCommentList() {
     let replayCommentList = [];
-    replayCommentList = _.filter(this.captainCommentList, (item: FeedsData.CommentV3) => {
+    replayCommentList = _.filter(this.postCommentList, (item: FeedsData.CommentV3) => {
       return item.refcommentId === this.commentId;
     });
     this.commentsNum = replayCommentList.length;
@@ -159,11 +159,7 @@ export class CommentlistPage implements OnInit {
       this.channelId = data.channelId;
       this.postId = data.postId;
       this.commentId = data.commentId;
-      let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-      if (channel != null) {
-        this.channelOwner = UtilService.resolveAddress(channel.destDid);
-      }
-      this.userNameList[this.commentId] = data.destDid || '';
+      this.createrDid =  data.createrDid;
     });
   }
 
@@ -171,11 +167,10 @@ export class CommentlistPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
-    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     this.initTitle();
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';
-    await this.getCaptainComment();
+    this.getCaptainComment();
     this.initData(true);
     //this.feedService.refreshPostById(this.destDid, this.channelId, this.postId);
 
@@ -190,11 +185,10 @@ export class CommentlistPage implements OnInit {
     this.events.subscribe(
       FeedsEvent.PublishType.getCommentFinish,
       (getCommentData: FeedsData.CommentV3) => {
-        this.zone.run(async () => {
-          await this.getCaptainComment();
+        this.zone.run(() => {
+          this.getCaptainComment();
           this.startIndex = 0;
           this.initData(true);
-
         });
       },
     );
@@ -286,8 +280,12 @@ export class CommentlistPage implements OnInit {
     return this.feedsServiceApi.parsePostContentImg(content);
   }
 
-  indexText(text: string, limit: number, indexLength: number): string {
-    return this.feedService.indexText(text, limit, indexLength);
+  indexText(text: string): string {
+    text = text || "";
+    if(text != ''){
+      text = text.replace('did:elastos:', '');
+      return UtilService.resolveAddress(text);
+    }
   }
 
   showComment(comment: FeedsData.CommentV3) {
@@ -357,17 +355,26 @@ export class CommentlistPage implements OnInit {
   }
 
   handleUpdateDate(updatedTime: number) {
+    if(updatedTime === 0){
+      return;
+    }
     let updateDate = new Date(updatedTime);
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
   }
 
-  doRefresh(event: any) {
-    let sId = setTimeout(() => {
-      this.getCaptainComment();
-      this.initData(true);
+  async doRefresh(event: any) {
+
+    try {
+     this.postCommentList  = await this.hiveVaultController.
+     syncCommentFromPost(this.destDid, this.channelId, this.postId);
+     this.dataHelper.setPostCommentList(this.postCommentList);
+     this.getCaptainComment();
+     this.initData(true);
+     event.target.complete();
+    } catch (error) {
       event.target.complete();
-      clearTimeout(sId);
-    }, 500);
+    }
+
   }
 
   loadData(event: any) {
@@ -511,20 +518,11 @@ export class CommentlistPage implements OnInit {
     return this.feedService.getServerStatusFromId(nodeId);
   }
 
-  async getCaptainComment() {
-    let captainCommentList = [];
-    try {
-      captainCommentList =
-        await this.hiveVaultController.getCommentsByPost(
-          this.destDid,
-          this.channelId,
-          this.postId,
-        ) || [];
-    } catch (error) {
-      captainCommentList = [];
-    }
-    this.captainCommentList = _.cloneDeep(captainCommentList);
-    this.captainComment = _.find(captainCommentList, (item: FeedsData.CommentV3) => {
+  getCaptainComment() {
+
+    this.postCommentList  = this.dataHelper.getPostCommentList() || [];
+
+    this.captainComment = _.find(this.postCommentList, (item: FeedsData.CommentV3) => {
       return item.commentId == this.commentId;
     });
 

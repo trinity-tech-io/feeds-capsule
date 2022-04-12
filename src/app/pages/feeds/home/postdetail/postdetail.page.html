@@ -152,7 +152,7 @@
         <ion-col class="content-col" size="8">
           <ion-row class="top-row">
             <ion-col class="left-col" size="10.5" (click)="clickComment(comment)">
-              <ion-label (press)="pressContent(comment.destDid)" [style.touch-action]="'pan-y'">
+              <ion-label (press)="pressContent(comment.createrDid)" [style.touch-action]="'pan-y'">
                 @{{ indexText(comment.createrDid) }}
                 <span> {{ handleDisplayTime(comment.updatedAt) }}</span>
               </ion-label>

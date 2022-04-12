@@ -104,8 +104,15 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
         const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
-
-        await this.dataHelper.addCommentsV3(commentList);
+        for(let commentIndex = 0; commentIndex< commentList.length; commentIndex++){
+            let item = commentList[commentIndex];
+            let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
+            if(comment === ''){
+              await this.dataHelper.addCommentV3(item);
+            }else{
+              await this.dataHelper.updateCommentV3(item);
+            }
+        }
         resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'Sync comment from post error', error);
