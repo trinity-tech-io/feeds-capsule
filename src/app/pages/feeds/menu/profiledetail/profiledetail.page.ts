@@ -152,15 +152,6 @@ export class ProfiledetailPage implements OnInit {
 
     this.initData();
 
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
-      let pageName = dialogData.pageName;
-      let dialogName = dialogData.dialogName;
-      let dialogbutton = dialogData.clickButton;
-      if (pageName === "profiledetail") {
-        this.handleDialog(dialogName, dialogbutton, pageName);
-      }
-    });
-
     this.events.subscribe(
       FeedsEvent.PublishType.serverConnectionChanged,
       () => {
@@ -193,7 +184,6 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillUnload() { }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
     this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
@@ -375,7 +365,7 @@ export class ProfiledetailPage implements OnInit {
                   this.native.toast('ServerInfoPage.removeserver');
                   this.isShowPublisherAccount = false;
                   this.native.hideLoading();
-                  this.feedService.setCurrentChannel(null);
+                  this.dataHelper.setCurrentChannel(null);
                   this.storageService.remove('feeds.currentChannel');
                   this.native.hideLoading();
                   this.events.publish(FeedsEvent.PublishType.updateTab);
@@ -446,44 +436,4 @@ export class ProfiledetailPage implements OnInit {
     this.viewHelper.showPublisherDialog("profiledetail")
   }
 
-  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
-    switch (dialogName) {
-      case "publisherAccount":
-        this.publisherAccount(dialogbutton, pageName)
-        break;
-      case "guide":
-        this.guide(dialogbutton);
-        break;
-    }
-  }
-
-  async publisherAccount(dialogbutton: string, pageName: string) {
-    switch (dialogbutton) {
-      case "createNewPublisherAccount":
-        this.feedService.setBindPublisherAccountType('new');
-        break;
-      case "bindExistingPublisherAccount":
-        this.feedService.setBindPublisherAccountType('exit');
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
-
-  async guide(dialogbutton: string) {
-    switch (dialogbutton) {
-      case "guidemac":
-        await this.native.navigateForward(["guidemac"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "guideubuntu":
-        await this.native.navigateForward(["guideubuntu"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "skip":
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
 }

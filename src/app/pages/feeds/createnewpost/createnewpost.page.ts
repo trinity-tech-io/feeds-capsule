@@ -110,12 +110,12 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async initFeed() {
-    let currentFeed: FeedsData.ChannelV3 = this.feedService.getCurrentChannel();
+    let currentFeed: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel();
 
     if (currentFeed == null) {
       const selfChannelList = await this.dataHelper.getSelfChannelListV3();
       currentFeed = await this.dataHelper.getChannelV3ById(selfChannelList[0].destDid, selfChannelList[0].channelId);
-      this.feedService.setCurrentChannel(currentFeed);
+      this.dataHelper.setCurrentChannel(currentFeed);
     }
 
     this.channelIdV3 = currentFeed.channelId;
@@ -138,8 +138,8 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.imgUrl = this.feedService.getSelsectNftImage();
-    this.feedService.setSelsectNftImage(this.imgUrl);
+    this.imgUrl = this.dataHelper.getSelsectNftImage();
+    this.dataHelper.setSelsectNftImage(this.imgUrl);
     this.channelList = await this.dataHelper.getSelfChannelListV3() || [];
     this.initTitle();
 
@@ -238,7 +238,7 @@ export class CreatenewpostPage implements OnInit {
       (imageUrl: any) => {
         this.zone.run(() => {
           this.imgUrl = imageUrl;
-          this.feedService.setSelsectNftImage(imageUrl);
+          this.dataHelper.setSelsectNftImage(imageUrl);
         });
       },
       (err: any) => {
@@ -259,10 +259,6 @@ export class CreatenewpostPage implements OnInit {
       'CreatenewpostPage.addingPost',
       this.appService,
     );
-  }
-
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
   }
 
   pressName(channelName: string) {
@@ -464,7 +460,7 @@ export class CreatenewpostPage implements OnInit {
     this.subscribers = channel['subscribers'] || '';
     this.channelAvatar = this.feedService.parseChannelAvatar(channel['avatar']);
 
-    this.feedService.setCurrentChannel(channel);
+    this.dataHelper.setCurrentChannel(channel);
     this.storageService.set('feeds.currentChannel', JSON.stringify(channel));
     this.initFeed();
     this.hideSwitchFeed = false;
@@ -521,7 +517,7 @@ export class CreatenewpostPage implements OnInit {
         // const fileBlob = UtilService.base64ToBlob(fileBase64);
         // that.ipfsService.uploadData(fileBlob);
         that.imgUrl = fileBase64;
-        that.feedService.setSelsectNftImage(fileBase64);
+        that.dataHelper.setSelsectNftImage(fileBase64);
       });
 
     });
@@ -535,7 +531,7 @@ export class CreatenewpostPage implements OnInit {
       (imageUrl: any) => {
         that.zone.run(() => {
           that.imgUrl = imageUrl;
-          that.feedService.setSelsectNftImage(imageUrl);
+          that.dataHelper.setSelsectNftImage(imageUrl);
         });
       },
       (err: any) => {
@@ -550,7 +546,7 @@ export class CreatenewpostPage implements OnInit {
 
   removeImg() {
     this.imgUrl = "";
-    this.feedService.setSelsectNftImage("");
+    this.dataHelper.setSelsectNftImage("");
   }
 
   handleImgUri(type: number, that: any): Promise<any> {

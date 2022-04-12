@@ -86,19 +86,6 @@ export class EditCommentPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitle();
     });
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
-
-    this.initnodeStatus();
   }
 
   ionViewDidEnter() {
@@ -115,7 +102,6 @@ export class EditCommentPage implements OnInit {
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
   }
 
   newPostTextArea() {
@@ -175,14 +161,6 @@ export class EditCommentPage implements OnInit {
     }
   }
 
-  checkServerStatus(destId: string) {
-    return this.feedService.getServerStatusFromId(destId);
-  }
-
-  initnodeStatus() {
-    let status = this.checkServerStatus(this.destDid);
-    this.nodeStatus[this.destDid] = status;
-  }
 
   pressName(channelName: string) {
     this.viewHelper.createTip(channelName);

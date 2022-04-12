@@ -4,6 +4,7 @@ import { NativeService } from '../../services/NativeService';
 import { FeedService } from '../../services/FeedService';
 import { UtilService } from '../../services/utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 @Component({
   selector: 'app-switchfeed',
   templateUrl: './switchfeed.component.html',
@@ -18,12 +19,12 @@ export class SwitchfeedComponent implements OnInit {
   constructor(
     public theme: ThemeService,
     public native: NativeService,
-    private feedService: FeedService,
+    private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController
   ) {}
 
   ngOnInit() {
-    this.currentFeed = this.feedService.getCurrentChannel();
+    this.currentFeed = this.dataHelper.getCurrentChannel();
     this.getAllAvatarList();
   }
 

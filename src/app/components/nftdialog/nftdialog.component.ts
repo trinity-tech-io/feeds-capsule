@@ -568,7 +568,7 @@ export class NftdialogComponent implements OnInit {
   }
 
   async getSetChannel(tokenId: any) {
-    let setChannel = this.feedService.getCollectibleStatus();
+    let setChannel = this.dataHelper.getCollectibleStatus();
     let isTipToast: boolean = false;
     for (let key in setChannel) {
       let value = setChannel[key] || '';

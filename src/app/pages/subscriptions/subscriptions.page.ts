@@ -57,16 +57,6 @@ export class SubscriptionsPage implements OnInit {
   }
 
   addEvents() {
-    this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
 
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
       this.zone.run(() => {
@@ -85,17 +75,14 @@ export class SubscriptionsPage implements OnInit {
       () => {
         this.zone.run(async () => {
           this.followingList = await this.initFollowing()
-          this.initnodeStatus(this.followingList);
         });
       },
     );
   }
 
   removeEvents() {
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
   }
 
@@ -147,8 +134,6 @@ export class SubscriptionsPage implements OnInit {
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
     this.followingList = await this.getFollowedChannelList(subscribedChannel);
     this.refreshFollowingVisibleareaImage();
-    // this.initnodeStatus(this.followingList);
-    // this.feedService.updateSubscribedFeed();
   }
 
   async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
@@ -162,18 +147,6 @@ export class SubscriptionsPage implements OnInit {
       }
     }
     return list;
-  }
-  initnodeStatus(list: any) {
-    list = list || [];
-    for (let index = 0; index < list.length; index++) {
-      let nodeId = list[index]['nodeId'];
-      let status = this.checkServerStatus(nodeId);
-      this.nodeStatus[nodeId] = status;
-    }
-  }
-
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
   }
 
   doRefresh(event: any) {
@@ -285,15 +258,15 @@ export class SubscriptionsPage implements OnInit {
     let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
     if (feedAvatar.indexOf('data:image') > -1 ||
       feedAvatar.startsWith("https:")) {
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(feedAvatar);
+      this.dataHelper.setSelsectIndex(0);
+      this.dataHelper.setProfileIamge(feedAvatar);
     } else if (feedAvatar.indexOf('assets/images') > -1) {
       let index = feedAvatar.substring(
         feedAvatar.length - 5,
         feedAvatar.length - 4,
       );
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(feedAvatar);
+      this.dataHelper.setSelsectIndex(index);
+      this.dataHelper.setProfileIamge(feedAvatar);
     }
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     this.feedService.setChannelInfo({

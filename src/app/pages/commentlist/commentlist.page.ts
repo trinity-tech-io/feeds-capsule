@@ -143,7 +143,7 @@ export class CommentlistPage implements OnInit {
       return item.refcommentId === this.commentId;
     });
     this.commentsNum = replayCommentList.length;
-    this.hideDeletedComments = this.feedService.getHideDeletedComments();
+    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     if (!this.hideDeletedComments) {
       replayCommentList = _.filter(replayCommentList, (item: any) => {
         return item.status != 1;
@@ -171,7 +171,7 @@ export class CommentlistPage implements OnInit {
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
-    this.hideDeletedComments = this.feedService.getHideDeletedComments();
+    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     this.initTitle();
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';

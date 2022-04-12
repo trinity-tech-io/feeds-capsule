@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { DataHelper } from 'src/app/services/DataHelper';
 const TAG: string = 'ProfileImagePage';
 @Component({
   selector: 'app-profilenftimage',
@@ -43,6 +44,7 @@ export class ProfilenftimagePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() {
@@ -161,7 +163,7 @@ export class ProfilenftimagePage implements OnInit {
         this.zone.run(() => {
           let dataSrc = data || "";
           if (dataSrc != "") {
-            this.feedService.setSelsectNftImage(dataSrc);
+            this.dataHelper.setSelsectNftImage(dataSrc);
             this.native.pop();
             this.native.hideLoading();
           }

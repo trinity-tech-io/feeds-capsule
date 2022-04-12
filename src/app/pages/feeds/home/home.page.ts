@@ -14,7 +14,6 @@ import {
   IonRefresher
 } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService, SignInData } from 'src/app/services/FeedService';
 import { MenuService } from 'src/app/services/MenuService';
 import { FeedsPage } from '../feeds.page';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -174,7 +173,6 @@ export class HomePage implements OnInit {
     private feedspage: FeedsPage,
     private events: Events,
     private zone: NgZone,
-    private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
     private native: NativeService,
@@ -234,7 +232,7 @@ export class HomePage implements OnInit {
 
   async sortPostList() {
     let postList = await this.dataHelper.getPostV3List() || [];
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       postList = _.filter(postList, (item: any) => {
         return item.status != 1;
@@ -282,7 +280,7 @@ export class HomePage implements OnInit {
     this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
-    this.elaPrice = this.feedService.getElaUsdPrice();
+    this.elaPrice = this.dataHelper.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -290,7 +288,7 @@ export class HomePage implements OnInit {
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     this.handleScroll();
-    let pasarListGrid = this.feedService.getPasarListGrid();
+    let pasarListGrid = this.dataHelper.getPasarListGrid();
     if (!pasarListGrid) {
       this.styleType = "grid";
     } else {
@@ -331,7 +329,7 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
       Logger.log(TAG, "revice unfollowFeedsFinish event");
       this.zone.run(async () => {
-        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
         await this.refreshPostList();
       });
     });
@@ -363,7 +361,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(async () => {
-        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
         this.refreshPostList();
       });
     });
@@ -378,7 +376,7 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.pasarListGrid, () => {
-      let pasarListGrid = this.feedService.getPasarListGrid();
+      let pasarListGrid = this.dataHelper.getPasarListGrid();
       if (!pasarListGrid) {
         this.styleType = "grid";
       } else {
@@ -412,15 +410,6 @@ export class HomePage implements OnInit {
         return;
       }
       this.native.navigateForward(['mintnft'], {});
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
-      let pageName = dialogData.pageName;
-      let dialogName = dialogData.dialogName;
-      let dialogbutton = dialogData.clickButton;
-      if (pageName === "home") {
-        this.handleDialog(dialogName, dialogbutton, pageName);
-      }
     });
 
     this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
@@ -534,7 +523,6 @@ export class HomePage implements OnInit {
 
     this.isLoading = false;
     this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
-    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
@@ -688,10 +676,6 @@ export class HomePage implements OnInit {
       .navigateForward(['/postdetail', destDid, channelId, postId]);
   }
 
-  checkMyLike(destDid: string, channelId: string, postId: string) {
-    return this.feedService.checkMyLike(destDid, channelId, postId);
-  }
-
   exploreFeeds() {
     this.native.setRootRouter(['/tabs/search']);
     this.feedspage.search();
@@ -765,10 +749,6 @@ export class HomePage implements OnInit {
     return channel.name;
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
-  }
-
   moreName(name: string) {
     return UtilService.moreNanme(name);
   }
@@ -789,7 +769,6 @@ export class HomePage implements OnInit {
               let len = this.postList.length - 1;
               this.postList = this.postList.concat(arr);
               this.refreshImage(len);
-              // this.initnodeStatus(arr);
               event.target.complete();
             });
           } else {
@@ -811,7 +790,7 @@ export class HomePage implements OnInit {
       case 'pasar':
         // this.scrollToTop(1);
         this.zone.run(() => {
-          this.elaPrice = this.feedService.getElaUsdPrice();
+          this.elaPrice = this.dataHelper.getElaUsdPrice();
           this.loadMoreData().then((list) => {
             let timer = setTimeout(() => {
               if (list.length > 0) {
@@ -869,7 +848,7 @@ export class HomePage implements OnInit {
 
         break;
       case 'pasar':
-        this.elaPrice = this.feedService.getElaUsdPrice();
+        this.elaPrice = this.dataHelper.getElaUsdPrice();
         this.zone.run(async () => {
           await this.refreshPasarList();
           event.target.complete();
@@ -1710,7 +1689,7 @@ export class HomePage implements OnInit {
   }
 
   retry(destDid: string, channelId: string, postId: string) {
-    this.feedService.republishOnePost(destDid, channelId, postId);
+    //重新发送Post
   }
 
   async buy(post: any) {
@@ -1759,7 +1738,7 @@ export class HomePage implements OnInit {
         } else {
           this.handleRefresherInfinite(false);
         }
-        this.elaPrice = this.feedService.getElaUsdPrice();
+        this.elaPrice = this.dataHelper.getElaUsdPrice();
         let value =
           this.popoverController.getTop()['__zone_symbol__value'] || '';
         if (value != '') {
@@ -1822,12 +1801,12 @@ export class HomePage implements OnInit {
       return;
     }
 
-    this.feedService.setSelsectNftImage("");
+    this.dataHelper.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }
 
   createNft() {
-    let nftFirstdisclaimer = this.feedService.getNftFirstdisclaimer() || "";
+    let nftFirstdisclaimer = this.dataHelper.getNftFirstdisclaimer() || "";
     if (nftFirstdisclaimer === "") {
       this.viewHelper.showNftdisclaimerPrompt();
       return;
@@ -1945,47 +1924,6 @@ export class HomePage implements OnInit {
     //this.searchPasar = _.cloneDeep(this.pasarList);
     // this.nftPersistenceHelper.setPasarList(pList);
     this.dataHelper.deletePasarItem(saleOrderId);
-  }
-
-  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
-    switch (dialogName) {
-      case "publisherAccount":
-        this.publisherAccount(dialogbutton, pageName)
-        break;
-      case "guide":
-        this.guide(dialogbutton);
-        break;
-    }
-  }
-
-  async publisherAccount(dialogbutton: string, pageName: string) {
-    switch (dialogbutton) {
-      case "createNewPublisherAccount":
-        this.feedService.setBindPublisherAccountType('new');
-        break;
-      case "bindExistingPublisherAccount":
-        this.feedService.setBindPublisherAccountType('exit');
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
-
-  async guide(dialogbutton: string) {
-    switch (dialogbutton) {
-      case "guidemac":
-        await this.native.navigateForward(["guidemac"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "guideubuntu":
-        await this.native.navigateForward(["guideubuntu"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "skip":
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
   }
 
   handleScroll() {

@@ -580,11 +580,11 @@ export class GalleriachannelPage implements OnInit {
   }
 
   handleDiscoverfeedsCache(feedsUrl: string) {
-    let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+    let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
     let newDiscoverfeeds = _.filter(discoverfeeds, (item) => {
       return item.url != feedsUrl;
     });
-    this.feedService.setDiscoverfeeds(newDiscoverfeeds);
+    this.dataHelper.setDiscoverfeeds(newDiscoverfeeds);
     this.storageService.set(
       'feed:discoverfeeds',
       JSON.stringify(newDiscoverfeeds),

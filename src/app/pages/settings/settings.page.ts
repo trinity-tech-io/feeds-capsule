@@ -3,7 +3,6 @@ import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../services/theme.service';
 import { NativeService } from '../../services/NativeService';
-import { FeedService } from '../../services/FeedService';
 import { PopupProvider } from '../../services/popup';
 import { StorageService } from '../../services/StorageService';
 import { Events } from 'src/app/services/events.service';
@@ -38,7 +37,6 @@ export class SettingsPage implements OnInit {
   private isHideDeletedPosts: boolean = false;
   constructor(
     private languageService: LanguageService,
-    private feedService: FeedService,
     private events: Events,
     private native: NativeService,
     private translate: TranslateService,
@@ -66,13 +64,13 @@ export class SettingsPage implements OnInit {
   ionViewWillEnter() {
     this.loadIpfsShowName();
     //this.loadAssistShowName();
-    this.pasarListGrid = this.feedService.getPasarListGrid();
+    this.pasarListGrid = this.dataHelper.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
-    this.hideDeletedComments = this.feedService.getHideDeletedComments();
-    this.hideOfflineFeeds = this.feedService.getHideOfflineFeeds();
-    this.developerMode = this.feedService.getDeveloperMode();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
+    this.hideOfflineFeeds = this.dataHelper.getHideOfflineFeeds();
+    this.developerMode = this.dataHelper.getDeveloperMode();
     this.isShowAdult = this.dataHelper.getAdultStatus();
     this.initTitle();
   }
@@ -140,16 +138,16 @@ export class SettingsPage implements OnInit {
     this.zone.run(() => {
       this.hideDeletedPosts = !this.hideDeletedPosts;
     });
-    this.feedService.setHideDeletedPosts(this.hideDeletedPosts);
-    this.feedService.setData('feeds.hideDeletedPosts', this.hideDeletedPosts);
+    this.dataHelper.setHideDeletedPosts(this.hideDeletedPosts);
+    this.dataHelper.saveData('feeds.hideDeletedPosts', this.hideDeletedPosts);
   }
 
   toggleHideDeletedComments() {
     this.zone.run(() => {
       this.hideDeletedComments = !this.hideDeletedComments;
     });
-    this.feedService.setHideDeletedComments(this.hideDeletedComments);
-    this.feedService.setData(
+    this.dataHelper.setHideDeletedComments(this.hideDeletedComments);
+    this.dataHelper.saveData(
       'feeds.hideDeletedComments',
       this.hideDeletedComments,
     );
@@ -157,17 +155,17 @@ export class SettingsPage implements OnInit {
 
   toggleHideOfflineFeeds() {
     this.hideOfflineFeeds = !this.hideOfflineFeeds;
-    this.feedService.setHideOfflineFeeds(this.hideOfflineFeeds);
+    this.dataHelper.setHideOfflineFeeds(this.hideOfflineFeeds);
     this.events.publish(FeedsEvent.PublishType.hideOfflineFeeds);
-    this.feedService.setData('feeds.hideOfflineFeeds', this.hideOfflineFeeds);
+    this.dataHelper.saveData('feeds.hideOfflineFeeds', this.hideOfflineFeeds);
   }
 
   toggleDeveloperMode() {
     this.zone.run(() => {
       this.developerMode = !this.developerMode;
     });
-    this.feedService.setDeveloperMode(this.developerMode);
-    this.feedService.setData('feeds.developerMode', this.developerMode);
+    this.dataHelper.setDeveloperMode(this.developerMode);
+    this.dataHelper.saveData('feeds.developerMode', this.developerMode);
     this.events.publish(FeedsEvent.PublishType.search);
     if (this.developerMode) {
       this.ipfsService.setTESTMode(true);
@@ -202,13 +200,11 @@ export class SettingsPage implements OnInit {
   }
 
   removeData() {
-    this.feedService.removeAllServerFriends();
+
     this.storageService
       .clearAll()
       .then(() => {
         localStorage.clear();
-        this.feedService.resetConnectionStatus();
-        this.feedService.destroyCarrier();
         this.titleBarService.hideRight(this.titleBar);
         this.native.setRootRouter('disclaimer');
         this.native.toast('SettingsPage.des1');
@@ -255,8 +251,8 @@ export class SettingsPage implements OnInit {
     this.zone.run(() => {
       this.pasarListGrid = !this.pasarListGrid;
     });
-    this.feedService.setPasarListGrid(this.pasarListGrid);
-    this.feedService.setData('feeds.pasarListGrid', this.pasarListGrid);
+    this.dataHelper.setPasarListGrid(this.pasarListGrid);
+    this.dataHelper.saveData('feeds.pasarListGrid', this.pasarListGrid);
     this.isListGrid = true;
   }
 

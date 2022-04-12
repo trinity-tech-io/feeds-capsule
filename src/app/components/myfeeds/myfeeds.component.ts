@@ -5,6 +5,7 @@ import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -21,7 +22,7 @@ export class MyfeedsComponent implements OnInit {
   public popover: any = '';
   public avatarList:any = '';
   constructor(
-    private feedService: FeedService,
+    private dataHelper: DataHelper,
     public theme: ThemeService,
     private native: NativeService,
     private viewHelper: ViewHelper,
@@ -69,8 +70,8 @@ export class MyfeedsComponent implements OnInit {
   }
 
   checkDid() {
-    this.feedService.setProfileIamge('assets/images/profile-1.svg');
-    this.feedService.setSelsectIndex(1);
+    this.dataHelper.setProfileIamge('assets/images/profile-1.svg');
+    this.dataHelper.setSelsectIndex(1);
 
     this.native.navigateForward(['/createnewfeed'], '');
   }

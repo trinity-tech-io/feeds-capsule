@@ -199,7 +199,7 @@ export class AssetdetailsPage implements OnInit {
     this.handleNftDid();
     this.price = this.assItem.fixedAmount || null;
     if(this.price!=null){
-      let elaPrice = this.feedService.getElaUsdPrice() || "";
+      let elaPrice = this.dataHelper.getElaUsdPrice() || "";
       if(elaPrice != ""){
         let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
       this.usdPrice = UtilService.accMul(elaPrice,ethprice).toFixed(2);

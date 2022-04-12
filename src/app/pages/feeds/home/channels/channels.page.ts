@@ -2,7 +2,6 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
-import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -82,8 +81,6 @@ export class ChannelsPage implements OnInit {
 
   public fullScreenmodal: any = '';
 
-  public curNodeId: string = '';
-
   public hideDeletedPosts: boolean = false;
 
   public isPress: boolean = false;
@@ -139,7 +136,6 @@ export class ChannelsPage implements OnInit {
     private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
-    private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
     private menuService: MenuService,
@@ -223,17 +219,10 @@ export class ChannelsPage implements OnInit {
     //this.initStatus(this.postList);
   }
 
-  // initStatus(arr: any) {
-  //   for (let index = 0; index < arr.length; index++) {
-  //     let destDid = arr[index]['destDid'];
-  //     this.initnodeStatus(destDid);
-  //   }
-  // }
-
   async sortChannelList() {
     let postListByChannel =
       await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       postListByChannel = _.filter(postListByChannel, (item: any) => {
         return item.status != 1;
@@ -320,7 +309,7 @@ export class ChannelsPage implements OnInit {
       this.isAndroid = false;
     }
 
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     this.styleObj.width = screen.width - 105 + 'px';
@@ -375,8 +364,6 @@ export class ChannelsPage implements OnInit {
       this.isVideoLoading[this.videoDownStatusKey] = false;
       this.videoDownStatus[this.videoDownStatusKey] = '';
 
-      this.feedService.closeSession(this.curNodeId);
-      this.curNodeId = '';
       this.pauseAllVideo();
       this.hideFullScreen();
     });
@@ -528,10 +515,6 @@ export class ChannelsPage implements OnInit {
       .navigateForward(['/postdetail', destDid, channelId, postId]);
   }
 
-  checkMyLike(destDid: string, channelId: string, postId: string) {
-    return this.feedService.checkMyLike(destDid, channelId, postId);
-  }
-
   async checkFollowStatus(destDid: string, channelId: string) {
 
     let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
@@ -595,15 +578,6 @@ export class ChannelsPage implements OnInit {
         post.postId,
       );
     }
-  }
-
-  checkServerStatus(destDid: string) {
-    return this.feedService.getServerStatusFromId(destDid);
-  }
-
-  initnodeStatus(destDid: string) {
-    let status = this.checkServerStatus(destDid);
-    this.nodeStatus[destDid] = status;
   }
 
   doRefresh(event: any) {
@@ -1278,18 +1252,18 @@ export class ChannelsPage implements OnInit {
   async clickAvatar() {
     if (this.channelAvatar.indexOf('data:image') > -1 ||
       this.channelAvatar.startsWith('https:')) {
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(this.channelAvatar);
+      this.dataHelper.setSelsectIndex(0);
+      this.dataHelper.setProfileIamge(this.channelAvatar);
     } else if (this.channelAvatar.indexOf('assets/images') > -1) {
       let index = this.channelAvatar.substring(
         this.channelAvatar.length - 5,
         this.channelAvatar.length - 4,
       );
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(this.channelAvatar);
+      this.dataHelper.setSelsectIndex(index);
+      this.dataHelper.setProfileIamge(this.channelAvatar);
     }
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    this.feedService.setChannelInfo({
+    this.dataHelper.setChannelInfo({
       destDid: this.destDid,
       channelId: this.channelId,
       name: this.channelName,
@@ -1334,7 +1308,6 @@ export class ChannelsPage implements OnInit {
   }
 
   retry(destDid: string, channelId: string, postId: string) {
-    this.feedService.republishOnePost(destDid, channelId, postId);
   }
 
   handlePostLikeData(id: string, srcId: string, rowindex: number, postgrid: any) {

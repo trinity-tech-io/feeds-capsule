@@ -270,47 +270,48 @@ export class MyApp {
   }
 
   initDiscoverfeeds() {
-    this.feedService
-      .getData('feed:discoverfeeds')
+    this.dataHelper
+      .loadData('feed:discoverfeeds')
       .then(discoverfeeds => {
         if (discoverfeeds === null) {
-          this.feedService.setDiscoverfeeds([]);
+          this.dataHelper.setDiscoverfeeds([]);
           return;
         }
-        this.feedService.setDiscoverfeeds(JSON.parse(discoverfeeds));
+        this.dataHelper.setDiscoverfeeds(JSON.parse(discoverfeeds));
       })
       .catch(err => { });
   }
 
   initCurrentChannel() {
-    this.feedService
-      .getData('feeds.currentChannel')
+    this.dataHelper
+      .loadData('feeds.currentChannel')
       .then(currentFeed => {
         if (currentFeed === null) {
-          this.feedService.setCurrentChannel(null);
+          this.dataHelper.setCurrentChannel(null);
           return;
         }
-        this.feedService.setCurrentChannel(JSON.parse(currentFeed));
+        this.dataHelper.setCurrentChannel(JSON.parse(currentFeed));
       })
       .catch(err => { });
   }
 
   initFeedPublicStatus() {
-    this.feedService
-      .getData('feeds.feedPublicStatus')
+    this.dataHelper
+      .loadData('feeds.feedPublicStatus')
       .then(feedPublicStatus => {
         if (feedPublicStatus === null) {
-          this.feedService.setFeedPublicStatus({});
+          this.dataHelper.setFeedPublicStatus({});
           return;
         }
-        this.feedService.setFeedPublicStatus(JSON.parse(feedPublicStatus));
+        this.dataHelper.setFeedPublicStatus(JSON.parse(feedPublicStatus));
       })
       .catch(err => { });
   }
 
   initSetting() {
     this.updateElaPrice();
-    this.feedService.getData("feeds:elaPrice").then((elaPrice: any) => {
+    this.dataHelper
+      .loadData("feeds:elaPrice").then((elaPrice: any) => {
       if (elaPrice === null) {
         this.setElaUsdPrice("");
       } else {
@@ -328,47 +329,47 @@ export class MyApp {
       this.globalService.changeNet(net);
     });
 
-    this.feedService
-      .getData('feeds.developerMode')
+    this.dataHelper
+      .loadData('feeds.developerMode')
       .then(status => {
         if (status === null) {
-          this.feedService.setDeveloperMode(false);
+          this.dataHelper.setDeveloperMode(false);
           return;
         }
-        this.feedService.setDeveloperMode(status);
+        this.dataHelper.setDeveloperMode(status);
       })
       .catch(err => { });
 
-    this.feedService
-      .getData('feeds.hideDeletedPosts')
+      this.dataHelper
+      .loadData('feeds.hideDeletedPosts')
       .then(status => {
         if (status === null) {
-          this.feedService.setHideDeletedPosts(false);
+          this.dataHelper.setHideDeletedPosts(false);
           return;
         }
-        this.feedService.setHideDeletedPosts(status);
+        this.dataHelper.setHideDeletedPosts(status);
       })
       .catch(err => { });
 
-    this.feedService
-      .getData('feeds.hideDeletedComments')
+      this.dataHelper
+      .loadData('feeds.hideDeletedComments')
       .then(status => {
         if (status === null) {
-          this.feedService.setHideDeletedComments(false);
+          this.dataHelper.setHideDeletedComments(false);
           return;
         }
-        this.feedService.setHideDeletedComments(status);
+        this.dataHelper.setHideDeletedComments(status);
       })
       .catch(err => { });
 
-    this.feedService
-      .getData("feeds.pasarListGrid")
+    this.dataHelper
+      .loadData("feeds.pasarListGrid")
       .then((pasarListGrid) => {
         if (pasarListGrid === null) {
-          this.feedService.setPasarListGrid(false);
+          this.dataHelper.setPasarListGrid(false);
           return;
         }
-        this.feedService.setPasarListGrid(pasarListGrid);
+        this.dataHelper.setPasarListGrid(pasarListGrid);
       })
       .catch(err => { });
   }
@@ -534,27 +535,27 @@ export class MyApp {
   }
 
   initCollectibleSetting() {
-    this.feedService
-      .getData('feeds.collectible.setting')
+    this.dataHelper
+      .loadData('feeds.collectible.setting')
       .then(collectibleSetting => {
         if (collectibleSetting === null) {
-          this.feedService.setCollectibleStatus({});
+          this.dataHelper.setCollectibleStatus({});
           return;
         }
-        this.feedService.setCollectibleStatus(JSON.parse(collectibleSetting));
+        this.dataHelper.setCollectibleStatus(JSON.parse(collectibleSetting));
       })
       .catch(() => { });
   }
 
   initWhiteList() {
-    this.feedService.getData("feeds.WhiteList")
+    this.dataHelper.loadData("feeds.WhiteList")
       .then((whiteListData: FeedsData.WhiteItem[]) => {
         if (whiteListData === null) {
-          this.feedService.setWhiteListData([]);
+          this.dataHelper.setWhiteListData([]);
           this.ajaxGetWhiteList(false);
           return;
         }
-        this.feedService.setWhiteListData(whiteListData);
+        this.dataHelper.setWhiteListData(whiteListData);
         this.ajaxGetWhiteList(false);
       })
       .catch()
@@ -626,25 +627,25 @@ export class MyApp {
   setElaUsdPrice(caceElaPrice: any) {
     this.httpService.getElaPrice().then((elaPrice: any) => {
       if (elaPrice != null) {
-        this.feedService.setElaUsdPrice(elaPrice);
-        this.feedService.setData("feeds:elaPrice", elaPrice);
+        this.dataHelper.setElaUsdPrice(elaPrice);
+        this.dataHelper.saveData("feeds:elaPrice", elaPrice);
       }
     }).catch(() => {
       if (caceElaPrice != "") {
-        this.feedService.setElaUsdPrice(caceElaPrice);
-        this.feedService.setData("feeds:elaPrice", caceElaPrice);
+        this.dataHelper.setElaUsdPrice(caceElaPrice);
+        this.dataHelper.saveData("feeds:elaPrice", caceElaPrice);
       }
     });
   }
 
   initNftFirstdisclaimer() {
-    this.feedService
-      .getData("feeds:nftFirstdisclaimer")
+    this.dataHelper
+      .loadData("feeds:nftFirstdisclaimer")
       .then((nftFirstdisclaimer: any) => {
         if (nftFirstdisclaimer === null) {
-          this.feedService.setNftFirstdisclaimer("");
+          this.dataHelper.setNftFirstdisclaimer("");
         } else {
-          this.feedService.setNftFirstdisclaimer(nftFirstdisclaimer);
+          this.dataHelper.setNftFirstdisclaimer(nftFirstdisclaimer);
         }
       }).catch(() => {
 
@@ -679,8 +680,8 @@ export class MyApp {
     this.httpService.ajaxGet(ApiUrl.getWhiteList, isLoading).then((result: any) => {
       if (result.code === 200) {
         const whiteListData = result.data || [];
-        this.feedService.setWhiteListData(whiteListData);
-        this.feedService.setData("feeds.WhiteList", whiteListData);
+        this.dataHelper.setWhiteListData(whiteListData);
+        this.dataHelper.saveData("feeds.WhiteList", whiteListData);
       }
     }).catch((err) => {
 

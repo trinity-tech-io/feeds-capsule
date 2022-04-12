@@ -206,7 +206,7 @@ export class BidPage implements OnInit {
     this.collectContractData();
     this.addEvent();
     if(this.fixedPrice != null){
-    let elaPrice = this.feedService.getElaUsdPrice() || "";
+    let elaPrice = this.dataHelper.getElaUsdPrice() || "";
     if(elaPrice != ""){
       let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
       this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);

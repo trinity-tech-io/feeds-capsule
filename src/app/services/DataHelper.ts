@@ -14,6 +14,15 @@ let TAG: string = 'DataHelper';
 @Injectable()
 export class DataHelper {
   // TODO new add
+  private selsectIndex = 1;
+  private collectibleStatus: any = {};
+  private whiteListData: FeedsData.WhiteItem[] = [];
+  private discoverfeeds: any = [];
+  private currentChannel: any = null;
+  private selsectNftImage: string = "";
+  private nftFirstdisclaimer: string = "";
+  private pasarListGrid: boolean = false;
+  private elaUsdPrice: string = "";
   public channelsMapV3: { [key: string]: FeedsData.ChannelV3 } = {};
   public subscribedChannelMapV3: { [key: string]: FeedsData.SubscribedChannelV3 } = {};
   public postMapV3: { [key: string]: FeedsData.PostV3 } = {};
@@ -3514,5 +3523,77 @@ export class DataHelper {
   //postV3
   async deletePostData(postId: string) {
     await this.sqliteHelper.deletePostData(postId);
+  }
+
+  setElaUsdPrice(elaUsdPrice: string) {
+    this.elaUsdPrice = elaUsdPrice;
+  }
+
+  getElaUsdPrice() {
+    return this.elaUsdPrice;
+  }
+
+  setPasarListGrid(pasarListGrid: boolean) {
+    this.pasarListGrid = pasarListGrid;
+  }
+
+  getPasarListGrid() {
+    return this.pasarListGrid;
+  }
+
+  setNftFirstdisclaimer(nftFirstdisclaimer: string) {
+    this.nftFirstdisclaimer = nftFirstdisclaimer;
+  }
+
+  getNftFirstdisclaimer() {
+    return this.nftFirstdisclaimer;
+  }
+
+  setSelsectNftImage(selsectNftImage: any) {
+    this.selsectNftImage = selsectNftImage;
+  }
+
+  getSelsectNftImage() {
+    return this.selsectNftImage;
+  }
+
+  getCurrentChannel() {
+    return this.currentChannel;
+  }
+
+  setCurrentChannel(currentFeed: any) {
+    this.currentChannel = currentFeed;
+  }
+
+  getDiscoverfeeds() {
+    return this.discoverfeeds;
+  }
+
+  setDiscoverfeeds(discoverfeeds: any) {
+    return (this.discoverfeeds = discoverfeeds);
+  }
+
+  getWhiteListData() {
+    return this.whiteListData;
+  }
+
+  setWhiteListData(whiteListData: FeedsData.WhiteItem[]) {
+    this.whiteListData = whiteListData;
+  }
+
+  getCollectibleStatus() {
+    return this.collectibleStatus;
+  }
+
+  setCollectibleStatus(collectibleStatus: any) {
+    this.collectibleStatus = collectibleStatus;
+  }
+
+  setSelsectIndex(index: any) {
+    this.selsectIndex = index;
+  }
+
+  getSelsectIndex() {
+    return this.selsectIndex;
   }
 }

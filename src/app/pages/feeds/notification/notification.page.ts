@@ -1,7 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActionSheetController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService, Avatar } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,6 +12,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { StorageService } from 'src/app/services/StorageService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Avatar, FeedService } from 'src/app/services/FeedService';
 
 @Component({
   selector: 'slides-example',
@@ -40,28 +40,19 @@ export class NotificationPage {
     private events: Events,
     public theme: ThemeService,
     private translate: TranslateService,
-    private feedService: FeedService,
     private viewHelper: ViewHelper,
     private titleBarService: TitleBarService,
     private actionSheetController: ActionSheetController,
     private dataHelper: DataHelper,
     public popoverController: PopoverController,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private feedService: FeedService
   ) {
   }
 
   ngOnInit(): void { }
 
   addEvent() {
-
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
-      let pageName = dialogData.pageName;
-      let dialogName = dialogData.dialogName;
-      let dialogbutton = dialogData.clickButton;
-      if (pageName === "notification") {
-        this.handleDialog(dialogName, dialogbutton, pageName);
-      }
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitleBar();
@@ -74,7 +65,6 @@ export class NotificationPage {
 
   removeEvent() {
     this.isAddNotification = false;
-    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
@@ -143,7 +133,7 @@ export class NotificationPage {
     return obj.content;
   }
 
-  getNotificationContent(notification: any): string {
+  async getNotificationContent(notification: any): Promise<string> {
     /*
     comment,
     likedPost,
@@ -162,7 +152,7 @@ export class NotificationPage {
       postId,
       commentId,
     );
-    let channel = this.feedService.getChannelFromId(nodeId, channelId);
+    let channel = await this.dataHelper.getChannelV3ById(nodeId, channelId);
 
     switch (notification.behavior) {
       case 0:
@@ -319,7 +309,7 @@ export class NotificationPage {
     await this.notificationMenu.present();
   }
 
-  createPost() {
+  async createPost() {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
@@ -327,79 +317,16 @@ export class NotificationPage {
     return;
     }
 
-    let bindingServer = this.feedService.getBindingServer();
-    if (bindingServer == null || bindingServer == undefined) {
-      this.viewHelper.showPublisherDialog("notification");
-      return;
-    }
-
-    let nodeId = bindingServer['nodeId'];
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    if (
-      !this.feedService.checkBindingServerVersion(() => {
-        this.feedService.hideAlertPopover();
-      })
-    )
-      return;
-
     this.removeEvent();
 
-    if (this.feedService.getMyChannelList().length === 0) {
+    const channels = await this.dataHelper.getSelfChannelListV3() || []
+    if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
       return;
     }
 
-    this.feedService.setSelsectNftImage("");
+    this.dataHelper.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }
 
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
-  }
-
-  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
-    switch (dialogName) {
-      case "publisherAccount":
-        this.publisherAccount(dialogbutton, pageName)
-        break;
-      case "guide":
-        this.guide(dialogbutton);
-        break;
-    }
-  }
-
-  async publisherAccount(dialogbutton: string, pageName: string) {
-    switch (dialogbutton) {
-      case "createNewPublisherAccount":
-        this.feedService.setBindPublisherAccountType('new');
-        break;
-      case "bindExistingPublisherAccount":
-        this.feedService.setBindPublisherAccountType('exit');
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
-
-  async guide(dialogbutton: string) {
-    switch (dialogbutton) {
-      case "guidemac":
-        await this.native.navigateForward(["guidemac"], "");
-        await this.popoverController.dismiss();
-
-        break;
-      case "guideubuntu":
-        await this.native.navigateForward(["guideubuntu"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "skip":
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
 }

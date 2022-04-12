@@ -60,8 +60,8 @@ export class CreatenewfeedPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
-    this.developerMode = this.feedService.getDeveloperMode();
-    this.channelAvatar = this.feedService.getProfileIamge();
+    this.developerMode = this.dataHelper.getDeveloperMode();
+    this.channelAvatar = this.dataHelper.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
     this.events.subscribe(FeedsEvent.PublishType.tipdialogCancel, () => {
@@ -110,14 +110,6 @@ export class CreatenewfeedPage implements OnInit {
         });
       },
     );
-
-    this.feedService.checkBindingServerVersion(() => {
-      this.zone.run(() => {
-        this.navCtrl.pop().then(() => {
-          this.feedService.hideAlertPopover();
-        });
-      });
-    });
   }
 
   showTimeOutErrorAlert() {
@@ -190,7 +182,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    this.channelAvatar = this.feedService.getProfileIamge() || '';
+    this.channelAvatar = this.dataHelper.getProfileIamge() || '';
 
     // if (this.channelAvatar == '') {
     //   this.native.toast_trans('CreatenewfeedPage.tipMsg');

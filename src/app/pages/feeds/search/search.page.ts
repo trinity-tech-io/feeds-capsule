@@ -126,17 +126,6 @@ export class SearchPage implements OnInit {
     });
 
     this.events.subscribe(
-      FeedsEvent.PublishType.friendConnectionChanged,
-      (friendConnectionChangedData: FeedsEvent.FriendConnectionChangedData) => {
-        this.zone.run(() => {
-          let nodeId = friendConnectionChangedData.nodeId;
-          let connectionStatus = friendConnectionChangedData.connectionStatus;
-          this.nodeStatus[nodeId] = connectionStatus;
-        });
-      },
-    );
-
-    this.events.subscribe(
       FeedsEvent.PublishType.subscribeFinish,
       (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
         this.zone.run(() => {
@@ -188,7 +177,6 @@ export class SearchPage implements OnInit {
       this.popover = '';
     }
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.friendConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.addFeedStatusChanged);
   }
@@ -210,7 +198,7 @@ export class SearchPage implements OnInit {
   }
 
   async init() {
-    let discoverfeeds = this.feedService.getDiscoverfeeds();
+    let discoverfeeds = this.dataHelper.getDiscoverfeeds();
     if (discoverfeeds.length === 0) {
       this.pageNum = 1;
       await this.native.showLoading('common.waitMoment');
@@ -271,7 +259,7 @@ export class SearchPage implements OnInit {
         this.ionRefresher.disabled = false;
         this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
         this.unfollowedFeed = this.getUnfollowedFeed() || [];
-        let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+        let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
         if (discoverfeeds.length > 0) {
           this.discoverSquareList = this.filterdiscoverSquareList(
             discoverfeeds,
@@ -297,7 +285,7 @@ export class SearchPage implements OnInit {
       this.ionRefresher.disabled = false;
       this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
       this.unfollowedFeed = this.getUnfollowedFeed() || [];
-      let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+      let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
       if (discoverfeeds.length > 0) {
         this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
       }
@@ -342,7 +330,7 @@ export class SearchPage implements OnInit {
   doRefresh(event) {
     //let sid = setTimeout(() => {
     this.feedService.updateSubscribedFeed();
-    this.feedService.setDiscoverfeeds([]);
+    this.dataHelper.setDiscoverfeeds([]);
     this.curtotalNum = 0;
     this.panelPageNum = 1;
     this.pageNum = 1;
@@ -499,7 +487,7 @@ export class SearchPage implements OnInit {
           this.refreshDiscoverSquareFeedAvatar()
           this.curtotalNum = this.curtotalNum + arr.length;
           this.handleCache(arr);
-          let discoverSquareList = this.feedService.getDiscoverfeeds();
+          let discoverSquareList = this.dataHelper.getDiscoverfeeds();
           this.httpAllData = _.cloneDeep(discoverSquareList);
           this.discoverSquareList = this.filterdiscoverSquareList(
             discoverSquareList,
@@ -541,7 +529,7 @@ export class SearchPage implements OnInit {
           this.refreshDiscoverSquareFeedAvatar();
           this.curtotalNum = discoverSquareList.length;
           this.handleCache(discoverSquareList);
-          discoverSquareList = this.feedService.getDiscoverfeeds();
+          discoverSquareList = this.dataHelper.getDiscoverfeeds();
           this.httpAllData = _.cloneDeep(discoverSquareList);
 
           this.discoverSquareList = this.filterdiscoverSquareList(
@@ -623,7 +611,6 @@ export class SearchPage implements OnInit {
 
   filterdiscoverSquareList(discoverSquare: any) {
     this.developerMode = this.feedService.getDeveloperMode();
-    this.initnodeStatus();
     this.followedList = this.feedService.getChannelsList() || [];
     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
     this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
@@ -642,14 +629,6 @@ export class SearchPage implements OnInit {
     });
     this.searchUnfollowedFeed = _.cloneDeep(unfollowedFeed);
     return unfollowedFeed;
-  }
-
-  initnodeStatus() {
-    _.each(this.unfollowedFeed, feed => {
-      let nodeId = feed['nodeId'];
-      let status = this.checkServerStatus(nodeId);
-      this.nodeStatus[nodeId] = status;
-    });
   }
 
 
@@ -720,13 +699,13 @@ export class SearchPage implements OnInit {
   }
 
   handleCache(addArr: any) {
-    let discoverfeeds = this.feedService.getDiscoverfeeds() || [];
+    let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
     _.each(addArr, (feed: any) => {
       if (this.isExitFeed(discoverfeeds, feed) === '') {
         discoverfeeds.push(feed);
       }
     });
-    this.feedService.setDiscoverfeeds(discoverfeeds);
+    this.dataHelper.setDiscoverfeeds(discoverfeeds);
     this.storageService.set(
       'feed:discoverfeeds',
       JSON.stringify(discoverfeeds),
@@ -770,42 +749,6 @@ export class SearchPage implements OnInit {
     return description;
   }
 
-  createPost() {
-    let connectStatus = this.dataHelper.getNetworkStatus();
-    if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
-    }
-
-    let bindingServer = this.feedService.getBindingServer();
-    if (bindingServer == null || bindingServer == undefined) {
-      this.native.navigateForward(['bindservice/learnpublisheraccount'], '');
-      return;
-    }
-
-    let nodeId = bindingServer['nodeId'];
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    if (
-      !this.feedService.checkBindingServerVersion(() => {
-        this.feedService.hideAlertPopover();
-      })
-    )
-      return;
-
-    this.removeSubscribe();
-
-    if (this.feedService.getMyChannelList().length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '');
-      return;
-    }
-
-    this.feedService.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '');
-  }
 
   clickAddingchannel(addingchannel: any) {
 

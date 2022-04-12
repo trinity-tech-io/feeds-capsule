@@ -269,15 +269,15 @@ export class DiscoverfeedinfoPage implements OnInit {
         channelAvatar.indexOf('feeds:image:') > -1 ||
         channelAvatar.indexOf('pasar:image:') > -1
         ) {
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(channelAvatar);
+      this.dataHelper.setSelsectIndex(0);
+      this.dataHelper.setProfileIamge(channelAvatar);
     } else if (channelAvatar.indexOf('assets/images') > -1) {
       let index = channelAvatar.substring(
         channelAvatar.length - 5,
         channelAvatar.length - 4,
       );
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(channelAvatar);
+      this.dataHelper.setSelsectIndex(index);
+      this.dataHelper.setProfileIamge(channelAvatar);
     }
     let destDid = this.feedInfo['nodeId'];
     let feedUrl = this.feedInfo['url'];

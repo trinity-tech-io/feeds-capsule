@@ -6,7 +6,7 @@ import { NativeService } from '../../services/NativeService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
-import { FeedService } from 'src/app/services/FeedService';
+import { DataHelper } from 'src/app/services/DataHelper';
 //https://ipfs.trinity-feeds.app/ipfs/Qmd4CXXv47x2aoo7TBbvusxHBYDtDEcWwcT4EzcMM1VmPh
 @Component({
   selector: 'app-whitelist',
@@ -21,7 +21,7 @@ export class WhitelistPage implements OnInit {
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private HttpService: HttpService,
-    private feedService: FeedService,
+    private dataHelper: DataHelper,
     private native: NativeService,
     public theme: ThemeService
   ) { }
@@ -48,7 +48,7 @@ export class WhitelistPage implements OnInit {
   }
 
   getWhiteList(){
-   let whiteListData = this.feedService.getWhiteListData();
+   let whiteListData = this.dataHelper.getWhiteListData();
    if(whiteListData.length === 0){
      this.ajaxGetWhiteList(true,"");
     return;
@@ -60,8 +60,8 @@ export class WhitelistPage implements OnInit {
     this.HttpService.ajaxGet(ApiUrl.getWhiteList,isLoading).then((result:any)=>{
       if(result.code === 200){
         this.whiteListData = result.data || [];
-        this.feedService.setWhiteListData(this.whiteListData);
-        this.feedService.setData("feeds.WhiteList",this.whiteListData);
+        this.dataHelper.setWhiteListData(this.whiteListData);
+        this.dataHelper.saveData("feeds.WhiteList",this.whiteListData);
         if(event!=""){
           event.target.complete();
         }

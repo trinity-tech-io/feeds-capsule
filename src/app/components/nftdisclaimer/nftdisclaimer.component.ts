@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { PopoverController } from '@ionic/angular';
 import { Events } from '../../services/events.service';
-import { FeedService } from '../../services/FeedService';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-nftdisclaimer',
@@ -14,7 +14,7 @@ export class NftdisclaimerComponent implements OnInit {
   constructor(
     private popover: PopoverController,
     private events: Events,
-    private feedService: FeedService,
+    private dataHelper: DataHelper,
     public theme: ThemeService,
   ) { }
 
@@ -29,8 +29,8 @@ export class NftdisclaimerComponent implements OnInit {
  async confirm(){
   await this.popover.dismiss();
   this.events.publish(FeedsEvent.PublishType.nftdisclaimer);
-  this.feedService.setNftFirstdisclaimer("1");
-  this.feedService.setData("feeds:nftFirstdisclaimer","1");
+  this.dataHelper.setNftFirstdisclaimer("1");
+  this.dataHelper.saveData("feeds:nftFirstdisclaimer","1");
  }
 
 }

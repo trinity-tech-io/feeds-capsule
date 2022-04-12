@@ -1,7 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService, Avatar, SignInData } from 'src/app/services/FeedService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { MenuService } from 'src/app/services/MenuService';
@@ -28,6 +27,7 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveService } from 'src/app/services/HiveService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { FeedService } from 'src/app/services/FeedService';
 
 let TAG: string = 'Feeds-profile';
 
@@ -86,8 +86,6 @@ export class ProfilePage implements OnInit {
   public curPostId: string = '';
 
   public popover: any = '';
-
-  public curNodeId: string = '';
 
   public hideDeletedPosts: boolean = false;
 
@@ -178,7 +176,6 @@ export class ProfilePage implements OnInit {
   private channelNameMap: any = {};
 
   constructor(
-    private feedService: FeedService,
     public theme: ThemeService,
     private events: Events,
     private zone: NgZone,
@@ -202,7 +199,8 @@ export class ProfilePage implements OnInit {
     private fileHelperService: FileHelperService,
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private feedService: FeedService
   ) {
   }
 
@@ -221,7 +219,6 @@ export class ProfilePage implements OnInit {
       this.myFeedsSum = this.channels.length;
       let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
       this.followers = followedList.length;
-      this.initnodeStatus(this.channels);
       this.refreshMyFeedsVisibleareaImage();
     } catch (error) {
 
@@ -232,7 +229,6 @@ export class ProfilePage implements OnInit {
     // 赞/收藏
     this.startIndex = 0;
     this.initRefresh();
-    //this.initnodeStatus(this.likeList);
   }
 
   async initRefresh() {
@@ -310,7 +306,7 @@ export class ProfilePage implements OnInit {
 
       }
     }
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
         return item.status != 1;
@@ -340,14 +336,6 @@ export class ProfilePage implements OnInit {
       this.native.navigateForward(['mintnft'], {});
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.clickDialog, (dialogData: any) => {
-      let pageName = dialogData.pageName;
-      let dialogName = dialogData.dialogName;
-      let dialogbutton = dialogData.clickButton;
-      if (pageName === "profile") {
-        this.handleDialog(dialogName, dialogbutton, pageName);
-      }
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
 
@@ -429,7 +417,7 @@ export class ProfilePage implements OnInit {
     );
 
 
-    this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     this.curItem = {};
@@ -437,7 +425,7 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(() => {
-        this.hideDeletedPosts = this.feedService.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
         this.refreshLikeList();
       });
     });
@@ -532,12 +520,7 @@ export class ProfilePage implements OnInit {
       this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
       this.isVideoLoading[this.videoDownStatusKey] = false;
       this.videoDownStatus[this.videoDownStatusKey] = '';
-
       this.curPostId = '';
-      if (this.curNodeId != '') {
-        this.feedService.closeSession(this.curNodeId);
-      }
-      this.curNodeId = '';
       this.pauseAllVideo();
       this.hideFullScreen();
     });
@@ -558,9 +541,9 @@ export class ProfilePage implements OnInit {
 
   async ionViewWillEnter() {
     this.initTitleBar();
-    this.elaPrice = this.feedService.getElaUsdPrice();
+    this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
-      this.elaPrice = this.feedService.getElaUsdPrice();
+      this.elaPrice = this.dataHelper.getElaUsdPrice();
       if (!this.collectiblesList || this.collectiblesList.length == 0) {
         await this.getCollectiblesList();
       }
@@ -617,7 +600,6 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.walletAccountChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
-    this.events.unsubscribe(FeedsEvent.PublishType.clickDialog);
     this.events.unsubscribe(FeedsEvent.PublishType.nftdisclaimer);
 
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
@@ -634,9 +616,6 @@ export class ProfilePage implements OnInit {
     this.isInitComment = {};
     this.curItem = {};
     this.curPostId = '';
-    if (this.curNodeId != '') {
-      this.feedService.closeSession(this.curNodeId);
-    }
   }
 
   clearDownStatus() {
@@ -662,7 +641,7 @@ export class ProfilePage implements OnInit {
         this.initMyFeeds();
         break;
       case 'ProfilePage.collectibles':
-        this.elaPrice = this.feedService.getElaUsdPrice();
+        this.elaPrice = this.dataHelper.getElaUsdPrice();
         //if (!this.collectiblesList || this.collectiblesList.length == 0)
         await this.getCollectiblesList();
         break;
@@ -673,19 +652,6 @@ export class ProfilePage implements OnInit {
     }
 
     this.isRefreshingCollectibles = false;
-  }
-
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
-  }
-
-  initnodeStatus(list: any) {
-    list = list || [];
-    for (let index = 0; index < list.length; index++) {
-      let nodeId = list[index]['nodeId'];
-      let status = this.checkServerStatus(nodeId);
-      this.nodeStatus[nodeId] = status;
-    }
   }
 
   async doRefresh(event: any) {
@@ -762,7 +728,6 @@ export class ProfilePage implements OnInit {
             });
             this.refreshImage();
             this.infiniteScroll.disabled = true;
-            this.initnodeStatus(arr);
 
             event.target.complete();
             clearTimeout(sId);
@@ -1832,18 +1797,18 @@ export class ProfilePage implements OnInit {
 
     if (feedAvatar.indexOf('data:image') > -1 ||
       feedAvatar.startsWith("https:")) {
-      this.feedService.setSelsectIndex(0);
-      this.feedService.setProfileIamge(feedAvatar);
+      this.dataHelper.setSelsectIndex(0);
+      this.dataHelper.setProfileIamge(feedAvatar);
     } else if (feedAvatar.indexOf('assets/images') > -1) {
       let index = feedAvatar.substring(
         feedAvatar.length - 5,
         feedAvatar.length - 4,
       );
-      this.feedService.setSelsectIndex(index);
-      this.feedService.setProfileIamge(feedAvatar);
+      this.dataHelper.setSelsectIndex(index);
+      this.dataHelper.setProfileIamge(feedAvatar);
     }
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    this.feedService.setChannelInfo({
+    this.dataHelper.setChannelInfo({
       destDid: destDid,
       channelId: channelId,
       name: channelName,
@@ -1875,6 +1840,12 @@ export class ProfilePage implements OnInit {
 
   async createPost() {
 
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+    this.native.toastWarn('common.connectionError');
+    return;
+    }
+
     this.clearData();
     const channels = await this.dataHelper.getSelfChannelListV3() || []
     if (channels.length === 0) {
@@ -1882,7 +1853,7 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    this.feedService.setSelsectNftImage("");
+    this.dataHelper.setSelsectNftImage("");
     this.native.navigateForward(['createnewpost'], '');
   }
 
@@ -2082,7 +2053,7 @@ export class ProfilePage implements OnInit {
   }
 
   async createNft() {
-    let nftFirstdisclaimer = this.feedService.getNftFirstdisclaimer() || "";
+    let nftFirstdisclaimer = this.dataHelper.getNftFirstdisclaimer() || "";
     if (nftFirstdisclaimer === "") {
       this.viewHelper.showNftdisclaimerPrompt();
       return;
@@ -2251,47 +2222,6 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  handleDialog(dialogName: string, dialogbutton: string, pageName: string) {
-    switch (dialogName) {
-      case "publisherAccount":
-        this.publisherAccount(dialogbutton, pageName)
-        break;
-      case "guide":
-        this.guide(dialogbutton);
-        break;
-    }
-  }
-
-  async publisherAccount(dialogbutton: string, pageName: string) {
-    switch (dialogbutton) {
-      case "createNewPublisherAccount":
-        this.feedService.setBindPublisherAccountType('new');
-        break;
-      case "bindExistingPublisherAccount":
-        this.feedService.setBindPublisherAccountType('exit');
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
-
-  async guide(dialogbutton: string) {
-    switch (dialogbutton) {
-      case "guidemac":
-        await this.native.navigateForward(["guidemac"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "guideubuntu":
-        await this.native.navigateForward(["guideubuntu"], "");
-        await this.popoverController.dismiss();
-        break;
-      case "skip":
-        await this.native.navigateForward(['bindservice/scanqrcode'], "");
-        await this.popoverController.dismiss();
-        break;
-    }
-  }
-
   async handleNftTransfer(tokenId: any, createAddr: any, transferNum: any) {
     let quantity = await this.nftContractControllerService
       .getSticker()
@@ -2334,7 +2264,7 @@ export class ProfilePage implements OnInit {
     // this.collectiblesList = [];
     this.refreshNotSaleOrderFinish = false;
     this.refreshSaleOrderFinish = false;
-    this.elaPrice = this.feedService.getElaUsdPrice();
+    this.elaPrice = this.dataHelper.getElaUsdPrice();
     // await this.getOwnNftSum();
     let accAddress = this.nftContractControllerService.getAccountAddress() || '';
 

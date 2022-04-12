@@ -2,7 +2,6 @@ import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModalController, Platform } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
-import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -13,9 +12,8 @@ import { AppService } from 'src/app/services/AppService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import * as _ from 'lodash';
+import  _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
-import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
@@ -139,7 +137,6 @@ export class PostdetailPage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private native: NativeService,
-    private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
     public menuService: MenuService,
@@ -147,7 +144,6 @@ export class PostdetailPage implements OnInit {
     public modalController: ModalController,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController
@@ -168,7 +164,6 @@ export class PostdetailPage implements OnInit {
       this.handleChannelAvatar(channelAvatarUri);
     }
     this.initPostContent();
-    this.initnodeStatus();
     if (isInit) {
       this.initRefresh();
     } else {
@@ -259,7 +254,7 @@ export class PostdetailPage implements OnInit {
       return item.refcommentId === '0';
     });
 
-    this.hideDeletedComments = this.feedService.getHideDeletedComments();
+    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     if (!this.hideDeletedComments) {
       captainCommentList = _.filter(captainCommentList, (item: any) => {
         return item.status != 1;
@@ -305,7 +300,7 @@ export class PostdetailPage implements OnInit {
       this.isAndroid = false;
     }
 
-    this.hideDeletedComments = this.feedService.getHideDeletedComments();
+    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     this.initTitle();
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';
@@ -390,7 +385,6 @@ export class PostdetailPage implements OnInit {
       this.isVideoPercentageLoading = false;
       this.isVideoLoading = false;
       this.videoDownStatus = '';
-      this.feedService.closeSession(this.destDid);
       this.native.hideLoading();
       this.pauseVideo();
       this.hideFullScreen();
@@ -439,7 +433,6 @@ export class PostdetailPage implements OnInit {
     // this.postImage = '';
     this.isFullContent = {};
     this.isOwnComment = {};
-    this.feedService.closeSession(this.destDid);
     this.clearVideo();
     this.hideFullScreen();
   }
@@ -491,25 +484,6 @@ export class PostdetailPage implements OnInit {
 
     this.pauseVideo();
     this.hideComment = false;
-  }
-
-  checkMyLike() {
-    return this.feedService.checkMyLike(
-      this.destDid,
-      this.channelId,
-      this.postId,
-    );
-  }
-
-  checkLikedComment(commentId: string) {
-    // return this.feedService.checkLikedComment(
-    //   this.destDid,
-    //   this.channelId,
-    //   this.postId,
-    //   commentId,
-    // );
-
-    return false;
   }
 
   like() {
@@ -571,6 +545,9 @@ export class PostdetailPage implements OnInit {
   }
 
   handleUpdateDate(updatedTime: number) {
+    if(updatedTime === 0){
+      return;
+    }
     let updateDate = new Date(updatedTime);
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
   }
@@ -678,15 +655,6 @@ export class PostdetailPage implements OnInit {
     });
   }
 
-  checkServerStatus(destDid: string) {
-    return this.feedService.getServerStatusFromId(destDid);
-  }
-
-  initnodeStatus() {
-    let status = this.checkServerStatus(this.destDid);
-    this.nodeStatus[this.destDid] = status;
-  }
-
   getImage(post: FeedsData.PostV3) {
     this.postImage = './assets/icon/reserve.svg';//set Reserve Image
     let mediaDatas = post.content.mediaData;
@@ -728,7 +696,6 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
-        this.initnodeStatus();
         this.initOwnCommentObj();
         event.target.complete();
       } else {
@@ -740,7 +707,6 @@ export class PostdetailPage implements OnInit {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
         this.infiniteScroll.disabled = true;
-        this.initnodeStatus();
         this.initOwnCommentObj();
         event.target.complete();
         clearTimeout(sId);
@@ -1009,43 +975,6 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  handleTotal() {
-    let post = this.feedService.getPostFromId(
-      this.destDid,
-      this.channelId,
-      this.postId,
-    );
-    let videoThumbKey = post.content['videoThumbKey'] || '';
-    let duration = 29;
-    if (videoThumbKey != '') {
-      duration = videoThumbKey['duration'] || 0;
-    }
-    return UtilService.timeFilter(duration);
-  }
-
-  processGetBinaryResult(key: string, value: string) {
-    this.cacheGetBinaryRequestKey = '';
-    if (key.indexOf('img') > -1) {
-      this.imgDownStatus = '';
-      this.isImgPercentageLoading = false;
-      this.isImgLoading = false;
-      this.postImage = value;
-      this.viewHelper.openViewer(
-        this.titleBar,
-        value,
-        'common.image',
-        'PostdetailPage.postview',
-        this.appService,
-      );
-    } else if (key.indexOf('video') > -1) {
-      this.videoDownStatus = '';
-      this.isVideoPercentageLoading = false;
-      this.isVideoLoading = false;
-      this.videoObj = value;
-      this.loadVideo(value);
-    }
-  }
-
   getPostContentTextSize(content: string) {
     let size = UtilService.getSize(content);
     return size;
@@ -1163,8 +1092,8 @@ export class PostdetailPage implements OnInit {
       },
     });
   }
+
   retry(destDid: string, channelId: string, postId: string) {
-    this.feedService.republishOnePost(destDid, destDid, postId);
   }
 
   getPostLikeNum(post: FeedsData.PostV3) {

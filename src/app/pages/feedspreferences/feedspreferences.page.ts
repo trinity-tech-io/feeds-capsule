@@ -92,7 +92,7 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.collectibleStatus = this.feedService.getCollectibleStatus();
+    this.collectibleStatus = this.dataHelper.getCollectibleStatus();
     let key = this.nodeId + '_' + this.feedId;
     this.curCollectibleStatus = this.collectibleStatus[key] || false;
     this.feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
@@ -438,7 +438,7 @@ export class FeedspreferencesPage implements OnInit {
       this.curCollectibleStatus = !this.curCollectibleStatus;
       let key = this.nodeId + '_' + this.feedId;
       this.collectibleStatus[key] = this.curCollectibleStatus;
-      this.feedService.setCollectibleStatus(this.collectibleStatus);
+      this.dataHelper.setCollectibleStatus(this.collectibleStatus);
       this.storageService.set(
         'feeds.collectible.setting',
         JSON.stringify(this.collectibleStatus),

@@ -19,6 +19,7 @@ import { VideoService } from 'src/app/services/video.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import _ from 'lodash';
+import { DataHelper } from 'src/app/services/DataHelper';
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
 const TAG: string = 'MintPage';
@@ -114,7 +115,8 @@ export class MintnftPage implements OnInit {
     private nftPersistenceHelper: NFTPersistenceHelper,
     private nftContractHelperService: NFTContractHelperService,
     private videoService: VideoService,
-    private feedsServiceApi: FeedsServiceApi
+    private feedsServiceApi: FeedsServiceApi,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() {
@@ -671,7 +673,7 @@ export class MintnftPage implements OnInit {
       .getSellerOrderByIndex(orderIndex);
     this.orderId = order[0];
 
-    let setChannel = this.feedService.getCollectibleStatus();
+    let setChannel = this.dataHelper.getCollectibleStatus();
     let isTipToast: boolean = false;
     for (let key in setChannel) {
       let value = setChannel[key] || '';
