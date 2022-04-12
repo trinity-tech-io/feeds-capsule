@@ -23,43 +23,6 @@ export class HiveVaultController {
   ) {
   }
 
-  //获得订阅的channel列表
-  async getHomePostContent(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-        if (subscribedChannels.length === 0) {
-          this.dataHelper.setPostMapV3({});
-          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, {});
-          resolve('FINISH');
-        }
-        let postMapV3 = {};
-        for (let index = 0; index < subscribedChannels.length; index++) {
-          const item = subscribedChannels[index];
-
-          const channelId = item.channelId
-          const destDid = item.destDid
-
-          const posts = await this.getPostListByChannel(destDid, channelId);
-
-          for (let index = 0; index < posts.length; index++) {
-            const post: FeedsData.PostV3 = posts[index];
-            const key = UtilService.getKey(post.destDid, post.postId);
-            postMapV3[key] = post;
-            //await this.dataHelper.addPostV3(post);
-          }
-          this.dataHelper.setPostMapV3(postMapV3);
-          await this.dataHelper.saveData(FeedsData.PersistenceKey.postsMapV3, postMapV3);
-        }
-        resolve('FINISH');
-      } catch (error) {
-        Logger.error(TAG, 'Get all subscribed channel post error', error);
-        reject(error);
-      }
-
-    });
-  }
-
   syncAllPost(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -269,12 +232,29 @@ export class HiveVaultController {
     console.log("rangeOfTimePostList >>>>>>>>>>>> ", rangeOfTimePostList)
   }
 
-  async queryPostByPostId(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3[]> {
+  async queryPostByPostId(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
-      const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId)
-      const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+      try {
+        const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId);
+        Logger.log(TAG, 'Query post by id result is', result);
+        if (result) {
+          const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
 
-      this.dataHelper.addPostsV3(posts);
+          const localPost = await this.dataHelper.getPostV3ById(targetDid, postId);
+          if (!localPost) {
+            this.dataHelper.addPostV3(posts[0]);
+          } else {
+            this.dataHelper.updatePostV3(posts[0]);
+          }
+
+          resolve(posts[0]);
+        } else {
+          resolve(null);
+        }
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error)
+      }
     });
   }
 
