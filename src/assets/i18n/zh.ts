@@ -778,22 +778,6 @@ export const zh = {
     introduce2: '连接钱包',
     skip: '跳过',
   },
-  PublisherdialogComponent: {
-    publisheraccount: '出版号',
-    des: '您当前正在使用',
-    des1: '订阅Feeds',
-    des2: '基本帐户',
-    des3: '升级到',
-    des4: '出版号',
-    des5: '可解锁下面的更多功能',
-    des6: '● 创建最多5个频道',
-    des7: '● 发布无限量的帖子',
-    des8: '● 向订阅者发布NFT销售',
-    des9: '了解更多出版号',
-    createNewPublisherAccount: '创建新的出版号',
-    bindExistingPublisherAccount: '绑定现有的出版号',
-    cancel: '取消'
-  },
   NftdisclaimerComponent: {
     title: 'Feeds 收藏品 免责声明',
     des: '对于因使用 Feeds Pasar（及其供应商）提供的服务而导致的任何损失，Feeds 团队概不负责，包括但不限于直接、间接、附带、惩罚性和已发生的损失：',

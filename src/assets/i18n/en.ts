@@ -771,22 +771,6 @@ export const en = {
     introduce2: 'Connect Wallet',
     skip: 'Skip',
   },
-  PublisherdialogComponent: {
-    publisheraccount: 'Publisher Account',
-    des: 'You are currently using',
-    des1: 'Basic Account',
-    des2: ' on Feeds',
-    des3: 'Upgrade to ',
-    des4: 'Publisher Account',
-    des5: 'to unlock more features below',
-    des6: '● Create up to 5 channels',
-    des7: '● Publish unlimited posts',
-    des8: '● Publish NFT sale to subscribers',
-    des9: 'Learn more about Publisher Account',
-    createNewPublisherAccount: 'Create New Publisher Account',
-    bindExistingPublisherAccount: 'Bind Existing Publisher Account',
-    cancel: 'Cancel'
-  },
   NftdisclaimerComponent: {
     title: 'Feeds Collectible Disclaimer',
     des: 'The Feeds team is not liable for any losses resulting from using services provided by Feeds Pasar (and its suppliers), including but not limited to direct, indirect, incidental, punitive, and incurred losses:',

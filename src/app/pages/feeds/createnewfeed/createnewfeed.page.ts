@@ -199,12 +199,13 @@ export class CreatenewfeedPage implements OnInit {
 
     const signinDid = (await this.dataHelper.getSigninData()).did;
     const channelId = UtilService.generateChannelId(signinDid,name.value);
-
+    await this.native.showLoading('common.waitMoment');
     try {
 
       const selfchannels =  await this.hiveVaultController.syncSelfChannel() || [];
 
-      if (selfchannels.length >= 5) {
+      if (selfchannels.length >= 15) {
+      this.native.hideLoading();
       this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
       return;
       }
@@ -213,19 +214,19 @@ export class CreatenewfeedPage implements OnInit {
                     return channel.destDid === signinDid && channel.channelId === channelId;
             });
       if(list.length > 0){
+        this.native.hideLoading();
         this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           return;
       }
       await this.uploadChannel(name.value, desc.value);
     } catch (error) {
-
+      this.native.hideLoading();
     }
 
   }
 
   async uploadChannel(name: string, desc: string) {
     try {
-      await this.native.showLoading('common.waitMoment');
       // 创建channles（用来存储userid下的所有创建的频道info）
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did

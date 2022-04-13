@@ -432,8 +432,4 @@ export class ProfiledetailPage implements OnInit {
     this.native.navigateForward(['editprofileimage'], {});
   }
 
-  upgradeToPublisherAccount() {
-    this.viewHelper.showPublisherDialog("profiledetail")
-  }
-
 }

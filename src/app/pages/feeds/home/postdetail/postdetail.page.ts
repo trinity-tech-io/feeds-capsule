@@ -240,7 +240,6 @@ export class PostdetailPage implements OnInit {
 
   async sortCommentList() {
     let captainCommentList = [];
-    if(this.postCommentList.length === 0){
     try {
       captainCommentList =
         await this.hiveVaultController.getCommentsByPost(
@@ -252,7 +251,11 @@ export class PostdetailPage implements OnInit {
     } catch (error) {
 
     }
-      }
+    let post: any = await this.dataHelper.getPostV3ById(
+      this.destDid,
+      this.postId,
+    ) || null;
+    this.getCommentsNum(post);
     captainCommentList = this.postCommentList;
     captainCommentList = _.filter(captainCommentList, (item: FeedsData.CommentV3) => {
       return item.refcommentId === '0';
@@ -293,7 +296,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.getPostLikeNum(post);
-    this.getPostComments(post);
+    //this.getPostComments(post);
   }
 
   ionViewWillEnter() {
@@ -321,7 +324,7 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, () => {
       this.zone.run(async () => {
         Logger.log(TAG, 'Received refreshPostDetail event');
-        let post: any = this.dataHelper.getChannelV3ById(
+        let post: any = await this.dataHelper.getPostV3ById(
           this.destDid,
           this.postId,
         ) || null;
@@ -1157,10 +1160,7 @@ export class PostdetailPage implements OnInit {
   }
 
   async getPostComments(post: FeedsData.PostV3) {
-    if(this.postCommentList.length > 0){
-      this.getCommentsNum(post);
-      return;
-    }
+
     try {
       this.hiveVaultController.getCommentsByPost(
         post.destDid, post.channelId, post.postId

@@ -720,11 +720,12 @@ export class HiveVaultController {
           }
           resolve(parseResult);
         } else {
-          reject('Sync self channels error');
+          resolve([]);
         }
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);
-        reject(error);
+        resolve([]);
+
       }
     });
   }
