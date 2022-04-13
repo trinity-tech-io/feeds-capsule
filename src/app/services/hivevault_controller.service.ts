@@ -104,14 +104,14 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
         const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
-        for(let commentIndex = 0; commentIndex< commentList.length; commentIndex++){
-            let item = commentList[commentIndex];
-            let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
-            if(comment === ''){
-              await this.dataHelper.addCommentV3(item);
-            }else{
-              await this.dataHelper.updateCommentV3(item);
-            }
+        for (let commentIndex = 0; commentIndex < commentList.length; commentIndex++) {
+          let item = commentList[commentIndex];
+          let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
+          if (comment === '') {
+            await this.dataHelper.addCommentV3(item);
+          } else {
+            await this.dataHelper.updateCommentV3(item);
+          }
         }
         resolve(commentList);
       } catch (error) {
@@ -707,14 +707,14 @@ export class HiveVaultController {
         if (channelsResult) {
           const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
           console.log('parseResult', parseResult);
-          for(let channelIndex = 0; channelIndex < parseResult.length; channelIndex++){
-                let item = parseResult[channelIndex];
-                let channel = await this.dataHelper.getChannelV3ById(item.destDid,item.channelId) || null;
-                if(channel === null){
-                  await this.dataHelper.addChannelV3(item);
-                }else{
-                  await this.dataHelper.updateChannelV3(item);
-                }
+          for (let channelIndex = 0; channelIndex < parseResult.length; channelIndex++) {
+            let item = parseResult[channelIndex];
+            let channel = await this.dataHelper.getChannelV3ById(item.destDid, item.channelId) || null;
+            if (channel === null) {
+              await this.dataHelper.addChannelV3(item);
+            } else {
+              await this.dataHelper.updateChannelV3(item);
+            }
           }
           resolve(parseResult);
         } else {
@@ -757,14 +757,14 @@ export class HiveVaultController {
         Logger.log('Query self post result', postResult);
         if (postResult) {
           const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
-          for(let postIndex = 0; postIndex < parseResult.length; postIndex++) {
-              let item = parseResult[postIndex];
-              let post = this.dataHelper.getPostV3ById(item.destDid, item.channelId) || null;
-              if(post === null){
-                await this.dataHelper.addPostV3(item);
-              }else {
-                await this.dataHelper.updatePostV3(item);
-              }
+          for (let postIndex = 0; postIndex < parseResult.length; postIndex++) {
+            let item = parseResult[postIndex];
+            let post = this.dataHelper.getPostV3ById(item.destDid, item.channelId) || null;
+            if (post === null) {
+              await this.dataHelper.addPostV3(item);
+            } else {
+              await this.dataHelper.updatePostV3(item);
+            }
           }
           console.log('parseResult', parseResult);
           resolve(parseResult);
@@ -828,12 +828,12 @@ export class HiveVaultController {
           //TODO
           //1.query
           //2.if null add else update ,toast warn
-          for(let commentIndex = 0; commentIndex< comments.length; commentIndex++){
+          for (let commentIndex = 0; commentIndex < comments.length; commentIndex++) {
             let item = comments[commentIndex];
             let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
-            if(comment === ''){
+            if (comment === '') {
               await this.dataHelper.addCommentV3(item);
-            }else{
+            } else {
               await this.dataHelper.updateCommentV3(item);
             }
           }
@@ -1136,8 +1136,37 @@ export class HiveVaultController {
     });
   }
 
-  getDisplayName(targetDid: string, channelId: string, userDid: string) {
-    getDisplayName
+  getDisplayName(targetDid: string, channelId: string, userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const displayName = this.dataHelper.getUserDisplayName(targetDid, channelId, userDid);
+        if (displayName) {
+          resolve(displayName);
+          return;
+        }
+
+        const result = await this.hiveVaultApi.queryUserDisplayName(targetDid, channelId, userDid);
+        Logger.log(TAG, 'Get subscription result is ', result);
+        if (result) {
+          const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result.find_message.items);
+          if (subscriptions && subscriptions[0]) {
+            const displayName = subscriptions[0].displayName;
+            this.dataHelper.cacheUserDisplayName(targetDid, channelId, userDid, displayName);
+            resolve(displayName);
+            return;
+          } else {
+            const errorMsg = 'Get subscription error';
+            Logger.error(TAG, errorMsg);
+            reject(errorMsg);
+          }
+        } else {
+          resolve('UNKNOW');
+        }
+      } catch (error) {
+        Logger.error(TAG, 'Get subscription error', error);
+        reject(error);
+      }
+    });
   }
 
 }

@@ -51,6 +51,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_LIKE_BY_ID = "script_query_like_by_id";
     public static readonly SCRIPT_QUERY_LIKE_BY_POST = "script_query_like_by_post";
     public static readonly SCRIPT_QUERY_LIKE_BY_CHANNEL = "script_query_like_by_channel";
+    public static readonly SCRIPT_QUERY_USER_DISPLAYNAME = "script_query_user_displayname";
 
     constructor(
         private hiveService: HiveService,
@@ -90,6 +91,10 @@ export class HiveVaultHelper {
                 await this.registerRemoveLikeScripting();
                 await this.registerQueryLikeByChannelScripting();
                 await this.registerQueryLikeByPostScripting();
+
+                //DisplayName
+                await this.registerQueryDisplayNameScripting();
+
                 resolve('FINISH');
             } catch (error) {
                 Logger.error(error);
@@ -1323,4 +1328,45 @@ export class HiveVaultHelper {
         return this.queryPostsByChannelFromDB(channelId);
     }
     /** query slef post by channel end */
+
+
+    /** query user displayName start */
+    private registerQueryDisplayNameScripting() {
+        let conditionFilter = {
+            "channel_id": "$params.channel_id",
+            "user_did": "$caller_did"
+        };
+        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+        const executableFilter = {
+            "channel_id": "$params.channel_id",
+            "post_id": "$params.post_id"
+        };
+
+        let options = { "projection": { "_id": false }, "limit": 100 };
+        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
+    }
+
+    private callQueryUserDisplayName(targetDid: string, channelId: string, userDid: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "channel_id": channelId,
+                    "user_did": userDid
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, params);
+                console.log("Remove like from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Remove like from scripting , error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    queryUserDisplayName(targetDid: string, channelId: string, userDid: string): Promise<any> {
+        return this.callQueryUserDisplayName(targetDid, channelId, userDid);
+    }
+    /** query displayName end */
 }
