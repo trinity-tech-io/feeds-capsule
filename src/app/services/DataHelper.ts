@@ -3374,7 +3374,7 @@ export class DataHelper {
   getCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const num = this.sqliteHelper.queryCommentNum(destDid, channelId, postId, commentId);
+        const num = this.sqliteHelper.queryCommentNum(commentId);
         resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Query comment num error', error);
@@ -3504,7 +3504,7 @@ export class DataHelper {
   getLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const num = this.sqliteHelper.queryLikeNum(destDid, channelId, postId, commentId);
+        const num = this.sqliteHelper.queryLikeNum(postId, commentId);
         resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Query comment num error', error);
