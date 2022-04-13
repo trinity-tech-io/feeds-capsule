@@ -496,7 +496,8 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?'
         const params = [channelId];
-        const num = await this.executeSql(statement, params);
+        const result = await this.executeSql(statement, params);
+        const num = this.parseNum(result);
 
         Logger.log(TAG, 'query subscription Num by channel id result is', num);
         resolve(num);
@@ -608,7 +609,7 @@ export class FeedsSqliteHelper {
   queryCommentById(postId: string, commentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? & comment_id=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? and comment_id=?';
         const params = [postId, commentId];
         const result = await this.executeSql(statement, params);
         const commentList = this.parseCommentData(result);
@@ -657,8 +658,9 @@ export class FeedsSqliteHelper {
         const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?'
         const params = [commentId];
         const result = await this.executeSql(statement, params);
+        const num = this.parseNum(result);
 
-        resolve(result);
+        resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Query comment num error', error);
         reject(error);
@@ -719,7 +721,7 @@ export class FeedsSqliteHelper {
   queryLikeDataById(postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? & comment_id=?'
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=?'
         const params = [postId, commentId];
 
         const result = await this.executeSql(statement, params);
@@ -735,11 +737,11 @@ export class FeedsSqliteHelper {
   queryLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_LIKE + ' WHERE post_id=? & comment_id=?'
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=?'
         const params = [postId, commentId];
         const result = await this.executeSql(statement, params);
-
-        resolve(result);
+        const num = this.parseNum(result)
+        resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Query comment num error', error);
         reject(error);
@@ -749,7 +751,7 @@ export class FeedsSqliteHelper {
 
   deleteLike(likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const statement = 'DELETE FROM ' + this.TABLE_LIKE + ' WHERE dest_did=? & channel_id=? & post_id=? & comment_id=?'
+      const statement = 'DELETE FROM ' + this.TABLE_LIKE + ' WHERE dest_did=? and channel_id=? and post_id=? and comment_id=?'
       const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId];
 
       const result = await this.executeSql(statement, params);
@@ -762,7 +764,7 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_LIKE
-          + ' SET proof=?, memo=? WHERE post_id=? & comment_id=?';
+          + ' SET proof=?, memo=? WHERE post_id=? and comment_id=?';
         const params = [likeV3.proof, likeV3.memo, likeV3.postId, likeV3.commentId];
 
         const result = await this.executeSql(statement, params);
@@ -937,6 +939,17 @@ export class FeedsSqliteHelper {
     }
     Logger.log(TAG, 'Parse like list from sql, list is', list);
     return list;
+  }
+
+  parseNum(result: any): number {
+    Logger.log(TAG, 'Parse like count result from sql, result is', result);
+    let num = 0;
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      num = element['COUNT(*)']
+    }
+    Logger.log(TAG, 'Parse count from sql, count is', num);
+    return num;
   }
 
   parseSubscriptionChannelData(result: any): FeedsData.SubscribedChannelV3[] {
