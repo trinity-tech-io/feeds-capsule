@@ -333,4 +333,15 @@ export class HiveInterfaceTestPage implements OnInit {
     console.log('updatePostData');
     // this.sqliteHelper.deletePostData();
   }
+
+  getDisplayName() {
+    console.log('getDisplayName');
+    this.hiveVaultController.getDisplayName(this.destDid, '7fdb0f185e7d8c412e7208f25b5a4b380566b463a8b4f32c8859561e399fe1d1', this.destDid);
+    // this.sqliteHelper.deletePostData();
+  }
+
+  querySubscription() {
+    console.log('querySubscription');
+    this.hiveVaultApi.querySubscription(this.destDid, '7fdb0f185e7d8c412e7208f25b5a4b380566b463a8b4f32c8859561e399fe1d1');
+  }
 }

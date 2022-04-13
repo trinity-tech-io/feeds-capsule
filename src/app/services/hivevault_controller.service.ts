@@ -1142,7 +1142,7 @@ export class HiveVaultController {
         const result = await this.hiveVaultApi.queryUserDisplayName(targetDid, channelId, userDid);
         Logger.log(TAG, 'Get subscription result is ', result);
         if (result) {
-          const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result.find_message.items);
+          const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
           if (subscriptions && subscriptions[0]) {
             const displayName = subscriptions[0].displayName;
             this.dataHelper.cacheUserDisplayName(targetDid, channelId, userDid, displayName);

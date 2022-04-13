@@ -1340,7 +1340,7 @@ export class HiveVaultHelper {
 
         const executableFilter = {
             "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id"
+            "user_did": "$params.user_did"
         };
 
         let options = { "projection": { "_id": false }, "limit": 100 };
@@ -1356,10 +1356,10 @@ export class HiveVaultHelper {
                     "user_did": userDid
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, params);
-                console.log("Remove like from scripting , result is", result);
+                Logger.log("Query user display name from scripting , result is", result);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'Remove like from scripting , error:', error);
+                Logger.error(TAG, 'Query user display name from scripting , error:', error);
                 reject(error);
             }
         });

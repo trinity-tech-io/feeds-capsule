@@ -223,7 +223,7 @@ export class FeedsSqliteHelper {
         const statement = 'DELETE FROM ' + this.TABLE_POST + ' WHERE post_id=?'
         const params = [postId];
         const result = await this.executeSql(statement, params);
-  
+
         Logger.log(TAG, 'delete post data result: ', result)
         resolve('SUCCESS');
       }
@@ -345,7 +345,7 @@ export class FeedsSqliteHelper {
         const statement = 'DELETE FROM ' + this.TABLE_CHANNEL + ' WHERE channel_id=?'
         const params = [channelId];
         const result = await this.executeSql(statement, params);
-  
+
         Logger.log(TAG, 'delete channel data result is', result);
         resolve('SUCCESS');
       }
@@ -776,7 +776,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_LIKE + ' WHERE dest_did=? and channel_id=? and post_id=? and comment_id=?'
         const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId];
-  
+
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'delete like result is', result);
         resolve('SUCCESS');
@@ -1011,6 +1011,4 @@ export class FeedsSqliteHelper {
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
   }
-
-
 }
