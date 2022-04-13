@@ -191,7 +191,7 @@ export class HiveVaultController {
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          const channel = await this.getSubscriptionInfoByChannel(destDid, channelId);
+          const channel = await this.getSubscriptionChannelById(destDid, channelId);
           subscribedChannelList.push(channel);
         }
 
@@ -203,7 +203,7 @@ export class HiveVaultController {
     });
   }
 
-  getSubscriptionInfoByChannel(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
+  getSubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
@@ -216,13 +216,13 @@ export class HiveVaultController {
             return;
           }
 
-          const channel = this.dataHelper.getSubscriptionV3DataByChannelId(targetDid, channelId);
-          if (channel) {
-            this.dataHelper.addSubscriptionV3Data(subscriptions[0]);
-          } else {
-            this.dataHelper.updateSubscriptionV3Data(subscriptions[0])
+          const subscribedChannel: FeedsData.SubscribedChannelV3 = await this.dataHelper.getSubscribedChannelV3ByKey(targetDid, channelId);
+
+          if (!subscribedChannel) {
+            this.dataHelper.addSubscribedChannelV3(subscriptions[0]);
           }
-          resolve(subscriptions[0]);
+
+          resolve(subscribedChannel);
         } else {
           resolve(null);
         }
@@ -577,20 +577,13 @@ export class HiveVaultController {
   subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const quryResult = this.getSubscriptionInfoByChannel(targetDid, channelId);
-        if (quryResult) {
-          resolve(quryResult);
-          return;
-        }
-
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
         if (result) {
           let subscribedChannel: FeedsData.SubscribedChannelV3 = {
             destDid: targetDid,
             channelId: channelId
           }
-
-          const localResult = await this.dataHelper.getSubscriptionV3DataByChannelId(targetDid, channelId);
+          const localResult = await this.dataHelper.getSubscribedChannelV3ByKey(targetDid, channelId);
           if (!localResult) {
             await this.dataHelper.addSubscribedChannelV3(subscribedChannel);
           }
@@ -715,6 +708,7 @@ export class HiveVaultController {
             } else {
               await this.dataHelper.updateChannelV3(item);
             }
+            await this.getSubscriptionChannelById(item.destDid, item.channelId);
           }
           resolve(parseResult);
         } else {

@@ -2951,6 +2951,7 @@ export class DataHelper {
 
 
   //subscriptionV3
+  //暂不缓存这部分数据
   addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2963,6 +2964,7 @@ export class DataHelper {
     });
   }
 
+  //暂不缓存这部分数据
   addSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2983,6 +2985,7 @@ export class DataHelper {
     });
   }
 
+  //暂不缓存这部分数据
   updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2996,6 +2999,7 @@ export class DataHelper {
     })
   }
 
+  //暂不缓存这部分数据
   updateSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3016,6 +3020,7 @@ export class DataHelper {
     });
   }
 
+  //暂不缓存这部分数据
   getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3029,6 +3034,7 @@ export class DataHelper {
     })
   }
 
+  //暂不缓存这部分数据
   getSubscriptionV3DataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3> {
     return new Promise(async (resolve, reject) => {
       try {
