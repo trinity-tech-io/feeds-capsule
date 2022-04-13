@@ -87,7 +87,7 @@ export class FeedinfoPage implements OnInit {
     this.name = channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
     this.ownerDid = channelInfo["ownerDid"] || "";
-    this.qrcodeString = "feeds://v3/"+this.ownerDid+"/"+this.channelId+'/'+encodeURIComponent(this.name);
+    this.qrcodeString = "feeds://v3/" + this.ownerDid + "/" + this.channelId + '/' + encodeURIComponent(this.name);
     this.oldChannelAvatar = this.feedService.getProfileIamge();
     this.followStatus = channelInfo['followStatus'] || null;
     if (this.followStatus == null) this.followStatus = false;
@@ -133,15 +133,15 @@ export class FeedinfoPage implements OnInit {
   async checkFollowStatus(destDid: string, channelId: string) {
 
     let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-     if(subscribedChannel.length === 0){
+    if (subscribedChannel.length === 0) {
       this.followStatus = false;
       return;
-     }
+    }
 
-    let channelIndex =  _.find(subscribedChannel,(item: FeedsData.SubscribedChannelV3)=>{
-         return item.destDid === destDid && item.channelId === channelId;
+    let channelIndex = _.find(subscribedChannel, (item: FeedsData.SubscribedChannelV3) => {
+      return item.destDid === destDid && item.channelId === channelId;
     }) || '';
-    if(channelIndex === '') {
+    if (channelIndex === '') {
       this.followStatus = false;
       return;
     }
@@ -156,9 +156,9 @@ export class FeedinfoPage implements OnInit {
       this.translate.instant('FeedinfoPage.title'),
     );
 
-    if(this.destDid === this.ownerDid){
+    if (this.destDid === this.ownerDid) {
       this.isMine = true;
-    }else{
+    } else {
       this.isMine = false;
     }
 
@@ -202,8 +202,7 @@ export class FeedinfoPage implements OnInit {
     let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveVaultController.subscribeChannel(
-        userDid,this.channelId,this.name);
+      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
       await this.hiveVaultController.getPostListByChannel(userDid, this.channelId);
       this.followStatus = true;
       this.native.hideLoading();
@@ -228,8 +227,8 @@ export class FeedinfoPage implements OnInit {
     }
 
     let isOwner = false;
-    if(this.destDid === this.ownerDid){
-       isOwner = true;
+    if (this.destDid === this.ownerDid) {
+      isOwner = true;
     }
 
     if (isOwner) {

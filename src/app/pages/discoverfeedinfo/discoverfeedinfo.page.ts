@@ -14,7 +14,7 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import  _ from 'lodash';
+import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
@@ -62,17 +62,17 @@ export class DiscoverfeedinfoPage implements OnInit {
     private ipfsService: IPFSService,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.acRoute.queryParams.subscribe(data => {
       this.feedInfo = _.cloneDeep(data)['params'];
       let avatar = this.handleAvatar(this.feedInfo['feedsAvatar']);
-      document.getElementById("discoverFeedsAvatar").setAttribute("src",avatar);
+      document.getElementById("discoverFeedsAvatar").setAttribute("src", avatar);
       this.feedsUrl = this.feedInfo['url'] || '';
       this.qrcodeString =
         this.feedsUrl + '#' + encodeURIComponent(this.feedInfo['name']) || null;
-      });
+    });
   }
 
   ionViewWillEnter() {
@@ -81,7 +81,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.status = this.getChannelStatus(this.feedInfo);
     this.initTitle();
 
-    this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu,()=>{
+    this.events.subscribe(FeedsEvent.PublishType.channelInfoRightMenu, () => {
       this.clickAvatar();
     });
 
@@ -152,14 +152,14 @@ export class DiscoverfeedinfoPage implements OnInit {
       this.translate.instant('ChannelsPage.feeds'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    if(!this.theme.darkMode){
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dot.ico");
-    }else{
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar,"channelInfoRightMenu","assets/icon/dark/dot.ico");
+    if (!this.theme.darkMode) {
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dot.ico");
+    } else {
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dark/dot.ico");
     }
   }
 
- async subscribe() {
+  async subscribe() {
     let feedUrl = this.feedInfo['url'];
     let avatar = this.feedInfo['feedsAvatar'];
     let followers = this.feedInfo['followers'];
@@ -167,7 +167,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     let desc = this.feedInfo['description'];
     let ownerName = this.feedInfo['ownerName'];
     let channelId = feedUrl.split('/')[4];
-    await this.subscribeV3(channelId,feedName);
+    await this.subscribeV3(channelId, feedName);
     // this.feedService
     //   .addFeed(feedUrl, avatar, followers, feedName, ownerName, desc)
     //   .then(isSuccess => {
@@ -182,7 +182,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     //   });
   }
 
-  async subscribeV3(channelId :string, channelName: string) {
+  async subscribeV3(channelId: string, channelName: string) {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
@@ -193,8 +193,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     let userDid = (await this.dataHelper.getSigninData()).did
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveVaultController.subscribeChannel(
-        userDid, channelId, channelName);
+      await this.hiveVaultController.subscribeChannel(userDid, channelId);
       await this.hiveVaultController.getPostListByChannel(userDid, channelId);
       this.status = '2';
       this.native.hideLoading();
@@ -259,16 +258,16 @@ export class DiscoverfeedinfoPage implements OnInit {
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   clickAvatar() {
     let channelAvatar = this.feedInfo['feedsAvatar'];
     if (channelAvatar.indexOf('data:image') > -1 ||
-        channelAvatar.indexOf('feeds:imgage:') > -1 ||
-        channelAvatar.indexOf('feeds:image:') > -1 ||
-        channelAvatar.indexOf('pasar:image:') > -1
-        ) {
+      channelAvatar.indexOf('feeds:imgage:') > -1 ||
+      channelAvatar.indexOf('feeds:image:') > -1 ||
+      channelAvatar.indexOf('pasar:image:') > -1
+    ) {
       this.dataHelper.setSelsectIndex(0);
       this.dataHelper.setProfileIamge(channelAvatar);
     } else if (channelAvatar.indexOf('assets/images') > -1) {
@@ -285,33 +284,33 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.feedService.setChannelInfo({
       ownerDid: this.feedInfo['ownerDid'],
       did: this.feedInfo['did'],
-      destDid:destDid,
-      channelId:channelId,
+      destDid: destDid,
+      channelId: channelId,
       name: this.feedInfo['name'],
       des: this.feedInfo['description'],
-      followStatus:false,
+      followStatus: false,
       channelSubscribes: this.channelSubscribes,
-      updatedTime:0,
-      channelOwner:this.feedInfo["ownerName"],
-      feedUrl:this.feedInfo["url"],
-      type:"discover"
+      updatedTime: 0,
+      channelOwner: this.feedInfo["ownerName"],
+      feedUrl: this.feedInfo["url"],
+      type: "discover"
     });
-    this.native.navigateForward(['/feedinfo'],"");
+    this.native.navigateForward(['/feedinfo'], "");
   }
 
-  handleAvatar(avatar:any){
+  handleAvatar(avatar: any) {
     let imgUri = "";
     if (avatar.indexOf('feeds:imgage:') > -1) {
       imgUri = avatar.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if( avatar.indexOf('feeds:image:') > -1){
+    } else if (avatar.indexOf('feeds:image:') > -1) {
       imgUri = avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if( avatar.indexOf('pasar:image:') > -1){
+    } else if (avatar.indexOf('pasar:image:') > -1) {
       imgUri = avatar.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
-    else{
+    else {
       imgUri = avatar;
     }
     return imgUri;

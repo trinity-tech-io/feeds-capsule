@@ -574,10 +574,18 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string): Promise<FeedsData.SubscribedChannelV3> {
+  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string = ''): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userDisplayName);
+        let userName = '';
+        if (userDisplayName == '') {
+          const signinData = await this.dataHelper.getSigninData();
+          userName = signinData.name;
+        } else {
+          userName = userDisplayName;
+        }
+
+        const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName);
         if (result) {
           let subscribedChannel: FeedsData.SubscribedChannelV3 = {
             destDid: targetDid,

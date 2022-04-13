@@ -163,8 +163,7 @@ export class ChannelsPage implements OnInit {
     let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveVaultController.subscribeChannel(
-        userDid, this.channelId, this.channelName);
+      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
       await this.hiveVaultController.getPostListByChannel(
         userDid, this.channelId);
       this.initRefresh();
@@ -302,7 +301,7 @@ export class ChannelsPage implements OnInit {
       })
   }
 
- async ionViewWillEnter() {
+  async ionViewWillEnter() {
 
     this.isMine = await this.checkChannelIsMine();
     if (this.platform.is('ios')) {
@@ -342,7 +341,7 @@ export class ChannelsPage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.refreshChannelList();
             this.native.hideLoading();
@@ -558,7 +557,7 @@ export class ChannelsPage implements OnInit {
     return obj.content;
   }
 
- async menuMore(post: FeedsData.PostV3) {
+  async menuMore(post: FeedsData.PostV3) {
     // if (!this.feedService.checkPostIsAvalible(post)) return;
 
     this.pauseAllVideo();
@@ -581,7 +580,7 @@ export class ChannelsPage implements OnInit {
   }
 
   doRefresh(event: any) {
-     try {
+    try {
       this.images = {};
       this.startIndex = 0;
       //TODO
@@ -589,10 +588,10 @@ export class ChannelsPage implements OnInit {
       this.init();
       event.target.complete();
       this.refreshImage();
-     } catch (error) {
+    } catch (error) {
       event.target.complete();
 
-     }
+    }
   }
 
   loadData(event: any) {
