@@ -130,6 +130,8 @@ export class PostdetailPage implements OnInit {
   private isInitLike: any = {};
   private isInitComment: any = {};
   private postCommentList: FeedsData.CommentV3[] = [];
+  private isInitUserNameMap: any = {};
+  private userNameMap: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1196,6 +1198,8 @@ export class PostdetailPage implements OnInit {
         let postId = arr[2];
         let commentId = arr[3];
         let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
+        //处理Name
+        this.handleDisplayUserName(id, srcId, captainCommentIndex, captainComment[captainCommentIndex]);
         //处理post like
         this.handleCommentLikeData(id, srcId, captainCommentIndex, captainComment[captainCommentIndex]);
         //处理post comment
@@ -1240,7 +1244,7 @@ export class PostdetailPage implements OnInit {
         let commentId = arr[3];
         let isInit = this.isInitComment[commentId] || '';
         if (isInit === '') {
-          this.isInitComment[postId] = "11";
+          this.isInitComment[commentId] = "11";
           this.initCommentData(destDid, channelId, postId, commentId);
         }
       }
@@ -1293,6 +1297,37 @@ export class PostdetailPage implements OnInit {
       });
     } catch (error) {
 
+    }
+  }
+
+  handleDisplayUserName(id: string, srcId: string, rowindex: number, postgrid: any) {
+    try {
+      if (
+        id != '' &&
+        postgrid.getBoundingClientRect().top >= -100 &&
+        postgrid.getBoundingClientRect().bottom <= this.clientHeight
+      ) {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let commentId = arr[3];
+        let userDid = arr[4];
+        let isInit = this.isInitUserNameMap[commentId] || '';
+        if (isInit === '') {
+          this.userNameMap[userDid] = this.indexText(userDid);
+          this.isInitUserNameMap[commentId] = "11";
+          this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+          then((result)=>{
+             let name = result || "";
+             if(name != ""){
+              this.userNameMap[userDid] = name;
+             }
+          }).catch(()=>{
+            this.userNameMap[userDid] = this.indexText(userDid);
+          });
+        }
+      }
+    } catch (error) {
     }
   }
 }
