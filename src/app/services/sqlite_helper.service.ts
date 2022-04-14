@@ -628,18 +628,35 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentById(postId: string, refcommentId: string): Promise<FeedsData.CommentV3[]> {
+  queryCommentById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? and refcomment_id=?';
-        const params = [postId, refcommentId];
+        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?';
+        const params = [commentId];
         const result = await this.executeSql(statement, params);
         const commentList = this.parseCommentData(result);
 
         Logger.log(TAG, 'query comment by Id result is', commentList);
-        resolve(commentList);
+        resolve(commentList[0]);
       } catch (error) {
         Logger.error(TAG, 'query comment Data By ID  error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryCommentByRefId(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? and refcomment_id=?';
+        const params = [postId, refCommentId];
+        const result = await this.executeSql(statement, params);
+        const commentList = this.parseCommentData(result);
+
+        Logger.log(TAG, 'query comment by ref Id result is', commentList);
+        resolve(commentList);
+      } catch (error) {
+        Logger.error(TAG, 'query comment Data By ref ID  error', error);
         reject(error);
       }
     });

@@ -145,6 +145,10 @@ export class DataHelper {
   private assetPageAssetItem: FeedsData.NFTItem;
 
   private userDisplayNameMap: { [destDid_channel_userdid: string]: string } = {};
+
+  private cachedCommentMap: { [postId: string]: { [refCommentId: string]: FeedsData.CommentV3[] } } = {};
+  private cachedLikeMap: { [postId: string]: { [commentId: string]: FeedsData.LikeV3 } } = {};
+
   constructor(
     private storageService: StorageService,
     private events: Events,
@@ -3069,9 +3073,23 @@ export class DataHelper {
   //   return null;
   // }
 
+
+  /**
+   * 
+   * @param channel     
+   * return new Promise(async (resolve, reject) => {
+      try {
+        await this.sqliteHelper.insertChannelData(channel)
+      } catch (error) {
+        Logger.error(TAG, 'Add channels erorr', error);
+        reject(error);
+      }
+    });
+   * @returns 
+   */
   //ChannelV3
-  async addChannelV3(channel: FeedsData.ChannelV3) {
-    return await this.sqliteHelper.insertChannelData(channel)
+  addChannelV3(channel: FeedsData.ChannelV3) {
+    return this.sqliteHelper.insertChannelData(channel)
   }
 
   addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
@@ -3344,11 +3362,22 @@ export class DataHelper {
     });
   }
 
-  getCommentV3ById(destDid: string, postId: string, commentId: string): Promise<FeedsData.CommentV3> {
+  getCommentsV3ById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryCommentById(postId, commentId)
-        resolve(result[0]);
+        const result = await this.sqliteHelper.queryCommentById(postId, commentId);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getCommentsV3ByRefId(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.sqliteHelper.queryCommentByRefId(postId, refCommentId);
+        resolve(result);
       } catch (error) {
         reject(error);
       }
@@ -3356,10 +3385,10 @@ export class DataHelper {
   }
 
 
-  getCommentV3List(destDid: string, postId: string): Promise<FeedsData.CommentV3[]> {
+  getCommentsV3ByPost(postId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const list = await this.sqliteHelper.queryCommentById(postId, '0')
+        const list = await this.getCommentsV3ById(postId, '0');
         resolve(list)
       } catch (error) {
         reject(error)
@@ -3622,5 +3651,40 @@ export class DataHelper {
   cacheUserDisplayName(targetDid: string, channelId: string, userDid: string, name: string) {
     const key = targetDid + '-' + channelId + '-' + userDid;
     this.userDisplayNameMap[key] = name;
+  }
+
+  getcachedCommentList(postId: string, refCommentId: string): FeedsData.CommentV3[] {
+    if (!this.cachedCommentMap || !this.cachedCommentMap[postId] || this.cachedCommentMap[postId][refCommentId]) {
+      return [];
+    }
+
+    return this.cachedCommentMap[postId][refCommentId];
+  }
+
+  cacheCommentList(postId: string, refCommentId: string, commentList: FeedsData.CommentV3[]) {
+    if (!this.cachedCommentMap) {
+      this.cachedCommentMap = {}
+    }
+
+    if (!commentList)
+      return;
+
+    this.cachedCommentMap[postId][refCommentId] = commentList;
+  }
+
+  clearCachedComment() {
+    this.cachedCommentMap = {};
+  }
+
+  getCachedLike() {
+
+  }
+
+  cacheLike() {
+
+  }
+
+  clearCachedLike() {
+
   }
 }

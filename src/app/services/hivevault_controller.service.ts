@@ -106,7 +106,7 @@ export class HiveVaultController {
         const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
         for (let commentIndex = 0; commentIndex < commentList.length; commentIndex++) {
           let item = commentList[commentIndex];
-          let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
+          let comment = await this.dataHelper.getCommentsV3ById(destDid, postId, item.commentId) || '';
           if (comment === '') {
             await this.dataHelper.addCommentV3(item);
           } else {
@@ -833,7 +833,7 @@ export class HiveVaultController {
           //2.if null add else update ,toast warn
           for (let commentIndex = 0; commentIndex < comments.length; commentIndex++) {
             let item = comments[commentIndex];
-            let comment = await this.dataHelper.getCommentV3ById(destDid, postId, item.commentId) || '';
+            let comment = await this.dataHelper.getCommentsV3ById(destDid, postId, item.commentId) || '';
             if (comment === '') {
               await this.dataHelper.addCommentV3(item);
             } else {
@@ -1172,4 +1172,22 @@ export class HiveVaultController {
     });
   }
 
+  getCommentList(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const commentList = this.dataHelper.getcachedCommentList(postId, refCommentId);
+        if (commentList.length > 0) {
+          resolve(commentList);
+          return;
+        }
+
+        const list = await this.dataHelper.getCommentsV3ByRefId(postId, refCommentId);
+        this.dataHelper.cacheCommentList(postId, refCommentId, list);
+        resolve(list);
+      } catch (error) {
+        Logger.error(TAG, 'Get local comment list error', error);
+        reject(error);
+      }
+    });
+  }
 }
