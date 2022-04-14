@@ -133,6 +133,8 @@ export class PostdetailPage implements OnInit {
   private postCommentList: FeedsData.CommentV3[] = [];
   private isInitUserNameMap: any = {};
   private userNameMap: any = {};
+  private isloadingLikeMap: any = {};
+  private isLoadingLike = false;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -472,25 +474,24 @@ export class PostdetailPage implements OnInit {
   }
 
   showComment(comment: FeedsData.CommentV3) {
-    if (comment === null) {
-      this.refcommentId = '0';
-      this.commentName = this.channelName;
-      this.commentAvatar = this.channelAvatarUri;
-    } else {
-      this.refcommentId = comment.commentId;
-      this.commentName = comment.createrDid;
-      this.commentAvatar = '';
-    }
-    // if (this.checkServerStatus(this.destDid) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    if (comment === null) {
+      this.refcommentId = '0';
+      this.commentName = this.channelName;
+      this.commentAvatar = this.channelAvatarUri;
+    } else {
+      this.refcommentId = comment.commentId;
+      this.commentName = this.userNameMap[comment.createrDid];
+      this.commentAvatar = '';
+    }
+
+
 
     this.pauseVideo();
     this.hideComment = false;
@@ -504,12 +505,24 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
+    if(this.isLoadingLike){
+       return;
+    }
+
     if (this.isLike) {
       try {
+        this.isLoadingLike = true;
         this.isLike = false;
         this.likesNum = this.likesNum - 1;
-        this.hiveVaultController.removeLike(this.destDid, this.channelId, this.postId, '0');
+        this.hiveVaultController.removeLike(
+          this.destDid, this.channelId, this.postId, '0').
+          then(()=>{
+            this.isLoadingLike = false;
+        }).catch(err=>{
+          this.isLoadingLike = false;
+        });
       } catch (error) {
+        this.isLoadingLike = false;
         this.isLike = true;
         this.likesNum = this.likesNum + 1;
 
@@ -518,10 +531,18 @@ export class PostdetailPage implements OnInit {
     }
 
     try {
+      this.isLoadingLike = true;
       this.isLike = true;
       this.likesNum = this.likesNum + 1;
-      this.hiveVaultController.like(this.destDid, this.channelId, this.postId, '0');
+      this.hiveVaultController.like(
+        this.destDid, this.channelId, this.postId, '0').
+        then(()=>{
+          this.isLoadingLike = false;
+      }).catch((err)=>{
+        this.isLoadingLike = false;
+      });
     } catch (err) {
+      this.isLoadingLike = false;
       this.isLike = false;
       this.likesNum = this.likesNum - 1;
     }
@@ -536,31 +557,9 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let destDid = comment.destDid;
-    let channelId = comment.channelId;
-    let postId = comment.postId;
-    let commentId = comment.commentId;
-
-    let isLike = this.likedCommentMap[commentId] || '';
-    if (isLike === '') {
-      try {
-        this.likedCommentMap[commentId] = "like";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
-        this.hiveVaultController.like(destDid, channelId, postId, commentId);
-      } catch (err) {
-        this.likedCommentMap[commentId] = "";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-      }
-    } else {
-      try {
-        this.likedCommentMap[commentId] = "";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] - 1;
-        this.hiveVaultController.removeLike(destDid, channelId, postId, commentId);
-      } catch (error) {
-        this.likedCommentMap[postId] = "like";
-        this.likedCommentNum[commentId] = this.likedCommentNum[commentId] + 1;
-      }
-    }
+    CommonPageService.
+    likeComment(comment, this.likedCommentMap,
+               this.isloadingLikeMap, this.likedCommentNum,this.hiveVaultController);
   }
 
   handleUpdateDate(updatedTime: number) {
@@ -701,10 +700,7 @@ export class PostdetailPage implements OnInit {
         event.target.complete();
       } catch (error) {
         event.target.complete();
-
       }
-
-
   }
 
   loadData(event: any) {
@@ -1229,7 +1225,16 @@ export class PostdetailPage implements OnInit {
         let isInit = this.isInitLike[commentId] || '';
         if (isInit === '') {
           this.isInitLike[commentId] = "11";
-          this.initLikeData(destDid, channelId, postId, commentId);
+          CommonPageService.initLikeData(
+            destDid,
+            channelId,
+            postId,
+            commentId,
+            this.hiveVaultController,
+            this.isInitLike,
+            this.likedCommentNum,
+            this.likedCommentMap
+          );
         }
       }
     } catch (error) {
@@ -1255,39 +1260,6 @@ export class PostdetailPage implements OnInit {
         }
       }
     } catch (error) {
-    }
-  }
-
-  initLikeData(destDid: string, channelId: string, postId: string, commentId: string) {
-    try {
-      this.hiveVaultController.getLikeById(
-        destDid, channelId, postId, commentId).then((likeList) => {
-          this.isInitLike[postId] = "13";
-          let list = likeList || [];
-
-          //计算comment like的数量
-          this.likedCommentNum[commentId] = list.length;
-
-          //检测comment like状态
-          let index = _.find(list, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === commentId;
-          }) || "";
-          if (index === "") {
-            this.likedCommentMap[commentId] = "";
-          } else {
-            this.likedCommentMap[commentId] = "like";
-          }
-
-        }).catch((err) => {
-          this.likedCommentMap[commentId] = "";
-          this.likedCommentNum[commentId] = 0;
-          this.isInitLike[commentId] = "";
-        });
-    } catch (err) {
-      //this.likesNum = 0;
-      this.likedCommentMap[commentId] = "";
-      this.likedCommentNum[commentId] = 0;
-      this.isInitLike[commentId] = "";
     }
   }
 

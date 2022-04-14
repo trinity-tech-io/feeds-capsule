@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import _ from 'lodash';
 import { UtilService } from './utilService';
 @Injectable()
 export class CommonPageService {
@@ -91,12 +92,16 @@ export class CommonPageService {
               isloadingLikeMap[commentId] = "";
           }).catch(()=>{
              likedCommentMap[commentId] = "";
-             likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
+             if(likedCommentNum[commentId] > 0){
+              likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
+             }
              isloadingLikeMap[commentId] = "";
           });
       } catch (err) {
          likedCommentMap[commentId] = "";
-         likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
+         if(likedCommentNum[commentId] > 0){
+          likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
+         }
          isloadingLikeMap[commentId] = "";
       }
       return;
@@ -112,15 +117,124 @@ export class CommonPageService {
            isloadingLikeMap[commentId] = "";
         }).catch(()=>{
            likedCommentMap[commentId] = "like";
-           likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
+           likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
            isloadingLikeMap[commentId] = "";
 
         });
       } catch (error) {
         likedCommentMap[postId] = "like";
-        likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
+        likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
         isloadingLikeMap[commentId] = "";
       }
       }
+  }
+
+  public static initLikeData(
+    destDid: string,
+    channelId: string,
+    postId: string,
+    commentId: string,
+    hiveVaultController: any,
+    isInitLike: any,
+    likedCommentNum: any,
+    likedCommentMap: any
+    ) {
+    try {
+      hiveVaultController.getLikeByPost(
+        destDid, channelId, postId).then((likeList) => {
+          isInitLike[postId] = "13";
+          let list = likeList || [];
+
+          //计算comment like的数量
+          let newList = _.filter(list,((item)=>{
+            return item.commentId === commentId;
+          }))
+            likedCommentNum[commentId] = newList.length;
+
+          //检测comment like状态
+          let index = _.find(list, (item) => {
+            return item.channelId === channelId && item.postId === postId && item.commentId === commentId;
+          }) || "";
+          if (index === "") {
+              likedCommentMap[commentId] = "";
+          } else {
+              likedCommentMap[commentId] = "like";
+          }
+
+        }).catch((err) => {
+            likedCommentMap[commentId] = "";
+            likedCommentNum[commentId] = 0;
+            isInitLike[commentId] = "";
+        });
+    } catch (err) {
+      //this.likesNum = 0;
+        likedCommentMap[commentId] = "";
+        likedCommentNum[commentId] = 0;
+        isInitLike[commentId] = "";
+    }
+  }
+
+  public static likePost(
+        destDid: string,
+        channelId: string,
+        postId: string,
+        isLoadingLikeMap: any,
+        likeMap: any,
+        likeNumMap: any,
+        hiveVaultController: any,
+        ) {
+    let isLoading  = isLoadingLikeMap[postId] || '';
+    if(isLoading === "loading"){
+        return;
+    }
+    let isLike = likeMap[postId] || '';
+    if (isLike === '') {
+      try {
+        isLoadingLikeMap[postId] = "loading";
+        likeMap[postId] = "like";
+        likeNumMap[postId] = likeNumMap[postId] + 1;
+        hiveVaultController.like(
+          destDid, channelId, postId, '0').then(()=>{
+              isLoadingLikeMap[postId] = "";
+          }).catch(err=>{
+              isLoadingLikeMap[postId] = "";
+              likeMap[postId] = "";
+              if(likeNumMap[postId] > 0){
+                likeNumMap[postId] = likeNumMap[postId] - 1;
+              }
+          });
+      } catch (err) {
+              isLoadingLikeMap[postId] = "";
+              likeMap[postId] = "";
+              if(likeNumMap[postId] > 0){
+                likeNumMap[postId] = likeNumMap[postId] - 1;
+              }
+      }
+
+      return;
+    }
+
+    if(isLike === "like")
+    {
+      try {
+        isLoadingLikeMap[postId] = "loading";
+        likeMap[postId] = "";
+        if(likeNumMap[postId] > 0){
+          likeNumMap[postId] = likeNumMap[postId] - 1;
+        }
+        hiveVaultController.removeLike(
+          destDid, channelId, postId, '0').then(()=>{
+              isLoadingLikeMap[postId] = "";
+          }).catch(()=>{
+              isLoadingLikeMap[postId] = "";
+              likeMap[postId] = "like";
+              likeNumMap[postId] = likeNumMap[postId] + 1;
+          });
+      } catch (error) {
+              isLoadingLikeMap[postId] = "";
+              likeMap[postId] = "like";
+              likeNumMap[postId] = likeNumMap[postId] + 1;
+      }
+    }
   }
 }

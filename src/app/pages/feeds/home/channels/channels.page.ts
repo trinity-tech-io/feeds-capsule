@@ -24,6 +24,7 @@ import * as _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { CommonPageService } from 'src/app/services/common.page.service';
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -128,7 +129,7 @@ export class ChannelsPage implements OnInit {
   private likeMap: any = {};
   private likeNumMap: any = {};
   private commentNumMap: any = {};
-  private hannelNameMap: any = {};
+  private isLoadingLikeMap: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -435,30 +436,14 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
-
-    let isLike = this.likeMap[postId] || '';
-    if (isLike === '') {
-      try {
-        this.likeMap[postId] = "like";
-        this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
-        this.hiveVaultController.like(destDid, channelId, postId, '0');
-      } catch (err) {
-        this.likeMap[postId] = "";
-        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
-      }
-    } else {
-      try {
-        this.likeMap[postId] = "";
-        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
-        this.hiveVaultController.removeLike(destDid, channelId, postId, '0');
-      } catch (error) {
-        this.likeMap[postId] = "like";
-        this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
-
-      }
-    }
+    CommonPageService.likePost(
+      destDid,
+      channelId,
+      postId,
+      this.isLoadingLikeMap,
+      this.likeMap,
+      this.likeNumMap,
+      this.hiveVaultController);
   }
 
   getContentText(content: string): string {

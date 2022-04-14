@@ -520,7 +520,12 @@ export class CommentlistPage implements OnInit {
         destDid, channelId, postId).then((likeList) => {
           let list = likeList || [];
           //计算comment like的数量
-          this.likedCommentNum[commentId] = list.length;
+
+          let newList = _.filter(list,((item)=>{
+          return item.commentId === commentId;
+          }))
+
+          this.likedCommentNum[commentId] = newList.length;
 
           //检测comment like状态
           let index = _.find(list, (item) => {

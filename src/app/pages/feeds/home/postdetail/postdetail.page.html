@@ -178,9 +178,9 @@
           </h2>
           <ion-row class="bottom-row">
             <ion-col size="2.25" (click)="likeComment(comment)">
-              <img [src]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
-              <img [src]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined  ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-              <ion-label [class.liked]="likedCommentMap[comment.commentId] != '' && likedCommentMap[comment.commentId] != undefined ">{{ likedCommentNum[comment.commentId] }}</ion-label>
+              <img [src]="likedCommentMap[comment.commentId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+              <img [src]="likedCommentMap[comment.commentId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+              <ion-label [class.liked]="likedCommentMap[comment.commentId] === 'like' ">{{ likedCommentNum[comment.commentId] }}</ion-label>
             </ion-col>
             <ion-col size="2.25" (click)="showComment(comment)">
               <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">

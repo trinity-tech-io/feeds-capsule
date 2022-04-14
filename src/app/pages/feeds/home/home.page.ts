@@ -166,7 +166,7 @@ export class HomePage implements OnInit {
   private commentNumMap: any = {};
   public isPostLoading: boolean = true;
   private hannelNameMap: any = {};
-  //private isInitPostList: boolean = true;
+  private isLoadingLikeMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -614,30 +614,14 @@ export class HomePage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
-    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
-
-    let isLike = this.likeMap[postId] || '';
-    if (isLike === '') {
-      try {
-        this.likeMap[postId] = "like";
-        this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
-        this.hiveVaultController.like(destDid, channelId, postId, '0');
-      } catch (err) {
-        this.likeMap[postId] = "";
-        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
-      }
-    } else {
-      try {
-        this.likeMap[postId] = "";
-        this.likeNumMap[postId] = this.likeNumMap[postId] - 1;
-        this.hiveVaultController.removeLike(destDid, channelId, postId, '0');
-      } catch (error) {
-        this.likeMap[postId] = "like";
-        this.likeNumMap[postId] = this.likeNumMap[postId] + 1;
-      }
-    }
+    CommonPageService.likePost(
+              destDid,
+              channelId,
+              postId,
+              this.isLoadingLikeMap,
+              this.likeMap,
+              this.likeNumMap,
+              this.hiveVaultController);
   }
 
   navTo(destDid: string, channelId: string, postId: number) {

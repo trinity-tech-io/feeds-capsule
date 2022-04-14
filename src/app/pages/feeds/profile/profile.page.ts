@@ -175,7 +175,7 @@ export class ProfilePage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   private channelNameMap: any = {};
-
+  public isLoadingLikeMap: any = {};
   constructor(
     public theme: ThemeService,
     private events: Events,
