@@ -628,11 +628,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentById(postId: string, commentId: string): Promise<FeedsData.CommentV3[]> {
+  queryCommentById(postId: string, refcommentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? and comment_id=?';
-        const params = [postId, commentId];
+        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? and refcomment_id=?';
+        const params = [postId, refcommentId];
         const result = await this.executeSql(statement, params);
         const commentList = this.parseCommentData(result);
 
