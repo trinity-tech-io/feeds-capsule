@@ -147,7 +147,8 @@ export class DataHelper {
   private userDisplayNameMap: { [destDid_channel_userdid: string]: string } = {};
 
   private cachedCommentMap: { [postId: string]: { [refCommentId: string]: FeedsData.CommentV3[] } } = {};
-  private cachedLikeMap: { [postId: string]: { [commentId: string]: FeedsData.LikeV3 } } = {};
+  private cachedLikeStatusMap: { [postId_commentId: string]: boolean } = {};
+  private cachedLikeNumMap: { [postId_commentId: string]: number } = {};
 
   constructor(
     private storageService: StorageService,
@@ -3509,7 +3510,7 @@ export class DataHelper {
     })
   }
 
-  getLikeV3ById(destDid: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
+  getLikeV3ById(postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.sqliteHelper.queryLikeDataById(postId, commentId)
@@ -3538,7 +3539,7 @@ export class DataHelper {
     })
   }
 
-  getLikeNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
+  getLikeNum(postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
         const num = this.sqliteHelper.queryLikeNum(postId, commentId);
@@ -3676,15 +3677,46 @@ export class DataHelper {
     this.cachedCommentMap = {};
   }
 
-  getCachedLike() {
+  getCachedLikeStatus(postId: string, commentId: string): boolean {
+    const key = postId + '-' + commentId;
+    if (!this.cachedLikeStatusMap || !this.cachedLikeStatusMap[key]) {
+      return null;
+    }
 
+    return this.cachedLikeStatusMap[key];
   }
 
-  cacheLike() {
+  cacheLikeStatus(postId: string, commentId: string, status: boolean) {
+    const key = postId + '-' + commentId;
+    if (!this.cachedLikeStatusMap) {
+      this.cachedLikeStatusMap = {};
+    }
 
+    this.cachedLikeStatusMap[key] = status;
   }
 
-  clearCachedLike() {
+  clearCachedLikeStatus() {
+    this.cachedLikeStatusMap = {};
+  }
 
+  getCachedLikeNum(postId: string, commentId: string): number {
+    const key = postId + '-' + commentId;
+    if (!this.cachedLikeNumMap || !this.cachedLikeNumMap[key]) {
+      return null;
+    }
+    return this.cachedLikeNumMap[key];
+  }
+
+  cacheLikeNum(postId: string, commentId: string, num: number) {
+    const key = postId + '-' + commentId;
+    if (!this.cachedLikeNumMap) {
+      this.cachedLikeNumMap = {};
+    }
+
+    this.cachedLikeNumMap[key] = num;
+  }
+
+  clearCacheLikeNum() {
+    this.cachedLikeNumMap = {};
   }
 }

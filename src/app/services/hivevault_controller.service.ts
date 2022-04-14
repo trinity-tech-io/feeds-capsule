@@ -1182,8 +1182,62 @@ export class HiveVaultController {
         }
 
         const list = await this.dataHelper.getCommentsV3ByRefId(postId, refCommentId);
-        this.dataHelper.cacheCommentList(postId, refCommentId, list);
-        resolve(list);
+        if (list && list.length > 0) {
+          this.dataHelper.cacheCommentList(postId, refCommentId, list);
+          resolve(list);
+        } else {
+          //TODO sync data from remote
+          resolve([]);
+        }
+      } catch (error) {
+        Logger.error(TAG, 'Get local comment list error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getLikeStatus(postId: string, commentId: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let likedStatus = this.dataHelper.getCachedLikeStatus(postId, commentId);
+        if (likedStatus) {
+          resolve(likedStatus);
+          return;
+        }
+
+        const list = await this.dataHelper.getLikeV3ById(postId, commentId);
+
+        if (list && list.length > 0) {
+          likedStatus = true;
+          resolve(likedStatus);
+        } else {
+          likedStatus = false;
+          //TODO sync data from remote //TODO modify local like sql table ,add status
+          resolve(likedStatus);
+        }
+        this.dataHelper.cacheLikeStatus(postId, commentId, likedStatus);
+
+      } catch (error) {
+        Logger.error(TAG, 'Get local comment list error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getLikeNum(postId: string, commentId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let likedNum = this.dataHelper.getCachedLikeNum(postId, commentId);
+        if (likedNum) {
+          resolve(likedNum);
+          return;
+        }
+
+        const num = await this.dataHelper.getLikeNum(postId, commentId);
+
+        this.dataHelper.cacheLikeNum(postId, commentId, num);
+        //TODO sync data from remote //TODO modify local like sql table ,add status
+        resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Get local comment list error', error);
         reject(error);
