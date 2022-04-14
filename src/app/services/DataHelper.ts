@@ -3362,7 +3362,7 @@ export class DataHelper {
     });
   }
 
-  getCommentsV3ById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
+  getCommentV3ById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.sqliteHelper.queryCommentById(postId, commentId);
@@ -3388,7 +3388,7 @@ export class DataHelper {
   getCommentsV3ByPost(postId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const list = await this.getCommentsV3ById(postId, '0');
+        const list = await this.getCommentsV3ByRefId(postId, '0');
         resolve(list)
       } catch (error) {
         reject(error)

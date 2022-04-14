@@ -136,17 +136,17 @@ export class EditCommentPage implements OnInit {
 
   private async editComment() {
     try {
-      const originComment = await this.dataHelper.getCommentV3ById(this.destDid, this.postId, this.commentId);
+      const originComment = await this.dataHelper.getCommentV3ById(this.postId, this.commentId);
       this.hiveVaultController.updateComment(originComment, this.newComment)
         .then(() => {
-        let postCommentList: FeedsData.CommentV3[]  = this.dataHelper.getPostCommentList() || [];
-        let index = _.findIndex(postCommentList, (item: FeedsData.CommentV3)=>{
-          return item.destDid === this.destDid &&
-                  item.channelId === this.channelId &&
-                  item.postId === this.postId &&
-                  item.commentId === this.commentId;
+          let postCommentList: FeedsData.CommentV3[] = this.dataHelper.getPostCommentList() || [];
+          let index = _.findIndex(postCommentList, (item: FeedsData.CommentV3) => {
+            return item.destDid === this.destDid &&
+              item.channelId === this.channelId &&
+              item.postId === this.postId &&
+              item.commentId === this.commentId;
           });
-          if(index > -1) {
+          if (index > -1) {
             postCommentList[index].content = this.newComment;
             postCommentList[index].status = FeedsData.PostCommentStatus.edited;
           }

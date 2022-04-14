@@ -106,7 +106,7 @@ export class HiveVaultController {
         const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
         for (let commentIndex = 0; commentIndex < commentList.length; commentIndex++) {
           let item = commentList[commentIndex];
-          let comment = await this.dataHelper.getCommentsV3ById(destDid, postId, item.commentId) || '';
+          let comment = await this.dataHelper.getCommentV3ById(postId, item.commentId) || '';
           if (comment === '') {
             await this.dataHelper.addCommentV3(item);
           } else {
@@ -833,7 +833,7 @@ export class HiveVaultController {
           //2.if null add else update ,toast warn
           for (let commentIndex = 0; commentIndex < comments.length; commentIndex++) {
             let item = comments[commentIndex];
-            let comment = await this.dataHelper.getCommentsV3ById(destDid, postId, item.commentId) || '';
+            let comment = await this.dataHelper.getCommentV3ById(postId, item.commentId) || '';
             if (comment === '') {
               await this.dataHelper.addCommentV3(item);
             } else {
