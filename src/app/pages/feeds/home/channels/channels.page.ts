@@ -579,12 +579,12 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  doRefresh(event: any) {
+  async doRefresh(event: any) {
     try {
       this.images = {};
       this.startIndex = 0;
       //TODO
-      this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
       this.init();
       event.target.complete();
       this.refreshImage();

@@ -117,15 +117,9 @@ export class CommentComponent implements OnInit {
         this.postId,
         this.refcommentId,
         this.newComment
-      ).then(()=>{
+      ).then((comment: FeedsData.CommentV3)=>{
         this.native.hideLoading();
         this.hideComponent();
-        let comment = {
-        "destDid": this.destDid,
-        "channelId": this.channelId,
-        "postId": this.postId,
-        "refcommentId": this.refcommentId
-      }
         this.events.publish(FeedsEvent.PublishType.getCommentFinish,comment);
       }).catch((err)=>{
         this.native.hideLoading();

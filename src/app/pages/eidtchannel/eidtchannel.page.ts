@@ -64,7 +64,7 @@ export class EidtchannelPage implements OnInit {
   ) { }
 
  async ngOnInit() {
-    let item = this.feedService.getChannelInfo();
+    let item = this.dataHelper.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
     this.destDid = channelInfo['destDid'] || '';
@@ -183,7 +183,7 @@ export class EidtchannelPage implements OnInit {
         '',
         '',
       ).then((result)=>{
-        let channelInfo = this.feedService.getChannelInfo();
+        let channelInfo = this.dataHelper.getChannelInfo();
         let tippingAddress = this.tippingAddress || '';
         channelInfo["name"] = this.channelName;
         channelInfo["des"] = this.channelDes;

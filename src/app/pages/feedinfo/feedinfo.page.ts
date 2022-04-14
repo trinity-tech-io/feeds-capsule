@@ -76,7 +76,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   initChannelInfo() {
-    let item = this.feedService.getChannelInfo();
+    let item = this.dataHelper.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
     this.type = channelInfo['type'] || "";

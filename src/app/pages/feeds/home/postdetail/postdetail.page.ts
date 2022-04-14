@@ -17,6 +17,7 @@ import { Logger } from 'src/app/services/logger';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { CommonPageService } from 'src/app/services/common.page.service';
 
 let TAG: string = 'Feeds-postview';
 @Component({
@@ -1105,7 +1106,7 @@ export class PostdetailPage implements OnInit {
       }
     }
     let commentId: string = comment.commentId;
-    let createrDid: string  = comment.createrDid
+    let createrDid: string  = comment.createrDid;
     this.dataHelper.setPostCommentList(this.postCommentList);
     this.native.navigateForward(['commentlist'], {
       queryParams: {
@@ -1199,7 +1200,12 @@ export class PostdetailPage implements OnInit {
         let commentId = arr[3];
         let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
         //处理Name
-        this.handleDisplayUserName(id, srcId, captainCommentIndex, captainComment[captainCommentIndex]);
+        CommonPageService.handleDisplayUserName(
+          id, srcId, captainCommentIndex,
+          captainComment[captainCommentIndex],
+          this.clientHeight, this.isInitUserNameMap,
+          this.userNameMap, this.hiveVaultController
+          );
         //处理post like
         this.handleCommentLikeData(id, srcId, captainCommentIndex, captainComment[captainCommentIndex]);
         //处理post comment
@@ -1300,35 +1306,5 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  handleDisplayUserName(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let commentId = arr[3];
-        let userDid = arr[4];
-        let isInit = this.isInitUserNameMap[commentId] || '';
-        if (isInit === '') {
-          this.userNameMap[userDid] = this.indexText(userDid);
-          this.isInitUserNameMap[commentId] = "11";
-          this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-          then((result)=>{
-             let name = result || "";
-             if(name != ""){
-              this.userNameMap[userDid] = name;
-             }
-          }).catch(()=>{
-            this.userNameMap[userDid] = this.indexText(userDid);
-          });
-        }
-      }
-    } catch (error) {
-    }
-  }
 }
 
