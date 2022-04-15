@@ -4,9 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { FeedService } from 'src/app/services/FeedService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger, LogLevel } from 'src/app/services/logger';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-developer',
@@ -17,14 +18,16 @@ export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public openLog: boolean = false;
   public selectedNetwork: any = "MainNet";
+  public popover: any = null;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
     private native: NativeService,
-    private feedService: FeedService,
     private zone: NgZone,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController,
+    public popupProvider: PopupProvider
   ) { }
 
   ngOnInit() {
@@ -63,5 +66,49 @@ export class DeveloperPage implements OnInit {
 
   interfaceTest() {
     this.native.navigateForward(['/hive-interface-test'], {})
+  }
+
+
+  cleanData() {
+    this.popover = this.popupProvider.ionicConfirm(
+      this,
+      'SearchPage.confirmTitle',
+      '是否删除所有收藏品',
+      this.cancel,
+      this.confirm,
+      '',
+    );
+  }
+
+  cancel(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
+  }
+
+  async confirm(that: any) {
+    if (this.popover != null) {
+       await this.popover.dismiss();
+       this.popover = null;
+    }
+
+    that.deleteAllCollections(that);
+  }
+
+  async deleteAllCollections(that: any){
+   await that.native.showLoading("common.waitMoment");
+   try {
+   let reslut  = await that.hiveVaultController.deleteAllCollections();
+   if(reslut === "true"){
+        that.native.hideLoading();
+        alert("sucess");
+   }else{
+     that.native.hideLoading();
+    alert("fail");
+   }
+   } catch (error) {
+     that.native.hideLoading();
+     alert("====error==="+JSON.stringify(error));
+   }
   }
 }

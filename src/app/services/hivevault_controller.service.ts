@@ -924,7 +924,7 @@ export class HiveVaultController {
           //     proof: '',
           //     memo: '',
 
-          //     updatedAt: 
+          //     updatedAt:
           //   }
           //   await this.dataHelper.removeLikeV3(like);
           //   resolve(like);
@@ -1016,7 +1016,16 @@ export class HiveVaultController {
   }
 
   deleteAllCollections(): Promise<string> {
-    return this.hiveVaultApi.deleteAllCollections()
+    Logger.log(TAG, "deleteAllCollections");
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.deleteAllCollections();
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'deleteAllCollections data error', error);
+        reject(error);
+      }
+    });
   }
 
   deletePost(post: FeedsData.PostV3): Promise<FeedsData.PostV3> {
