@@ -418,6 +418,7 @@ export class HiveVaultController {
       try {
         await this.hiveVaultApi.createAllCollections()
         await this.hiveVaultApi.registeScripting()
+        localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
       } catch (error) {
         await this.hiveVaultApi.registeScripting()
         localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
@@ -577,8 +578,8 @@ export class HiveVaultController {
         } else {
           userName = userDisplayName;
         }
-
-        const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName);
+        const updatedAt = UtilService.getCurrentTimeNum();
+        const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName, updatedAt);
         if (result) {
           let subscribedChannel: FeedsData.SubscribedChannelV3 = {
             destDid: targetDid,
@@ -850,7 +851,8 @@ export class HiveVaultController {
         //TODO
         //1.query
         //2.if null add else update ,toast warn
-        const result = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId);
+        const updatedAt = UtilService.getCurrentTimeNum();
+        const result = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId, updatedAt);
         Logger.log('like result', result);
         const createrDid = (await this.dataHelper.getSigninData()).did;
         if (result) {
@@ -880,7 +882,8 @@ export class HiveVaultController {
   removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
+        const updatedAt = UtilService.getCurrentTimeNum();
+        const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId, updatedAt);
         const createrDid = (await this.dataHelper.getSigninData()).did;
 
         Logger.log('Remove like result', result);
@@ -954,7 +957,8 @@ export class HiveVaultController {
   unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
+        const updatedAt = UtilService.getCurrentTimeNum();
+        const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId, updatedAt);
         console.log('getLikeByPost result', result);
 
         if (result) {

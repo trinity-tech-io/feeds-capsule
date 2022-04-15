@@ -110,7 +110,11 @@ export class MyApp {
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
       this.sqliteHelper.createTables();
-      await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+      try {
+        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+      } catch (error) {
+        console.log("create channel tables error =========", JSON.stringify(error))
+      }
     })
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);

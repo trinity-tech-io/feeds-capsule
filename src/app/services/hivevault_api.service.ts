@@ -65,12 +65,12 @@ export class HiveVaultApi {
   }
 
   /** Suscription */
-  subscribeChannel(targetDid: string, channelId: string, displayName: string): Promise<any> {
-    return this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName);
+  subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
+    return this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName, updatedAt, status);
   }
 
-  unSubscribeChannel(targetDid: string, channelId: string) {
-    return this.hiveVaultHelper.unsubscribeChannel(targetDid, channelId);
+  unSubscribeChannel(targetDid: string, channelId: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.deleted) {
+    return this.hiveVaultHelper.unsubscribeChannel(targetDid, channelId, updatedAt, status);
   }
 
   querySubscrptionInfoByChannelId(targetDid: string, channelId: string) {
@@ -119,12 +119,12 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryLikeByPost(targetDid, channelId, postId);
   }
 
-  addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
-    return this.hiveVaultHelper.addLike(targetDid, channelId, postId, commentId);
+  addLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.available): Promise<{ createdAt: number }> {
+    return this.hiveVaultHelper.addLike(targetDid, channelId, postId, commentId, updatedAt, status);
   }
 
-  removeLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-    return this.hiveVaultHelper.removeLike(targetDid, channelId, postId, commentId);
+  removeLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.deleted): Promise<any> {
+    return this.hiveVaultHelper.removeLike(targetDid, channelId, postId, commentId, updatedAt, status);
   }
 
   /** Download data */

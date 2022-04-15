@@ -501,9 +501,11 @@ export class HiveVaultHelper {
                     "channel_id": "$params.channel_id",
                     "user_did": "$caller_did",
                     "created_at": "$params.created_at",
-                    "display_name": "$params.display_name"
+                    "display_name": "$params.display_name",
+                    "updated_at": "$params.updated_at",
+                    "status": "$params.status"
                 }
-                let options = { "projection": { "_id": false } };
+                let options = { "projectxsion": { "_id": false } };
 
                 const executable = new InsertExecutable("database_insert", HiveVaultHelper.TABLE_SUBSCRIPTIONS, document, options);
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
@@ -515,13 +517,15 @@ export class HiveVaultHelper {
         });
     }
 
-    private callSubscribeScripting(targetDid: string, channelId: string, userDisplayName: string): Promise<any> {
+    private callSubscribeScripting(targetDid: string, channelId: string, userDisplayName: string, updatedAt: number, status: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                     "created_at": UtilService.getCurrentTimeNum(),
-                    "display_name": userDisplayName
+                    "display_name": userDisplayName,
+                    "updated_at": updatedAt,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, params);
                 resolve(result);
@@ -532,8 +536,8 @@ export class HiveVaultHelper {
         })
     }
 
-    subscribeChannel(targetDid: string, channelId: string, displayName: string): Promise<any> {
-        return this.callSubscribeScripting(targetDid, channelId, displayName);
+    subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number): Promise<any> {
+        return this.callSubscribeScripting(targetDid, channelId, displayName, updatedAt, status);
     }
     /** subscribe channel end */
 
@@ -556,11 +560,13 @@ export class HiveVaultHelper {
         });
     }
 
-    private callUnsubscribeScripting(targetDid: string, channelId: string): Promise<any> {
+    private callUnsubscribeScripting(targetDid: string, channelId: string, updatedAt: number, status: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
-                    "channel_id": channelId
+                    "channel_id": channelId,
+                    "updated_at": updatedAt,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, params);
                 resolve(result);
@@ -571,8 +577,8 @@ export class HiveVaultHelper {
         })
     }
 
-    unsubscribeChannel(targetDid: string, channelId: string): Promise<any> {
-        return this.callUnsubscribeScripting(targetDid, channelId);
+    unsubscribeChannel(targetDid: string, channelId: string, updatedAt: number, status: number): Promise<any> {
+        return this.callUnsubscribeScripting(targetDid, channelId, updatedAt, status);
     }
     /** unsubscribe channel end */
 
@@ -1068,7 +1074,9 @@ export class HiveVaultHelper {
             "post_id": "$params.post_id",
             "comment_id": "$params.comment_id",
             "created_at": "$params.created_at",
-            "creater_did": "$caller_did"
+            "creater_did": "$caller_did",
+            "updated_at": "$params.updated_at",
+            "status": "$params.status"
         }
 
         let options = {
@@ -1081,7 +1089,7 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
     }
 
-    private callAddLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
+    private callAddLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number): Promise<{ createdAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const createdAt = UtilService.getCurrentTimeNum();
@@ -1089,7 +1097,9 @@ export class HiveVaultHelper {
                     "channel_id": channelId,
                     "post_id": postId,
                     "comment_id": commentId,
-                    "created_at": createdAt
+                    "created_at": createdAt,
+                    "updated_at": updatedAt,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_LIKE, params);
                 console.log("Add like from scripting , result is", result);
@@ -1101,8 +1111,8 @@ export class HiveVaultHelper {
         });
     }
 
-    addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
-        return this.callAddLike(targetDid, channelId, postId, commentId);
+    addLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number): Promise<{ createdAt: number }> {
+        return this.callAddLike(targetDid, channelId, postId, commentId, updatedAt, status);
     }
     /** add like end */
 
@@ -1125,13 +1135,15 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
     }
 
-    private callRemoveLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    private callRemoveLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                     "post_id": postId,
                     "comment_id": commentId,
+                    "updated_at": updatedAt,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REMOVE_LIKE, params);
                 console.log("Remove like from scripting , result is", result);
@@ -1143,8 +1155,8 @@ export class HiveVaultHelper {
         });
     }
 
-    removeLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
-        return this.callRemoveLike(targetDid, channelId, postId, commentId);
+    removeLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number): Promise<any> {
+        return this.callRemoveLike(targetDid, channelId, postId, commentId, updatedAt, status);
     }
     /** remove like end */
 

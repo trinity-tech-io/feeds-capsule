@@ -129,12 +129,13 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   subscribeChannel() {
-    this.hiveVaultApi.subscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'wangran');
+    this.hiveVaultApi.subscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'wangran', 0, 0);
     // alert('subscribe');
   }
 
   unSubscribeChannel() {
-    this.hiveVaultApi.unSubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    this.hiveVaultApi.
+      unSubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 0, 1);
     // alert('unSubscribe');
   }
 
@@ -188,13 +189,13 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async addLike() {
-    await this.hiveVaultApi.addLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6');
+    await this.hiveVaultApi.addLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', 'e008c6785f40e5a4e3b502562f1edab276de2a093c9dc1d584617ebda0e61bd6', 0, 0);
     // this.hiveVaultApi.addLike();
     // alert('addLike');
   }
 
   removeLike() {
-    this.hiveVaultApi.removeLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', '');
+    this.hiveVaultApi.removeLike('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01', '', 0, 1);
     // this.hiveVaultApi.removeLike();
     // alert('removeLike');
   }

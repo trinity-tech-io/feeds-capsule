@@ -238,13 +238,9 @@ export class CreatenewfeedPage implements OnInit {
       this.native.hideLoading()
       this.native.pop()
     } catch (error) {
-      const signinData = await this.dataHelper.getSigninData();
-      let userDid = signinData.did
-      localStorage.setItem(userDid + HiveService.CREATEALLCollECTION, "true")
       this.native.hideLoading();
-      console.log("create channel error =========", JSON.stringify(error))
-      this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
-    }
+      console.log("update channel error =========", JSON.stringify(error))
+      }
   }
 
   profileimage() {
