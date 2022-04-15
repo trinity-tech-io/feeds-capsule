@@ -122,16 +122,26 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryLikeById(targetDid, channelId, postId, commentId);
   }
 
+  queryLikeByUser(targetDid: string, channelId: string, postId: string, commentId: string, userDid: string): Promise<any> {
+    // TODO userDid: string
+    return this.hiveVaultHelper.queryLikeById(targetDid, channelId, postId, commentId);
+  }
+
   queryLikeByPost(targetDid: string, channelId: string, postId: string): Promise<any> {
     return this.hiveVaultHelper.queryLikeByPost(targetDid, channelId, postId);
   }
 
-  addLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.available): Promise<{ createdAt: number }> {
-    return this.hiveVaultHelper.addLike(targetDid, channelId, postId, commentId, updatedAt, status);
+  addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
+    return this.hiveVaultHelper.addLike(targetDid, channelId, postId, commentId);
   }
 
-  removeLike(targetDid: string, channelId: string, postId: string, commentId: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.deleted): Promise<any> {
-    return this.hiveVaultHelper.removeLike(targetDid, channelId, postId, commentId, updatedAt, status);
+  removeLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    return this.hiveVaultHelper.removeLike(targetDid, channelId, postId, commentId);
+  }
+
+  updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+    //TODO
+    return this.hiveVaultHelper.updateLike(targetDid, channelId, postId, commentId, status);
   }
 
   /** Download data */

@@ -224,7 +224,10 @@ export class HiveVaultResultParse {
               createdAt: like.created_at,
               createrDid: like.creater_did,
               proof: like.proof,
-              memo: like.memo
+              memo: like.memo,
+
+              updatedAt: like.updated_at,
+              status: like.status
             }
             parseResult.push(likeResult);
           }
@@ -260,6 +263,9 @@ export class HiveVaultResultParse {
             userDid: subscription.user_did,
             createdAt: subscription.created_at,
             displayName: subscription.display_name,
+
+            updatedAt: subscription.updated_at,
+            status: subscription.status
           }
           parseResult.push(subscriptionResult);
         });

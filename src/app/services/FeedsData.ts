@@ -1043,6 +1043,9 @@ declare namespace FeedsData {
     createrDid: string,
     proof: string,
     memo: string
+
+    updatedAt: number,
+    status: FeedsData.PostCommentStatus.available | FeedsData.PostCommentStatus.deleted
   }
 
   type SubscriptionV3 = {// subscription hivenode表模型
@@ -1052,6 +1055,9 @@ declare namespace FeedsData {
     userDid: string,
     createdAt: number,
     displayName: string,
+
+    updatedAt: number,
+    status: FeedsData.PostCommentStatus.available | FeedsData.PostCommentStatus.deleted
   }
 
   type SubscribedChannelV3 = {// 本地存储订阅列表模型

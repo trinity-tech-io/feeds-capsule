@@ -791,7 +791,7 @@ export class FeedsSqliteHelper {
   queryUserLikeData(postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and user_did=?'
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and creater_did=?'
         const params = [postId, commentId, userDid];
 
         const result = await this.executeSql(statement, params);
@@ -994,6 +994,9 @@ export class FeedsSqliteHelper {
         createrDid: element['creater_did'],
         proof: element['proof'],
         memo: element['memo'],
+
+        updatedAt: element['updated_at'],
+        status: element['status'],
       }
       list.push(likeV3);
     }
@@ -1038,6 +1041,9 @@ export class FeedsSqliteHelper {
         userDid: element['user_did'],
         createdAt: element['created_at'],
         displayName: element['display_name'],
+
+        updatedAt: element['updated_at'],
+        status: element['status'],
       }
       list.push(subscriptionV3);
     }

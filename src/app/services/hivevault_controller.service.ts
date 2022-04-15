@@ -851,10 +851,26 @@ export class HiveVaultController {
         //TODO
         //1.query
         //2.if null add else update ,toast warn
-        const updatedAt = UtilService.getCurrentTimeNum();
-        const result = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId, updatedAt);
-        Logger.log('like result', result);
         const createrDid = (await this.dataHelper.getSigninData()).did;
+        const result = await this.hiveVaultApi.queryLikeByUser(destDid, channelId, postId, commentId, createrDid);
+        const likeList = await this.handleLikeResult(destDid, result);
+
+        let like = likeList[0];
+        let updatedAt = 0;
+        let createdAt = 0;
+
+        if (like) {
+          const updateResult = await this.hiveVaultApi.updateLike(destDid, channelId, postId, commentId, FeedsData.PostCommentStatus.available);
+          createdAt = like.createdAt;
+          updatedAt = updateResult.updatedAt;
+        } else {
+          const addResult = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId,);
+          createdAt = addResult.createdAt;
+          updatedAt = createdAt;
+        }
+
+        Logger.log('like result', result);
+
         if (result) {
           const like: FeedsData.LikeV3 = {
             destDid: destDid,
@@ -862,13 +878,23 @@ export class HiveVaultController {
             commentId: commentId,
 
             channelId: channelId,
-            createdAt: result.createdAt,
+            createdAt: createdAt,
             createrDid: createrDid,
             proof: '',
-            memo: ''
+            memo: '',
+
+            updatedAt: updatedAt,
+            status: FeedsData.PostCommentStatus.available
           }
-          await this.dataHelper.addLikeV3(like);
+
+          const localResult = await this.dataHelper.getLikeV3ByUser(postId, commentId, createrDid);
+          if (localResult) {
+            await this.dataHelper.updateLikeV3(like);
+          } else {
+            await this.dataHelper.addLikeV3(like);
+          }
           resolve(like);
+
         } else {
           reject('Like error');
         }
@@ -882,25 +908,27 @@ export class HiveVaultController {
   removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const updatedAt = UtilService.getCurrentTimeNum();
-        const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId, updatedAt);
+        const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
         const createrDid = (await this.dataHelper.getSigninData()).did;
 
         Logger.log('Remove like result', result);
         if (result) {
-          const like: FeedsData.LikeV3 = {
-            destDid: destDid,
-            postId: postId,
-            commentId: commentId,
+          //   const like: FeedsData.LikeV3 = {
+          //     destDid: destDid,
+          //     postId: postId,
+          //     commentId: commentId,
 
-            channelId: channelId,
-            createdAt: UtilService.getCurrentTimeNum(),
-            createrDid: createrDid,
-            proof: '',
-            memo: ''
-          }
-          await this.dataHelper.removeLikeV3(like);
-          resolve(like);
+          //     channelId: channelId,
+          //     createdAt: UtilService.getCurrentTimeNum(),
+          //     createrDid: createrDid,
+          //     proof: '',
+          //     memo: '',
+
+          //     updatedAt: 
+          //   }
+          //   await this.dataHelper.removeLikeV3(like);
+          //   resolve(like);
+
         } else {
           const errorMsg = 'Remove like error';
           reject(errorMsg);
