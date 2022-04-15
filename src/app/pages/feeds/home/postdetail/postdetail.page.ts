@@ -128,7 +128,8 @@ export class PostdetailPage implements OnInit {
   public commentNum: any = {};
   private clientHeight: number = 0;
   private clientWidth: number = 0;
-  private isInitLike: any = {};
+  private isInitLikeNum: any = {};
+  private isInitLikeStatus: any = {};
   private isInitComment: any = {};
   private postCommentList: FeedsData.CommentV3[] = [];
   private isInitUserNameMap: any = {};
@@ -1186,7 +1187,8 @@ export class PostdetailPage implements OnInit {
   refreshLikeAndComment() {
     let sid = setTimeout(() => {
       this.isInitComment = {};
-      this.isInitLike = {};
+      this.isInitLikeNum = {};
+      this.isInitLikeStatus = {};
       this.handleLikeAndComment();
       clearTimeout(sid);
     }, 50);
@@ -1211,81 +1213,26 @@ export class PostdetailPage implements OnInit {
           this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController
           );
-        //处理post like
-        this.handleCommentLikeData(id, srcId, captainCommentIndex, captainComment[captainCommentIndex]);
+        //处理commnet like status
+        CommonPageService.
+        handleCommentLikeStatus(
+          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitLikeStatus, this.isloadingLikeMap,
+          this.likedCommentMap);
+        //处理commnet like num
+        CommonPageService.handleCommentLikeNum(
+          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitLikeNum, this.likedCommentNum);
         //处理post comment
-        this.handleCommentData(id, srcId, captainCommentIndex, captainComment[captainCommentIndex]);
+        CommonPageService.handleCommentNum(
+          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitComment, this.commentNum
+          )
       }
     }
   }
-
-  handleCommentLikeData(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let isInit = this.isInitLike[commentId] || '';
-        if (isInit === '') {
-          this.isInitLike[commentId] = "11";
-          CommonPageService.initLikeData(
-            destDid,
-            channelId,
-            postId,
-            commentId,
-            this.hiveVaultController,
-            this.isInitLike,
-            this.likedCommentNum,
-            this.likedCommentMap
-          );
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  handleCommentData(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let isInit = this.isInitComment[commentId] || '';
-        if (isInit === '') {
-          this.isInitComment[commentId] = "11";
-          this.initCommentData(destDid, channelId, postId, commentId);
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  initCommentData(destDid: string, channelId: string, postId: string, commentId: string) {
-    try {
-      this.hiveVaultController.getCommentsByPost(
-        destDid, channelId, postId
-      ).then((result) => {
-        let commentList = _.filter(result, (item) => {
-          return item.channelId === channelId && item.postId === postId && item.refcommentId === commentId;
-        }) || [];
-        this.commentNum[commentId] = commentList.length;
-      });
-    } catch (error) {
-
-    }
-  }
-
 }
 

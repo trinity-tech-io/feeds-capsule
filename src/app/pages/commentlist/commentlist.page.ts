@@ -503,7 +503,45 @@ export class CommentlistPage implements OnInit {
     }
     this.updatedAt = this.captainComment['updatedAt'];
     this.checkCommentIsMine(this.captainComment);
-    this.initLikeData(this.destDid, this.channelId, this.postId, commentId);
+    this.getCommentLikeStatus(commentId);
+    this.getCommentLikeNumber(commentId);
+  }
+
+  getCommentLikeStatus(commentId: string){
+    try {
+      this.isloadingLikeMap[commentId] = "loading";
+      this.hiveVaultController.
+      getLikeStatus(this.postId, commentId).
+      then((status: boolean)=>{
+         if(status){
+          this.likedCommentMap[commentId] = "like";
+         }else{
+          this.likedCommentMap[commentId] = "";
+         }
+         this.isloadingLikeMap[commentId] = "";
+
+      }).catch((err)=>{
+        this.likedCommentMap[commentId] = "";
+        this.isloadingLikeMap[commentId] = "";
+      })
+    } catch (error) {
+      this.likedCommentMap[commentId] = "";
+      this.isloadingLikeMap[commentId] = "";
+    }
+
+  }
+
+  getCommentLikeNumber(commentId: string){
+
+    try {
+      this.hiveVaultController.
+      getLikeNum(this.postId, commentId).
+      then((likesNum: number)=>{
+        this.likedCommentNum[commentId] = likesNum || 0;
+      }).catch((err)=>{
+      })
+    } catch (error) {
+    }
   }
 
   menuMore() {
@@ -514,39 +552,6 @@ export class CommentlistPage implements OnInit {
     return UtilService.resolveAddress(text);
   }
 
-  initLikeData(destDid: string, channelId: string, postId: string, commentId: string) {
-    try {
-     this.hiveVaultController.getLikeByPost(
-        destDid, channelId, postId).then((likeList) => {
-          let list = likeList || [];
-          //计算comment like的数量
-
-          let newList = _.filter(list,((item)=>{
-          return item.commentId === commentId;
-          }))
-
-          this.likedCommentNum[commentId] = newList.length;
-
-          //检测comment like状态
-          let index = _.find(list, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === commentId;
-          }) || "";
-          if (index === "") {
-            this.likedCommentMap[commentId] = "";
-          } else {
-            this.likedCommentMap[commentId] = "like";
-          }
-
-        }).catch((err) => {
-          this.likedCommentMap[commentId] = "";
-          this.likedCommentNum[commentId] = 0;
-        });
-    } catch (err) {
-      //this.likesNum = 0;
-      this.likedCommentMap[commentId] = "";
-      this.likedCommentNum[commentId] = 0;
-    }
-  }
 
   ionScroll() {
     this.native.throttle(this.handleUserName(), 200, this, true);

@@ -130,51 +130,6 @@ export class CommonPageService {
       }
   }
 
-  public static initLikeData(
-    destDid: string,
-    channelId: string,
-    postId: string,
-    commentId: string,
-    hiveVaultController: any,
-    isInitLike: any,
-    likedCommentNum: any,
-    likedCommentMap: any
-    ) {
-    try {
-      hiveVaultController.getLikeByPost(
-        destDid, channelId, postId).then((likeList) => {
-          isInitLike[postId] = "13";
-          let list = likeList || [];
-
-          //计算comment like的数量
-          let newList = _.filter(list,((item)=>{
-            return item.commentId === commentId;
-          }))
-            likedCommentNum[commentId] = newList.length;
-
-          //检测comment like状态
-          let index = _.find(list, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === commentId;
-          }) || "";
-          if (index === "") {
-              likedCommentMap[commentId] = "";
-          } else {
-              likedCommentMap[commentId] = "like";
-          }
-
-        }).catch((err) => {
-            likedCommentMap[commentId] = "";
-            likedCommentNum[commentId] = 0;
-            isInitLike[commentId] = "";
-        });
-    } catch (err) {
-      //this.likesNum = 0;
-        likedCommentMap[commentId] = "";
-        likedCommentNum[commentId] = 0;
-        isInitLike[commentId] = "";
-    }
-  }
-
   public static likePost(
         destDid: string,
         channelId: string,
@@ -239,7 +194,7 @@ export class CommonPageService {
     }
   }
 
-public static handlePostLikeStatusData(
+  public static handlePostLikeStatusData(
     id: any, srcId: any, postgridindex: any, postgrid: any,
     clientHeight: any, isInitLikeStatus: any, hiveVaultController: any,
     likeMap: any,isLoadingLikeMap: any
@@ -385,4 +340,182 @@ public static handlePostCommentData(
     }
   }
 
+ public static handleCommentLikeStatus(
+   id: string, srcId: string, rowindex: number, postgrid: any,
+   clientHeight: any, hiveVaultController: any,
+   isInitLikeStatus: any, isloadingLikeMap: any,
+   likedCommentMap: any
+  ) {
+    try {
+      if (
+        id != '' &&
+        postgrid.getBoundingClientRect().top >= -100 &&
+        postgrid.getBoundingClientRect().bottom <= clientHeight
+      ) {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let commentId = arr[3];
+        let isInit =  isInitLikeStatus[commentId] || '';
+        if (isInit === '') {
+           isInitLikeStatus[commentId] = "11";
+           this.initCommentLikeStatus(
+            destDid,
+            channelId,
+            postId,
+            commentId,
+            hiveVaultController,
+            isInitLikeStatus,
+            isloadingLikeMap,
+            likedCommentMap
+          );
+        }
+      }
+    } catch (error) {
+    }
+  }
+
+  static initCommentLikeStatus(
+    destDid: string,
+    channelId: string,
+    postId: string,
+    commentId: string,
+    hiveVaultController: any,
+    isInitLikeStatus: any,
+    isloadingLikeMap: any,
+    likedCommentMap: any
+    ) {
+    try {
+      isloadingLikeMap[commentId] = "loading"
+       hiveVaultController.getLikeStatus(postId, commentId)(
+        destDid, channelId, postId).then((status: boolean) => {
+          isInitLikeStatus[postId] = "13";
+          if (status) {
+              likedCommentMap[commentId] = "like";
+          } else {
+              likedCommentMap[commentId] = "";
+          }
+          isloadingLikeMap[commentId] = "";
+        }).catch((err) => {
+
+            likedCommentMap[commentId] = "";
+            isInitLikeStatus[commentId] = "";
+            isloadingLikeMap[commentId] = "";
+        });
+    } catch (err) {
+
+        isloadingLikeMap[commentId] = "";
+        likedCommentMap[commentId] = "";
+        isInitLikeStatus[commentId] = "";
+    }
+  }
+
+public static handleCommentLikeNum(
+  id: string, srcId: string, rowindex: number, postgrid: any,
+  clientHeight: any, hiveVaultController: any,
+  isInitLikeNum: any, likedCommentNum: any
+  ) {
+    try {
+      if (
+        id != '' &&
+        postgrid.getBoundingClientRect().top >= -100 &&
+        postgrid.getBoundingClientRect().bottom <= clientHeight
+      ) {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let commentId = arr[3];
+        let isInit =  isInitLikeNum[commentId] || '';
+        if (isInit === '') {
+          isInitLikeNum[commentId] = "11";
+          this.initCommnetLikeNum(
+            destDid,
+            channelId,
+            postId,
+            commentId,
+            hiveVaultController,
+            isInitLikeNum,
+            likedCommentNum,
+          );
+        }
+      }
+    } catch (error) {
+    }
+  }
+
+  static initCommnetLikeNum(
+    destDid: string,
+    channelId: string,
+    postId: string,
+    commentId: string,
+    hiveVaultController: any,
+    isInitLikeNum: any,
+    likedCommentNum: any,
+    ) {
+    try {
+      hiveVaultController.getLikeNum(
+        postId, commentId
+      ).then((likesNum: any) => {
+          isInitLikeNum[commentId] = "13";
+          likedCommentNum[commentId] = likesNum || 0;
+        }).catch((err) => {
+            likedCommentNum[commentId] = 0;
+            isInitLikeNum[commentId] = "";
+        });
+    } catch (err) {
+        likedCommentNum[commentId] = 0;
+        isInitLikeNum[commentId] = "";
+    }
+  }
+
+ public static handleCommentNum(
+    id: string, srcId: string, rowindex: number, postgrid: any,
+    clientHeight: any, hiveVaultController: any,
+    isInitComment: any, commentNum: any
+    ) {
+    try {
+      if (
+        id != '' &&
+        postgrid.getBoundingClientRect().top >= -100 &&
+        postgrid.getBoundingClientRect().bottom <= clientHeight
+      ) {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let commentId = arr[3];
+        let isInit = isInitComment[commentId] || '';
+        if (isInit === '') {
+          isInitComment[commentId] = "11";
+          this.initCommentData(
+            destDid, channelId,
+            postId, commentId,
+            hiveVaultController,
+            commentNum
+            );
+        }
+      }
+    } catch (error) {
+    }
+  }
+
+ static initCommentData(
+    destDid: string, channelId: string,
+    postId: string, commentId: string,
+    hiveVaultController: any, commentNum: any
+    ) {
+    try {
+      hiveVaultController.
+      getLikeNum(postId, commentId).
+      then((likesNum: number)=>{
+         commentNum[commentId] = likesNum || 0;
+      });
+    } catch (error) {
+
+    }
+  }
 }
+
+
