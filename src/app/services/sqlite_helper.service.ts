@@ -6,12 +6,12 @@ const TAG: string = 'sqlite-helper';
 
 @Injectable()
 export class FeedsSqliteHelper {
-  private readonly TABLE_POST: string = 'poststest';
-  private readonly TABLE_CHANNEL: string = 'channeltest';
-  private readonly TABLE_COMMENT: string = 'commenttest';
-  private readonly TABLE_LIKE: string = 'liketest';
-  private readonly TABLE_SUBSCRIPTION_CHANNEL: string = 'subscriptionchanneltest';
-  private readonly TABLE_SUBSCRIPTION: string = 'subscriptiontest';
+  private readonly TABLE_POST: string = 'posts';
+  private readonly TABLE_CHANNEL: string = 'channel';
+  private readonly TABLE_COMMENT: string = 'comment';
+  private readonly TABLE_LIKE: string = 'like';
+  private readonly TABLE_SUBSCRIPTION_CHANNEL: string = 'subscriptionchannel';
+  private readonly TABLE_SUBSCRIPTION: string = 'subscription';
 
   private readonly LIMIT: number = 2;
   public isOpen: boolean = false;
@@ -445,7 +445,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_SUBSCRIPTION
           + '('
-          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), user_did VARCHAR(64), created_at VARCHAR(64), display_name VARCHAR(64)'
+          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), user_did VARCHAR(64), created_at REAL(64), display_name VARCHAR(64), updated_at REAL(64), status INTEGER'
           + ')';
 
         const result = await this.executeSql(statement);
@@ -462,10 +462,10 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION
-          + '(dest_did, channel_id, user_did, created_at, display_name) VALUES'
-          + '(?,?,?,?,?)';
+          + '(dest_did, channel_id, user_did, created_at, display_name, updated_at, status) VALUES'
+          + '(?,?,?,?,?,?,?)';
 
-        const params = [subscriptionV3.destDid, subscriptionV3.channelId, subscriptionV3.userDid, subscriptionV3.createdAt, subscriptionV3.displayName];
+        const params = [subscriptionV3.destDid, subscriptionV3.channelId, subscriptionV3.userDid, subscriptionV3.createdAt, subscriptionV3.displayName, subscriptionV3.updatedAt, subscriptionV3.status];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'Insert subscription Data result is', result);
@@ -713,7 +713,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_LIKE
           + '('
-          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT'
+          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT,updated_at REAL(64), status INTEGER'
           + ')';
         const result = await this.executeSql(statement);
         Logger.log(TAG, 'create like table result is', result);
@@ -729,9 +729,9 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_LIKE
-          + '(dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo) VALUES'
-          + '(?,?,?,?,?,?,?,?)';
-        const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt];
+          + '(dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo, updated_at, status) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?)';
+        const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt, likeV3.updatedAt, likeV3.status];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'Insert like result is', result);
