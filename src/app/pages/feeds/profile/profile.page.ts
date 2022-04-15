@@ -212,10 +212,13 @@ export class ProfilePage implements OnInit {
 
   async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
     try {
-      if (channels) {
-        this.channels = channels;
+      let newChannels =  channels || null;
+      if (newChannels != null) {
+         channels  =  _.uniqWith(newChannels, _.isEqual) || [];
+         this.channels = newChannels;
       } else {
-        this.channels = await this.dataHelper.getSelfChannelListV3() || [];
+       let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
+       this.channels  = _.uniqWith(newSelfChannels,_.isEqual) || [];
       }
 
       this.myFeedsSum = this.channels.length;
