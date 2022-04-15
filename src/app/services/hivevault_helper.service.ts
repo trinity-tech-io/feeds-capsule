@@ -37,6 +37,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_UNSUBSCRIBE_CHANNEL = "script_unsubscribe_channel";
     public static readonly SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID = "script_query_subscription_by_channelid";
     public static readonly SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID = "script_query_subscription_by_userdid";
+    public static readonly SCRIPT_UPDATE_SUBSCRIPTION = "script_update_subscription";
 
     public static readonly SCRIPT_CREATE_COMMENT = "script_create_comment";
     public static readonly SCRIPT_UPDATE_COMMENT = "script_update_comment";
@@ -52,6 +53,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_LIKE_BY_POST = "script_query_like_by_post";
     public static readonly SCRIPT_QUERY_LIKE_BY_CHANNEL = "script_query_like_by_channel";
     public static readonly SCRIPT_QUERY_USER_DISPLAYNAME = "script_query_user_displayname";
+    public static readonly SCRIPT_UPDATE_LIKE = "script_update_like";
 
     constructor(
         private hiveService: HiveService,
@@ -76,6 +78,7 @@ export class HiveVaultHelper {
                 await this.registerQuerySubscriptionInfoByChannelIdScripting();
                 await this.registerQuerySubscriptionInfoByUserDIDScripting();
                 await this.registerUnsubscribeScripting();
+                await this.registerUpdateSubscription()
 
                 //comment
                 await this.registerCreateCommentScripting();
@@ -91,6 +94,7 @@ export class HiveVaultHelper {
                 await this.registerRemoveLikeScripting();
                 await this.registerQueryLikeByChannelScripting();
                 await this.registerQueryLikeByPostScripting();
+                await this.registerUpdateLike()
 
                 //DisplayName
                 await this.registerQueryDisplayNameScripting();
@@ -558,6 +562,50 @@ export class HiveVaultHelper {
     subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number): Promise<any> {
         return this.callSubscribeScripting(targetDid, channelId, displayName, updatedAt, status);
     }
+
+    registerUpdateSubscription() {
+        const conditionfilter = {
+            "channel_id": "$params.channel_id",
+        };
+
+        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
+        let set = {
+            "status": "$params.status",
+            "updated_at": "$params.updated_at",
+        };
+        const filter = {
+            "channel_id": "$params.channel_id",
+            "user_did": "$caller_did",
+        };
+        let update = { "$set": set };
+        let options = { "bypass_document_validation": false, "upsert": true };
+        const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_SUBSCRIPTIONS, filter, update, options).setOutput(true)
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
+    }
+
+    private callUpdateSubscription(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const updatedAt = UtilService.getCurrentTimeNum();
+                const params = {
+                    "channel_id": channelId,
+                    "updated_at": updatedAt,
+                    "status": status
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, params);
+                console.log("update subscription , result is", result);
+                resolve({ updatedAt: updatedAt })
+            } catch (error) {
+                Logger.error(TAG, 'update subscription error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    updateSubscription(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
+        return this.callUpdateSubscription(targetDid, channelId, status)
+    }
+
     /** subscribe channel end */
 
     /** unsubscribe channel start */
@@ -579,13 +627,11 @@ export class HiveVaultHelper {
         });
     }
 
-    private callUnsubscribeScripting(targetDid: string, channelId: string, updatedAt: number, status: number): Promise<any> {
+    private callUnsubscribeScripting(targetDid: string, channelId: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
-                    "updated_at": updatedAt,
-                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, params);
                 resolve(result);
@@ -596,15 +642,17 @@ export class HiveVaultHelper {
         })
     }
 
-    unsubscribeChannel(targetDid: string, channelId: string, updatedAt: number, status: number): Promise<any> {
-        return this.callUnsubscribeScripting(targetDid, channelId, updatedAt, status);
+    unsubscribeChannel(targetDid: string, channelId: string): Promise<any> {
+        return this.callUnsubscribeScripting(targetDid, channelId);
     }
+
     /** unsubscribe channel end */
 
     /** query subscription info by channelId start */
     private registerQuerySubscriptionInfoByChannelIdScripting() {
         const executableFilter = {
-            "channel_id": "$params.channel_id"
+            "channel_id": "$params.channel_id",
+            "status": "$params.status"
         };
 
         let options = { "projection": { "_id": false }, "limit": 100 };
@@ -612,11 +660,12 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
     }
 
-    private callQuerySubscriptionInfoByChannelId(targetDid: string, channelId: string): Promise<any> {
+    private callQuerySubscriptionInfoByChannelId(targetDid: string, channelId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, params);
                 console.log("Query subscription from scripting , result is", result);
@@ -964,7 +1013,8 @@ export class HiveVaultHelper {
     private registerQueryLikeByIdScripting() {
         let conditionFilter = {
             "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
+            "user_did": "$caller_did",
+
         };
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
 
@@ -972,6 +1022,7 @@ export class HiveVaultHelper {
             "channel_id": "$params.channel_id",
             "post_id": "$params.post_id",
             "comment_id": "$params.comment_id",
+            "status": "$params.status"
         };
 
         let options = { "projection": { "_id": false }, "limit": 100 };
@@ -979,13 +1030,14 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
     }
 
-    private callQueryLikeById(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
+    private callQueryLikeById(targetDid: string, channelId: string, postId: string, commentId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                     "post_id": postId,
                     "comment_id": commentId,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, params);
                 console.log("Remove like from scripting , result is", result);
@@ -1006,12 +1058,13 @@ export class HiveVaultHelper {
     private registerQueryLikeByChannelScripting() {
         let conditionFilter = {
             "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
+            "user_did": "$caller_did",
         };
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
 
         const executableFilter = {
-            "channel_id": "$params.channel_id"
+            "channel_id": "$params.channel_id",
+            "status": "$params.status"
         };
 
         let options = { "projection": { "_id": false }, "limit": 100 };
@@ -1019,11 +1072,12 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
     }
 
-    private callQueryLikeByChannel(targetDid: string, channelId: string) {
+    private callQueryLikeByChannel(targetDid: string, channelId: string, status: number = FeedsData.PostCommentStatus.available) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
-                    "channel_id": channelId
+                    "channel_id": channelId,
+                    "stauts": "$params.status"
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, params);
                 console.log("Remove like from scripting , result is", result);
@@ -1044,13 +1098,14 @@ export class HiveVaultHelper {
     private registerQueryLikeByPostScripting() {
         let conditionFilter = {
             "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
+            "user_did": "$caller_did",
         };
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
 
         const executableFilter = {
             "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id"
+            "post_id": "$params.post_id",
+            "status": "$params.status"
         };
 
         let options = { "projection": { "_id": false }, "limit": 100 };
@@ -1058,12 +1113,13 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
     }
 
-    private callQueryLikeByPost(targetDid: string, channelId: string, postId: string) {
+    private callQueryLikeByPost(targetDid: string, channelId: string, postId: string, status: number = FeedsData.PostCommentStatus.available) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
-                    "post_id": postId
+                    "post_id": postId,
+                    "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, params);
                 console.log("Remove like from scripting , result is", result);
@@ -1176,6 +1232,55 @@ export class HiveVaultHelper {
         return this.callRemoveLike(targetDid, channelId, postId, commentId);
     }
     /** remove like end */
+
+    /** update like start */
+    registerUpdateLike() {
+        const conditionfilter = {
+            "channel_id": "$params.channel_id",
+            "user_did": "$caller_did",
+        };
+
+        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
+        let set = {
+            "status": "$params.status",
+            "updated_at": "$params.updated_at",
+        };
+        const filter = {
+            "channel_id": "$params.channel_id",
+            "post_id": "$params.post_id",
+            "comment_id": "$params.comment_id",
+        };
+        let update = { "$set": set };
+        let options = { "bypass_document_validation": false, "upsert": true };
+        const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_LIKES, filter, update, options).setOutput(true)
+        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
+    }
+
+    private callUpdateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const updatedAt = UtilService.getCurrentTimeNum();
+                const params = {
+                    "channel_id": channelId,
+                    "post_id": postId,
+                    "comment_id": commentId,
+                    "updated_at": updatedAt,
+                    "status": status
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_LIKE, params);
+                console.log("update subscription , result is", result);
+                resolve({ updatedAt: updatedAt });
+            } catch (error) {
+                Logger.error(TAG, 'update subscription error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+        return this.callUpdateLike(targetDid, channelId, postId, commentId, status)
+    }
+    /** update like end */
 
     /** download essential avatar start */
     private downloadEssAvatarData(): Promise<any> {
@@ -1398,10 +1503,4 @@ export class HiveVaultHelper {
         return this.callQueryUserDisplayName(targetDid, channelId, userDid);
     }
     /** query displayName end */
-
-
-    updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
-        //TODO
-        return;
-    }
 }

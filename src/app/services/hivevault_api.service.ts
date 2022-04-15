@@ -76,8 +76,12 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName, updatedAt, status);
   }
 
-  unSubscribeChannel(targetDid: string, channelId: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.deleted) {
-    return this.hiveVaultHelper.unsubscribeChannel(targetDid, channelId, updatedAt, status);
+  updateSubscription(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
+    return this.hiveVaultHelper.updateSubscription(targetDid, channelId, status);
+  }
+
+  unSubscribeChannel(targetDid: string, channelId: string) {
+    return this.hiveVaultHelper.unsubscribeChannel(targetDid, channelId);
   }
 
   querySubscrptionInfoByChannelId(targetDid: string, channelId: string) {
@@ -140,7 +144,6 @@ export class HiveVaultApi {
   }
 
   updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
-    //TODO
     return this.hiveVaultHelper.updateLike(targetDid, channelId, postId, commentId, status);
   }
 

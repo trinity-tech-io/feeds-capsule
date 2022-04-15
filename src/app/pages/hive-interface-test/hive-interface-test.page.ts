@@ -135,7 +135,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
   unSubscribeChannel() {
     this.hiveVaultApi.
-      unSubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 0, 1);
+      unSubscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
     // alert('unSubscribe');
   }
 

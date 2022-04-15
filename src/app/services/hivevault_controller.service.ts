@@ -603,6 +603,10 @@ export class HiveVaultController {
     });
   }
 
+  updateSubscriptionChannel(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
+    return this.hiveVaultApi.updateSubscription(targetDid, channelId, status);
+  }
+
   downloadCustomeAvatar(remotePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -942,6 +946,10 @@ export class HiveVaultController {
     });
   }
 
+  updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+    return this.hiveVaultApi.updateLike(targetDid, channelId, postId, commentId, status);
+  }
+
   getLike(destDid: string, channelId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -985,8 +993,7 @@ export class HiveVaultController {
   unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const updatedAt = UtilService.getCurrentTimeNum();
-        const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId, updatedAt);
+        const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
         console.log('getLikeByPost result', result);
 
         if (result) {
