@@ -983,6 +983,14 @@ export class HiveVaultController {
 
   }
 
+  deleteCollection(collectionName: string): Promise<void> {
+    return this.hiveVaultApi.deleteCollection(collectionName)
+  }
+
+  deleteAllCollections(): Promise<string> {
+    return this.hiveVaultApi.deleteAllCollections()
+  }
+
   deletePost(post: FeedsData.PostV3): Promise<FeedsData.PostV3> {
     Logger.log(TAG, "Delete post", post);
     return new Promise(async (resolve, reject) => {

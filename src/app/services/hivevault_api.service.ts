@@ -26,6 +26,13 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.createAllCollections();
   }
 
+  deleteCollection(collectionName: string): Promise<void> {
+    return this.hiveVaultHelper.deleteCollection(collectionName)
+  }
+
+  deleteAllCollections(): Promise<string> {
+    return this.hiveVaultHelper.deleteAllCollections()
+  }
   /** Channel */
   createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string, category: string = '', proof: string = ''): Promise<any> {
     return this.hiveVaultHelper.createChannel(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);

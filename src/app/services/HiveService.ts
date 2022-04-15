@@ -190,6 +190,19 @@ export class HiveService {
     })
   }
 
+  async deleteCollection(collectionName: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const databaseService = await this.getDatabaseService()
+        const result = await databaseService.deleteCollection(collectionName);
+         resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'delete collection error', error);
+        reject(error);
+      }
+    })
+  }
+
   registerScript(scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {

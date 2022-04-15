@@ -122,6 +122,25 @@ export class HiveVaultHelper {
         });
     }
 
+    deleteCollection(collectionName: string): Promise<void> {
+        return this.hiveService.deleteCollection(collectionName)
+    }
+
+    deleteAllCollections(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.deleteCollection(HiveVaultHelper.TABLE_CHANNELS);
+                await this.deleteCollection(HiveVaultHelper.TABLE_POSTS);
+                await this.deleteCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
+                await this.deleteCollection(HiveVaultHelper.TABLE_COMMENTS);
+                await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
+                resolve("true")
+            } catch (error) {
+                Logger.error(TAG, 'delete Collections error', error);
+                reject(error)
+            }
+        });
+    }
     /** create channel start */
     private insertDataToChannelDB(channelId: string, name: string, intro: string, avatar: string, memo: string,
         createdAt: number, updatedAt: number, type: string, tippingAddress: string, nft: string, category: string, proof: string): Promise<any> {
