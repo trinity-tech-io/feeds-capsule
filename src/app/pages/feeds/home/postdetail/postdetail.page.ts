@@ -245,10 +245,9 @@ export class PostdetailPage implements OnInit {
     let captainCommentList = [];
     try {
       captainCommentList =
-        await this.hiveVaultController.getCommentsByPost(
-          this.destDid,
-          this.channelId,
+        await this.hiveVaultController.getCommentList(
           this.postId,
+          '0'
         ) || [];
       this.postCommentList = _.cloneDeep(captainCommentList);
     } catch (error) {
@@ -298,8 +297,25 @@ export class PostdetailPage implements OnInit {
       this.getVideoPoster(post);
     }
 
-    this.getPostLikeNum(post);
-    //this.getPostComments(post);
+   // like status
+    this.getLikeStatus(post.postId, '0');
+    this.getPostLikeNum(post.postId, '0');
+
+  }
+
+  getLikeStatus(postId: string, commentId: string) {
+    try{
+      this.isLoadingLike = true;
+      this.hiveVaultController.getLikeStatus(postId, commentId).then((status)=>{
+          this.isLike = status;
+          this.isLoadingLike = false;
+      }).catch((err)=>{
+        this.isLoadingLike = false;
+      });
+      this.isLoadingLike = false;
+    }catch(err){
+      this.isLoadingLike = false;
+    }
   }
 
   ionViewWillEnter() {
@@ -333,7 +349,8 @@ export class PostdetailPage implements OnInit {
         ) || null;
         this.postContent = post.content.content;
         this.updatedTime = post.updatedAt;
-        this.getPostLikeNum(post);
+        this.getLikeStatus(post.postId, '0');
+        this.getPostLikeNum(post.postId, '0');
         this.getPostComments(post);
       });
     });
@@ -513,13 +530,16 @@ export class PostdetailPage implements OnInit {
       try {
         this.isLoadingLike = true;
         this.isLike = false;
-        this.likesNum = this.likesNum - 1;
+        if(this.likesNum > 0){
+          this.likesNum = this.likesNum - 1;
+        }
         this.hiveVaultController.removeLike(
           this.destDid, this.channelId, this.postId, '0').
           then(()=>{
             this.isLoadingLike = false;
         }).catch(err=>{
           this.isLoadingLike = false;
+          this.likesNum = this.likesNum + 1;
         });
       } catch (error) {
         this.isLoadingLike = false;
@@ -540,11 +560,16 @@ export class PostdetailPage implements OnInit {
           this.isLoadingLike = false;
       }).catch((err)=>{
         this.isLoadingLike = false;
+        if(this.likesNum > 0){
+          this.likesNum = this.likesNum - 1;
+        }
       });
     } catch (err) {
       this.isLoadingLike = false;
       this.isLike = false;
-      this.likesNum = this.likesNum - 1;
+      if(this.likesNum > 0){
+        this.likesNum = this.likesNum - 1;
+      }
     }
 
   }
@@ -1118,31 +1143,15 @@ export class PostdetailPage implements OnInit {
   retry(destDid: string, channelId: string, postId: string) {
   }
 
-  getPostLikeNum(post: FeedsData.PostV3) {
+  getPostLikeNum(postId: string, commentId: string) {
     try {
-      this.hiveVaultController.getLikeByPost(
-        post.destDid, post.channelId, post.postId
+      this.hiveVaultController.getLikeNum(
+         postId, commentId
       ).then((result) => {
-
-        let list = result || [];
-        //计算post like的数量
-        let likeList = _.filter(list, (item) => {
-          return item.channelId === post.channelId && item.postId === post.postId && item.commentId === "0";
-        }) || [];
-        this.likesNum = likeList.length;
-
-        let index = _.find(likeList, (item) => {
-          return item.channelId === post.channelId && item.postId === post.postId && item.commentId === "0";
-          ;
-        }) || "";
-
-        if (index === "") {
-          this.isLike = false;
-        } else {
-          this.isLike = true;
-        }
+        let listNum = result || 0;
+        this.likesNum = listNum;
       }).catch((err) => {
-
+        this.likesNum = 0;
       });
     } catch (err) {
       this.likesNum = 0;
@@ -1159,8 +1168,8 @@ export class PostdetailPage implements OnInit {
   async getPostComments(post: FeedsData.PostV3) {
 
     try {
-      this.hiveVaultController.getCommentsByPost(
-        post.destDid, post.channelId, post.postId
+      this.hiveVaultController.getCommentList(
+        post.channelId, post.postId
       ).then((result) => {
         this.postCommentList = _.cloneDeep(result);
         this.getCommentsNum(post);

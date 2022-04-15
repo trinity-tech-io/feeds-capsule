@@ -2244,40 +2244,37 @@ export class HomePage implements OnInit {
   }
 
   initLikeData(destDid: string, channelId: string, postId: string) {
-    try {
-      this.hiveVaultController.getLikeByPost(
-        destDid, channelId, postId).then((result) => {
-          this.isInitLike[postId] = "13";
-          let list = result || [];
 
-          //计算post like的数量
-          let likeList = _.filter(list, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
-          }) || [];
-          this.likeNumMap[postId] = likeList.length;
-
-          //检测post like状态
-
-          let index = _.find(likeList, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
-          }) || "";
-          if (index === "") {
-            this.likeMap[postId] = "";
-          } else {
+    try{
+      this.isLoadingLikeMap[postId] = "loading";
+      this.hiveVaultController.getLikeStatus(postId, '0').then((status)=>{
+          if(status){
             this.likeMap[postId] = "like";
+          }else{
+            this.likeMap[postId] = "";
           }
-
-        }).catch((err) => {
-          this.likeMap[postId] = "";
-          this.likeNumMap[postId] = 0;
-          this.isInitLike[postId] = "";
-        });
-    } catch (err) {
-      //this.likesNum = 0;
-      this.likeMap[postId] = "";
-      this.likeNumMap[postId] = 0;
-      this.isInitLike[postId] = "";
+          this.isLoadingLikeMap[postId] = "";
+      }).catch((err)=>{
+        this.isLoadingLikeMap[postId] = "";
+      });
+    }catch(err){
+      this.isLoadingLikeMap[postId] = "";
     }
+
+    try {
+      this.hiveVaultController.getLikeNum(
+         postId, '0'
+      ).then((result) => {
+        let listNum = result || 0;
+        this.likeNumMap[postId]= listNum;
+      }).catch((err) => {
+        this.likeNumMap[postId]= 0;
+      });
+    } catch (err) {
+      this.isInitLike[postId] = "";
+      this.likeNumMap[postId]= 0;
+    }
+
   }
 
   initCommentData(destDid: string, channelId: string, postId: string) {
