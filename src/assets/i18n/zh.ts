@@ -479,6 +479,12 @@ export const zh = {
     elaAddress: 'ELA地址',
     channelName: '频道名称',
   },
+  GalleriahivePage: {
+    title: '登录Hive Node中',
+    description:
+      '正在等待Essential 授权登录Hive， 请稍后....',
+    buttonTitle: '开始',
+  },
   ErrorInfo: {
     alreadyExists: '内容已经存在',
     notExists: '内容不存在',

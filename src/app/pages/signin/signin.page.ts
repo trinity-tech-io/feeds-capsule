@@ -81,7 +81,8 @@ export class SigninPage implements OnInit {
     });
     this.feedService.signIn().then(isSuccess => {
       if (isSuccess) {
-        this.native.setRootRouter('/tabs/home');
+        //此处切换成galleriahive 页面
+        this.native.setRootRouter('galleriahive');
         return;
       }
     });

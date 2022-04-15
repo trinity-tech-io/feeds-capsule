@@ -191,6 +191,10 @@ const routes: Routes = [
     path: 'hive-interface-test',
     loadChildren: () => import('./pages/hive-interface-test/hive-interface-test.module').then( m => m.HiveInterfaceTestPageModule)
   },
+  {
+    path: 'galleriahive',
+    loadChildren: () => import('./pages/galleriahive/galleriahive.module').then( m => m.GalleriahivePageModule)
+  },
 ];
 
 @NgModule({

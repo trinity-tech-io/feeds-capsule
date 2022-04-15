@@ -231,7 +231,6 @@ export class CreatenewfeedPage implements OnInit {
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
       let userDisplayName = signinData.name;
-      await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
       let tippingAddress = this.tippingAddress || '';
       const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, tippingAddress)
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);

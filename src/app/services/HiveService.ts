@@ -11,6 +11,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { } from '@elastosfoundation/hive-js-sdk'
 import { isEqual, isNil, reject, values } from 'lodash';
 let TAG: string = 'Feeds-HiveService';
+import { Events } from 'src/app/services/events.service';
 
 @Injectable()
 export class HiveService {
@@ -33,6 +34,7 @@ export class HiveService {
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
     private dataHelper: DataHelper,
+    private events: Events,
   ) {
   }
 
@@ -70,6 +72,7 @@ export class HiveService {
             return new Promise(async (resolve, reject) => {
               try {
                 const authToken = await self.standardAuthService.generateHiveAuthPresentationJWT(jwtToken)
+                self.events.publish(FeedsEvent.PublishType.authEssentialSuccess);
                 resolve(authToken)
               } catch (error) {
                 Logger.error(TAG, "get Authorization Error: ", error)

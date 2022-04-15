@@ -1,0 +1,16 @@
+<ion-content>
+  <ion-grid class="container">
+    <h1>
+      {{ 'GalleriahivePage.title' | translate }}
+    </h1>
+    <p>
+      {{ 'GalleriahivePage.description' | translate }}
+    </p>
+    <img src="./assets/images/connect.svg" />
+    <ion-row class="btn-row">
+      <ion-button class="nextButton" disabled={{buttonDisabled}} (click)="openHomePage()">
+        <ion-label>{{ 'GalleriahivePage.buttonTitle' | translate }}</ion-label>
+      </ion-button>
+    </ion-row>
+  </ion-grid>
+</ion-content>

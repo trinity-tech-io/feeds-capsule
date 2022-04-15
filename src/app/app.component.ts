@@ -105,6 +105,13 @@ export class MyApp {
       }
     })
 
+    // authEssentialSuccess
+    this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
+      const signinData = await this.dataHelper.getSigninData();
+      let userDid = signinData.did
+      this.sqliteHelper.createTables();
+      await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+    })
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
     });
@@ -132,7 +139,6 @@ export class MyApp {
   initializeApp() {
     this.platform.ready()
       .then(async () => {
-        this.sqliteHelper.createTables();
         return await this.dataHelper.loadApiProvider();
       })
       .then(async (api) => {

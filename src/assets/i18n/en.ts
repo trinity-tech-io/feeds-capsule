@@ -476,6 +476,12 @@ export const en = {
     elaAddress: 'ELA Address',
     channelName: 'Channel Name',
   },
+  GalleriahivePage: {
+    title: 'Log in to Hive Node',
+    description:
+      'Waiting for Essential authorization to log in to Hive Node, please wait....',
+    buttonTitle: 'start',
+  },
   ErrorInfo: {
     alreadyExists: 'Entity Already Exists',
     notExists: 'Entity Does Not Exist',

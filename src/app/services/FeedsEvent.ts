@@ -175,7 +175,10 @@ declare namespace FeedsEvent {
     nftLoadingUpdateText = "feeds:nftLoadingUpdateText",
     openPayPrompt = "feeds:openPayPrompt",
     migrateDataToHive = 'feeds:migrateDataToHive',
-    homeCommonEvents = 'feeds:homeCommonEvents'
+    homeCommonEvents = 'feeds:homeCommonEvents',
+
+    // hive
+    authEssentialSuccess = 'feeds:authEssentialSuccess',
   }
 
   type TipDialogData = {
