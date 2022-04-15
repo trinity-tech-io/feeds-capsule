@@ -12,7 +12,7 @@ import { AppService } from 'src/app/services/AppService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import  _ from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
@@ -298,23 +298,23 @@ export class PostdetailPage implements OnInit {
       this.getVideoPoster(post);
     }
 
-   // like status
+    // like status
     this.getLikeStatus(post.postId, '0');
     this.getPostLikeNum(post.postId, '0');
 
   }
 
   getLikeStatus(postId: string, commentId: string) {
-    try{
+    try {
       this.isLoadingLike = true;
-      this.hiveVaultController.getLikeStatus(postId, commentId).then((status)=>{
-          this.isLike = status;
-          this.isLoadingLike = false;
-      }).catch((err)=>{
+      this.hiveVaultController.getLikeStatus(postId, commentId).then((status) => {
+        this.isLike = status;
+        this.isLoadingLike = false;
+      }).catch((err) => {
         this.isLoadingLike = false;
       });
       this.isLoadingLike = false;
-    }catch(err){
+    } catch (err) {
       this.isLoadingLike = false;
     }
   }
@@ -366,7 +366,7 @@ export class PostdetailPage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.initData(true);
             this.native.hideLoading();
@@ -485,7 +485,7 @@ export class PostdetailPage implements OnInit {
 
   indexText(text: string): string {
     text = text || "";
-    if(text != ''){
+    if (text != '') {
       text = text.replace('did:elastos:', '');
       return UtilService.resolveAddress(text);
     }
@@ -523,25 +523,25 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    if(this.isLoadingLike){
-       return;
+    if (this.isLoadingLike) {
+      return;
     }
 
     if (this.isLike) {
       try {
         this.isLoadingLike = true;
         this.isLike = false;
-        if(this.likesNum > 0){
+        if (this.likesNum > 0) {
           this.likesNum = this.likesNum - 1;
         }
         this.hiveVaultController.removeLike(
           this.destDid, this.channelId, this.postId, '0').
-          then(()=>{
+          then(() => {
             this.isLoadingLike = false;
-        }).catch(err=>{
-          this.isLoadingLike = false;
-          this.likesNum = this.likesNum + 1;
-        });
+          }).catch(err => {
+            this.isLoadingLike = false;
+            this.likesNum = this.likesNum + 1;
+          });
       } catch (error) {
         this.isLoadingLike = false;
         this.isLike = true;
@@ -557,18 +557,18 @@ export class PostdetailPage implements OnInit {
       this.likesNum = this.likesNum + 1;
       this.hiveVaultController.like(
         this.destDid, this.channelId, this.postId, '0').
-        then(()=>{
+        then(() => {
           this.isLoadingLike = false;
-      }).catch((err)=>{
-        this.isLoadingLike = false;
-        if(this.likesNum > 0){
-          this.likesNum = this.likesNum - 1;
-        }
-      });
+        }).catch((err) => {
+          this.isLoadingLike = false;
+          if (this.likesNum > 0) {
+            this.likesNum = this.likesNum - 1;
+          }
+        });
     } catch (err) {
       this.isLoadingLike = false;
       this.isLike = false;
-      if(this.likesNum > 0){
+      if (this.likesNum > 0) {
         this.likesNum = this.likesNum - 1;
       }
     }
@@ -584,12 +584,12 @@ export class PostdetailPage implements OnInit {
     }
 
     CommonPageService.
-    likeComment(comment, this.likedCommentMap,
-               this.isloadingLikeMap, this.likedCommentNum,this.hiveVaultController);
+      likeComment(comment, this.likedCommentMap,
+        this.isloadingLikeMap, this.likedCommentNum, this.hiveVaultController);
   }
 
   handleUpdateDate(updatedTime: number) {
-    if(updatedTime === 0){
+    if (updatedTime === 0) {
       return;
     }
     let updateDate = new Date(updatedTime);
@@ -718,15 +718,18 @@ export class PostdetailPage implements OnInit {
   }
 
   async doRefresh(event: any) {
-      //this.postImage = "";
-      try {
-       await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
-       await this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
-       this.initData(true);
-        event.target.complete();
-      } catch (error) {
-        event.target.complete();
-      }
+    //this.postImage = "";
+    try {
+      this.dataHelper.cleanCachedComment();
+      this.dataHelper.cleanCacheLikeNum();
+      this.dataHelper.cleanCachedLikeStatus();
+      await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
+      await this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
+      this.initData(true);
+      event.target.complete();
+    } catch (error) {
+      event.target.complete();
+    }
   }
 
   loadData(event: any) {
@@ -1128,7 +1131,7 @@ export class PostdetailPage implements OnInit {
       }
     }
     let commentId: string = comment.commentId;
-    let createrDid: string  = comment.createrDid;
+    let createrDid: string = comment.createrDid;
     this.dataHelper.setPostCommentList(this.postCommentList);
     this.native.navigateForward(['commentlist'], {
       queryParams: {
@@ -1147,7 +1150,7 @@ export class PostdetailPage implements OnInit {
   getPostLikeNum(postId: string, commentId: string) {
     try {
       this.hiveVaultController.getLikeNum(
-         postId, commentId
+        postId, commentId
       ).then((result) => {
         let listNum = result || 0;
         this.likesNum = listNum;
@@ -1212,14 +1215,14 @@ export class PostdetailPage implements OnInit {
           captainComment[captainCommentIndex],
           this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController
-          );
+        );
         //处理commnet like status
         CommonPageService.
-        handleCommentLikeStatus(
-          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-          this.clientHeight, this.hiveVaultController,
-          this.isInitLikeStatus, this.isloadingLikeMap,
-          this.likedCommentMap);
+          handleCommentLikeStatus(
+            id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+            this.clientHeight, this.hiveVaultController,
+            this.isInitLikeStatus, this.isloadingLikeMap,
+            this.likedCommentMap);
         //处理commnet like num
         CommonPageService.handleCommentLikeNum(
           id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
@@ -1230,7 +1233,7 @@ export class PostdetailPage implements OnInit {
           id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
           this.clientHeight, this.hiveVaultController,
           this.isInitComment, this.commentNum
-          )
+        )
       }
     }
   }

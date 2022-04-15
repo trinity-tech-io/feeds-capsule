@@ -574,6 +574,9 @@ export class ChannelsPage implements OnInit {
       this.images = {};
       this.startIndex = 0;
       //TODO
+      this.dataHelper.cleanCachedComment();
+      this.dataHelper.cleanCacheLikeNum();
+      this.dataHelper.cleanCachedLikeStatus();
       await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
       this.init();
       event.target.complete();

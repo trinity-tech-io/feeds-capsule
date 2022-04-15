@@ -3523,8 +3523,29 @@ export class DataHelper {
     })
   }
 
-  getLikeV3List(destDid: string, postId: string): FeedsData.LikeV3[] {
-    return null;
+  getLikeV3ByUser(postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.sqliteHelper.queryUserLikeData(postId, commentId, userDid);
+        resolve(result[0]);
+      } catch (error) {
+        Logger.error(TAG, 'remove likes error', error);
+        reject(error)
+      }
+    });
+  }
+
+  getSelfLikeV3(postId: string, commentId: string): Promise<FeedsData.LikeV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const did = (await this.getSigninData()).did;
+        const result = await this.getLikeV3ByUser(postId, commentId, did);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'remove likes error', error);
+        reject(error)
+      }
+    });
   }
 
   loadLikeV3Map(): Promise<{ [key: string]: FeedsData.LikeV3 }> {
@@ -3667,13 +3688,17 @@ export class DataHelper {
       this.cachedCommentMap = {}
     }
 
+    if (!this.cachedCommentMap[postId]) {
+      this.cachedCommentMap[postId] = {};
+    }
+
     if (!commentList)
       return;
 
     this.cachedCommentMap[postId][refCommentId] = commentList;
   }
 
-  clearCachedComment() {
+  cleanCachedComment() {
     this.cachedCommentMap = {};
   }
 
@@ -3695,7 +3720,7 @@ export class DataHelper {
     this.cachedLikeStatusMap[key] = status;
   }
 
-  clearCachedLikeStatus() {
+  cleanCachedLikeStatus() {
     this.cachedLikeStatusMap = {};
   }
 
@@ -3716,7 +3741,7 @@ export class DataHelper {
     this.cachedLikeNumMap[key] = num;
   }
 
-  clearCacheLikeNum() {
+  cleanCacheLikeNum() {
     this.cachedLikeNumMap = {};
   }
 }

@@ -64,7 +64,7 @@ export class CommentlistPage implements OnInit {
   public updatedAt: number = 0;
   public curComment: any = {};
   public refcommentId: string = "0";
-  private postCommentList: FeedsData.CommentV3[]  = [];
+  private postCommentList: FeedsData.CommentV3[] = [];
   public likedCommentMap: any = {};
   public likedCommentNum: any = {};
   public createrDid: string = '';
@@ -121,7 +121,7 @@ export class CommentlistPage implements OnInit {
       this.userNameList[key] = replayItem['createrDid'];
       this.checkCommentIsMine(replayItem);
     });
-   this.refresuserName();
+    this.refresuserName();
   }
 
   refreshCommentList() {
@@ -148,7 +148,7 @@ export class CommentlistPage implements OnInit {
       return item.refcommentId === this.commentId;
     });
 
-    replayCommentList =  _.sortBy(replayCommentList, (item: FeedsData.CommentV3) => {
+    replayCommentList = _.sortBy(replayCommentList, (item: FeedsData.CommentV3) => {
       return -Number(item.createdAt);
     });
 
@@ -169,7 +169,7 @@ export class CommentlistPage implements OnInit {
       this.channelId = data.channelId;
       this.postId = data.postId;
       this.commentId = data.commentId;
-      this.createrDid =  data.createrDid;
+      this.createrDid = data.createrDid;
     });
   }
 
@@ -208,14 +208,14 @@ export class CommentlistPage implements OnInit {
         this.hiveVaultController
           .deleteComment(comment)
           .then(async (result: any) => {
-           let postCommentList: FeedsData.CommentV3[] = this.dataHelper.getPostCommentList() || [];
-           let index =  _.findIndex(postCommentList,(item: FeedsData.CommentV3)=>{
-                return item.destDid === comment.destDid &&
-                       item.channelId ===  comment.channelId &&
-                       item.postId === comment.postId &&
-                       item.commentId === comment.commentId
+            let postCommentList: FeedsData.CommentV3[] = this.dataHelper.getPostCommentList() || [];
+            let index = _.findIndex(postCommentList, (item: FeedsData.CommentV3) => {
+              return item.destDid === comment.destDid &&
+                item.channelId === comment.channelId &&
+                item.postId === comment.postId &&
+                item.commentId === comment.commentId
             });
-            if( index > -1 ) {
+            if (index > -1) {
               postCommentList[index].status = FeedsData.PostCommentStatus.deleted;
             }
             this.dataHelper.setPostCommentList(postCommentList);
@@ -231,10 +231,10 @@ export class CommentlistPage implements OnInit {
 
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, async (comment)=>{
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, async (comment) => {
       Logger.log(TAG, 'Received getCommentFinish event');
       let postCommentList = this.dataHelper.getPostCommentList() || [];
-          postCommentList.push(comment);
+      postCommentList.push(comment);
       this.dataHelper.setPostCommentList(postCommentList);
       await this.getCaptainComment();
       this.initData(false);
@@ -283,7 +283,7 @@ export class CommentlistPage implements OnInit {
 
   indexText(text: string): string {
     text = text || "";
-    if(text != ''){
+    if (text != '') {
       text = text.replace('did:elastos:', '');
       return UtilService.resolveAddress(text);
     }
@@ -314,13 +314,13 @@ export class CommentlistPage implements OnInit {
     }
 
     CommonPageService.
-     likeComment(comment, this.likedCommentMap,
-                this.isloadingLikeMap, this.likedCommentNum,this.hiveVaultController);
+      likeComment(comment, this.likedCommentMap,
+        this.isloadingLikeMap, this.likedCommentNum, this.hiveVaultController);
 
   }
 
   handleUpdateDate(updatedTime: number) {
-    if(updatedTime === 0){
+    if (updatedTime === 0) {
       return;
     }
     let updateDate = new Date(updatedTime);
@@ -328,15 +328,17 @@ export class CommentlistPage implements OnInit {
   }
 
   async doRefresh(event: any) {
-
     try {
-     this.postCommentList  = await this.hiveVaultController.
-     syncCommentFromPost(this.destDid, this.channelId, this.postId);
-     this.dataHelper.setPostCommentList(this.postCommentList);
-     this.getCaptainComment();
-     this.isInitUserNameMap = {};
-     this.initData(true);
-     event.target.complete();
+      this.dataHelper.cleanCachedComment();
+      this.dataHelper.cleanCacheLikeNum();
+      this.dataHelper.cleanCachedLikeStatus();
+      this.postCommentList = await this.hiveVaultController.
+        syncCommentFromPost(this.destDid, this.channelId, this.postId);
+      this.dataHelper.setPostCommentList(this.postCommentList);
+      this.getCaptainComment();
+      this.isInitUserNameMap = {};
+      this.initData(true);
+      event.target.complete();
     } catch (error) {
       event.target.complete();
     }
@@ -482,7 +484,7 @@ export class CommentlistPage implements OnInit {
 
   async getCaptainComment() {
 
-    this.postCommentList  = this.dataHelper.getPostCommentList() || [];
+    this.postCommentList = this.dataHelper.getPostCommentList() || [];
 
     this.captainComment = _.find(this.postCommentList, (item: FeedsData.CommentV3) => {
       return item.commentId == this.commentId;
@@ -492,11 +494,11 @@ export class CommentlistPage implements OnInit {
     this.userNameList[commentId] = createrDid;
     try {
       this.userNameMap[createrDid] =
-      await this.hiveVaultController.
-      getDisplayName(this.destDid, this.channelId, createrDid);
+        await this.hiveVaultController.
+          getDisplayName(this.destDid, this.channelId, createrDid);
 
       this.userNameMap[this.destDid] = await this.hiveVaultController.
-      getDisplayName(this.destDid, this.channelId, this.destDid);
+        getDisplayName(this.destDid, this.channelId, this.destDid);
 
     } catch (error) {
 
@@ -507,23 +509,23 @@ export class CommentlistPage implements OnInit {
     this.getCommentLikeNumber(commentId);
   }
 
-  getCommentLikeStatus(commentId: string){
+  getCommentLikeStatus(commentId: string) {
     try {
       this.isloadingLikeMap[commentId] = "loading";
       this.hiveVaultController.
-      getLikeStatus(this.postId, commentId).
-      then((status: boolean)=>{
-         if(status){
-          this.likedCommentMap[commentId] = "like";
-         }else{
-          this.likedCommentMap[commentId] = "";
-         }
-         this.isloadingLikeMap[commentId] = "";
+        getLikeStatus(this.postId, commentId).
+        then((status: boolean) => {
+          if (status) {
+            this.likedCommentMap[commentId] = "like";
+          } else {
+            this.likedCommentMap[commentId] = "";
+          }
+          this.isloadingLikeMap[commentId] = "";
 
-      }).catch((err)=>{
-        this.likedCommentMap[commentId] = "";
-        this.isloadingLikeMap[commentId] = "";
-      })
+        }).catch((err) => {
+          this.likedCommentMap[commentId] = "";
+          this.isloadingLikeMap[commentId] = "";
+        })
     } catch (error) {
       this.likedCommentMap[commentId] = "";
       this.isloadingLikeMap[commentId] = "";
@@ -531,15 +533,15 @@ export class CommentlistPage implements OnInit {
 
   }
 
-  getCommentLikeNumber(commentId: string){
+  getCommentLikeNumber(commentId: string) {
 
     try {
       this.hiveVaultController.
-      getLikeNum(this.postId, commentId).
-      then((likesNum: number)=>{
-        this.likedCommentNum[commentId] = likesNum || 0;
-      }).catch((err)=>{
-      })
+        getLikeNum(this.postId, commentId).
+        then((likesNum: number) => {
+          this.likedCommentNum[commentId] = likesNum || 0;
+        }).catch((err) => {
+        })
     } catch (error) {
     }
   }
@@ -551,7 +553,6 @@ export class CommentlistPage implements OnInit {
   handleText(text: string) {
     return UtilService.resolveAddress(text);
   }
-
 
   ionScroll() {
     this.native.throttle(this.handleUserName(), 200, this, true);
@@ -575,7 +576,7 @@ export class CommentlistPage implements OnInit {
           id, srcId, replayCommentIndex,
           replayComment, this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController
-          );
+        );
       }
     }
   }

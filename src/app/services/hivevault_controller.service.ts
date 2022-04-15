@@ -74,11 +74,6 @@ export class HiveVaultController {
     });
   }
 
-  syncAllLikes(): Promise<FeedsData.LikeV3[]> {
-    return new Promise(async (resolve, reject) => {
-    });
-  }
-
   syncPostFromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -125,9 +120,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
-        const likeList = HiveVaultResultParse.parseLikeResult(destDid, result);
-
-        await this.dataHelper.addLikesV3(likeList);
+        const likeList = this.handleLikeResult(destDid, result);
         resolve(likeList);
       } catch (error) {
         Logger.error(TAG, 'Sync comment from post error', error);
@@ -1073,20 +1066,47 @@ export class HiveVaultController {
   restoreSubscriptions() {
   }
 
+  handleLikeResult(destDid: string, result: any): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!result) {
+          const errorMsg = 'Handle like result error ,result null';
+          reject(errorMsg);
+          return;
+        }
+
+        const likesResult = HiveVaultResultParse.parseLikeResult(destDid, result);
+        if (!likesResult || likesResult.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        let likeList = [];
+        for (let index = 0; index < likesResult.length; index++) {
+          const element = likesResult[index];
+          const localLike = await this.dataHelper.getLikeV3ByUser(element.postId, element.commentId, element.createrDid);
+          if (localLike) {
+            this.dataHelper.updateLikeV3(element);
+          } else {
+            this.dataHelper.addLikeV3(element);
+          }
+          likeList.push(element);
+        }
+        resolve(likeList);
+      } catch (error) {
+        Logger.error(TAG, 'Handle like result error', error);
+        reject(error);
+      }
+    });
+  }
+
   getLikeById(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryLikeById(destDid, channelId, postId, commentId);
         Logger.log(TAG, 'Get like by id result', result);
-
-        if (result) {
-          const likeList = HiveVaultResultParse.parseLikeResult(destDid, result);
-          await this.dataHelper.updateLikesV3(likeList);
-          resolve(likeList);
-        } else {
-          Logger.error(TAG, 'Get like by id error');
-          reject('Get like by id error');
-        }
+        const likeList = await this.handleLikeResult(destDid, result);
+        resolve(likeList);
       } catch (error) {
         Logger.error(TAG, 'Get like by id error', error);
         reject(error);
@@ -1205,18 +1225,16 @@ export class HiveVaultController {
           return;
         }
 
-        const list = await this.dataHelper.getLikeV3ById(postId, commentId);
+        const list = await this.dataHelper.getSelfLikeV3(postId, commentId);
 
-        if (list && list.length > 0) {
+        if (list) {
           likedStatus = true;
-          resolve(likedStatus);
         } else {
           likedStatus = false;
           //TODO sync data from remote //TODO modify local like sql table ,add status
-          resolve(likedStatus);
         }
         this.dataHelper.cacheLikeStatus(postId, commentId, likedStatus);
-
+        resolve(likedStatus);
       } catch (error) {
         Logger.error(TAG, 'Get local comment list error', error);
         reject(error);
@@ -1234,7 +1252,6 @@ export class HiveVaultController {
         }
 
         const num = await this.dataHelper.getLikeNum(postId, commentId);
-
         this.dataHelper.cacheLikeNum(postId, commentId, num);
         //TODO sync data from remote //TODO modify local like sql table ,add status
         resolve(num);
