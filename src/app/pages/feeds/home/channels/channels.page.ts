@@ -67,7 +67,8 @@ export class ChannelsPage implements OnInit {
 
   private clientHeight: number = 0;
   private clientWidth: number = 0;
-  private isInitLike: any = {};
+  private isInitLikeNum: any = {};
+  private isInitLikeStatus: any = {};
   private isInitComment: any = {};
   public isLoadimage: any = {};
   public isLoadVideoiamge: any = {};
@@ -241,7 +242,8 @@ export class ChannelsPage implements OnInit {
 
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
-      this.isInitLike = {};
+      this.isInitLikeNum= {};
+      this.isInitLikeStatus = {};
       this.isInitComment = {};
       this.refreshImage();
     } else {
@@ -249,7 +251,8 @@ export class ChannelsPage implements OnInit {
       this.infiniteScroll.disabled = true;
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
-      this.isInitLike = {};
+      this.isInitLikeNum= {};
+      this.isInitLikeStatus = {};
       this.isInitComment = {};
       this.refreshImage();
     }
@@ -273,7 +276,8 @@ export class ChannelsPage implements OnInit {
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLike = {};
+    this.isInitLikeNum= {};
+    this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.refreshImage();
   }
@@ -402,7 +406,8 @@ export class ChannelsPage implements OnInit {
     this.removeAllVideo();
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLike = {};
+    this.isInitLikeNum= {};
+    this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.events.publish(FeedsEvent.PublishType.updateTab);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
@@ -672,10 +677,21 @@ export class ChannelsPage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
-        //处理post like
-        this.handlePostLikeData(id, srcId, postgridindex, postgridList[postgridindex]);
+        //post like status
+        CommonPageService.handlePostLikeStatusData(
+        id, srcId, postgridindex,postgridList[postgridindex],
+        this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+        this.likeMap,this.isLoadingLikeMap)
+        //处理post like number
+        CommonPageService.handlePostLikeNumData(
+        id, srcId, postgridindex, postgridList[postgridindex],
+        this.clientHeight, this.hiveVaultController,
+        this.likeNumMap, this.isInitLikeNum);
         //处理post comment
-        this.handlePostCommentData(id, srcId, postgridindex, postgridList[postgridindex]);
+        CommonPageService.handlePostCommentData(
+        id, srcId, postgridindex, postgridList[postgridindex],
+        this.clientHeight, this.hiveVaultController,
+        this.isInitComment, this.commentNumMap);
         //postImg
         if (mediaType === '1') {
           this.handlePostImg(id, srcId, postgridindex);
@@ -1294,103 +1310,4 @@ export class ChannelsPage implements OnInit {
 
   retry(destDid: string, channelId: string, postId: string) {
   }
-
-  handlePostLikeData(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let isInit = this.isInitLike[postId] || '';
-        if (isInit === '') {
-          this.isInitLike[postId] = "11";
-          this.initLikeData(destDid, channelId, postId);
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  handlePostCommentData(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let isInit = this.isInitComment[postId] || '';
-        if (isInit === '') {
-          this.isInitComment[postId] = "11";
-          this.initCommentData(destDid, channelId, postId);
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  initLikeData(destDid: string, channelId: string, postId: string) {
-    try {
-      this.hiveVaultController.getLikeByPost(
-        destDid, channelId, postId).then((result) => {
-          this.isInitLike[postId] = "13";
-          let list = result || [];
-
-          //计算post like的数量
-          let likeList = _.filter(list, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
-          }) || [];
-          this.likeNumMap[postId] = likeList.length;
-
-          //检测post like状态
-
-          let index = _.find(likeList, (item) => {
-            return item.channelId === channelId && item.postId === postId && item.commentId === "0";
-          }) || "";
-          if (index === "") {
-            this.likeMap[postId] = "";
-          } else {
-            this.likeMap[postId] = "like";
-          }
-
-        }).catch((err) => {
-          this.likeMap[postId] = "";
-          this.likeNumMap[postId] = 0;
-          this.isInitLike[postId] = "";
-        });
-    } catch (err) {
-      //this.likesNum = 0;
-      this.likeMap[postId] = "";
-      this.likeNumMap[postId] = 0;
-      this.isInitLike[postId] = "";
-    }
-  }
-
-  initCommentData(destDid: string, channelId: string, postId: string) {
-    try {
-      this.hiveVaultController.getCommentsByPost(
-        destDid, channelId, postId
-      ).then((result) => {
-        this.isInitComment[postId] = "13";
-        let commentPostList = _.filter(result, (item) => {
-          return item.channelId === channelId && item.postId === postId && item.refcommentId === "0";
-        }) || [];
-        this.commentNumMap[postId] = commentPostList.length;
-      }).catch((err) => {
-        this.isInitComment[postId] = "";
-      });
-    } catch (error) {
-      this.isInitComment[postId] = "";
-      this.commentNumMap[postId] = 0;
-    }
-  }
-
 }

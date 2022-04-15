@@ -76,7 +76,8 @@ export class HomePage implements OnInit {
   private clientWidth: number = 0;
   private isLoadimage: any = {};
   private isLoadAvatarImage: any = {};
-  private isInitLike: any = {};
+  private isInitLikeNum: any = {};
+  private isInitLikeStatus: any = {};
   private isInitComment: any = {};
   public isLoadVideoiamge: any = {};
   public videoIamges: any = {};
@@ -222,7 +223,8 @@ export class HomePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLike = {};
+    this.isInitLikeNum = {};
+    this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.refreshImage(0);
     this.dataHelper.resetNewPost();
@@ -261,7 +263,8 @@ export class HomePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLike = {};
+    this.isInitLikeNum = {};
+    this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.refreshImage(0);
     this.dataHelper.resetNewPost();
@@ -540,7 +543,8 @@ export class HomePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLike = {};
+    this.isInitLikeNum = {};
+    this.isInitLikeStatus = {};
     this.isInitComment = {};
 
     let isImgPercentageLoadingkeys: string[] = Object.keys(this.isImgPercentageLoading) || [];
@@ -943,10 +947,21 @@ export class HomePage implements OnInit {
           this.handleVideo(id, srcId, postgridindex);
         }
 
-        //处理post like
-        this.handlePostLikeData(id, srcId, postgridindex, postgridList[postgridindex]);
+        //post like status
+        CommonPageService.handlePostLikeStatusData(
+          id, srcId, postgridindex,postgridList[postgridindex],
+          this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+          this.likeMap,this.isLoadingLikeMap)
+        //处理post like number
+        CommonPageService.handlePostLikeNumData(
+          id, srcId, postgridindex, postgridList[postgridindex],
+          this.clientHeight, this.hiveVaultController,
+          this.likeNumMap, this.isInitLikeNum);
         //处理post comment
-        this.handlePostCommentData(id, srcId, postgridindex, postgridList[postgridindex]);
+        CommonPageService.handlePostCommentData(
+          id, srcId, postgridindex, postgridList[postgridindex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitComment, this.commentNumMap);
       }
     }
   }
@@ -1721,7 +1736,8 @@ export class HomePage implements OnInit {
         this.removeAllVideo();
         this.isLoadimage = {};
         this.isLoadVideoiamge = {};
-        this.isInitLike = {};
+        this.isInitLikeNum = {};
+        this.isInitLikeStatus = {};
         this.isInitComment = {};
         this.isImgPercentageLoading[this.imgDownStatusKey] = false;
         this.isImgLoading[this.imgDownStatusKey] = false;
@@ -2199,100 +2215,5 @@ export class HomePage implements OnInit {
   navigateForwardBidPage(assetItem: FeedsData.NFTItem) {
     this.dataHelper.setBidPageAssetItem(assetItem);
     this.native.navigateForward(['bid'], { queryParams: assetItem });
-  }
-
-  handlePostLikeData(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let isInit = this.isInitLike[postId] || '';
-        if (isInit === '') {
-          this.isInitLike[postId] = "11";
-          this.initLikeData(destDid, channelId, postId);
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  handlePostCommentData(id: string, srcId: string, rowindex: number, postgrid: any) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= this.clientHeight
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let isInit = this.isInitComment[postId] || '';
-        if (isInit === '') {
-          this.isInitComment[postId] = "11";
-          this.initCommentData(destDid, channelId, postId);
-        }
-      }
-    } catch (error) {
-    }
-  }
-
-  initLikeData(destDid: string, channelId: string, postId: string) {
-
-    try{
-      this.isLoadingLikeMap[postId] = "loading";
-      this.hiveVaultController.getLikeStatus(postId, '0').then((status)=>{
-          if(status){
-            this.likeMap[postId] = "like";
-          }else{
-            this.likeMap[postId] = "";
-          }
-          this.isLoadingLikeMap[postId] = "";
-      }).catch((err)=>{
-        this.isLoadingLikeMap[postId] = "";
-      });
-    }catch(err){
-      this.isLoadingLikeMap[postId] = "";
-    }
-
-    try {
-      this.hiveVaultController.getLikeNum(
-         postId, '0'
-      ).then((result) => {
-        let listNum = result || 0;
-        this.likeNumMap[postId]= listNum;
-      }).catch((err) => {
-        this.likeNumMap[postId]= 0;
-      });
-    } catch (err) {
-      this.isInitLike[postId] = "";
-      this.likeNumMap[postId]= 0;
-    }
-
-  }
-
-  initCommentData(destDid: string, channelId: string, postId: string) {
-    try {
-      this.hiveVaultController.getCommentsByPost(
-        destDid, channelId, postId
-      ).then((result) => {
-        this.isInitComment[postId] = "13";
-        let commentPostList = _.filter(result, (item) => {
-          return item.channelId === channelId && item.postId === postId && item.refcommentId === "0";
-        }) || [];
-        this.commentNumMap[postId] = commentPostList.length;
-      }).catch((err) => {
-        this.isInitComment[postId] = "";
-      });
-    } catch (error) {
-      this.isInitComment[postId] = "";
-      this.commentNumMap[postId] = 0;
-    }
   }
 }
