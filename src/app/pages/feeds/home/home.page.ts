@@ -472,7 +472,7 @@ export class HomePage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then((result: any) => {
             this.refreshPostList();
             this.native.hideLoading();
@@ -619,13 +619,13 @@ export class HomePage implements OnInit {
       return;
     }
     CommonPageService.likePost(
-      destDid,
-      channelId,
-      postId,
-      this.isLoadingLikeMap,
-      this.likeMap,
-      this.likeNumMap,
-      this.hiveVaultController);
+              destDid,
+              channelId,
+              postId,
+              this.isLoadingLikeMap,
+              this.likeMap,
+              this.likeNumMap,
+              this.hiveVaultController);
   }
 
   navTo(destDid: string, channelId: string, postId: number) {
@@ -706,7 +706,7 @@ export class HomePage implements OnInit {
     return obj.content;
   }
 
-  async menuMore(post: FeedsData.PostV3) {
+ async menuMore(post: FeedsData.PostV3) {
 
     let destDid = post.destDid;
     let ownerDid = (await this.dataHelper.getSigninData()).did;
@@ -728,7 +728,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  async getChannelName(destDid: string, channelId: string) {
+ async getChannelName(destDid: string, channelId: string) {
 
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     if (channel === null) {
@@ -823,15 +823,12 @@ export class HomePage implements OnInit {
       case 'feeds':
         //TODO
         try {
-          this.dataHelper.cleanCachedComment();
-          this.dataHelper.cleanCacheLikeNum();
-          this.dataHelper.cleanCachedLikeStatus();
-          await this.hiveVaultController.syncAllPost();
-          await this.hiveVaultController.syncAllComments();
+        await this.hiveVaultController.syncAllPost();
+        await this.hiveVaultController.syncAllComments();
 
-          await this.initPostListData(true);
-          if (event != null) event.target.complete();
-          this.refreshEvent = null;
+        await this.initPostListData(true);
+        if (event != null) event.target.complete();
+        this.refreshEvent = null;
         } catch (error) {
           if (event != null) event.target.complete();
           this.refreshEvent = null;
@@ -1364,7 +1361,7 @@ export class HomePage implements OnInit {
       if (value === '13') {
         let videoElement: any = document.getElementById(id + 'video') || '';
         if (videoElement != '') {
-          videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
+           videoElement.setAttribute('poster',"./assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'source') || '';
         if (source != '') {

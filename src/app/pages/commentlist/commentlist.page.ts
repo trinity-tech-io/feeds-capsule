@@ -92,17 +92,17 @@ export class CommentlistPage implements OnInit {
     private dataHelper: DataHelper
   ) { }
 
-  initData(isInit: boolean) {
+  async initData(isInit: boolean) {
     if (isInit) {
-      this.initRefresh();
+      await this.initRefresh();
     } else {
-      this.refreshCommentList();
+     await this.refreshCommentList();
     }
   }
 
-  initRefresh() {
+  async initRefresh() {
     this.startIndex = 0;
-    this.totalData = this.sortCommentList();
+    this.totalData = await this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.replayCommentList = this.totalData.slice(0, this.pageNumber);
 
@@ -124,8 +124,8 @@ export class CommentlistPage implements OnInit {
     this.refresuserName();
   }
 
-  refreshCommentList() {
-    this.totalData = this.sortCommentList();
+  async refreshCommentList() {
+    this.totalData = await this.sortCommentList();
     if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
@@ -142,12 +142,15 @@ export class CommentlistPage implements OnInit {
     this.initOwnCommentObj();
   }
 
-  sortCommentList() {
+  async sortCommentList() {
     let replayCommentList = [];
-    replayCommentList = _.filter(this.postCommentList, (item: FeedsData.CommentV3) => {
-      return item.refcommentId === this.commentId;
-    });
+    try {
+      let postId: string =  this.captainComment.postId;
+      let refcommentId: string =  this.captainComment.commentId;
+      replayCommentList = await this.hiveVaultController.getCommentList(postId, refcommentId);
+    } catch (error) {
 
+    }
     replayCommentList = _.sortBy(replayCommentList, (item: FeedsData.CommentV3) => {
       return -Number(item.createdAt);
     });
@@ -183,7 +186,7 @@ export class CommentlistPage implements OnInit {
     this.styleObj.width = screen.width - 55 + 'px';
     this.dstyleObj.width = screen.width - 105 + 'px';
     await this.getCaptainComment();
-    this.initData(true);
+    await this.initData(true);
 
 
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
@@ -205,6 +208,7 @@ export class CommentlistPage implements OnInit {
       Logger.log(TAG, 'Received deleteCommentFinish event');
       await this.native.showLoading('common.waitMoment');
       try {
+
         this.hiveVaultController
           .deleteComment(comment)
           .then(async (result: any) => {
@@ -213,14 +217,14 @@ export class CommentlistPage implements OnInit {
               return item.destDid === comment.destDid &&
                 item.channelId === comment.channelId &&
                 item.postId === comment.postId &&
-                item.commentId === comment.commentId
+                item.commentId === comment.commentId;
             });
             if (index > -1) {
               postCommentList[index].status = FeedsData.PostCommentStatus.deleted;
+              this.dataHelper.setPostCommentList(postCommentList);
             }
-            this.dataHelper.setPostCommentList(postCommentList);
             await this.getCaptainComment();
-            this.initData(false);
+            await this.initData(false);
             this.native.hideLoading();
           }).catch(() => {
             this.native.hideLoading();
@@ -233,11 +237,8 @@ export class CommentlistPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, async (comment) => {
       Logger.log(TAG, 'Received getCommentFinish event');
-      let postCommentList = this.dataHelper.getPostCommentList() || [];
-      postCommentList.push(comment);
-      this.dataHelper.setPostCommentList(postCommentList);
       await this.getCaptainComment();
-      this.initData(false);
+      await this.initData(false);
     });
 
   }
@@ -335,9 +336,9 @@ export class CommentlistPage implements OnInit {
       this.postCommentList = await this.hiveVaultController.
         syncCommentFromPost(this.destDid, this.channelId, this.postId);
       this.dataHelper.setPostCommentList(this.postCommentList);
-      this.getCaptainComment();
+      await this.getCaptainComment();
       this.isInitUserNameMap = {};
-      this.initData(true);
+      await this.initData(true);
       event.target.complete();
     } catch (error) {
       event.target.complete();
@@ -497,7 +498,7 @@ export class CommentlistPage implements OnInit {
         await this.hiveVaultController.
           getDisplayName(this.destDid, this.channelId, createrDid);
 
-      this.userNameMap[this.destDid] = await this.hiveVaultController.
+          this.userNameMap[this.destDid] = await this.hiveVaultController.
         getDisplayName(this.destDid, this.channelId, this.destDid);
 
     } catch (error) {

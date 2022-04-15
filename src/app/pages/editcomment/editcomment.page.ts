@@ -149,6 +149,7 @@ export class EditCommentPage implements OnInit {
           if (index > -1) {
             postCommentList[index].content = this.newComment;
             postCommentList[index].status = FeedsData.PostCommentStatus.edited;
+            this.dataHelper.setPostCommentList(postCommentList);
           }
           this.native.hideLoading();
           this.native.pop();

@@ -14,6 +14,7 @@ let TAG: string = 'DataHelper';
 @Injectable()
 export class DataHelper {
   // TODO new add
+  private isUpdateHomePage: boolean = false;//控制刷新home页面
   private postCommentList: FeedsData.CommentV3[] = null;
   private selsectIndex = 1;
   private collectibleStatus: any = {};
@@ -3076,8 +3077,8 @@ export class DataHelper {
 
 
   /**
-   * 
-   * @param channel     
+   *
+   * @param channel
    * return new Promise(async (resolve, reject) => {
       try {
         await this.sqliteHelper.insertChannelData(channel)
@@ -3086,7 +3087,7 @@ export class DataHelper {
         reject(error);
       }
     });
-   * @returns 
+   * @returns
    */
   //ChannelV3
   addChannelV3(channel: FeedsData.ChannelV3) {
@@ -3743,5 +3744,13 @@ export class DataHelper {
 
   cleanCacheLikeNum() {
     this.cachedLikeNumMap = {};
+  }
+
+  setIsUpdateHomePage(isUpdateHomePage: boolean) {
+      this.isUpdateHomePage = isUpdateHomePage;
+  }
+
+  getIsUpdateHomePage() {
+    return this.isUpdateHomePage;
   }
 }

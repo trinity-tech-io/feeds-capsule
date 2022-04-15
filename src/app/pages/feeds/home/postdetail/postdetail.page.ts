@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController, Platform } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -152,8 +152,8 @@ export class PostdetailPage implements OnInit {
     private viewHelper: ViewHelper,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
-
+    private hiveVaultController: HiveVaultController,
+    private router: Router
   ) { }
 
 
@@ -209,15 +209,6 @@ export class PostdetailPage implements OnInit {
       let key = item.commentId;
       this.userNameList[key] = item.destDid;
       this.checkCommentIsMine(item);
-      // let commentId = item.commentId;
-      // let replayCommentList =
-      //   this.feedService.getReplayCommentList(
-      //     this.destDid,
-      //     this.channelId,
-      //     this.postId,
-      //     commentId,
-      //   ) || [];
-      // item['replayCommentSum'] = replayCommentList.length;
     });
 
     this.captainCommentList = _.cloneDeep(captainCommentList);
@@ -320,7 +311,6 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     if (this.platform.is('ios')) {
@@ -339,26 +329,6 @@ export class PostdetailPage implements OnInit {
         this.startIndex = 0;
         this.initData(true);
       });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.refreshPostDetail, () => {
-      this.zone.run(async () => {
-        Logger.log(TAG, 'Received refreshPostDetail event');
-        let post: any = await this.dataHelper.getPostV3ById(
-          this.destDid,
-          this.postId,
-        ) || null;
-        this.postContent = post.content.content;
-        this.updatedTime = post.updatedAt;
-        this.getLikeStatus(post.postId, '0');
-        this.getPostLikeNum(post.postId, '0');
-        this.getPostComments(post);
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      Logger.log(TAG, 'Received editPostFinish event');
-      this.initData(true);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: FeedsData.PostV3) => {
@@ -427,21 +397,18 @@ export class PostdetailPage implements OnInit {
     }
 
     this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
 
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshPostDetail);
 
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
-
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
-    this.events.publish(FeedsEvent.PublishType.updateTab);
     this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
-
+    if(this.router.url === "/tabs/home"){
+      this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
+      this.events.publish(FeedsEvent.PublishType.updateTab);
+    }
   }
 
   ionViewDidLeave() {
@@ -1133,6 +1100,7 @@ export class PostdetailPage implements OnInit {
     let commentId: string = comment.commentId;
     let createrDid: string = comment.createrDid;
     this.dataHelper.setPostCommentList(this.postCommentList);
+    this.dataHelper.setIsUpdateHomePage(false);
     this.native.navigateForward(['commentlist'], {
       queryParams: {
         destDid: this.destDid,

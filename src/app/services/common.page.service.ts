@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import _ from 'lodash';
-import { HiveVaultController } from './hivevault_controller.service';
 import { UtilService } from './utilService';
 @Injectable()
 export class CommonPageService {
