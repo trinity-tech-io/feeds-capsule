@@ -395,6 +395,9 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.native.handleTabsEvents();
+    this.isInitLikeNum = {};
+    this.isInitComment = {};
+    this.isInitLikeStatus = {};
   }
 
   ionViewDidLeave() {

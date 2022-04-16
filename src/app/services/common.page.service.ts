@@ -284,11 +284,9 @@ export class CommonPageService {
         likeNumMap[postId]= listNum;
       }).catch((err) => {
         isInitLikeNum[postId] = "";
-        likeNumMap[postId]= 0;
       });
     } catch (err) {
        isInitLikeNum[postId] = "";
-       likeNumMap[postId]= 0;
     }
 
   }
@@ -331,11 +329,9 @@ public static handlePostCommentData(
         commentNumMap[postId] = result.length;
       }).catch((err) => {
          isInitComment[postId] = "";
-         commentNumMap[postId] = 0;
       });
     } catch (error) {
        isInitComment[postId] = "";
-       commentNumMap[postId] = 0;
     }
   }
 
@@ -460,11 +456,9 @@ public static handleCommentLikeNum(
           isInitLikeNum[commentId] = "13";
           likedCommentNum[commentId] = likesNum || 0;
         }).catch((err) => {
-            likedCommentNum[commentId] = 0;
             isInitLikeNum[commentId] = "";
         });
     } catch (err) {
-        likedCommentNum[commentId] = 0;
         isInitLikeNum[commentId] = "";
     }
   }
@@ -492,6 +486,7 @@ public static handleCommentLikeNum(
             destDid, channelId,
             postId, commentId,
             hiveVaultController,
+            isInitComment,
             commentNum
             );
         }
@@ -503,16 +498,20 @@ public static handleCommentLikeNum(
  static initCommentData(
     destDid: string, channelId: string,
     postId: string, commentId: string,
-    hiveVaultController: any, commentNum: any
+    hiveVaultController: any, isInitComment: any,
+    commentNum: any
     ) {
     try {
       hiveVaultController.
-      getLikeNum(postId, commentId).
-      then((likesNum: number)=>{
-         commentNum[commentId] = likesNum || 0;
+      getCommentList(postId, commentId).
+      then((result: any)=>{
+         result = result || [];
+         commentNum[commentId] = result.length || 0;
+      }).catch(()=>{
+        isInitComment[commentId] = "";
       });
     } catch (error) {
-
+      isInitComment[commentId] = "";
     }
   }
 }

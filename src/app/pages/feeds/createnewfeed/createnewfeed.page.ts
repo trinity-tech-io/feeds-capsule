@@ -63,61 +63,6 @@ export class CreatenewfeedPage implements OnInit {
     this.developerMode = this.dataHelper.getDeveloperMode();
     this.channelAvatar = this.dataHelper.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-
-    this.events.subscribe(FeedsEvent.PublishType.tipdialogCancel, () => {
-      this.popover.dismiss();
-    });
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.tipdialogConfirm,
-      (tipdialogData: FeedsEvent.TipDialogData) => {
-        let name = tipdialogData.name;
-        let desc = tipdialogData.desc;
-        this.popover.dismiss();
-        this.native
-          .showLoading('common.waitMoment', isDismiss => {
-            if (isDismiss) {
-              this.showTimeOutErrorAlert();
-            }
-          })
-          .then(() => {
-            this.uploadChannel(name, desc)
-            // carrirer 发送创建频道
-            // this.feedService.createTopic(
-            //   this.selectedServer.nodeId,
-            //   name,
-            //   desc,
-            //   this.channelAvatar,
-            // );
-          })
-          .catch(() => {
-            this.native.hideLoading();
-          });
-      },
-    );
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.createTopicSuccess,
-      (createTopicSuccessData: FeedsEvent.CreateTopicSuccessData) => {
-        this.zone.run(() => {
-          console.log("FeedsEvent.PublishType.createTopicSuccess112");
-          let nodeId = createTopicSuccessData.nodeId;
-          let channelId = createTopicSuccessData.channelId;
-          this.native.hideLoading();
-          this.navCtrl.pop().then(() => {
-            this.publicFeeds(nodeId, channelId);
-          });
-        });
-      },
-    );
-  }
-
-  showTimeOutErrorAlert() {
-    this.popup.ionicAlert1(
-      'common.error',
-      'common.transMsgTimeout',
-      'common.ok',
-    );
   }
 
   mintChannel(nodeId: string, channelId: number) {
@@ -127,11 +72,6 @@ export class CreatenewfeedPage implements OnInit {
   ionViewDidEnter() { }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.tipdialogCancel);
-    this.events.unsubscribe(FeedsEvent.PublishType.tipdialogConfirm);
-    this.events.unsubscribe(FeedsEvent.PublishType.createTopicSuccess);
-    this.events.publish(FeedsEvent.PublishType.addRpcRequestError);
-    this.events.publish(FeedsEvent.PublishType.addRpcResponseError);
     this.native.hideLoading();
     this.native.handleTabsEvents();
   }
