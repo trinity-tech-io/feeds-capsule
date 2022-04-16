@@ -18,9 +18,10 @@ import { result } from 'lodash';
 @Injectable()
 export class MenuService {
   public destDid: string = '';
-  public channelId: string = "0";
-  public postId: string = "0";
-  public commentId: number = 0;
+  public channelId: string = "";
+  public postId: string = "";
+  public commentId: string = "";
+  private refcommentId: string = '0';
   public saleOrderId: any = '';
   public assItem: any = {};
 
@@ -35,6 +36,7 @@ export class MenuService {
   public saveImageMenu: any = null;
   public channelCollectionsMenu: any = null;
   public channelCollectionsPublishedMenu: any = null;
+  private comment: FeedsData.CommentV3 = null;
   constructor(
     private feedService: FeedService,
     private actionSheetController: ActionSheetController,
@@ -667,12 +669,13 @@ export class MenuService {
     return this.postDetail;
   }
 
-  async showCommentDetailMenu(comment: any) {
+  async showCommentDetailMenu(comment: FeedsData.CommentV3) {
+    this.comment = comment;
     this.destDid = comment['destDid'];
     this.channelId = comment['channelId'];
     this.postId = comment['postId'];
     this.commentId = comment['commentId'];
-
+    this.refcommentId = comment['refcommentId'];
     let destDid = comment['destDid'];
     let channelId = comment['channelId'];
     let postId = comment['postId'];
@@ -744,16 +747,15 @@ export class MenuService {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    that.events.publish(FeedsEvent.PublishType.deleteCommentFinish,
-      {
-        "destDid": that.destDid,
-        "channelId": that.channelId,
-        "postId": that.postId,
-        "commentId": that.commentId
-      });
+
+      that.events.publish(FeedsEvent.PublishType.deleteCommentFinish,
+        that.comment
+       );
+
   }
 
-  async showReplyDetailMenu(reply: any) {
+  async showReplyDetailMenu(reply: FeedsData.CommentV3) {
+    this.comment = reply;
     this.destDid = reply['destDid'];
     this.channelId = reply['channelId'];
     this.postId = reply['postId'];

@@ -254,6 +254,10 @@ export class PostdetailPage implements OnInit {
       return item.refcommentId === '0';
     });
 
+    captainCommentList = _.sortBy(captainCommentList, (item: FeedsData.CommentV3) => {
+      return -Number(item.createdAt);
+    });
+
     this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     if (!this.hideDeletedComments) {
       captainCommentList = _.filter(captainCommentList, (item: any) => {
@@ -322,9 +326,13 @@ export class PostdetailPage implements OnInit {
     this.dstyleObj.width = screen.width - 105 + 'px';
     this.initData(true);
 
-    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, () => {
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
       this.zone.run(() => {
         Logger.log(TAG, 'Received commentDataUpdate event');
+        let postId = comment.postId;
+        let refcommentId = comment.refcommentId;
+        let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
+        cachedCommentList.push(comment);
         this.startIndex = 0;
         this.initData(true);
       });
@@ -349,13 +357,26 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, async (comment) => {
+    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, async (comment: FeedsData.CommentV3) => {
       Logger.log(TAG, 'Received deleteCommentFinish event');
       await this.native.showLoading('common.waitMoment');
       try {
         this.hiveVaultController
           .deleteComment(comment)
-          .then(async (result: any) => {
+          .then(async (newComment: FeedsData.CommentV3) => {
+            let postId = comment.postId;
+            let refcommentId = comment.refcommentId;
+            let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
+
+            let index = _.findIndex(cachedCommentList, (item: FeedsData.CommentV3) => {
+            return item.destDid === newComment.destDid &&
+            item.channelId === newComment.channelId &&
+            item.postId === newComment.postId &&
+            item.commentId === newComment.commentId;
+            });
+            if (index > -1) {
+               cachedCommentList[index] = newComment;
+            }
             this.startIndex = 0;
             await this.initData(false);
             this.native.hideLoading();
@@ -1088,8 +1109,6 @@ export class PostdetailPage implements OnInit {
     }
     let commentId: string = comment.commentId;
     let createrDid: string = comment.createrDid;
-    this.dataHelper.setPostCommentList(this.postCommentList);
-    this.dataHelper.setIsUpdateHomePage(false);
     this.native.navigateForward(['commentlist'], {
       queryParams: {
         destDid: this.destDid,

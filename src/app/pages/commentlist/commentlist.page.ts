@@ -204,24 +204,27 @@ export class CommentlistPage implements OnInit {
     });
 
 
-    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, async (comment) => {
+    this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, async (comment: FeedsData.CommentV3) => {
       Logger.log(TAG, 'Received deleteCommentFinish event');
       await this.native.showLoading('common.waitMoment');
       try {
 
         this.hiveVaultController
           .deleteComment(comment)
-          .then(async (result: any) => {
-            let postCommentList: FeedsData.CommentV3[] = this.dataHelper.getPostCommentList() || [];
-            let index = _.findIndex(postCommentList, (item: FeedsData.CommentV3) => {
-              return item.destDid === comment.destDid &&
-                item.channelId === comment.channelId &&
-                item.postId === comment.postId &&
-                item.commentId === comment.commentId;
+          .then(async (newComment: FeedsData.CommentV3) => {
+
+            let postId = comment.postId;
+            let refcommentId = comment.refcommentId;
+            let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
+
+            let index = _.findIndex(cachedCommentList, (item: FeedsData.CommentV3) => {
+            return item.destDid === newComment.destDid &&
+            item.channelId === newComment.channelId &&
+            item.postId === newComment.postId &&
+            item.commentId === newComment.commentId;
             });
             if (index > -1) {
-              postCommentList[index].status = FeedsData.PostCommentStatus.deleted;
-              this.dataHelper.setPostCommentList(postCommentList);
+               cachedCommentList[index] = newComment;
             }
             await this.getCaptainComment();
             await this.initData(false);
@@ -235,8 +238,12 @@ export class CommentlistPage implements OnInit {
 
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, async (comment) => {
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, async (comment: FeedsData.CommentV3) => {
       Logger.log(TAG, 'Received getCommentFinish event');
+      let postId = comment.postId;
+      let refcommentId = comment.refcommentId;
+      let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
+      cachedCommentList.push(comment);
       await this.getCaptainComment();
       await this.initData(false);
     });
@@ -332,9 +339,9 @@ export class CommentlistPage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-      this.postCommentList = await this.hiveVaultController.
+      await this.hiveVaultController.
         syncCommentFromPost(this.destDid, this.channelId, this.postId);
-      this.dataHelper.setPostCommentList(this.postCommentList);
+      await this.hiveVaultController.getCommentList(this.postId,'0');
       await this.getCaptainComment();
       this.isInitUserNameMap = {};
       await this.initData(true);
@@ -383,7 +390,7 @@ export class CommentlistPage implements OnInit {
     }
   }
 
-  async openEditTool(comment: any) {
+  async openEditTool(comment: FeedsData.CommentV3) {
     this.curComment = comment;
     this.menuService.showReplyDetailMenu(comment);
   }
@@ -484,7 +491,7 @@ export class CommentlistPage implements OnInit {
 
   async getCaptainComment() {
 
-    this.postCommentList = this.dataHelper.getPostCommentList() || [];
+    this.postCommentList = this.dataHelper.getcachedCommentList(this.postId, '0') || [];
 
     this.captainComment = _.find(this.postCommentList, (item: FeedsData.CommentV3) => {
       return item.commentId == this.commentId;

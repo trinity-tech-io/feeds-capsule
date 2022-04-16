@@ -599,7 +599,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'UPDATE ' + this.TABLE_COMMENT
           + ' SET content=?, status=?, updated_at=?, proof=?, memo=? WHERE comment_id=?'; // 条件是否使用refcomment_id
-        const params = [JSON.stringify(commentV3.content), commentV3.status, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.channelId];
+        const params = [commentV3.content, commentV3.status, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.commentId];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'update comment data result is', result);

@@ -14,8 +14,6 @@ let TAG: string = 'DataHelper';
 @Injectable()
 export class DataHelper {
   // TODO new add
-  private isUpdateHomePage: boolean = false;//控制刷新home页面
-  private postCommentList: FeedsData.CommentV3[] = null;
   private selsectIndex = 1;
   private collectibleStatus: any = {};
   private whiteListData: FeedsData.WhiteItem[] = [];
@@ -3658,14 +3656,6 @@ export class DataHelper {
     return this.selsectIndex;
   }
 
-  setPostCommentList(postCommentList: FeedsData.CommentV3[]) {
-    this.postCommentList = postCommentList;
-  }
-
-  getPostCommentList() {
-    return this.postCommentList;
-  }
-
   getUserDisplayName(targetDid: string, channelId: string, userDid: string) {
     const key = targetDid + '-' + channelId + '-' + userDid;
     return this.userDisplayNameMap[key];
@@ -3743,13 +3733,5 @@ export class DataHelper {
 
   cleanCacheLikeNum() {
     this.cachedLikeNumMap = {};
-  }
-
-  setIsUpdateHomePage(isUpdateHomePage: boolean) {
-    this.isUpdateHomePage = isUpdateHomePage;
-  }
-
-  getIsUpdateHomePage() {
-    return this.isUpdateHomePage;
   }
 }
