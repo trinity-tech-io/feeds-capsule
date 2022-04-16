@@ -12,7 +12,6 @@ import { ViewHelper } from '../../services/viewhelper.service';
 export class FollowingComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() followingList: any = [];
-  @Input() nodeStatus: any = {};
   @Output() toFollowPage = new EventEmitter();
   constructor(
     private feedService: FeedService,

@@ -201,7 +201,7 @@ export class CreatenewfeedPage implements OnInit {
     await this.native.showLoading('common.waitMoment');
     try {
 
-      const selfchannels =  await this.hiveVaultController.syncSelfChannel() || [];
+      const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
 
       if (selfchannels.length >= 15) {
       this.native.hideLoading();

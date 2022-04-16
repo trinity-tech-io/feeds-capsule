@@ -28,7 +28,6 @@ export class CommentComponent implements OnInit {
   @Input() public channelId: string = '';
   @Input() public postId: string = '0';
   @Input() public refcommentId: string = '0';
-  @Input() public onlineStatus = 0;
 
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
 

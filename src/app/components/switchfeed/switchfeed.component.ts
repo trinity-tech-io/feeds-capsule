@@ -12,7 +12,6 @@ import { DataHelper } from 'src/app/services/DataHelper';
 })
 export class SwitchfeedComponent implements OnInit {
   @Input() public channelList = [];
-  @Input() public nodeStatus = {};
   @Output() hideComment = new EventEmitter();
   public currentFeed: any = {};
   public avatarList: any = {};

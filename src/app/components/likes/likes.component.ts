@@ -20,7 +20,6 @@ import { CommonPageService } from 'src/app/services/common.page.service';
 })
 export class LikesComponent implements OnInit {
   @Input() likeList: any = [];
-  @Input() nodeStatus: any = {};
   @Input() isLoadVideoiamge: any = {};
 
   @Input() isImgLoading: any = {};
@@ -229,7 +228,6 @@ export class LikesComponent implements OnInit {
       destDid: destDid,
       channelId: channelId,
       postId: postId,
-      onlineStatus: this.nodeStatus[destDid],
       channelAvatar: await this.parseAvatar(destDid, channelId),
       channelName: channelName,
     });

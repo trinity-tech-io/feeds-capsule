@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)" (subsciptions)="subsciptions()" (chanelCollections)="chanelCollections()"  [channels] = "channels" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" [followers] = "followers"></app-myfeeds>
+    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)" (subsciptions)="subsciptions()" (chanelCollections)="chanelCollections()"  [channels] = "channels" (fromChild)="showMenuMore($event)" [followers] = "followers"></app-myfeeds>
     <!-- <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
       <ion-col size="12">
        <div class="bigCircle">
@@ -100,7 +100,6 @@
        [videoPercent]="videoPercent"
        [videoRotateNum]="videoRotateNum"
        [likeList] = "likeList"
-       [nodeStatus]="nodeStatus"
        [isLoadVideoiamge]="isLoadVideoiamge"
        [likeMap]="likeMap"
        [likeNumMap] = "likeNumMap"
@@ -152,7 +151,6 @@
   [destDid]="nodeId "
   [channelId]="channelId"
   [channelAvatar]="channelAvatar"
-  [onlineStatus]="onlineStatus"
   [channelName]="channelName"
   (hideComment)="hideComponent($event)"
 ></app-comment>

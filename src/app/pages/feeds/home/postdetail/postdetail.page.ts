@@ -30,7 +30,6 @@ export class PostdetailPage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
   public postImage: string = 'assets/images/loading.png';
-  public nodeStatus: any = {};
   public avatar: string = '';
 
   public channelAvatar: string = './assets/icon/reserve.svg';

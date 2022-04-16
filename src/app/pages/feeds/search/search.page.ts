@@ -39,7 +39,6 @@ export class SearchPage implements OnInit {
   @ViewChild(IonRefresher, { static: true }) ionRefresher: IonRefresher;
   @ViewChild('searchbar', { static: false }) searchbar: IonSearchbar;
 
-  public nodeStatus: any = {};
   public popover: any = '';
   public curAddingItem = {};
   public addingChanneList = [];
@@ -133,8 +132,6 @@ export class SearchPage implements OnInit {
           let channelId = subscribeFinishData.channelId;
           this.unfollowedFeed = this.getUnfollowedFeed() || [];
           this.searchUnfollowedFeed = _.cloneDeep(this.unfollowedFeed);
-          let status = this.checkServerStatus(nodeId);
-          this.nodeStatus[nodeId] = status;
           this.addingChanneList =
             this.feedService.getToBeAddedFeedsList() || [];
           this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
@@ -225,19 +222,13 @@ export class SearchPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.search);
   }
 
-  subscribe(nodeId: string, id: string) {
+  subscribe(destDid: string, id: string) {
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
     this.native.toastWarn('common.connectionError');
     return;
     }
 
-    if (this.checkServerStatus(nodeId) != 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    // this.feedsServiceApi.subscribeChannel(nodeId, id);
     //TODO
     // this.hiveVaultController.subscribeChannel();
   }
@@ -347,10 +338,6 @@ export class SearchPage implements OnInit {
 
   parseChannelAvatar(avatar: string): string {
     return this.feedService.parseChannelAvatar(avatar);
-  }
-
-  checkServerStatus(nodeId: string) {
-    return this.feedService.getServerStatusFromId(nodeId);
   }
 
   moreName(name: string) {

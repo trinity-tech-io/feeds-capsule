@@ -14,7 +14,6 @@ import { DataHelper } from 'src/app/services/DataHelper';
 export class MyfeedsComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() channels: any = [];
-  @Input() nodeStatus: any = {};
   @Input() followers:any = 0;
   @Output() toFeedPage = new EventEmitter();
   @Output() subsciptions = new EventEmitter();

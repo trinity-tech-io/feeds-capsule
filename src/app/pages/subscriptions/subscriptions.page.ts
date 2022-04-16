@@ -20,7 +20,6 @@ import _ from 'lodash';
 export class SubscriptionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public followingList: any = [];
-  public nodeStatus: any = {};
   public isShowUnfollow: boolean = false;
   public isShowQrcode: boolean = false;
   public isShowTitle: boolean = false;

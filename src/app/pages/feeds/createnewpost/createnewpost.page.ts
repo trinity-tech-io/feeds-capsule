@@ -39,7 +39,6 @@ export class CreatenewpostPage implements OnInit {
   public loadingText: string = "common.uploading";
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
-  public nodeStatus = {};
   public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
   public subscribers: string = '';

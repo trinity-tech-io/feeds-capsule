@@ -9,7 +9,7 @@
       refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
-   <app-following [followingList] = "followingList" [nodeStatus]="nodeStatus" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
+   <app-following [followingList] = "followingList" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
 </ion-content>
 <!---------------- ADD share menu---------------->
 <app-sharemenu

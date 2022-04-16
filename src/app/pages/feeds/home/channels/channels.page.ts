@@ -40,7 +40,6 @@ export class ChannelsPage implements OnInit {
   public images = {};
   public isShowPrompt: boolean = false;
   public popover: any;
-  public nodeStatus: any = {};
   public channelAvatar: string = './assets/icon/reserve.svg';
   public channelAvatarUri: string = '';
   public channelName: string = '';
@@ -76,8 +75,6 @@ export class ChannelsPage implements OnInit {
 
   public cacheGetBinaryRequestKey: string = '';
   public cachedMediaType = '';
-
-  public onlineStatus = null;
 
   public maxTextSize = 240;
 
@@ -642,13 +639,11 @@ export class ChannelsPage implements OnInit {
 
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.postId = postId;
-    this.onlineStatus = this.nodeStatus[destDid];
     this.hideComment = false;
   }
 
   hideComponent(event: any) {
     this.postId = null;
-    this.onlineStatus = null;
     this.hideComment = true;
   }
 

@@ -54,7 +54,6 @@ export class HomePage implements OnInit {
   private homeTittleBar: HTMLElement;
   private homeTab: HTMLElement;
   public postList: any = [];
-  public nodeStatus: any = {};
   public startIndex = 0;
   public pageNumber = 8;
   public totalData = [];
@@ -70,7 +69,6 @@ export class HomePage implements OnInit {
   public channelId: string = '';
   public channelAvatar = null;
   public channelName = null;
-  public onlineStatus = null;
 
   private clientHeight: number = 0;
   private clientWidth: number = 0;
@@ -342,6 +340,7 @@ export class HomePage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
       this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
+      this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
       this.clearData();
       this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
     });
@@ -898,7 +897,6 @@ export class HomePage implements OnInit {
     this.destDid = destDid;
     this.channelAvatar = await this.parseAvatar(destDid, channelId);
     this.channelName = await this.getChannelName(destDid, channelId);
-    this.onlineStatus = this.nodeStatus[destDid];
     this.hideComment = false;
   }
 
@@ -908,7 +906,6 @@ export class HomePage implements OnInit {
     this.destDid = "";
     this.channelAvatar = null;
     this.channelName = null;
-    this.onlineStatus = null;
     this.hideComment = true;
   }
 

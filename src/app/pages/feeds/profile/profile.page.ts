@@ -42,7 +42,6 @@ export class ProfilePage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
 
-  public nodeStatus = {}; //friends status;
   public channels = []; //myFeeds page
 
   public collectiblesList: FeedsData.NFTItem[] = []; //NFT列表
@@ -59,7 +58,6 @@ export class ProfilePage implements OnInit {
   public description: string = '';
 
   public hideComment = true;
-  public onlineStatus = null;
 
   // For comment component
   public postId = null;
@@ -788,7 +786,6 @@ export class ProfilePage implements OnInit {
     this.postId = commentParams.postId;
     this.channelId = commentParams.channelId;
     this.nodeId = commentParams.nodeId;
-    this.onlineStatus = commentParams.onlineStatus;
     this.channelAvatar = commentParams.channelAvatar;
     this.channelName = commentParams.channelName;
     this.hideComment = false;
@@ -801,7 +798,6 @@ export class ProfilePage implements OnInit {
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
-    this.onlineStatus = null;
   }
 
   ionScroll() {

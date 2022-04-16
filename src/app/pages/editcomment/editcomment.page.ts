@@ -22,7 +22,6 @@ export class EditCommentPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', { static: false })
   newPostIonTextarea: IonTextarea;
-  public nodeStatus: any = {};
   public channelAvatar = './assets/icon/reserve.svg';
   public channelName = '';
   public subscribers: string = '';

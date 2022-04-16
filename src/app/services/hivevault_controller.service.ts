@@ -27,7 +27,6 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-        console.log("===subscribedChannels===", subscribedChannels)
         if (subscribedChannels.length === 0) {
           resolve([]);
           return;
@@ -80,9 +79,11 @@ export class HiveVaultController {
         const selfDid = (await this.dataHelper.getSigninData()).did;
         let postList = [];
         if (destDid == selfDid) {
+          console.log("=====dest======"+destDid);
           const posts = await this.syncSelfPostsByChannel(channelId);
           postList.push(posts);
         } else {
+          console.log("=====dest11======"+destDid);
           const posts = await this.getPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
@@ -759,8 +760,8 @@ export class HiveVaultController {
         if (postResult) {
           const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
           for (let postIndex = 0; postIndex < parseResult.length; postIndex++) {
-            let item = parseResult[postIndex];
-            let post = this.dataHelper.getPostV3ById(item.destDid, item.channelId) || null;
+            let item: FeedsData.PostV3 = parseResult[postIndex];
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
             if (post === null) {
               await this.dataHelper.addPostV3(item);
             } else {
@@ -775,7 +776,7 @@ export class HiveVaultController {
 
       } catch (error) {
         Logger.error(TAG, 'Sync self post by channel', error);
-        reject(error);
+        reject([]);
       }
     });
   }
@@ -1314,6 +1315,26 @@ export class HiveVaultController {
       } catch (error) {
         Logger.error(TAG, 'Get local comment list error', error);
         reject(error);
+      }
+    });
+  }
+
+  getSelfChannel(): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const did = (await this.dataHelper.getSigninData()).did;
+        const channelsResult = await this.hiveVaultApi.querySelfChannels();
+        Logger.log(TAG, 'Query self channels result', channelsResult);
+        if (channelsResult) {
+          const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
+          console.log('parseResult', parseResult);
+          resolve(parseResult);
+        } else {
+          reject([]);
+        }
+      } catch (error) {
+        Logger.error(TAG, 'Sync self channel', error);
+        reject([]);
       }
     });
   }
