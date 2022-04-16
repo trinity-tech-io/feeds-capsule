@@ -130,8 +130,6 @@ export class SettingsPage implements OnInit {
       this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
       this.isHideDeletedPosts = false;
     }
-
-    this.native.handleTabsEvents();
   }
 
   toggleHideDeletedPosts() {
@@ -167,7 +165,6 @@ export class SettingsPage implements OnInit {
     });
     this.dataHelper.setDeveloperMode(this.developerMode);
     this.dataHelper.saveData('feeds.developerMode', this.developerMode);
-    this.events.publish(FeedsEvent.PublishType.search);
     if (this.developerMode) {
       this.ipfsService.setTESTMode(true);
     } else {

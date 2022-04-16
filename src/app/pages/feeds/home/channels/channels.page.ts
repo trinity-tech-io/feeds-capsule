@@ -335,13 +335,6 @@ export class ChannelsPage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      this.zone.run(async () => {
-        Logger.log(TAG, FeedsEvent.PublishType.editPostFinish);
-        await this.refreshChannelList();
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
@@ -397,7 +390,6 @@ export class ChannelsPage implements OnInit {
     this.videoRotateNum['transform'] = 'rotate(0deg)';
 
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);

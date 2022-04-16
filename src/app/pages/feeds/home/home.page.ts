@@ -339,7 +339,6 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.clearHomeEvent, () => {
       this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
-      this.events.unsubscribe(FeedsEvent.PublishType.createpost);
       this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
       this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
@@ -356,10 +355,6 @@ export class HomePage implements OnInit {
         }
         this.refreshPostList();
       });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.createpost, () => {
-      this.clearData();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
@@ -391,8 +386,6 @@ export class HomePage implements OnInit {
     });
 
     this.addCommonEvents();
-
-    this.addBinaryEvevnt();
 
   }
 
@@ -485,10 +478,6 @@ export class HomePage implements OnInit {
       });
     });
 
-  }
-
-  addBinaryEvevnt() {
-
     this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
       this.isImgPercentageLoading[this.imgDownStatusKey] = false;
       this.isImgLoading[this.imgDownStatusKey] = false;
@@ -502,6 +491,7 @@ export class HomePage implements OnInit {
       this.pauseAllVideo();
 
     });
+
   }
 
   ionViewWillLeave() {
@@ -510,7 +500,6 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.hideDeletedPosts);
     this.events.unsubscribe(FeedsEvent.PublishType.hideAdult);
     this.events.unsubscribe(FeedsEvent.PublishType.pasarListGrid);
-    this.events.unsubscribe(FeedsEvent.PublishType.createpost);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
     this.clearData();
   }
