@@ -178,13 +178,21 @@ export class HiveInterfaceTestPage implements OnInit {
 
   queryLikeByPost() {
     // this.hiveVaultApi.findLikeById();
-    this.hiveVaultApi.queryLikeByPost('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'postId01');
+    this.hiveVaultApi.queryLikeByPost('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'b473b33e385f4a4dea1d4ed55eaa1d57c70888b43432cd1c63bddbd605d6a8a9', '5d91a4cd5708ee9ccb8788933eeeb5048c5d79fc7d43625307a243da881d545c');
     alert('getLikes');
   }
 
-  queryLikeByChannel() {
+  async queryLikeByChannel() {
     // this.hiveVaultApi.findLikeById();
-    this.hiveVaultApi.queryLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    this.hiveVaultApi.queryLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'b473b33e385f4a4dea1d4ed55eaa1d57c70888b43432cd1c63bddbd605d6a8a9');
+
+    console.log('......');
+    const list = await this.sqliteHelper.queryLikeData();
+    console.log('......queryLikeData = ', list);
+
+
+    const result = this.dataHelper.getSelfLikeV3('5d91a4cd5708ee9ccb8788933eeeb5048c5d79fc7d43625307a243da881d545c', '0');
+    console.log('......getSelfLikeV3', result);
     alert('getLikes');
   }
 

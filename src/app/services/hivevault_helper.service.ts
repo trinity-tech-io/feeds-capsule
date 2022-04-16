@@ -1072,18 +1072,18 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
     }
 
-    private callQueryLikeByChannel(targetDid: string, channelId: string, status: number = FeedsData.PostCommentStatus.available) {
+    private callQueryLikeByChannel(targetDid: string, channelId: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
-                    "stauts": "$params.status"
+                    "status": FeedsData.PostCommentStatus.available
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, params);
-                console.log("Remove like from scripting , result is", result);
+                console.log("Query like by channel from scripting , result is", result);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'Remove like from scripting , error:', error);
+                Logger.error(TAG, 'Query like by channel from scripting , error:', error);
                 reject(error);
             }
         });
@@ -1113,19 +1113,19 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
     }
 
-    private callQueryLikeByPost(targetDid: string, channelId: string, postId: string, status: number = FeedsData.PostCommentStatus.available) {
+    private callQueryLikeByPost(targetDid: string, channelId: string, postId: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "channel_id": channelId,
                     "post_id": postId,
-                    "status": status
+                    "status": FeedsData.PostCommentStatus.available
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, params);
-                console.log("Remove like from scripting , result is", result);
+                console.log("Query like by post from scripting , result is", result);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'Remove like from scripting , error:', error);
+                Logger.error(TAG, 'Query like by post from scripting , error:', error);
                 reject(error);
             }
         });

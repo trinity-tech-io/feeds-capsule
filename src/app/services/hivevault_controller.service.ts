@@ -869,7 +869,7 @@ export class HiveVaultController {
           createdAt = like.createdAt;
           updatedAt = updateResult.updatedAt;
         } else {
-          const addResult = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId,);
+          const addResult = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId);
           createdAt = addResult.createdAt;
           updatedAt = createdAt;
         }
@@ -1286,7 +1286,6 @@ export class HiveVaultController {
           resolve(likedStatus);
           return;
         }
-
         const list = await this.dataHelper.getSelfLikeV3(postId, commentId);
 
         if (list) {

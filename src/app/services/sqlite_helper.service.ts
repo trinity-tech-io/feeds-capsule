@@ -62,6 +62,9 @@ export class FeedsSqliteHelper {
           this.isOpen = true;
         }
         const result = await db.executeSql(statement, params);
+
+        Logger.log(TAG, 'Exec sql result is ', result);
+
         if (result) {
           resolve(result);
         } else {
@@ -731,7 +734,7 @@ export class FeedsSqliteHelper {
         const statement = 'INSERT INTO ' + this.TABLE_LIKE
           + '(dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo, updated_at, status) VALUES'
           + '(?,?,?,?,?,?,?,?,?,?)';
-        const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt, likeV3.updatedAt, likeV3.status];
+        const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt, likeV3.createrDid, likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'Insert like result is', result);
@@ -824,8 +827,8 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_LIKE
-          + ' SET proof=?, memo=? WHERE post_id=? and comment_id=?';
-        const params = [likeV3.proof, likeV3.memo, likeV3.postId, likeV3.commentId];
+          + ' SET proof=?, memo=?, updated_at=?, status=? WHERE post_id=? and comment_id=? ';
+        const params = [likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status, likeV3.postId, likeV3.commentId];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'update comment data result is', result);
@@ -836,41 +839,6 @@ export class FeedsSqliteHelper {
         reject(error)
       }
     });
-  }
-
-  test() {
-    let testdb: SQLiteObject;
-    this.sqlite.create({
-      name: 'data.db',
-      location: 'default'
-    })
-      // .then((db: SQLiteObject) => {
-      //   testdb = db;
-
-      //   return db.executeSql('create table danceMoves(name VARCHAR(32))', []);
-      //   // .then(() => console.log('Executed SQL'))
-      //   // .catch(e => console.log(e));
-
-
-      // })
-      .then((db: SQLiteObject) => {
-        testdb = db;
-        // const statement = 'INSERT INTO ' + this.TABLE_POST
-        // + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo) VALUES'
-        // + '(' + postV3.postId + ',' + postV3.destDid + ',' + postV3.channelId + ',' + postV3.createdAt + ',' + postV3.updatedAt
-        // + ',' + postV3.content + ',' + postV3.type + ',' + postV3.tag + ',' + postV3.proof + ',' + postV3.memo + ')';
-
-        // console.log('result ==', result);
-        return testdb.executeSql('insert into danceMoves(name) values ("new name")', []);
-      })
-      .then((result) => {
-        console.log('result ==', result);
-        return testdb.executeSql('select * from danceMoves', []);
-      }).then((result) => {
-        console.log('result ==', result);
-      })
-      .catch(e => console.log(e));
-
   }
 
   parsePostData(result: any): FeedsData.PostV3[] {
