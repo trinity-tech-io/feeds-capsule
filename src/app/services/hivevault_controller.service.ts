@@ -79,11 +79,11 @@ export class HiveVaultController {
         const selfDid = (await this.dataHelper.getSigninData()).did;
         let postList = [];
         if (destDid == selfDid) {
-          console.log("=====dest======"+destDid);
+          console.log("=====dest======" + destDid);
           const posts = await this.syncSelfPostsByChannel(channelId);
           postList.push(posts);
         } else {
-          console.log("=====dest11======"+destDid);
+          console.log("=====dest11======" + destDid);
           const posts = await this.getPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
@@ -1253,7 +1253,8 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const commentList = this.dataHelper.getcachedCommentList(postId, refCommentId);
-        if (commentList.length > 0) {
+
+        if (commentList && commentList.length > 0) {
           resolve(commentList);
           return;
         }
@@ -1293,7 +1294,7 @@ export class HiveVaultController {
         this.dataHelper.cacheLikeStatus(postId, commentId, likedStatus);
         resolve(likedStatus);
       } catch (error) {
-        Logger.error(TAG, 'Get local comment list error', error);
+        Logger.error(TAG, 'Get local like list error', error);
         reject(error);
       }
     });
@@ -1313,7 +1314,7 @@ export class HiveVaultController {
         //TODO sync data from remote //TODO modify local like sql table ,add status
         resolve(num);
       } catch (error) {
-        Logger.error(TAG, 'Get local comment list error', error);
+        Logger.error(TAG, 'Get local like number list error', error);
         reject(error);
       }
     });

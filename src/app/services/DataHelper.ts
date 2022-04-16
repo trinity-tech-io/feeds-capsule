@@ -3677,10 +3677,9 @@ export class DataHelper {
   }
 
   getcachedCommentList(postId: string, refCommentId: string): FeedsData.CommentV3[] {
-    if (!this.cachedCommentMap || !this.cachedCommentMap[postId] || this.cachedCommentMap[postId][refCommentId]) {
-      return [];
+    if (!this.cachedCommentMap || !this.cachedCommentMap[postId] || !this.cachedCommentMap[postId][refCommentId]) {
+      return null;
     }
-
     return this.cachedCommentMap[postId][refCommentId];
   }
 
@@ -3747,7 +3746,7 @@ export class DataHelper {
   }
 
   setIsUpdateHomePage(isUpdateHomePage: boolean) {
-      this.isUpdateHomePage = isUpdateHomePage;
+    this.isUpdateHomePage = isUpdateHomePage;
   }
 
   getIsUpdateHomePage() {
