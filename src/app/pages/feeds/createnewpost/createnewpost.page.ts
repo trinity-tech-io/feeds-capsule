@@ -168,15 +168,13 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress = 0;
     this.totalProgress = 0;
     this.removeVideo();
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
-    this.events.publish(FeedsEvent.PublishType.search);
-    this.events.publish(FeedsEvent.PublishType.homeCommonEvents);//添加删除的home event与其它页面相同的页面
+
     if (this.isUpdateHomePage) {
-      this.events.publish(FeedsEvent.PublishType.updateTab, true);
+      this.native.handleTabsEvents("update");
     }else{
-      this.events.publish(FeedsEvent.PublishType.updateTab,false);
+      this.native.handleTabsEvents();
     }
+
   }
 
   ionViewDidEnter() { }

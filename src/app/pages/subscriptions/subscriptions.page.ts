@@ -99,7 +99,7 @@ export class SubscriptionsPage implements OnInit {
     this.followingIsLoadimage = {};
     this.hideSharMenuComponent = false;
     this.removeEvents();
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents();
   }
 
   async showMenuMore(item: any) {

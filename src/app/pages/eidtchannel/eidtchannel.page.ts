@@ -113,8 +113,7 @@ export class EidtchannelPage implements OnInit {
     if (!this.isClickConfirm) {
       this.feedService.setProfileIamge(this.oldChannelAvatar);
     }
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents();
   }
 
   profileimage() {

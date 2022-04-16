@@ -125,9 +125,7 @@ export class FeedinfoPage implements OnInit {
   removeEvents() {
     this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
-    this.events.publish(FeedsEvent.PublishType.search);
+    this.native.handleTabsEvents();
   }
 
   async checkFollowStatus(destDid: string, channelId: string) {

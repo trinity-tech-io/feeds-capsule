@@ -115,7 +115,7 @@ export class FeedspreferencesPage implements OnInit {
       this.popover = null;
     }
     this.clearEvent();
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents()
   }
 
   clearEvent() {

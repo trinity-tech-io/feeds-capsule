@@ -132,9 +132,8 @@ export class CreatenewfeedPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.createTopicSuccess);
     this.events.publish(FeedsEvent.PublishType.addRpcRequestError);
     this.events.publish(FeedsEvent.PublishType.addRpcResponseError);
-    this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     this.native.hideLoading();
+    this.native.handleTabsEvents();
   }
 
   initTitle() {

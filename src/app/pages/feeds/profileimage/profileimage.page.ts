@@ -116,10 +116,10 @@ export class ProfileimagePage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
     }
+    this.native.handleTabsEvents()
   }
 
   ionViewDidEnter() {}

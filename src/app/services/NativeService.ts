@@ -3,7 +3,6 @@ import {
   ToastController,
   LoadingController,
   NavController,
-  PopoverController,
 } from '@ionic/angular';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { Router } from '@angular/router';
@@ -13,13 +12,13 @@ import { ModalController } from '@ionic/angular';
 import { VideofullscreenComponent } from './../components/videofullscreen/videofullscreen.component';
 import { Network } from '@ionic-native/network/ngx';
 import { Logger } from './logger';
+import { Events } from './events.service';
 
 const TAG: string = 'NativeService';
 @Injectable()
 export class NativeService {
   public loading: any = null;
   constructor(
-    private popoverController: PopoverController,
     public modalController: ModalController,
     private toastCtrl: ToastController,
     private clipboard: Clipboard,
@@ -29,6 +28,7 @@ export class NativeService {
     private router: Router,
     private translate: TranslateService,
     private network: Network,
+    private events: Events,
   ) {}
 
   public toast(
@@ -308,5 +308,34 @@ export class NativeService {
     message = this.translate.instant(message);
     if (this.loading)
       this.loading.message = message;
+  }
+
+  handleTabsEvents(isUpdateHomePage?: string) {
+    isUpdateHomePage = isUpdateHomePage || '';
+    let isUpdate = false;
+    if(isUpdateHomePage != '') {
+      isUpdate = true;
+    }
+    let url: string = this.router.url;
+    console.log("====url=====",url);
+    switch(url) {
+      case "/tabs/home":
+      case "/home":
+      this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
+      this.events.publish(FeedsEvent.PublishType.updateTab,isUpdate);
+        break;
+      case "/tabs/profile":
+      case "/profile":
+        this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+        break;
+      case "/tabs/notification":
+      case "/notification":
+        this.events.publish(FeedsEvent.PublishType.notification);
+        break;
+      case "/tabs/search":
+      case "/search":
+        this.events.publish(FeedsEvent.PublishType.search);
+          break;
+    }
   }
 }

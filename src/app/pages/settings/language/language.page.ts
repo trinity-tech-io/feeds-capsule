@@ -5,6 +5,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { LanguageService } from 'src/app/services/language.service';
 import { Events } from 'src/app/services/events.service';
+import { NativeService } from 'src/app/services/NativeService';
 
 @Component({
   selector: 'app-language',
@@ -21,6 +22,7 @@ export class LanguagePage implements OnInit {
     private titleBarService: TitleBarService,
     private languageService: LanguageService,
     private events: Events,
+    private native: NativeService
   ) {
     this.currentLang = this.languageService.getCurLang();
     this.languageList = this.languageService.languages;
@@ -41,9 +43,7 @@ export class LanguagePage implements OnInit {
     this.initTitle();
   }
   ionViewWillLeave() {
-    this.events.publish(FeedsEvent.PublishType.search);
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents()
   }
   selectLanguage(language: any) {
     this.languageService.setCurLang(language.code);

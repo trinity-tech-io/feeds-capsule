@@ -350,11 +350,6 @@ export class PostdetailPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.editCommentFinish, () => {
-      Logger.log(TAG, 'Received editCommentFinish event');
-      this.initData(false);
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.deleteCommentFinish, async (comment) => {
       Logger.log(TAG, 'Received deleteCommentFinish event');
       await this.native.showLoading('common.waitMoment');
@@ -396,19 +391,11 @@ export class PostdetailPage implements OnInit {
       this.popover = null;
     }
 
-    this.events.unsubscribe(FeedsEvent.PublishType.editCommentFinish);
-
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
-
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
-    this.events.publish(FeedsEvent.PublishType.notification);
-    if(this.router.url === "/tabs/home"){
-      this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
-      this.events.publish(FeedsEvent.PublishType.updateTab);
-    }
+    this.native.handleTabsEvents();
   }
 
   ionViewDidLeave() {

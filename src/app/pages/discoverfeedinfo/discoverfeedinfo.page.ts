@@ -143,7 +143,8 @@ export class DiscoverfeedinfoPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.channelInfoRightMenu);
-    this.events.publish(FeedsEvent.PublishType.search);
+    this.native.handleTabsEvents();
+
   }
 
   initTitle() {

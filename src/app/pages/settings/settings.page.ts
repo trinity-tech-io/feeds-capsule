@@ -116,7 +116,6 @@ export class SettingsPage implements OnInit {
     if (this.popover != null) {
       this.popoverController.dismiss();
     }
-    this.events.publish(FeedsEvent.PublishType.search);
     if (this.isListGrid) {
       this.events.publish(FeedsEvent.PublishType.pasarListGrid);
       this.isListGrid = false;
@@ -131,6 +130,8 @@ export class SettingsPage implements OnInit {
       this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
       this.isHideDeletedPosts = false;
     }
+
+    this.native.handleTabsEvents();
   }
 
   toggleHideDeletedPosts() {

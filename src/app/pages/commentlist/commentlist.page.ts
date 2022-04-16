@@ -253,8 +253,7 @@ export class CommentlistPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
-
+    this.native.handleTabsEvents();
   }
 
   ionViewDidLeave() {

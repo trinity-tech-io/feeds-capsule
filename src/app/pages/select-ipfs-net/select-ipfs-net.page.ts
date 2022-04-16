@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { GlobalService } from 'src/app/services/global.service';
 import { Events } from 'src/app/services/events.service';
 import { ApiUrl } from 'src/app/services/ApiUrl';
+import { NativeService } from 'src/app/services/NativeService';
 
 
 @Component({
@@ -39,8 +40,8 @@ export class SelectIpfsNetPage implements OnInit {
     public translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
-    private events: Events,
     private globalService: GlobalService,
+    private native: NativeService
   ) {
 
   }
@@ -63,9 +64,7 @@ export class SelectIpfsNetPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.events.publish(FeedsEvent.PublishType.search);
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents()
   }
 
   selectIpfs(selectedIpfsNetwork: any) {

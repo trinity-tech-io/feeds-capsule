@@ -245,12 +245,10 @@ export class BidPage implements OnInit {
       this.popover = null;
     }
     this.removeEvent();
-    this.event.publish(FeedsEvent.PublishType.search);
-    this.event.publish(FeedsEvent.PublishType.notification);
-    this.event.publish(FeedsEvent.PublishType.addProflieEvent);
     if(this.isBuy){
       this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     }
+    this.native.handleTabsEvents();
   }
 
   initTile() {

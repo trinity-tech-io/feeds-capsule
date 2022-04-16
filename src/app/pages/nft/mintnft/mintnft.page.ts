@@ -141,7 +141,7 @@ export class MintnftPage implements OnInit {
 
   ionViewWillLeave() {
     this.removeEvent();
-    this.event.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents()
   }
 
   ionViewDidLeave() {

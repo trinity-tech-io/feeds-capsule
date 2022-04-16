@@ -239,9 +239,7 @@ export class AssetdetailsPage implements OnInit {
 
   ionViewWillLeave() {
     this.removeEvent();
-    this.events.publish(FeedsEvent.PublishType.search);
-    this.events.publish(FeedsEvent.PublishType.notification);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents();
   }
 
   initTile() {
@@ -299,7 +297,7 @@ export class AssetdetailsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents()
   }
 
  async collectContractData() {

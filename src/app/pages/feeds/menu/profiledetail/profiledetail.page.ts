@@ -186,8 +186,7 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
-    this.events.publish(FeedsEvent.PublishType.addConnectionChanged);
-    this.events.publish(FeedsEvent.PublishType.addProflieEvent);
+    this.native.handleTabsEvents();
   }
 
   handleImages() {
