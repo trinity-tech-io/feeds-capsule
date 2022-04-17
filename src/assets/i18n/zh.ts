@@ -486,6 +486,14 @@ export const zh = {
       '正在等待Essential 授权登录Hive， 请稍后....',
     buttonTitle: '开始',
     synchronizingData: '正在同步数据',
+
+    preparingData: '正在准备数据',
+    creatingScripting: '正在创建scripting',
+    synchronizingChannelData: '正在同步channel数据',
+    synchronizingPostData: '正在同步post数据',
+    synchronizingCommentData: '正在同步comment数据',
+    synchronizingOtherData: '正在同步其他数据',
+
     synchronizingComplete: '同步完成，开始使用'
   },
   ErrorInfo: {

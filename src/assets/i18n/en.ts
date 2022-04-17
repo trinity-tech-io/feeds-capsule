@@ -483,6 +483,14 @@ export const en = {
       'Waiting for Essential authorization to log in to Hive Node, please wait....',
     buttonTitle: 'start',
     synchronizingData: 'Synchronizing data',
+
+    preparingData: 'Preparing data',
+    creatingScripting: 'Creating scripting',
+    synchronizingChannelData: 'Synchronizing channel data',
+    synchronizingPostData: 'Synchronizing post data',
+    synchronizingCommentData: 'Synchronizing comment data',
+    synchronizingOtherData: 'Synchronizing other data',
+
     synchronizingComplete: "The synchronization is complete, Let's go"
   },
   ErrorInfo: {

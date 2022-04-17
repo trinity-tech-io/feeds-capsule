@@ -40,17 +40,30 @@ export class GalleriahivePage implements OnInit {
       this.description = this.translate.instant('GalleriahivePage.synchronizingData');
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
+
+
+      this.description = this.translate.instant('GalleriahivePage.preparingData');
       this.sqliteHelper.createTables();
+
+
       try {
+        this.description = this.translate.instant('GalleriahivePage.creatingScripting');
         await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
       } catch (error) {
-        // console.log("create channel tables error =========", JSON.stringify(error))
       }
 
+      this.description = this.translate.instant('GalleriahivePage.synchronizingChannelData');
       await this.hiveVaultController.syncSelfChannel();
+
+      this.description = this.translate.instant('GalleriahivePage.synchronizingPostData');
       await this.hiveVaultController.syncAllPost();
-      await this.hiveVaultController.syncAllLikeData();
+
+      this.description = this.translate.instant('GalleriahivePage.synchronizingCommentData');
       await this.hiveVaultController.syncAllComments();
+
+      this.description = this.translate.instant('GalleriahivePage.synchronizingOtherData');
+      await this.hiveVaultController.syncAllLikeData();
+
       this.description = this.translate.instant('GalleriahivePage.synchronizingComplete');
       this.buttonDisabled = false;
     })
