@@ -484,6 +484,8 @@ export const zh = {
     description:
       '正在等待Essential 授权登录Hive， 请稍后....',
     buttonTitle: '开始',
+    synchronizingData: '正在同步数据',
+    synchronizingComplete: '同步完成，开始使用'
   },
   ErrorInfo: {
     alreadyExists: '内容已经存在',

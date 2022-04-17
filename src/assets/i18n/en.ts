@@ -481,6 +481,8 @@ export const en = {
     description:
       'Waiting for Essential authorization to log in to Hive Node, please wait....',
     buttonTitle: 'start',
+    synchronizingData: 'Synchronizing data',
+    synchronizingComplete: "The synchronization is complete, Let's go"
   },
   ErrorInfo: {
     alreadyExists: 'Entity Already Exists',

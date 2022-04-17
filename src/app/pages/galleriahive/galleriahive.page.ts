@@ -4,6 +4,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-galleriahive',
@@ -13,23 +14,27 @@ import { NativeService } from 'src/app/services/NativeService';
 export class GalleriahivePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public buttonDisabled = true
-
+  public description = ''
   constructor(
     public titleBarService: TitleBarService,
     private translate: TranslateService,
     private events: Events,
     private native: NativeService,
+    private hiveVaultController: HiveVaultController
   ) {
-
+    this.description = this.translate.instant('GalleriahivePage.description');
   }
 
   ngOnInit() {
   }
-  
-  ionViewWillEnter() {
 
+  ionViewWillEnter() {
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
-      this.buttonDisabled = false
+      this.description = this.translate.instant('GalleriahivePage.synchronizingData');
+      await this.hiveVaultController.syncSelfChannel();
+      await this.hiveVaultController.syncAllPost();
+      this.description = this.translate.instant('GalleriahivePage.synchronizingComplete');
+      this.buttonDisabled = false;
     })
   }
 

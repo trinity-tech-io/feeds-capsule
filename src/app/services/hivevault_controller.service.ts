@@ -1253,17 +1253,13 @@ export class HiveVaultController {
   getCommentList(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('==========111111')
         const commentList = this.dataHelper.getcachedCommentList(postId, refCommentId) || [];
-        console.log('==========22222'+JSON.stringify(commentList));
 
         if (commentList && commentList.length > 0) {
           resolve(commentList);
           return;
         }
-        console.log('==========333333');
         const list = await this.dataHelper.getCommentsV3ByRefId(postId, refCommentId);
-        console.log('==========5555'+JSON.stringify(list));
         if (list && list.length > 0) {
           this.dataHelper.cacheCommentList(postId, refCommentId, list);
           resolve(list);
