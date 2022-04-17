@@ -36,6 +36,8 @@ export class GalleriahivePage implements OnInit {
       this.description = this.translate.instant('GalleriahivePage.synchronizingData');
       await this.hiveVaultController.syncSelfChannel();
       await this.hiveVaultController.syncAllPost();
+      await this.hiveVaultController.syncAllLikeData();
+      await this.hiveVaultController.syncAllComments();
       this.description = this.translate.instant('GalleriahivePage.synchronizingComplete');
       this.buttonDisabled = false;
     })
