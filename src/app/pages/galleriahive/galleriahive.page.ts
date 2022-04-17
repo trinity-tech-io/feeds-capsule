@@ -25,7 +25,8 @@ export class GalleriahivePage implements OnInit {
     private native: NativeService,
     private hiveVaultController: HiveVaultController,
     private dataHelper: DataHelper,
-    private sqliteHelper: FeedsSqliteHelper
+    private sqliteHelper: FeedsSqliteHelper,
+    private zone: NgZone,
   ) {
     this.title = this.translate.instant('GalleriahivePage.title');
     this.description = this.translate.instant('GalleriahivePage.description');
@@ -36,36 +37,38 @@ export class GalleriahivePage implements OnInit {
 
   ionViewWillEnter() {
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
-      this.title = this.translate.instant('GalleriahivePage.titleSuccess');
-      this.description = this.translate.instant('GalleriahivePage.synchronizingData');
-      const signinData = await this.dataHelper.getSigninData();
-      let userDid = signinData.did
+      this.zone.run(async () => {
+        this.title = this.translate.instant('GalleriahivePage.titleSuccess');
+        this.description = this.translate.instant('GalleriahivePage.synchronizingData');
+        const signinData = await this.dataHelper.getSigninData();
+        let userDid = signinData.did
 
 
-      this.description = this.translate.instant('GalleriahivePage.preparingData');
-      this.sqliteHelper.createTables();
+        this.description = this.translate.instant('GalleriahivePage.preparingData');
+        this.sqliteHelper.createTables();
 
 
-      try {
-        this.description = this.translate.instant('GalleriahivePage.creatingScripting');
-        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-      } catch (error) {
-      }
+        try {
+          this.description = this.translate.instant('GalleriahivePage.creatingScripting');
+          await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+        } catch (error) {
+        }
 
-      this.description = this.translate.instant('GalleriahivePage.synchronizingChannelData');
-      await this.hiveVaultController.syncSelfChannel();
+        this.description = this.translate.instant('GalleriahivePage.synchronizingChannelData');
+        await this.hiveVaultController.syncSelfChannel();
 
-      this.description = this.translate.instant('GalleriahivePage.synchronizingPostData');
-      await this.hiveVaultController.syncAllPost();
+        this.description = this.translate.instant('GalleriahivePage.synchronizingPostData');
+        await this.hiveVaultController.syncAllPost();
 
-      this.description = this.translate.instant('GalleriahivePage.synchronizingCommentData');
-      await this.hiveVaultController.syncAllComments();
+        this.description = this.translate.instant('GalleriahivePage.synchronizingCommentData');
+        await this.hiveVaultController.syncAllComments();
 
-      this.description = this.translate.instant('GalleriahivePage.synchronizingOtherData');
-      await this.hiveVaultController.syncAllLikeData();
+        this.description = this.translate.instant('GalleriahivePage.synchronizingOtherData');
+        await this.hiveVaultController.syncAllLikeData();
 
-      this.description = this.translate.instant('GalleriahivePage.synchronizingComplete');
-      this.buttonDisabled = false;
+        this.description = this.translate.instant('GalleriahivePage.synchronizingComplete');
+        this.buttonDisabled = false;
+      });
     })
   }
 
