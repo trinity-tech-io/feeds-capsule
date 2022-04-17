@@ -1040,10 +1040,10 @@ export class HiveVaultHelper {
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, params);
-                console.log("Remove like from scripting , result is", result);
+                Logger.log("Query like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'Remove like from scripting , error:', error);
+                Logger.error(TAG, 'Query like from scripting , error:', error);
                 reject(error);
             }
         });

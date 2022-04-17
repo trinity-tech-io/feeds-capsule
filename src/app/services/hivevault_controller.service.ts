@@ -913,33 +913,27 @@ export class HiveVaultController {
   removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.removeLike(destDid, channelId, postId, commentId);
+
         const createrDid = (await this.dataHelper.getSigninData()).did;
+        const like = await this.dataHelper.getLikeV3ByUser(postId, commentId, createrDid);
+        if (!like) {
+          resolve(null);
+          return;
+        }
+
+        const result = await this.updateLike(destDid, channelId, postId, commentId, FeedsData.PostCommentStatus.deleted);
 
         Logger.log('Remove like result', result);
         if (result) {
-          //   const like: FeedsData.LikeV3 = {
-          //     destDid: destDid,
-          //     postId: postId,
-          //     commentId: commentId,
-
-          //     channelId: channelId,
-          //     createdAt: UtilService.getCurrentTimeNum(),
-          //     createrDid: createrDid,
-          //     proof: '',
-          //     memo: '',
-
-          //     updatedAt:
-          //   }
-          //   await this.dataHelper.removeLikeV3(like);
-          //   resolve(like);
-
+          like.updatedAt = result.updatedAt;
+          like.status = FeedsData.PostCommentStatus.deleted;
+          await this.dataHelper.updateLikeV3(like);
+          resolve(like);
         } else {
           const errorMsg = 'Remove like error';
           reject(errorMsg);
         }
-        //TODO
-        // this.dataHelper.removeLikeV3();
+
       } catch (error) {
         Logger.error(TAG, 'Remove like data error', error);
         reject(error);
