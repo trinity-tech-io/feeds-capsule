@@ -382,9 +382,8 @@ export class CommonPageService {
   ) {
     try {
       isloadingLikeMap[commentId] = "loading"
-      hiveVaultController.getLikeStatus(postId, commentId)(
-        destDid, channelId, postId).then((status: boolean) => {
-          isInitLikeStatus[postId] = "13";
+      hiveVaultController.getLikeStatus(postId, commentId)
+      .then((status: boolean) => {
           if (status) {
             likedCommentMap[commentId] = "like";
           } else {
