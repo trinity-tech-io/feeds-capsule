@@ -481,10 +481,13 @@ export class ProfilePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment) => {
+    this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
       Logger.log(TAG, "======= Receive getCommentFinish ========");
       let postId = comment.postId;
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
+      let refcommentId = comment.refcommentId;
+      let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
+       cachedCommentList.push(comment);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {

@@ -42,6 +42,9 @@ export class CommentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log("=====refcommentId======",this.refcommentId);
+    console.log("=====refcommentId======",typeof(this.refcommentId));
+
     if (this.platform.is('ios')) {
       this.isAndroid = "ios";
     } else {
