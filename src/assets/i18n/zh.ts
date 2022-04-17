@@ -480,7 +480,8 @@ export const zh = {
     channelName: '频道名称',
   },
   GalleriahivePage: {
-    title: '登录Hive Node中',
+    title: '登录Hive 中',
+    titleSuccess: '登录Hive成功',
     description:
       '正在等待Essential 授权登录Hive， 请稍后....',
     buttonTitle: '开始',

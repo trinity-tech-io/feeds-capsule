@@ -477,7 +477,8 @@ export const en = {
     channelName: 'Channel Name',
   },
   GalleriahivePage: {
-    title: 'Log in to Hive Node',
+    title: 'Log in to Hive',
+    titleSuccess: 'logged in to hive',
     description:
       'Waiting for Essential authorization to log in to Hive Node, please wait....',
     buttonTitle: 'start',

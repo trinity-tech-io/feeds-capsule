@@ -15,6 +15,7 @@ export class GalleriahivePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public buttonDisabled = true
   public description = ''
+  public title = ''
   constructor(
     public titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -22,6 +23,7 @@ export class GalleriahivePage implements OnInit {
     private native: NativeService,
     private hiveVaultController: HiveVaultController
   ) {
+    this.title = this.translate.instant('GalleriahivePage.title');
     this.description = this.translate.instant('GalleriahivePage.description');
   }
 
@@ -30,6 +32,7 @@ export class GalleriahivePage implements OnInit {
 
   ionViewWillEnter() {
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
+      this.title = this.translate.instant('GalleriahivePage.titleSuccess');
       this.description = this.translate.instant('GalleriahivePage.synchronizingData');
       await this.hiveVaultController.syncSelfChannel();
       await this.hiveVaultController.syncAllPost();
