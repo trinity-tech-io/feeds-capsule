@@ -6168,7 +6168,7 @@ export class FeedService {
         return;
       }
       resolve(did);
-      this.carrierService.init(did);
+      // this.carrierService.init(did);
     });
   }
 

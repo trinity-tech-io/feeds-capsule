@@ -95,27 +95,19 @@ export class MyApp {
     this.initializeApp();
     this.initProfileData();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async () => {
-      try {
-        await this.downloadEssAvatar()
-        this.downloadCustomeAvatar()
 
-        this.initProfileData();
+      try {
+        await this.hiveVaultController.prepareConnection();
+
+        // await this.downloadEssAvatar()
+        // this.downloadCustomeAvatar()
+
+        // this.initProfileData();
       } catch (error) {
         Logger.error(TAG, error)
       }
     })
 
-    // authEssentialSuccess
-    this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
-      const signinData = await this.dataHelper.getSigninData();
-      let userDid = signinData.did
-      this.sqliteHelper.createTables();
-      try {
-        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-      } catch (error) {
-        console.log("create channel tables error =========", JSON.stringify(error))
-      }
-    })
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
     });
@@ -322,12 +314,12 @@ export class MyApp {
     this.updateElaPrice();
     this.dataHelper
       .loadData("feeds:elaPrice").then((elaPrice: any) => {
-      if (elaPrice === null) {
-        this.setElaUsdPrice("");
-      } else {
-        this.setElaUsdPrice(elaPrice);
-      }
-    }).catch(err => { });
+        if (elaPrice === null) {
+          this.setElaUsdPrice("");
+        } else {
+          this.setElaUsdPrice(elaPrice);
+        }
+      }).catch(err => { });
 
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
@@ -350,7 +342,7 @@ export class MyApp {
       })
       .catch(err => { });
 
-      this.dataHelper
+    this.dataHelper
       .loadData('feeds.hideDeletedPosts')
       .then(status => {
         if (status === null) {
@@ -361,7 +353,7 @@ export class MyApp {
       })
       .catch(err => { });
 
-      this.dataHelper
+    this.dataHelper
       .loadData('feeds.hideDeletedComments')
       .then(status => {
         if (status === null) {

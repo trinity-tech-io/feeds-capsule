@@ -5,6 +5,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 
 @Component({
   selector: 'app-galleriahive',
@@ -21,7 +23,9 @@ export class GalleriahivePage implements OnInit {
     private translate: TranslateService,
     private events: Events,
     private native: NativeService,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private dataHelper: DataHelper,
+    private sqliteHelper: FeedsSqliteHelper
   ) {
     this.title = this.translate.instant('GalleriahivePage.title');
     this.description = this.translate.instant('GalleriahivePage.description');
@@ -34,6 +38,15 @@ export class GalleriahivePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
       this.title = this.translate.instant('GalleriahivePage.titleSuccess');
       this.description = this.translate.instant('GalleriahivePage.synchronizingData');
+      const signinData = await this.dataHelper.getSigninData();
+      let userDid = signinData.did
+      this.sqliteHelper.createTables();
+      try {
+        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+      } catch (error) {
+        // console.log("create channel tables error =========", JSON.stringify(error))
+      }
+
       await this.hiveVaultController.syncSelfChannel();
       await this.hiveVaultController.syncAllPost();
       await this.hiveVaultController.syncAllLikeData();
@@ -41,6 +54,10 @@ export class GalleriahivePage implements OnInit {
       this.description = this.translate.instant('GalleriahivePage.synchronizingComplete');
       this.buttonDisabled = false;
     })
+  }
+
+  ionViewWillLeave() {
+    this.events.unsubscribe(FeedsEvent.PublishType.authEssentialSuccess);
   }
 
   openHomePage() {

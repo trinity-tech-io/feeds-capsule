@@ -48,11 +48,11 @@ export class HiveService {
           AppContext.setupResolver(currentNet, HiveService.RESOLVE_CACHE)
         } catch (error) {
         }
-
         const rootDirEntry = await this.fileService.resolveLocalFileSystemURL()
         const path = rootDirEntry.fullPath
         // auth
         let self = this
+        let cachedAuthToken = '';
         const context = await AppContext.build({
           getLocalDataDir(): string {
             return path
@@ -72,7 +72,6 @@ export class HiveService {
             return new Promise(async (resolve, reject) => {
               try {
                 const authToken = await self.standardAuthService.generateHiveAuthPresentationJWT(jwtToken)
-                self.events.publish(FeedsEvent.PublishType.authEssentialSuccess);
                 resolve(authToken)
               } catch (error) {
                 Logger.error(TAG, "get Authorization Error: ", error)
@@ -83,7 +82,7 @@ export class HiveService {
         }, userDidString);
         resolve(context)
       } catch (error) {
-        Logger.error(TAG, "creat Error: ", error)
+        // Logger.error(TAG, "creat Error: ", error)
         reject(error)
       }
     })
@@ -151,18 +150,20 @@ export class HiveService {
     return vault
   }
 
-  async getMyVault(): VaultServices {
-    const userDid = (await this.dataHelper.getSigninData()).did
-    let vault = values[userDid]
-    console.log("vault ========= ", vault)
-    if (vault == undefined) {
-      vault = await this.creatVault(userDid)
-      const userDID = DID.from(userDid)
-      const userDIDDocument = await userDID.resolve()
-      this.parseUserDIDDocument(userDid, userDIDDocument)
-    }
-    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
-    return vault
+  getMyVault(): Promise<VaultServices> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userDid = (await this.dataHelper.getSigninData()).did
+        let vault = values[userDid]
+        if (vault == undefined) {
+          vault = await this.creatVault(userDid)
+        }
+        Logger.log(TAG, 'Create vault is', this.vault);
+        resolve(vault);
+      } catch (error) {
+        Logger.error(TAG, 'Create vault error', error);
+      }
+    });
   }
 
   async getDatabaseService() {
@@ -195,7 +196,7 @@ export class HiveService {
       try {
         const databaseService = await this.getDatabaseService()
         const result = await databaseService.deleteCollection(collectionName);
-         resolve(result)
+        resolve(result)
       } catch (error) {
         Logger.error(TAG, 'delete collection error', error);
         reject(error);

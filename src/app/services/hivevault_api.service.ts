@@ -188,4 +188,8 @@ export class HiveVaultApi {
   querySubscription(targetDid: string, channelId: string): Promise<any> {
     return this.hiveVaultHelper.querySubscriptionInfoByChannelId(targetDid, channelId);
   }
+
+  prepareConnection() {
+    return this.hiveVaultHelper.prepareConnection();
+  }
 }

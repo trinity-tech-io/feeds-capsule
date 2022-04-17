@@ -11,7 +11,6 @@ import { FileHelperService } from './FileHelperService';
 import _ from 'lodash';
 
 const TAG = 'HiveVaultController';
-let eventBus: Events = null;
 
 @Injectable()
 export class HiveVaultController {
@@ -20,6 +19,7 @@ export class HiveVaultController {
     private dataHelper: DataHelper,
     private postHelperService: PostHelperService,
     private fileHelperService: FileHelperService,
+    private eventBus: Events
   ) {
   }
 
@@ -38,6 +38,7 @@ export class HiveVaultController {
           const channelId = subscribedChannel.channelId
           const destDid = subscribedChannel.destDid
 
+          // const localPost = await this.dataHelper.getPostV3ById(destDid, postId)
           const posts = await this.getPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
@@ -52,9 +53,10 @@ export class HiveVaultController {
   syncAllComments(): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        let commentList = [];
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
         if (!subscribedChannels) {
-          resolve([]);
+          resolve(commentList);
           return;
         }
 
@@ -63,9 +65,10 @@ export class HiveVaultController {
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          await this.queryCommentByChannel(destDid, channelId);
+          const comments = await this.queryCommentByChannel(destDid, channelId);
+          commentList.push(comments);
         }
-        resolve([]);
+        resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'Sync all comment error', error);
         reject(error);
@@ -269,7 +272,7 @@ export class HiveVaultController {
           for (let postIndex = 0; postIndex < postList.length; postIndex++) {
             let postId = postList[postIndex].postId;
             let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(targetDid, postId) || null;
-            if (post === null) {
+            if (!post) {
               await this.dataHelper.addPostV3(postList[postIndex]);
             } else {
               await this.dataHelper.updatePostV3(postList[postIndex]);
@@ -316,15 +319,9 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryCommentByChannel(targetDid, channelId);
         Logger.log(TAG, 'Query comment from channel, result is', result);
-        if (result) {
-          const commentList = HiveVaultResultParse.parseCommentResult(targetDid, result);
 
-          this.dataHelper.updateCommentsV3(commentList);
-          resolve(commentList);
-        } else {
-          const errorMsg = 'Query comment from channel error';
-          Logger.error(TAG, errorMsg);
-        }
+        const commentsResult = await this.handleCommentResult(targetDid, result);
+        resolve(commentsResult);
       } catch (error) {
         Logger.error(TAG, 'Query comment by channel error', error);
         reject(error);
@@ -762,7 +759,7 @@ export class HiveVaultController {
           for (let postIndex = 0; postIndex < parseResult.length; postIndex++) {
             let item: FeedsData.PostV3 = parseResult[postIndex];
             let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
-            if (post === null) {
+            if (!post) {
               await this.dataHelper.addPostV3(item);
             } else {
               await this.dataHelper.updatePostV3(item);
@@ -988,6 +985,7 @@ export class HiveVaultController {
   unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
+
         const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
         console.log('getLikeByPost result', result);
 
@@ -1116,6 +1114,41 @@ export class HiveVaultController {
   }
 
   restoreSubscriptions() {
+  }
+
+  handleCommentResult(targetDid: string, result: any): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!result) {
+          reject('Query comment error, result null');
+          return;
+        }
+
+        const commentList = HiveVaultResultParse.parseCommentResult(targetDid, result);
+
+        if (!commentList || commentList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        let commentsResult = [];
+        for (let index = 0; index < commentList.length; index++) {
+          const comment = commentList[index];
+          const localComment = await this.dataHelper.getCommentV3ById(comment.postId, comment.commentId);
+
+          if (!localComment) {
+            this.dataHelper.addCommentV3(comment);
+          } else {
+            this.dataHelper.updateCommentV3(comment);
+          }
+          commentsResult.push(comment);
+        }
+        resolve(commentsResult);
+      } catch (error) {
+        Logger.error(TAG, 'Handle comment result error', error);
+        reject(error);
+      }
+    });
   }
 
   handleLikeResult(destDid: string, result: any): Promise<FeedsData.LikeV3[]> {
@@ -1329,6 +1362,18 @@ export class HiveVaultController {
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);
         reject([]);
+      }
+    });
+  }
+
+  prepareConnection(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.hiveVaultApi.prepareConnection();
+        this.eventBus.publish(FeedsEvent.PublishType.authEssentialSuccess);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Prepare Connection error', error);
       }
     });
   }

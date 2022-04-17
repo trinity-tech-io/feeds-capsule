@@ -1503,4 +1503,15 @@ export class HiveVaultHelper {
         return this.callQueryUserDisplayName(targetDid, channelId, userDid);
     }
     /** query displayName end */
+
+    prepareConnection(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.hiveService.getMyVault();
+                resolve('FINISH')
+            } catch (error) {
+                Logger.error(TAG, 'Prepare Connection error', error);
+            }
+        });
+    }
 }
