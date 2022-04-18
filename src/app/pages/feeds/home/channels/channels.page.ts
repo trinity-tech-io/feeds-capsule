@@ -436,7 +436,8 @@ export class ChannelsPage implements OnInit {
       this.isLoadingLikeMap,
       this.likeMap,
       this.likeNumMap,
-      this.hiveVaultController);
+      this.hiveVaultController,
+      this.dataHelper);
   }
 
   getContentText(content: string): string {

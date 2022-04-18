@@ -205,7 +205,6 @@ export class ProfilePage implements OnInit {
   }
 
   ngOnInit() {
-    console.log("ProfilePage")
   }
 
   async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
@@ -269,6 +268,7 @@ export class ProfilePage implements OnInit {
     }
 
     this.totalLikeList = await this.sortLikeList();
+    this.likeSum = this.totalLikeList.length;
     if (this.totalLikeList.length - this.pageNumber * this.startIndex > 0) {
       this.likeList = this.likeList.slice(0, this.startIndex * this.pageNumber);
       this.infiniteScroll.disabled = false;
@@ -286,32 +286,20 @@ export class ProfilePage implements OnInit {
   }
 
   async sortLikeList() {
-    //let likeList = this.feedService.getLikeList() || [];
     let likeList = [];
-    let userDid = (await this.dataHelper.getSigninData()).did;
-
-    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List();
-    for (let item of subscribedChannel) {
-      let destDid = item.destDid;
-      let channelId = item.channelId;
-      try {
-        let result = await this.hiveVaultController.getLike(destDid, channelId);
-        let list = result || [];
-        if (list.length > 0) {
-          for (let index = 0; index < list.length; index++) {
-            let postId = list[index].postId;
-            let commentId = list[index].commentId;
-            let createrDid = list[index].createrDid;
-            if (commentId === '0' && userDid === createrDid) {
-              let post = await this.dataHelper.getPostV3ById(destDid, postId);
+    try {
+     let likes: FeedsData.LikeV3[] = await this.dataHelper.getSelfAllLikeV3Data() || [];
+        for(let likeIndex = 0; likeIndex < likes.length; likeIndex++){
+            let item = likes[likeIndex];
+            if(item.commentId === '0' && item.status === FeedsData.PostCommentStatus.available){
+              let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId);
               likeList.push(post);
             }
-          }
         }
-      } catch (error) {
+    } catch (error) {
 
-      }
     }
+
     this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
@@ -469,7 +457,6 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () => {
       this.zone.run(() => {
-        console.log("channelsDataUpdate ===== ")
         this.initMyFeeds();
       });
     });
@@ -679,19 +666,24 @@ export class ProfilePage implements OnInit {
         }
         break;
       case 'ProfilePage.collectibles':
-        // await this.getCollectiblesList();
-        await this.refreshCollectibles();
-        this.refreshCollectiblesVisibleareaImage();
-        event.target.complete();
+        try {
+          await this.refreshCollectibles();
+          this.refreshCollectiblesVisibleareaImage();
+          event.target.complete();
+        } catch (error) {
+          event.target.complete();
+        }
+
         break;
       case 'ProfilePage.myLikes':
-        let sId = setTimeout(() => {
-          this.hiveVaultController.syncAllLikeData();
+        try {
+         await this.hiveVaultController.syncAllLikeData();
           this.startIndex = 0;
           this.initLike();
           event.target.complete();
-          clearTimeout(sId);
-        }, 500);
+        } catch (error) {
+          event.target.complete();
+        }
         break;
     }
   }

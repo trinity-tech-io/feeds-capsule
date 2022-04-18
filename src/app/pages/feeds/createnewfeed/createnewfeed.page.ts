@@ -178,7 +178,6 @@ export class CreatenewfeedPage implements OnInit {
       this.native.pop()
     } catch (error) {
       this.native.hideLoading();
-      console.log("update channel error =========", JSON.stringify(error))
       }
   }
 

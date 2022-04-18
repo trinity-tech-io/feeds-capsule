@@ -616,7 +616,8 @@ export class HomePage implements OnInit {
               this.isLoadingLikeMap,
               this.likeMap,
               this.likeNumMap,
-              this.hiveVaultController);
+              this.hiveVaultController,
+              this.dataHelper);
   }
 
   navTo(destDid: string, channelId: string, postId: number) {

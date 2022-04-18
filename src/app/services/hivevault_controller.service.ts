@@ -942,52 +942,12 @@ export class HiveVaultController {
     return this.hiveVaultApi.updateLike(targetDid, channelId, postId, commentId, status);
   }
 
-  getLike(destDid: string, channelId: string): Promise<FeedsData.LikeV3[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await this.hiveVaultApi.queryLikeByChannel(destDid, channelId);
-        Logger.log('Get like result', result);
-        if (result) {
-          const likes = HiveVaultResultParse.parseLikeResult(destDid, result);
-          await this.dataHelper.addLikesV3(likes);
-          resolve(likes);
-        } else {
-          const errorMSG = 'Get like error';
-          reject(errorMSG);
-        }
-      } catch (error) {
-        reject([]);
-        Logger.error(TAG, 'Get like data error', error);
-      }
-    });
-  }
-
-  getLikeByPost(destDid: string, channelId: string, postId: string): Promise<FeedsData.LikeV3[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await this.hiveVaultApi.queryLikeByPost(destDid, channelId, postId);
-        Logger.log('Get like result', result);
-        if (result) {
-          const likes = HiveVaultResultParse.parseLikeResult(destDid, result);
-          await this.dataHelper.addLikesV3(likes);
-          resolve(likes);
-        } else {
-          const errorMSG = 'Get like error';
-          reject(errorMSG);
-        }
-      } catch (error) {
-        Logger.error(TAG, 'getLikeByPost data error', error);
-        reject([]);
-      }
-    });
-  }
-
   unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
 
         const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
-        console.log('getLikeByPost result', result);
+        console.log('unSubscribeChannel result', result);
 
         if (result) {
           const subscribedChannel: FeedsData.SubscribedChannelV3 = {
@@ -1305,7 +1265,9 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let likedStatus = this.dataHelper.getCachedLikeStatus(postId, commentId);
+        console.log("===============likedStatus0",likedStatus);
         if (likedStatus) {
+          console.log("===============likedStatus1",likedStatus);
           resolve(likedStatus);
           return;
         }

@@ -621,7 +621,6 @@ export class SearchPage implements OnInit {
 
   //TODO
   discoverSubscribe(feedInfo: any) {
-    console.log('discoverSubscribe', feedInfo);
     let feedUrl = feedInfo['url'];
     let feedsUrlHash = feedInfo['feedsUrlHash'];
     let followers = feedInfo['followers'];

@@ -514,6 +514,13 @@ export class PostdetailPage implements OnInit {
         this.hiveVaultController.removeLike(
           this.destDid, this.channelId, this.postId, '0').
           then(() => {
+            //update cached
+            this.dataHelper.cacheLikeStatus(this.postId, '0', false);
+            let likedNum = this.dataHelper.getCachedLikeNum(this.postId, '0') || 0;
+            if (likedNum > 0) {
+            likedNum = likedNum - 1;
+            }
+            this.dataHelper.cacheLikeNum(this.postId, '0', likedNum);
             this.isLoadingLike = false;
           }).catch(err => {
             this.isLoadingLike = false;
@@ -535,6 +542,11 @@ export class PostdetailPage implements OnInit {
       this.hiveVaultController.like(
         this.destDid, this.channelId, this.postId, '0').
         then(() => {
+           //update cached
+           this.dataHelper.cacheLikeStatus(this.postId, '0', true);
+           let likedNum = this.dataHelper.getCachedLikeNum(this.postId, '0') || 0;
+           likedNum = likedNum + 1;
+           this.dataHelper.cacheLikeNum(this.postId, '0', likedNum);
           this.isLoadingLike = false;
         }).catch((err) => {
           this.isLoadingLike = false;
@@ -562,7 +574,9 @@ export class PostdetailPage implements OnInit {
 
     CommonPageService.
       likeComment(comment, this.likedCommentMap,
-        this.isloadingLikeMap, this.likedCommentNum, this.hiveVaultController);
+        this.isloadingLikeMap, this.likedCommentNum,
+        this.hiveVaultController,
+        this.dataHelper);
   }
 
   handleUpdateDate(updatedTime: number) {

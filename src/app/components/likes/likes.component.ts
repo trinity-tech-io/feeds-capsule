@@ -10,6 +10,7 @@ import { ViewHelper } from '../../services/viewhelper.service';
 import { FeedsServiceApi } from '../../services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { Events } from 'src/app/services/events.service';
 import _ from 'lodash';
 import { CommonPageService } from 'src/app/services/common.page.service';
 
@@ -59,7 +60,8 @@ export class LikesComponent implements OnInit {
     public appService: AppService,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private events: Events
   ) { }
 
   ngOnInit() {
@@ -96,7 +98,10 @@ export class LikesComponent implements OnInit {
       this.isLoadingLikeMap,
       this.likeMap,
       this.likeNumMap,
-      this.hiveVaultController);
+      this.hiveVaultController,
+      this.dataHelper).then(()=>{
+        this.events.publish(FeedsEvent.PublishType.updateLikeList);
+      });
   }
 
   getContentText(content: string): string {

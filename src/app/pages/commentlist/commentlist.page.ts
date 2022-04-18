@@ -322,7 +322,8 @@ export class CommentlistPage implements OnInit {
 
     CommonPageService.
       likeComment(comment, this.likedCommentMap,
-        this.isloadingLikeMap, this.likedCommentNum, this.hiveVaultController);
+        this.isloadingLikeMap, this.likedCommentNum,
+        this.hiveVaultController, this.dataHelper);
 
   }
 
