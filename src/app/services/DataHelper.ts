@@ -149,6 +149,7 @@ export class DataHelper {
   private cachedLikeStatusMap: { [postId_commentId: string]: boolean } = {};
   private cachedLikeNumMap: { [postId_commentId: string]: number } = {};
 
+  private lastPostMap: { [destDid_channel: string]: FeedsData.PostV3 } = {};
   constructor(
     private storageService: StorageService,
     private events: Events,
@@ -3745,5 +3746,17 @@ export class DataHelper {
 
   cleanCacheLikeNum() {
     this.cachedLikeNumMap = {};
+  }
+
+  updateLastPost(destDid: string, channelId: string, post: FeedsData.PostV3) {
+    if (!this.lastPostMap)
+      this.lastPostMap = {};
+    const key = destDid + '_' + channelId;
+    this.lastPostMap[key] = post;
+  }
+
+  getLastPost(destDid: string, channelId): FeedsData.PostV3 {
+    const key = destDid + '_' + channelId;
+    return this.lastPostMap[key];
   }
 }

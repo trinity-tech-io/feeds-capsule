@@ -167,7 +167,7 @@ export class HiveVaultController {
           const channelId = subscribedChannel.channelId;
 
           const channel = await this.getChannelInfoById(destDid, channelId) || null;
-          if(channel != null){
+          if (channel != null) {
             channelList.push(channel);
           }
         }
@@ -307,11 +307,11 @@ export class HiveVaultController {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
         const channelList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
         let channel: FeedsData.ChannelV3 = channelList[0] || null;
-        if(channel != null) {
+        if (channel != null) {
           let newChannel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(channel.destDid, channel.channelId) || null;
-          if(newChannel === null){
+          if (newChannel === null) {
             await this.dataHelper.addChannelV3(channel);
-          }else{
+          } else {
             await this.dataHelper.updateChannelV3(channel);
           }
         }
@@ -1144,9 +1144,9 @@ export class HiveVaultController {
           const element = likesResult[index];
           const localLike = await this.dataHelper.getLikeV3ByUser(element.postId, element.commentId, element.createrDid);
           if (localLike) {
-           await this.dataHelper.updateLikeV3(element);
+            await this.dataHelper.updateLikeV3(element);
           } else {
-           await this.dataHelper.addLikeV3(element);
+            await this.dataHelper.addLikeV3(element);
           }
           likeList.push(element);
         }
@@ -1278,9 +1278,9 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let likedStatus = this.dataHelper.getCachedLikeStatus(postId, commentId);
-        console.log("===============likedStatus0",likedStatus);
+        console.log("===============likedStatus0", likedStatus);
         if (likedStatus) {
-          console.log("===============likedStatus1",likedStatus);
+          console.log("===============likedStatus1", likedStatus);
           resolve(likedStatus);
           return;
         }
@@ -1351,5 +1351,16 @@ export class HiveVaultController {
         Logger.error(TAG, 'Prepare Connection error', error);
       }
     });
+  }
+
+  checkPostIsLast(destDid: string, channelId: string): FeedsData.PostV3 {
+    const post = this.dataHelper.getLastPost(destDid, channelId);
+    if (!post) {
+      return null;
+    }
+
+    //TODO sync post by time
+    // this.hiveVaultApi.queryPostByRangeOfTime()
+    return post;
   }
 }
