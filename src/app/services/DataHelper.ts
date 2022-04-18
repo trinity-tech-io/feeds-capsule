@@ -3426,7 +3426,7 @@ export class DataHelper {
         const result = await this.updateCommentV3(comment);
         resolve(comment);
       } catch (error) {
-        Logger.error(TAG, 'Query comment num error', error);
+        Logger.error(TAG, 'Delete comment num error', error);
         reject(error);
       }
     });
@@ -3533,6 +3533,19 @@ export class DataHelper {
     });
   }
 
+  getSelfAllLikeV3Data(): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const did = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryUserAllLikeData(did) || [];
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'remove likes error', error);
+        reject(error)
+      }
+    });
+  }
+
   getSelfLikeV3(postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3564,7 +3577,7 @@ export class DataHelper {
         const num = this.sqliteHelper.queryLikeNum(postId, commentId);
         resolve(num);
       } catch (error) {
-        Logger.error(TAG, 'Query comment num error', error);
+        Logger.error(TAG, 'Query like num error', error);
         reject(error);
       }
     });

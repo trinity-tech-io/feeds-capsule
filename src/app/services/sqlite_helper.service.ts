@@ -754,7 +754,7 @@ export class FeedsSqliteHelper {
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
-        Logger.error(TAG, 'query comment Data error', error);
+        Logger.error(TAG, 'Query like Data error', error);
         reject(error);
       }
     });
@@ -770,7 +770,7 @@ export class FeedsSqliteHelper {
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
-        Logger.error(TAG, 'query comment Data error', error);
+        Logger.error(TAG, 'query like Data error', error);
         reject(error);
       }
     });
@@ -785,7 +785,7 @@ export class FeedsSqliteHelper {
         const num = this.parseNum(result)
         resolve(num);
       } catch (error) {
-        Logger.error(TAG, 'Query comment num error', error);
+        Logger.error(TAG, 'Query like num error', error);
         reject(error);
       }
     });
@@ -801,7 +801,23 @@ export class FeedsSqliteHelper {
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
-        Logger.error(TAG, 'query comment Data error', error);
+        Logger.error(TAG, 'Query user likes data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryUserAllLikeData(userDid: string): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE creater_did=?'
+        const params = [userDid];
+
+        const result = await this.executeSql(statement, params);
+        const likeList = this.parseLikeData(result);
+        resolve(likeList);
+      } catch (error) {
+        Logger.error(TAG, 'Query user all like data error', error);
         reject(error);
       }
     });
