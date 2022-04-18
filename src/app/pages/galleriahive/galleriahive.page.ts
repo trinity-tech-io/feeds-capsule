@@ -40,6 +40,13 @@ export class GalleriahivePage implements OnInit {
       this.zone.run(async () => {
         this.title = this.translate.instant('GalleriahivePage.titleSuccess');
         this.description = this.translate.instant('GalleriahivePage.synchronizingData');
+
+        try {
+          await this.hiveVaultController.downloadEssAvatar()
+          await this.hiveVaultController.downloadCustomeAvatar("custome")
+        } catch {
+        }
+
         const signinData = await this.dataHelper.getSigninData();
         let userDid = signinData.did
 

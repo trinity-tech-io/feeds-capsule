@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ScriptingService, Executable, InsertOptions, File as HiveFile, VaultServices, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
+import { Executable, InsertOptions, File as HiveFile, VaultServices, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -93,6 +93,10 @@ export class HiveService {
       let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
       const context = await this.creatAppContext(appinstanceDocument, userDid)
       const vault = new VaultServices(context)
+      const userDID = DID.from(userDid)
+      const userDIDDocument = await userDID.resolve()
+      this.parseUserDIDDocument(userDid, userDIDDocument)
+
       this.vaults[userDid] = vault
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
       return vault
@@ -238,7 +242,7 @@ export class HiveService {
   async downloadEssAvatarTransactionId() {
     try {
       const avatarParam = this.avatarParam
-      if (avatarParam === null) {
+      if (avatarParam === null || avatarParam == undefined) {
         return
       }
       let userDid = (await this.dataHelper.getSigninData()).did

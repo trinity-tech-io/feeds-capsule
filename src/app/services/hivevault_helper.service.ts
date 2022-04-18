@@ -12,6 +12,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { trace } from 'console';
 import { R3TargetBinder } from '@angular/compiler';
 import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
+import { registerLocaleData } from '@angular/common';
 
 const TAG = 'HiveVaultHelper';
 
@@ -1288,6 +1289,10 @@ export class HiveVaultHelper {
             try {
                 let userDid = (await this.dataHelper.getSigninData()).did
                 const result = await this.hiveService.downloadEssAvatarTransactionId()
+                if (result === undefined) {
+                    resolve(null)
+                    return
+                }
                 const transaction_id = result["download"]["transaction_id"]
                 let dataBuffer = await this.hiveService.downloadScripting(userDid, transaction_id)
                 const rawImage = await rawImageToBase64DataUrl(dataBuffer)
@@ -1507,10 +1512,11 @@ export class HiveVaultHelper {
     prepareConnection(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.hiveService.getMyVault();
+                await this.registerQueryChannelInfoScripting()
                 resolve('FINISH')
             } catch (error) {
                 Logger.error(TAG, 'Prepare Connection error', error);
+                reject(error)
             }
         });
     }

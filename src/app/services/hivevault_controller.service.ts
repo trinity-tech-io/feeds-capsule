@@ -646,6 +646,10 @@ export class HiveVaultController {
           return
         }
         const rawImage = await this.hiveVaultApi.downloadEssAvatar();
+        if (rawImage === undefined || rawImage === null) {
+          resolve(null)
+          return
+        }
         const savekey = userDid + "_ess_avatar"
         this.dataHelper.saveUserAvatar(savekey, rawImage)
         resolve(rawImage);
