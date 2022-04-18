@@ -3461,13 +3461,12 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         if (!like) {
-          this.sqliteHelper.updateLike(like);
           resolve('FINISH');
           return;
-        } else {
-          Logger.error(TAG, 'Update like error');
-          reject('Update like error');
         }
+
+        this.sqliteHelper.updateLike(like);
+
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Update like error', error);
