@@ -166,8 +166,10 @@ export class HiveVaultController {
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          const channel = await this.getChannelInfoById(destDid, channelId);
-          channelList.push(channel);
+          const channel = await this.getChannelInfoById(destDid, channelId) || null;
+          if(channel != null){
+            channelList.push(channel);
+          }
         }
 
         resolve(channelList);
@@ -299,14 +301,21 @@ export class HiveVaultController {
     return this.hiveVaultApi.downloadScripting(targetDid, mediaPath)
   }
 
-  getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3[]> {
+  getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
         const channelList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
-        console.log("=======channelList=======" + JSON.stringify(channelList));
-        await this.dataHelper.addChannelsV3(channelList)
-        resolve(channelList);
+        let channel: FeedsData.ChannelV3 = channelList[0] || null;
+        if(channel != null) {
+          let newChannel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(channel.destDid, channel.channelId) || null;
+          if(newChannel === null){
+            await this.dataHelper.addChannelV3(channel);
+          }else{
+            await this.dataHelper.updateChannelV3(channel);
+          }
+        }
+        resolve(channel);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);

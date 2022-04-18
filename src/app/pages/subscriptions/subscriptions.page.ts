@@ -148,14 +148,14 @@ export class SubscriptionsPage implements OnInit {
     return list;
   }
 
-  doRefresh(event: any) {
-    let sId = setTimeout(() => {
-      //TODO
-      this.hiveVaultController.syncAllChannelInfo();
+  async doRefresh(event: any) {
+    try{
+     await this.hiveVaultController.syncAllChannelInfo();
       this.initFollowing();
       event.target.complete();
-      clearTimeout(sId);
-    }, 500);
+    }catch(err){
+      event.target.complete();
+    }
   }
 
   async getQrCodeString(channel: any) {
