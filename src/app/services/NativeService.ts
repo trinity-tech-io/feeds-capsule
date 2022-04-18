@@ -317,7 +317,6 @@ export class NativeService {
       isUpdate = true;
     }
     let url: string = this.router.url;
-    console.log("====url=====",url);
     switch(url) {
       case "/tabs/home":
       case "/home":

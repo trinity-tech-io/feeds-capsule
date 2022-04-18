@@ -1309,9 +1309,9 @@ export class HiveVaultController {
           resolve(likedStatus);
           return;
         }
-        const list = await this.dataHelper.getSelfLikeV3(postId, commentId);
+        const list = await this.dataHelper.getSelfLikeV3(postId, commentId) || '';
 
-        if (list) {
+        if (list && list.status === FeedsData.PostCommentStatus.available) {
           likedStatus = true;
         } else {
           likedStatus = false;
