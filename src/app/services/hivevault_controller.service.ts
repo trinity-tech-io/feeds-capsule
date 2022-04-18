@@ -1144,9 +1144,9 @@ export class HiveVaultController {
           const element = likesResult[index];
           const localLike = await this.dataHelper.getLikeV3ByUser(element.postId, element.commentId, element.createrDid);
           if (localLike) {
-            this.dataHelper.updateLikeV3(element);
+           await this.dataHelper.updateLikeV3(element);
           } else {
-            this.dataHelper.addLikeV3(element);
+           await this.dataHelper.addLikeV3(element);
           }
           likeList.push(element);
         }
