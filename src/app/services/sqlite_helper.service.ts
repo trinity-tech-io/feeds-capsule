@@ -763,8 +763,8 @@ export class FeedsSqliteHelper {
   queryLikeDataById(postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=?'
-        const params = [postId, commentId];
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and status=?'
+        const params = [postId, commentId, FeedsData.PostCommentStatus.available];
 
         const result = await this.executeSql(statement, params);
         const likeList = this.parseLikeData(result);
@@ -779,8 +779,8 @@ export class FeedsSqliteHelper {
   queryLikeNum(postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=?'
-        const params = [postId, commentId];
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and status=?'
+        const params = [postId, commentId, FeedsData.PostCommentStatus.available];
         const result = await this.executeSql(statement, params);
         const num = this.parseNum(result)
         resolve(num);
@@ -794,8 +794,8 @@ export class FeedsSqliteHelper {
   queryUserLikeData(postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and creater_did=?'
-        const params = [postId, commentId, userDid];
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and creater_did=? and status=?'
+        const params = [postId, commentId, userDid, FeedsData.PostCommentStatus.available];
 
         const result = await this.executeSql(statement, params);
         const likeList = this.parseLikeData(result);
@@ -810,8 +810,8 @@ export class FeedsSqliteHelper {
   queryUserAllLikeData(userDid: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE creater_did=?'
-        const params = [userDid];
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE creater_did=? and status=?'
+        const params = [userDid, FeedsData.PostCommentStatus.available];
 
         const result = await this.executeSql(statement, params);
         const likeList = this.parseLikeData(result);
