@@ -1276,9 +1276,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let likedStatus = this.dataHelper.getCachedLikeStatus(postId, commentId);
-        console.log("===============likedStatus0", likedStatus);
         if (likedStatus) {
-          console.log("===============likedStatus1", likedStatus);
           resolve(likedStatus);
           return;
         }

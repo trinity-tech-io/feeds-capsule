@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ModalController, Platform } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -153,7 +153,6 @@ export class PostdetailPage implements OnInit {
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
-    private router: Router
   ) { }
 
 
@@ -162,12 +161,6 @@ export class PostdetailPage implements OnInit {
       await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
-    // this.hiveVaultController.getDisplayName(this.destDid,this.channelId,this.destDid).then((name:string)=>{
-    //          let newName = name || '';
-    //          if(newName != ''){
-    //           this.channelOwnerName = name;
-    //          }
-    // });
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     let channelAvatarUri = channel['avatar'] || '';
@@ -491,7 +484,11 @@ export class PostdetailPage implements OnInit {
     } else {
       this.refcommentId = comment.commentId;
       this.commentName = this.userNameMap[comment.createrDid];
-      this.commentAvatar = '';
+      if(this.destDid === comment.createrDid){
+        this.commentAvatar = this.channelAvatarUri;
+      }else{
+        this.commentAvatar = '';
+      }
     }
 
 
@@ -1212,7 +1209,8 @@ export class PostdetailPage implements OnInit {
           id, srcId, captainCommentIndex,
           captainComment[captainCommentIndex],
           this.clientHeight, this.isInitUserNameMap,
-          this.userNameMap, this.hiveVaultController
+          this.userNameMap, this.hiveVaultController,
+          this.channelName
         );
         //处理commnet like status
         CommonPageService.

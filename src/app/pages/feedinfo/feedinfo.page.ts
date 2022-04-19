@@ -197,19 +197,19 @@ export class FeedinfoPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    await this.showSubscribePrompt();
-    // const signinData = await this.dataHelper.getSigninData();
-    // let userDid = signinData.did
-    // await this.native.showLoading('common.waitMoment');
-    // try {
-    //   await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
-    //   await this.hiveVaultController.getPostListByChannel(userDid, this.channelId);
-    //   this.followStatus = true;
-    //   this.native.hideLoading();
-    // } catch (error) {
-    //   this.followStatus = false;
-    //   this.native.hideLoading();
-    // }
+
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
+      await this.hiveVaultController.getPostListByChannel(userDid, this.channelId);
+      this.followStatus = true;
+      this.native.hideLoading();
+    } catch (error) {
+      this.followStatus = false;
+      this.native.hideLoading();
+    }
   }
 
   unsubscribe() {
@@ -272,44 +272,4 @@ export class FeedinfoPage implements OnInit {
       .catch(() => { });
   }
 
-  async showSubscribePrompt() {
-
-    let channelName  = decodeURIComponent(this.name);
-    this.confirmdialog = await this.popupProvider.showConfirmdialog(
-      this,
-      'common.confirmDialog',
-      this.translate.instant('SearchPage.follow') + channelName + '?',
-      this.cancelButton,
-      this.subscribeButton,
-      './assets/images/finish.svg',
-      'SearchPage.follow',
-      "common.editedContentDes2"
-    );
-  }
-
-  async cancelButton(that: any) {
-    if (that.confirmdialog != null) {
-      await that.confirmdialog.dismiss();
-      that.confirmdialog = null;
-    }
-  }
-
-  async subscribeButton(that: any) {
-    if (that.confirmdialog != null) {
-      await that.confirmdialog.dismiss();
-      that.confirmdialog = null;
-      const signinData = await that.dataHelper.getSigninData();
-      let userDid = signinData.did
-      await that.native.showLoading('common.waitMoment');
-      try {
-        await that.hiveVaultController.subscribeChannel(userDid, that.channelId);
-        await that.hiveVaultController.getPostListByChannel(
-          userDid, that.channelId);
-        that.followStatus = true;
-        that.native.hideLoading();
-      } catch (error) {
-        that.native.hideLoading();
-      }
-    }
-  }
 }

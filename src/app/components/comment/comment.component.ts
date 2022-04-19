@@ -33,6 +33,7 @@ export class CommentComponent implements OnInit {
 
   public newComment = '';
   public isAndroid = '';
+  public isBorder: boolean = false;
   constructor(
     public theme: ThemeService,
     public native: NativeService,
@@ -49,8 +50,10 @@ export class CommentComponent implements OnInit {
       this.isAndroid = "android";
     }
     if(this.channelAvatar === ""){
+      this.isBorder = true;
       this.channelAvatar = "./assets/images/default-contact.svg";
     }else{
+      this.isBorder = false;
       this.parseAvatar();
     }
   }

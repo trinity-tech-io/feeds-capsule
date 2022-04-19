@@ -7,7 +7,8 @@
         <ion-col size="2.5" class="left-col">
 
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId!='0'">
-            <img style="border: 1.25px solid #368bff;" class="comment-avatar" src={{channelAvatar}}>
+            <img *ngIf="isBorder"  style="border: 1.25px solid #368bff;" class="comment-avatar" src={{channelAvatar}}>
+            <img  *ngIf="!isBorder" class="comment-avatar" src={{channelAvatar}}>
           </div>
 
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId==='0'">

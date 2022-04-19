@@ -159,23 +159,20 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    ///add SubscribePrompt
-    await this.showSubscribePrompt();
-
-    // const signinData = await this.dataHelper.getSigninData();
-    // let userDid = signinData.did
-    // await this.native.showLoading('common.waitMoment');
-    // try {
-    //   await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
-    //   await this.hiveVaultController.getPostListByChannel(
-    //     userDid, this.channelId);
-    //   this.initRefresh();
-    //   this.followStatus = true;
-    //   this.native.hideLoading();
-    // } catch (error) {
-    //   this.followStatus = false;
-    //   this.native.hideLoading();
-    // }
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
+      await this.hiveVaultController.getPostListByChannel(
+        userDid, this.channelId);
+      this.initRefresh();
+      this.followStatus = true;
+      this.native.hideLoading();
+    } catch (error) {
+      this.followStatus = false;
+      this.native.hideLoading();
+    }
 
   }
 
@@ -1304,48 +1301,6 @@ export class ChannelsPage implements OnInit {
   }
 
   retry(destDid: string, channelId: string, postId: string) {
-  }
-
-  async showSubscribePrompt() {
-    //Temp
-    let channelName = decodeURIComponent(this.channelName);
-    this.confirmdialog = await this.popupProvider.showConfirmdialog(
-      this,
-      'common.confirmDialog',
-      this.translate.instant('SearchPage.follow') + channelName + '?',
-      this.cancelButton,
-      this.subscribeButton,
-      './assets/images/finish.svg',
-      'SearchPage.follow',
-      "common.editedContentDes2"
-    );
-  }
-
-  async cancelButton(that: any) {
-    if (that.confirmdialog != null) {
-      await that.confirmdialog.dismiss();
-      that.confirmdialog = null;
-    }
-  }
-
-  async subscribeButton(that: any) {
-    if (that.confirmdialog != null) {
-      await that.confirmdialog.dismiss();
-      that.confirmdialog = null;
-      const signinData = await that.dataHelper.getSigninData();
-      let userDid = signinData.did
-      await that.native.showLoading('common.waitMoment');
-      try {
-        await that.hiveVaultController.subscribeChannel(userDid, that.channelId);
-        await that.hiveVaultController.getPostListByChannel(
-          userDid, that.channelId);
-        that.initRefresh();
-        that.followStatus = true;
-        that.native.hideLoading();
-      } catch (error) {
-        that.native.hideLoading();
-      }
-    }
   }
 
 }

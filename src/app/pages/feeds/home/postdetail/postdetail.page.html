@@ -146,7 +146,8 @@
           >
         </ion-col>
         <ion-col class="img-col" size="2.5" (click)="clickComment(comment)">
-          <img class="comment-avatar" [src]="avatar ? avatar : './assets/images/default-contact.svg'">
+          <img *ngIf="comment.destDid === comment.createrDid" class="comment-avatar" style="border: none;" [src]="channelAvatar">
+          <img *ngIf="comment.destDid != comment.createrDid" class="comment-avatar" src='./assets/images/default-contact.svg'>
         </ion-col>
         <ion-col class="content-col" size="8">
           <ion-row class="top-row">

@@ -348,6 +348,7 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
       Logger.log(TAG, "======= Receive updateTab========");
       this.zone.run(() => {
+        this.infiniteScroll.disabled = false;
         if (isInit) {
           this.initPostListData(true);
           return;

@@ -56,7 +56,7 @@ export class CommentlistPage implements OnInit {
   public isFullContent = {};
   public maxTextSize = 240;
   public popover: any = null;
-  public channelAvatar: string = '';
+  public channelAvatar: string = './assets/icon/reserve.svg';
   public channelName: string = '';
   public commentsNum: number = 0;
   public captainComment: any = {};
@@ -72,7 +72,8 @@ export class CommentlistPage implements OnInit {
   private isInitUserNameMap: any = {};
   private clientHeight: number = 0;
   private isloadingLikeMap: any = {};
-
+  private channelAvatarUri: string = null;
+  private commentAvatar: string = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -304,8 +305,13 @@ export class CommentlistPage implements OnInit {
       return;
     }
 
+    if(comment.createrDid === this.destDid){
+      this.commentAvatar = this.channelAvatarUri;
+    }else{
+      this.commentAvatar = '';
+    }
     this.channelName = this.userNameMap[comment.createrDid];
-    this.channelAvatar = '';
+
     this.refcommentId = comment.commentId;
     this.hideComment = false;
 
@@ -501,13 +507,34 @@ export class CommentlistPage implements OnInit {
     let createrDid = this.captainComment.createrDid;
     this.userNameList[commentId] = createrDid;
     try {
-      this.userNameMap[createrDid] =
-        await this.hiveVaultController.
-          getDisplayName(this.destDid, this.channelId, createrDid);
 
-          this.userNameMap[this.destDid] = await this.hiveVaultController.
-        getDisplayName(this.destDid, this.channelId, this.destDid);
+         if(this.destDid === createrDid){
+          let channel: FeedsData.ChannelV3 =
+          await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
+          this.userNameMap[this.destDid] = channel.name || '';
+          let channelAvatarUri = channel['avatar'] || '';
+          if (channelAvatarUri != '') {
+            this.channelAvatarUri = channelAvatarUri;
+            this.handleChannelAvatar(channelAvatarUri);
+          }
+         }else{
 
+          //被回复者
+          let channel: FeedsData.ChannelV3 =
+          await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
+          this.userNameMap[this.destDid] = channel.name || '';
+          let channelAvatarUri = channel['avatar'] || '';
+          if (channelAvatarUri != '') {
+            this.channelAvatarUri = channelAvatarUri;
+            this.handleChannelAvatar(channelAvatarUri);
+          }
+
+          //回复者
+          this.userNameMap[createrDid] =
+          await this.hiveVaultController.
+            getDisplayName(this.destDid, this.channelId, createrDid);
+
+         }
     } catch (error) {
 
     }
@@ -583,7 +610,8 @@ export class CommentlistPage implements OnInit {
         CommonPageService.handleDisplayUserName(
           id, srcId, replayCommentIndex,
           replayComment, this.clientHeight, this.isInitUserNameMap,
-          this.userNameMap, this.hiveVaultController
+          this.userNameMap, this.hiveVaultController,
+          this.userNameMap[this.destDid]
         );
       }
     }
@@ -594,5 +622,14 @@ export class CommentlistPage implements OnInit {
       this.handleUserName();
       clearTimeout(sid);
     }, 50);
+  }
+
+  handleChannelAvatar(channelAvatarUri: string) {
+    let fileName: string = channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
+      .then((result) => {
+        this.channelAvatar = result;
+      }).catch((err) => {
+      })
   }
 }
