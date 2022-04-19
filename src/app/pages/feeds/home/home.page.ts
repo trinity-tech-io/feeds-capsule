@@ -576,7 +576,7 @@ export class HomePage implements OnInit {
   }
 
   getContentShortText(post: any): string {
-    let content = post.content;
+    let content = post.content.content;
     let text = this.feedsServiceApi.parsePostContentText(content) || '';
     return text.substring(0, 180) + '...';
   }
