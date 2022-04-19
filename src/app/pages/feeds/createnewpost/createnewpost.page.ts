@@ -224,7 +224,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async sendPost() {
-    await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, TAG)
+    await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, '')
   }
 
   addImg(type: number) {

@@ -394,7 +394,7 @@ export class EditPostPage implements OnInit {
         this.originPostData,
         content,
         "public",
-        TAG,
+        '',
       ).then((result) => {
         this.zone.run(async () => {
           this.isUpdateTab = true;
