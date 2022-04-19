@@ -452,7 +452,7 @@ export class HomePage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
       let refcommentId = comment.refcommentId;
       let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
-       cachedCommentList.push(comment);
+      cachedCommentList.push(comment);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
@@ -467,7 +467,7 @@ export class HomePage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid,deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then((result: any) => {
             this.refreshPostList();
             this.native.hideLoading();
@@ -610,14 +610,14 @@ export class HomePage implements OnInit {
       return;
     }
     CommonPageService.likePost(
-              destDid,
-              channelId,
-              postId,
-              this.isLoadingLikeMap,
-              this.likeMap,
-              this.likeNumMap,
-              this.hiveVaultController,
-              this.dataHelper);
+      destDid,
+      channelId,
+      postId,
+      this.isLoadingLikeMap,
+      this.likeMap,
+      this.likeNumMap,
+      this.hiveVaultController,
+      this.dataHelper);
   }
 
   navTo(destDid: string, channelId: string, postId: number) {
@@ -698,7 +698,7 @@ export class HomePage implements OnInit {
     return obj.content;
   }
 
- async menuMore(post: FeedsData.PostV3) {
+  async menuMore(post: FeedsData.PostV3) {
 
     let destDid = post.destDid;
     let ownerDid = (await this.dataHelper.getSigninData()).did;
@@ -720,7 +720,7 @@ export class HomePage implements OnInit {
     }
   }
 
- async getChannelName(destDid: string, channelId: string) {
+  async getChannelName(destDid: string, channelId: string) {
 
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     if (channel === null) {
@@ -815,12 +815,12 @@ export class HomePage implements OnInit {
       case 'feeds':
         //TODO
         try {
-        await this.hiveVaultController.syncAllPost();
-        await this.hiveVaultController.syncAllComments();
+          await this.hiveVaultController.syncAllPost();
+          await this.hiveVaultController.syncAllComments();
 
-        await this.initPostListData(true);
-        if (event != null) event.target.complete();
-        this.refreshEvent = null;
+          await this.initPostListData(true);
+          if (event != null) event.target.complete();
+          this.refreshEvent = null;
         } catch (error) {
           if (event != null) event.target.complete();
           this.refreshEvent = null;
@@ -926,6 +926,7 @@ export class HomePage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
+
         //post Avatar
         this.handlePostAvatar(id, srcId, postgridindex);
         //postImg
@@ -939,9 +940,9 @@ export class HomePage implements OnInit {
 
         //post like status
         CommonPageService.handlePostLikeStatusData(
-          id, srcId, postgridindex,postgridList[postgridindex],
+          id, srcId, postgridindex, postgridList[postgridindex],
           this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-          this.likeMap,this.isLoadingLikeMap)
+          this.likeMap, this.isLoadingLikeMap)
         //处理post like number
         CommonPageService.handlePostLikeNumData(
           id, srcId, postgridindex, postgridList[postgridindex],
@@ -976,6 +977,15 @@ export class HomePage implements OnInit {
           let channelId: string = arr[1];
           let postId: string = arr[2];
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+
+          // this.hiveVaultController.checkPostIsLast();
+
+          const post = _.find(this.postList, item => {
+            return (
+              item.postId === postId
+            );
+          });
+          this.hiveVaultController.checkPostIsLast(post);
 
           let avatarUri = "";
           if (channel != null) {
@@ -1351,7 +1361,7 @@ export class HomePage implements OnInit {
       if (value === '13') {
         let videoElement: any = document.getElementById(id + 'video') || '';
         if (videoElement != '') {
-           videoElement.setAttribute('poster',"./assets/images/loading.png"); // empty source
+          videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'source') || '';
         if (source != '') {

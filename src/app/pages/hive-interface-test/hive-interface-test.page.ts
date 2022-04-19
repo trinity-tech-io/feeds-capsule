@@ -108,7 +108,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
   queryPostByChannelId() {
     // this.hiveVaultApi.queryPostByChannelId(this.destDid, 'channelId01');
-    this.hiveVaultController.getPostListByChannel(this.destDid, '5c125000ee1e1bd6cbf3815ef026dbfd5060f098d9c5a1e58234afbcb8941296');
+    this.hiveVaultController.getPostListByChannel(this.destDid, '0999ede0515410e8f7716c708868fde605ef25289fd2a7502e5f1982748bd41b');
     alert('queryPostByChannelId');
   }
 
@@ -353,4 +353,9 @@ export class HiveInterfaceTestPage implements OnInit {
     console.log('querySubscription');
     this.hiveVaultApi.querySubscription(this.destDid, '7fdb0f185e7d8c412e7208f25b5a4b380566b463a8b4f32c8859561e399fe1d1');
   }
+
+  queryRemotePostByTime() {
+    this.hiveVaultApi.queryPostByRangeOfTime(this.destDid, "0999ede0515410e8f7716c708868fde605ef25289fd2a7502e5f1982748bd41b", 0, 1650210408911);
+  }
+
 }

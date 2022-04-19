@@ -670,10 +670,6 @@ export class HiveVaultController {
     });
   }
 
-  handlePostResult(result: any): FeedsData.PostV3[] {
-    return;
-  }
-
   getAllPostScripting() {
     // const postList = this.hiveVaultApi();
   }
@@ -970,6 +966,7 @@ export class HiveVaultController {
           //1.query
           //2.remove
           await this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
+
           resolve(subscribedChannel);
         } else {
           const errorMsg = 'Unsubscribe channel error';
@@ -1193,6 +1190,7 @@ export class HiveVaultController {
     });
   }
 
+  //TODO wrong
   removePostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1353,8 +1351,8 @@ export class HiveVaultController {
     });
   }
 
-  checkPostIsLast(destDid: string, channelId: string): FeedsData.PostV3 {
-    const post = this.dataHelper.getLastPost(destDid, channelId);
+  checkPostIsLast(originPost: FeedsData.PostV3): FeedsData.PostV3 {
+    const post = this.dataHelper.getLastPost(originPost.destDid, originPost.channelId);
     if (!post) {
       return null;
     }
@@ -1363,4 +1361,16 @@ export class HiveVaultController {
     // this.hiveVaultApi.queryPostByRangeOfTime()
     return post;
   }
+
+  queryPostWithTime(destDid: string,) {
+    return new Promise(async (resolve, reject) => {
+      // this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId,)
+      // this.handlePostResult();
+    });
+  }
+
+  handlePostResult(destDid: string, result: any): FeedsData.PostV3[] {
+    return;
+  }
+
 }
