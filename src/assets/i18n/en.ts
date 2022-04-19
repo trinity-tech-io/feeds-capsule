@@ -418,7 +418,7 @@ export const en = {
     removeserver: 'Feeds Publisher Account Service removed',
     feedsSourceQRCode: 'Publisher Account QR Code',
     public: 'Private',
-    replyingto: 'Replying',
+    replyingto: 'Replying to',
     containedfeeds: 'Contained Channels',
     version: 'version',
     beingPublic: 'Public',
