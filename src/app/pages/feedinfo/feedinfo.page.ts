@@ -19,6 +19,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 
 import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { PopupProvider } from 'src/app/services/popup';
 
 @Component({
   selector: 'app-feedinfo',
@@ -52,6 +53,7 @@ export class FeedinfoPage implements OnInit {
   public channelOwner: string = '';
   public type: string = '';
   public serverDid: string = '';
+  private confirmdialog: any = null;
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -66,7 +68,7 @@ export class FeedinfoPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private intentService: IntentService,
-    private feedsServiceApi: FeedsServiceApi,
+    private popupProvider: PopupProvider,
     private hiveVaultController: HiveVaultController,
     private dataHelper: DataHelper
   ) { }
@@ -195,19 +197,19 @@ export class FeedinfoPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did
-    await this.native.showLoading('common.waitMoment');
-    try {
-      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
-      await this.hiveVaultController.getPostListByChannel(userDid, this.channelId);
-      this.followStatus = true;
-      this.native.hideLoading();
-    } catch (error) {
-      this.followStatus = false;
-      this.native.hideLoading();
-    }
+    await this.showSubscribePrompt();
+    // const signinData = await this.dataHelper.getSigninData();
+    // let userDid = signinData.did
+    // await this.native.showLoading('common.waitMoment');
+    // try {
+    //   await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
+    //   await this.hiveVaultController.getPostListByChannel(userDid, this.channelId);
+    //   this.followStatus = true;
+    //   this.native.hideLoading();
+    // } catch (error) {
+    //   this.followStatus = false;
+    //   this.native.hideLoading();
+    // }
   }
 
   unsubscribe() {
@@ -268,5 +270,46 @@ export class FeedinfoPage implements OnInit {
         this.native.toast_trans('common.textcopied');
       })
       .catch(() => { });
+  }
+
+  async showSubscribePrompt() {
+
+    let channelName  = decodeURIComponent(this.name);
+    this.confirmdialog = await this.popupProvider.showConfirmdialog(
+      this,
+      'common.confirmDialog',
+      this.translate.instant('SearchPage.follow') + channelName + '?',
+      this.cancelButton,
+      this.subscribeButton,
+      './assets/images/finish.svg',
+      'SearchPage.follow',
+      "common.editedContentDes2"
+    );
+  }
+
+  async cancelButton(that: any) {
+    if (that.confirmdialog != null) {
+      await that.confirmdialog.dismiss();
+      that.confirmdialog = null;
+    }
+  }
+
+  async subscribeButton(that: any) {
+    if (that.confirmdialog != null) {
+      await that.confirmdialog.dismiss();
+      that.confirmdialog = null;
+      const signinData = await that.dataHelper.getSigninData();
+      let userDid = signinData.did
+      await that.native.showLoading('common.waitMoment');
+      try {
+        await that.hiveVaultController.subscribeChannel(userDid, that.channelId);
+        await that.hiveVaultController.getPostListByChannel(
+          userDid, that.channelId);
+        that.followStatus = true;
+        that.native.hideLoading();
+      } catch (error) {
+        that.native.hideLoading();
+      }
+    }
   }
 }

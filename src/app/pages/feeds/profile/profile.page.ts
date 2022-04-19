@@ -292,14 +292,16 @@ export class ProfilePage implements OnInit {
         for(let likeIndex = 0; likeIndex < likes.length; likeIndex++){
             let item = likes[likeIndex];
             if(item.commentId === '0' && item.status === FeedsData.PostCommentStatus.available){
-              let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId);
-              likeList.push(post);
+              let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
+              if(post != null){
+                likeList.push(post);
+              }
             }
         }
     } catch (error) {
 
     }
-
+    console.log("=======likes1=====",likeList);
     this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
