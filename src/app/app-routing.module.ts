@@ -4,18 +4,10 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   { path: '', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
   { path: 'tabs', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
-
-  {
-    path: 'menu/servers/server-info',
-    loadChildren:
-      './pages/servers/server-info/server-info.module#ServerInfoPageModule',
-  },
-
   {
     path: 'signin',
     loadChildren: './pages/signin/signin.module#SigninPageModule',
   },
-
   {
     path: 'createnewfeed',
     loadChildren:
@@ -54,11 +46,6 @@ const routes: Routes = [
   {
     path: 'disclaimer',
     loadChildren: './pages/disclaimer/disclaimer.module#DisclaimerPageModule',
-  },
-  {
-    path: 'editserverinfo',
-    loadChildren:
-      './pages/editserverinfo/editserverinfo.module#EditserverinfoPageModule',
   },
   {
     path: 'eidtchannel',

@@ -121,7 +121,12 @@ export class NftavatarlistPage implements OnInit {
       this.nftAvatarList = [];
       event.target.complete();
     }
-    await this.refreshCollectibles(event, accAddress);
+    try {
+      await this.refreshCollectibles(event, accAddress);
+      event.target.complete();
+    } catch (error) {
+      event.target.complete();
+    }
   }
 
   hanleListCace(createAddress?: any) {

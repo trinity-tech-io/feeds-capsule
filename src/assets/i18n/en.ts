@@ -548,9 +548,6 @@ export const en = {
     SESSION_REQUEST_ERROR: 'Session: Request Error',
     SESSION_START_ERROR: 'Session: Start Error',
   },
-  EditserverinfoPage: {
-    title: 'Edit Account',
-  },
   EidtchannelPage: {
     title: 'Edit Channel Info',
     des: 'Prompt Box',

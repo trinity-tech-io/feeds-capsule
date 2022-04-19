@@ -551,9 +551,6 @@ export const zh = {
     SESSION_REQUEST_ERROR: 'Session: 请求出错',
     SESSION_START_ERROR: 'Session: 启动出错',
   },
-  EditserverinfoPage: {
-    title: '编辑出版号',
-  },
   EidtchannelPage: {
     title: '编辑频道信息',
     des: '提示框',
