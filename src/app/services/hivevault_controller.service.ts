@@ -1227,7 +1227,7 @@ export class HiveVaultController {
         }
 
         const result = await this.hiveVaultApi.queryUserDisplayName(targetDid, channelId, userDid);
-        Logger.log(TAG, 'Get subscription result is ', result);
+        Logger.log(TAG, 'getDisplayName result is ', result);
         if (result) {
           const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
           if (subscriptions && subscriptions[0]) {
@@ -1236,15 +1236,15 @@ export class HiveVaultController {
             resolve(displayName);
             return;
           } else {
-            const errorMsg = 'Get subscription error';
-            Logger.error(TAG, errorMsg);
+            const errorMsg = 'getDisplayName error';
+            //Logger.error(TAG, errorMsg);
             reject(errorMsg);
           }
         } else {
           resolve('UNKNOW');
         }
       } catch (error) {
-        Logger.error(TAG, 'Get subscription error', error);
+        Logger.error(TAG, 'getDisplayName error', error);
         reject(error);
       }
     });

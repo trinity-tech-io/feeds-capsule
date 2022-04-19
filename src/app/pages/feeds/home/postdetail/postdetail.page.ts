@@ -135,6 +135,7 @@ export class PostdetailPage implements OnInit {
   private userNameMap: any = {};
   private isloadingLikeMap: any = {};
   private isLoadingLike = false;
+  public  channelOwnerName: string = '';
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -159,7 +160,14 @@ export class PostdetailPage implements OnInit {
   async initData(isInit: boolean) {
     let channel: FeedsData.ChannelV3 =
       await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-    this.channelOwner = channel.destDid || ''
+    this.channelOwner = channel.destDid || '';
+    this.channelOwnerName = this.indexText(channel.destDid);
+    // this.hiveVaultController.getDisplayName(this.destDid,this.channelId,this.destDid).then((name:string)=>{
+    //          let newName = name || '';
+    //          if(newName != ''){
+    //           this.channelOwnerName = name;
+    //          }
+    // });
     this.channelWName = channel['name'] || '';
     this.channelName = UtilService.moreNanme(channel['name']);
     let channelAvatarUri = channel['avatar'] || '';
