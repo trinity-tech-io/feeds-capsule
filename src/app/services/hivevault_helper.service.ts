@@ -486,7 +486,7 @@ export class HiveVaultHelper {
     private registerQueryPostRangeOfTimeScripting() {
         let executablefilter =
             { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
-        let options = { "projection": { "_id": false }, "limit": 1, "sort": { "updated_at": -1 } }
+        let options = { "projection": { "_id": false }, "limit": 7, "sort": { "updated_at": -1 } }
         let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)

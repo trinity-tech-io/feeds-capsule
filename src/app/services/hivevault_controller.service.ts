@@ -38,8 +38,10 @@ export class HiveVaultController {
           const channelId = subscribedChannel.channelId
           const destDid = subscribedChannel.destDid
 
-          // const localPost = await this.dataHelper.getPostV3ById(destDid, postId)
-          const posts = await this.getPostListByChannel(destDid, channelId);
+          this.dataHelper.cleanOldestPostV3();
+
+          const posts = await this.queryPostWithTime(destDid, channelId, UtilService.getCurrentTimeNum());
+
           postList.push(posts);
         }
         resolve(postList);
@@ -1350,25 +1352,71 @@ export class HiveVaultController {
   }
 
   checkPostIsLast(originPost: FeedsData.PostV3): FeedsData.PostV3 {
-    const post = this.dataHelper.getLastPost(originPost.destDid, originPost.channelId);
+    const post = this.dataHelper.getOldestPostV3(originPost.destDid, originPost.channelId);
     if (!post) {
       return null;
     }
 
     //TODO sync post by time
-    // this.hiveVaultApi.queryPostByRangeOfTime()
+    this.queryPostWithTime(post.destDid, post.channelId, post.updatedAt);
     return post;
   }
 
-  queryPostWithTime(destDid: string,) {
+  queryPostWithTime(destDid: string, channelId: string, endTime: number) {
     return new Promise(async (resolve, reject) => {
-      // this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId,)
-      // this.handlePostResult();
+      try {
+        const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
+        const postList = await this.handleSyncPostResult(destDid, channelId, result);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Query post with time error', error);
+        reject(error);
+      }
     });
   }
 
-  handlePostResult(destDid: string, result: any): FeedsData.PostV3[] {
-    return;
-  }
+  handleSyncPostResult(destDid: string, channelId: string, result: any): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      if (!result) {
+        resolve([]);
+        return;
+      }
+      try {
+        let oldestPost: FeedsData.PostV3 = null;
+        const postList = HiveVaultResultParse.parsePostResult(destDid, result.find_message.items);
+        for (let postIndex = 0; postIndex < postList.length; postIndex++) {
+          const newPost = postList[postIndex];
+          let postId = newPost.postId;
+          let originPost: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
 
+          console.log('oldestPost', oldestPost);
+          console.log('newPost', newPost);
+          if (!oldestPost || newPost.updatedAt < oldestPost.updatedAt) {
+            //TOBE Improve
+            oldestPost = _.cloneDeep<FeedsData.PostV3>(newPost);
+            console.log('clone oldestPost', oldestPost);
+          }
+
+          if (!originPost) {
+            await this.dataHelper.addPostV3(newPost);
+          } else {
+            const isEqual = _.isEqual(originPost, newPost)
+            if (isEqual)
+              continue;
+            await this.dataHelper.updatePostV3(newPost);
+          }
+
+
+        }
+
+
+        this.dataHelper.updateOldestPostV3(destDid, channelId, oldestPost);
+
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Handle post result error', error);
+        reject(error);
+      }
+    });
+  }
 }

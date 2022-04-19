@@ -3748,15 +3748,21 @@ export class DataHelper {
     this.cachedLikeNumMap = {};
   }
 
-  updateLastPost(destDid: string, channelId: string, post: FeedsData.PostV3) {
-    if (!this.lastPostMap)
+  updateOldestPostV3(destDid: string, channelId: string, post: FeedsData.PostV3) {
+    if (!this.lastPostMap) {
       this.lastPostMap = {};
+    }
+
     const key = destDid + '_' + channelId;
     this.lastPostMap[key] = post;
   }
 
-  getLastPost(destDid: string, channelId): FeedsData.PostV3 {
+  getOldestPostV3(destDid: string, channelId: string): FeedsData.PostV3 {
     const key = destDid + '_' + channelId;
     return this.lastPostMap[key];
+  }
+
+  cleanOldestPostV3() {
+    this.lastPostMap = {};
   }
 }
