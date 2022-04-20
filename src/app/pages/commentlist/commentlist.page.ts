@@ -97,7 +97,7 @@ export class CommentlistPage implements OnInit {
     if (isInit) {
       await this.initRefresh();
     } else {
-     await this.refreshCommentList();
+      await this.refreshCommentList();
     }
   }
 
@@ -125,9 +125,9 @@ export class CommentlistPage implements OnInit {
 
   async refreshCommentList() {
     this.totalData = await this.sortCommentList();
-    if(this.totalData.length === this.replayCommentList.length){
+    if (this.totalData.length === this.replayCommentList.length) {
       this.replayCommentList = this.totalData;
-    }else if (
+    } else if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
     ) {
@@ -144,8 +144,8 @@ export class CommentlistPage implements OnInit {
   async sortCommentList() {
     let replayCommentList = [];
     try {
-      let postId: string =  this.captainComment.postId;
-      let refcommentId: string =  this.captainComment.commentId;
+      let postId: string = this.captainComment.postId;
+      let refcommentId: string = this.captainComment.commentId;
       replayCommentList = await this.hiveVaultController.getCommentList(postId, refcommentId);
     } catch (error) {
 
@@ -217,13 +217,13 @@ export class CommentlistPage implements OnInit {
             let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
 
             let index = _.findIndex(cachedCommentList, (item: FeedsData.CommentV3) => {
-            return item.destDid === newComment.destDid &&
-            item.channelId === newComment.channelId &&
-            item.postId === newComment.postId &&
-            item.commentId === newComment.commentId;
+              return item.destDid === newComment.destDid &&
+                item.channelId === newComment.channelId &&
+                item.postId === newComment.postId &&
+                item.commentId === newComment.commentId;
             });
             if (index > -1) {
-               cachedCommentList[index] = newComment;
+              cachedCommentList[index] = newComment;
             }
             await this.getCaptainComment();
             await this.initData(false);
@@ -303,9 +303,9 @@ export class CommentlistPage implements OnInit {
       return;
     }
 
-    if(comment.createrDid === this.destDid){
+    if (comment.createrDid === this.destDid) {
       this.commentAvatar = this.channelAvatarUri;
-    }else{
+    } else {
       this.commentAvatar = '';
     }
     this.channelName = this.userNameMap[comment.createrDid];
@@ -346,7 +346,7 @@ export class CommentlistPage implements OnInit {
       this.dataHelper.cleanCachedLikeStatus();
       await this.hiveVaultController.
         syncCommentFromPost(this.destDid, this.channelId, this.postId);
-      await this.hiveVaultController.getCommentList(this.postId,'0');
+      await this.hiveVaultController.getCommentList(this.postId, '0');
       await this.getCaptainComment();
       this.isInitUserNameMap = {};
       await this.initData(true);
@@ -354,7 +354,6 @@ export class CommentlistPage implements OnInit {
     } catch (error) {
       event.target.complete();
     }
-
   }
 
   loadData(event: any) {
@@ -372,7 +371,7 @@ export class CommentlistPage implements OnInit {
         this.initOwnCommentObj();
         event.target.complete();
       } else {
-        if(this.totalData.length === this.replayCommentList.length){
+        if (this.totalData.length === this.replayCommentList.length) {
           event.target.complete();
           clearTimeout(sId);
           return;
@@ -510,33 +509,33 @@ export class CommentlistPage implements OnInit {
     this.userNameList[commentId] = createrDid;
     try {
 
-         if(this.destDid === createrDid){
-          let channel: FeedsData.ChannelV3 =
+      if (this.destDid === createrDid) {
+        let channel: FeedsData.ChannelV3 =
           await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-          this.userNameMap[this.destDid] = channel.name || '';
-          let channelAvatarUri = channel['avatar'] || '';
-          if (channelAvatarUri != '') {
-            this.channelAvatarUri = channelAvatarUri;
-            this.handleChannelAvatar(channelAvatarUri);
-          }
-         }else{
+        this.userNameMap[this.destDid] = channel.name || '';
+        let channelAvatarUri = channel['avatar'] || '';
+        if (channelAvatarUri != '') {
+          this.channelAvatarUri = channelAvatarUri;
+          this.handleChannelAvatar(channelAvatarUri);
+        }
+      } else {
 
-          //被回复者
-          let channel: FeedsData.ChannelV3 =
+        //被回复者
+        let channel: FeedsData.ChannelV3 =
           await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-          this.userNameMap[this.destDid] = channel.name || '';
-          let channelAvatarUri = channel['avatar'] || '';
-          if (channelAvatarUri != '') {
-            this.channelAvatarUri = channelAvatarUri;
-            this.handleChannelAvatar(channelAvatarUri);
-          }
+        this.userNameMap[this.destDid] = channel.name || '';
+        let channelAvatarUri = channel['avatar'] || '';
+        if (channelAvatarUri != '') {
+          this.channelAvatarUri = channelAvatarUri;
+          this.handleChannelAvatar(channelAvatarUri);
+        }
 
-          //回复者
-          this.userNameMap[createrDid] =
+        //回复者
+        this.userNameMap[createrDid] =
           await this.hiveVaultController.
             getDisplayName(this.destDid, this.channelId, createrDid);
 
-         }
+      }
     } catch (error) {
 
     }

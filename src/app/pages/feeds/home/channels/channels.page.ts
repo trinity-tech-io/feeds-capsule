@@ -152,13 +152,11 @@ export class ChannelsPage implements OnInit {
   ) { }
 
   async subscribe() {
-
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');
@@ -166,6 +164,7 @@ export class ChannelsPage implements OnInit {
       await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
       await this.hiveVaultController.getPostListByChannel(
         userDid, this.channelId);
+
       this.initRefresh();
       this.followStatus = true;
       this.native.hideLoading();
@@ -173,7 +172,6 @@ export class ChannelsPage implements OnInit {
       this.followStatus = false;
       this.native.hideLoading();
     }
-
   }
 
   tip() {
@@ -240,7 +238,7 @@ export class ChannelsPage implements OnInit {
 
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
-      this.isInitLikeNum= {};
+      this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
       this.isInitComment = {};
       this.refreshImage();
@@ -248,7 +246,7 @@ export class ChannelsPage implements OnInit {
       this.postList = this.totalData;
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
-      this.isInitLikeNum= {};
+      this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
       this.isInitComment = {};
       this.refreshImage();
@@ -262,9 +260,9 @@ export class ChannelsPage implements OnInit {
     }
     this.totalData = await this.sortChannelList();
 
-    if(this.totalData.length === this.postList.length){
-        this.postList = this.totalData;
-    }else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+    if (this.totalData.length === this.postList.length) {
+      this.postList = this.totalData;
+    } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
       this.postList = this.totalData.slice(
         0,
         this.startIndex * this.pageNumber,
@@ -274,7 +272,7 @@ export class ChannelsPage implements OnInit {
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLikeNum= {};
+    this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.refreshImage();
@@ -333,7 +331,7 @@ export class ChannelsPage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
       let refcommentId = comment.refcommentId;
       let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
-       cachedCommentList.push(comment);
+      cachedCommentList.push(comment);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
@@ -399,7 +397,7 @@ export class ChannelsPage implements OnInit {
     this.removeAllVideo();
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
-    this.isInitLikeNum= {};
+    this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.native.hideLoading();
@@ -567,13 +565,17 @@ export class ChannelsPage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
-      this.init();
-      event.target.complete();
-      this.refreshImage();
+      this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId).then(() => {
+        this.init();
+        event.target.complete();
+        this.refreshImage();
+      }).catch(() => {
+        event.target.complete();
+      });
+      this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+      this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
     } catch (error) {
       event.target.complete();
-
     }
   }
 
@@ -595,10 +597,10 @@ export class ChannelsPage implements OnInit {
         event.target.complete();
       } else {
 
-        if(this.totalData.length === this.postList.length){
+        if (this.totalData.length === this.postList.length) {
           event.target.complete();
           clearTimeout(sId);
-            return;
+          return;
         }
 
         arr = this.totalData.slice(
@@ -675,19 +677,19 @@ export class ChannelsPage implements OnInit {
         let id = destDid + '-' + channelId + '-' + postId;
         //post like status
         CommonPageService.handlePostLikeStatusData(
-        id, srcId, postgridindex,postgridList[postgridindex],
-        this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-        this.likeMap,this.isLoadingLikeMap)
+          id, srcId, postgridindex, postgridList[postgridindex],
+          this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+          this.likeMap, this.isLoadingLikeMap)
         //处理post like number
         CommonPageService.handlePostLikeNumData(
-        id, srcId, postgridindex, postgridList[postgridindex],
-        this.clientHeight, this.hiveVaultController,
-        this.likeNumMap, this.isInitLikeNum);
+          id, srcId, postgridindex, postgridList[postgridindex],
+          this.clientHeight, this.hiveVaultController,
+          this.likeNumMap, this.isInitLikeNum);
         //处理post comment
         CommonPageService.handlePostCommentData(
-        id, srcId, postgridindex, postgridList[postgridindex],
-        this.clientHeight, this.hiveVaultController,
-        this.isInitComment, this.commentNumMap);
+          id, srcId, postgridindex, postgridList[postgridindex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitComment, this.commentNumMap);
         //postImg
         if (mediaType === '1') {
           this.handlePostImg(id, srcId, postgridindex);

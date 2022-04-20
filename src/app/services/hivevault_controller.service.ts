@@ -84,17 +84,28 @@ export class HiveVaultController {
         const selfDid = (await this.dataHelper.getSigninData()).did;
         let postList = [];
         if (destDid == selfDid) {
-          console.log("=====dest======" + destDid);
           const posts = await this.syncSelfPostsByChannel(channelId);
           postList.push(posts);
         } else {
-          console.log("=====dest11======" + destDid);
           const posts = await this.getPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Sync post from channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  syncCommentFromChannel(destDid: string, channelId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryCommentByChannel(destDid, channelId);
+        const commentList = await this.handleCommentResult(destDid, result);
+        resolve(commentList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync comment from post error', error);
         reject(error);
       }
     });
