@@ -2888,7 +2888,10 @@ export class DataHelper {
         }
         let originSubscribedChannel: FeedsData.SubscribedChannelV3 = await this.getSubscribedChannelV3ByKey(newSubscribedChannel.destDid, newSubscribedChannel.channelId);
         if (!originSubscribedChannel) {
-          await this.addSubscribedChannelV3(newSubscribedChannel);
+          try {
+            await this.addSubscribedChannelV3(newSubscribedChannel);
+          } catch (error) {
+          }
         } else {
           const isEqual = _.isEqual(newSubscribedChannel, originSubscribedChannel);
           if (isEqual) {
@@ -3123,7 +3126,10 @@ export class DataHelper {
       try {
         let originChannel: FeedsData.ChannelV3 = await this.getChannelV3ById(newChannel.destDid, newChannel.channelId) || null;
         if (!originChannel) {
-          await this.addChannelV3(newChannel);
+          try {
+            await this.addChannelV3(newChannel);
+          } catch (error) {
+          }
         } else {
           const isEqual = _.isEqual(newChannel, originChannel);
           if (isEqual) {
@@ -3256,7 +3262,10 @@ export class DataHelper {
       try {
         let originPost: FeedsData.PostV3 = await this.getPostV3ById(newPost.destDid, newPost.postId) || null;
         if (!originPost) {
-          await this.addPostV3(newPost);
+          try {
+            await this.addPostV3(newPost);
+          } catch (error) {
+          }
         } else {
           const isEqual = _.isEqual(newPost, originPost);
           if (isEqual) {
@@ -3303,7 +3312,10 @@ export class DataHelper {
 
         for (let index = 0; index < posts.length; index++) {
           const post = posts[index];
-          await this.addPostV3(post);
+          try {
+            await this.addPostV3(post);
+          } catch (error) {
+          }
         }
         resolve('FINISH');
       } catch (error) {
@@ -3417,7 +3429,10 @@ export class DataHelper {
       try {
         let originComment = await this.getCommentV3ById(newComment.postId, newComment.commentId);
         if (!originComment) {
-          await this.addCommentV3(newComment);
+          try {
+            await this.addCommentV3(newComment);
+          } catch (error) {
+          }
         } else {
           const isEqual = _.isEqual(newComment, originComment);
           if (isEqual) {
@@ -3586,7 +3601,10 @@ export class DataHelper {
         }
         let originLike: FeedsData.LikeV3 = await this.getLikeV3ByUser(newLike.postId, newLike.commentId, newLike.createrDid) || null;
         if (!originLike) {
-          await this.addLikeV3(newLike);
+          try {
+            await this.addLikeV3(newLike);
+          } catch (error) {
+          }
         } else {
           const isEqual = _.isEqual(newLike, originLike);
           if (isEqual) {

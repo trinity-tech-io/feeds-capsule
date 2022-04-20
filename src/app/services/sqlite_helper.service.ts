@@ -109,7 +109,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_POST
           + '('
-          + 'post_id VARCHAR(64), dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
+          + 'post_id VARCHAR(64) UNIQUE, dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
           + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT'
           + ')';
 
@@ -243,7 +243,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_CHANNEL
           + '('
-          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), channel_name VARCHAR(64), intro TEXT, created_at REAL(64), updated_at REAL(64),'
+          + 'dest_did VARCHAR(64), channel_id VARCHAR(64) UNIQUE, channel_name VARCHAR(64), intro TEXT, created_at REAL(64), updated_at REAL(64),'
           + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT'
           + ')';
         const result = await this.executeSql(statement);
@@ -565,7 +565,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_COMMENT
           + '('
-          + 'dest_did VARCHAR(64), comment_id VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, status INTEGER, created_at REAL(64), updated_at REAL(64), proof TEXT, memo TEXT, creater_did VARCHAR(64)'
+          + 'dest_did VARCHAR(64), comment_id VARCHAR(64) UNIQUE, channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, status INTEGER, created_at REAL(64), updated_at REAL(64), proof TEXT, memo TEXT, creater_did VARCHAR(64)'
           + ')';
         const result = await this.executeSql(statement);
         Logger.log(TAG, 'create Comment table result is', result);
