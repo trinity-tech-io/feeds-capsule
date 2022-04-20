@@ -784,20 +784,22 @@ export class HiveVaultController {
         let updatedAt = 0;
         let createdAt = 0;
 
+        const likeId = UtilService.generateLikeId(postId, commentId, createrDid);
         if (like) {
           const updateResult = await this.hiveVaultApi.updateLike(destDid, channelId, postId, commentId, FeedsData.PostCommentStatus.available);
           createdAt = like.createdAt;
           updatedAt = updateResult.updatedAt;
         } else {
-          const addResult = await this.hiveVaultApi.addLike(destDid, channelId, postId, commentId);
+          const addResult = await this.hiveVaultApi.addLike(destDid, likeId, channelId, postId, commentId);
           createdAt = addResult.createdAt;
           updatedAt = createdAt;
         }
 
         Logger.log('like result', result);
-
         if (result) {
           const like: FeedsData.LikeV3 = {
+            likeId: likeId,
+
             destDid: destDid,
             postId: postId,
             commentId: commentId,

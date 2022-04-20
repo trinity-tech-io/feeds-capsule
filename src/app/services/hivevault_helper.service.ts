@@ -486,7 +486,7 @@ export class HiveVaultHelper {
     private registerQueryPostRangeOfTimeScripting() {
         let executablefilter =
             { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
-        let options = { "projection": { "_id": false }, "limit": 7, "sort": { "updated_at": -1 } }
+        let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } }
         let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
         let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
         let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
@@ -1015,7 +1015,6 @@ export class HiveVaultHelper {
         let conditionFilter = {
             "channel_id": "$params.channel_id",
             "user_did": "$caller_did",
-
         };
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
 
@@ -1146,6 +1145,7 @@ export class HiveVaultHelper {
         const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
 
         let executablefilter = {
+            "like_id": "$params.like_id",
             "channel_id": "$params.channel_id",
             "post_id": "$params.post_id",
             "comment_id": "$params.comment_id",
@@ -1165,11 +1165,12 @@ export class HiveVaultHelper {
         return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
     }
 
-    private callAddLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
+    private callAddLike(targetDid: string, likeId: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const createdAt = UtilService.getCurrentTimeNum();
                 const params = {
+                    "like_id": likeId,
                     "channel_id": channelId,
                     "post_id": postId,
                     "comment_id": commentId,
@@ -1187,8 +1188,8 @@ export class HiveVaultHelper {
         });
     }
 
-    addLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
-        return this.callAddLike(targetDid, channelId, postId, commentId);
+    addLike(targetDid: string, likeId: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
+        return this.callAddLike(targetDid, likeId, channelId, postId, commentId);
     }
     /** add like end */
 

@@ -765,6 +765,10 @@ export class UtilService {
     return UtilService.SHA256(did + postId + refCommentId + commentContent + currentTime);
   }
 
+  public static generateLikeId(postId: string, commentId: string, userDid: string) {
+    return UtilService.SHA256(postId + commentId + userDid);
+  }
+
   public static getKey(did: string, id: string) {
     return did + '#' + id;
   }

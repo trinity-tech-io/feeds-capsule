@@ -716,7 +716,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_LIKE
           + '('
-          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT,updated_at REAL(64), status INTEGER'
+          + 'like_id VARCHAR(64) UNIQUE, dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT,updated_at REAL(64), status INTEGER'
           + ')';
         const result = await this.executeSql(statement);
         Logger.log(TAG, 'create like table result is', result);
@@ -732,9 +732,9 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_LIKE
-          + '(dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo, updated_at, status) VALUES'
-          + '(?,?,?,?,?,?,?,?,?,?)';
-        const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt, likeV3.createrDid, likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status];
+          + '(like_id, dest_did, channel_id, post_id, comment_id, created_at, creater_did, proof, memo, updated_at, status) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?)';
+        const params = [likeV3.likeId, likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt, likeV3.createrDid, likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'Insert like result is', result);
@@ -765,6 +765,22 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and status=?'
         const params = [postId, commentId, FeedsData.PostCommentStatus.available];
+
+        const result = await this.executeSql(statement, params);
+        const likeList = this.parseLikeData(result);
+        resolve(likeList);
+      } catch (error) {
+        Logger.error(TAG, 'query like Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryLikeDataById2(likeId: string): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE like_id=? and status=?'
+        const params = [likeId, FeedsData.PostCommentStatus.available];
 
         const result = await this.executeSql(statement, params);
         const likeList = this.parseLikeData(result);
@@ -826,8 +842,8 @@ export class FeedsSqliteHelper {
   deleteLike(likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'DELETE FROM ' + this.TABLE_LIKE + ' WHERE dest_did=? and channel_id=? and post_id=? and comment_id=?'
-        const params = [likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId];
+        const statement = 'DELETE FROM ' + this.TABLE_LIKE + ' WHERE like_id=?'
+        const params = [likeV3.likeId];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'delete like result is', result);
@@ -843,8 +859,8 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_LIKE
-          + ' SET proof=?, memo=?, updated_at=?, status=? WHERE post_id=? and comment_id=? ';
-        const params = [likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status, likeV3.postId, likeV3.commentId];
+          + ' SET proof=?, memo=?, updated_at=?, status=? WHERE like_id=?';
+        const params = [likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status, likeV3.likeId];
 
         const result = await this.executeSql(statement, params);
         Logger.log(TAG, 'update comment data result is', result);
@@ -970,6 +986,8 @@ export class FeedsSqliteHelper {
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
       let likeV3: FeedsData.LikeV3 = {
+        likeId: element['like_id'],
+
         destDid: element['dest_did'],
         postId: element['post_id'],
         commentId: element['comment_id'],

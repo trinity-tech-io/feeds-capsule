@@ -1034,6 +1034,8 @@ declare namespace FeedsData {
   }
 
   type LikeV3 = {
+    likeId: string,
+
     destDid: string,
     postId: string,
     commentId: string,

@@ -216,6 +216,7 @@ export class HiveVaultResultParse {
         likes.forEach(like => {
           if (like) {
             const likeResult: FeedsData.LikeV3 = {
+              likeId: like.like_id,
               destDid: destDid,
               postId: like.post_id,
               commentId: like.comment_id,
