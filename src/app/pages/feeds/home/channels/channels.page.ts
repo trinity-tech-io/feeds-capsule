@@ -236,7 +236,6 @@ export class ChannelsPage implements OnInit {
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
-      this.infiniteScroll.disabled = false;
       this.startIndex++;
 
       this.isLoadimage = {};
@@ -247,7 +246,6 @@ export class ChannelsPage implements OnInit {
       this.refreshImage();
     } else {
       this.postList = this.totalData;
-      this.infiniteScroll.disabled = true;
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
       this.isInitLikeNum= {};
@@ -263,15 +261,16 @@ export class ChannelsPage implements OnInit {
       return;
     }
     this.totalData = await this.sortChannelList();
-    if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+
+    if(this.totalData.length === this.postList.length){
+        this.postList = this.totalData;
+    }else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
       this.postList = this.totalData.slice(
         0,
         this.startIndex * this.pageNumber,
       );
-      this.infiniteScroll.disabled = false;
     } else {
       this.postList = this.totalData;
-      this.infiniteScroll.disabled = true;
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
@@ -595,15 +594,20 @@ export class ChannelsPage implements OnInit {
         });
         event.target.complete();
       } else {
+
+        if(this.totalData.length === this.postList.length){
+          event.target.complete();
+          clearTimeout(sId);
+            return;
+        }
+
         arr = this.totalData.slice(
           this.startIndex * this.pageNumber,
           this.totalData.length,
         );
         this.zone.run(() => {
-          //this.initStatus(arr);
           this.postList = this.postList.concat(arr);
         });
-        this.infiniteScroll.disabled = true;
         this.refreshImage();
         event.target.complete();
         clearTimeout(sId);

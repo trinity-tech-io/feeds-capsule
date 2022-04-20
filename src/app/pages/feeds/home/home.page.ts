@@ -210,10 +210,11 @@ export class HomePage implements OnInit {
 
 
       this.startIndex++;
-      this.infiniteScroll.disabled = false;
+      //this.infiniteScroll.disabled = false;
     } else {
+
       this.postList = this.totalData;
-      this.infiniteScroll.disabled = true;
+      //this.infiniteScroll.disabled = true;
     }
     if (scrollToTop) {
       this.scrollToTop(1);
@@ -248,7 +249,9 @@ export class HomePage implements OnInit {
     }
     this.isPostLoading = false;
     this.totalData = await this.sortPostList();
-    if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+    if(this.totalData.length === this.postList.length){
+      this.postList = this.totalData;
+    }else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
       this.postList = this.totalData.slice(
         0,
         this.startIndex * this.pageNumber,
@@ -348,7 +351,6 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
       Logger.log(TAG, "======= Receive updateTab========");
       this.zone.run(() => {
-        this.infiniteScroll.disabled = false;
         if (isInit) {
           this.initPostListData(true);
           return;
@@ -753,6 +755,12 @@ export class HomePage implements OnInit {
               event.target.complete();
             });
           } else {
+            //上拉加载到底
+            if(this.totalData.length === this.postList.length){
+              event.target.complete();
+              clearTimeout(sId);
+                return;
+            }
             arr = this.totalData.slice(
               this.startIndex * this.pageNumber,
               this.totalData.length,
@@ -760,8 +768,7 @@ export class HomePage implements OnInit {
             this.zone.run(() => {
               let len = this.postList.length - 1;
               this.postList = this.postList.concat(arr);
-              this.refreshImage(len - 1);
-              this.infiniteScroll.disabled = true;
+              this.refreshImage(len);
               event.target.complete();
             });
           }

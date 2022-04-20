@@ -108,10 +108,8 @@ export class CommentlistPage implements OnInit {
       this.replayCommentList = this.totalData.slice(0, this.pageNumber);
 
       this.startIndex++;
-      this.infiniteScroll.disabled = false;
     } else {
       this.replayCommentList = this.totalData;
-      this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
   }
@@ -127,7 +125,9 @@ export class CommentlistPage implements OnInit {
 
   async refreshCommentList() {
     this.totalData = await this.sortCommentList();
-    if (
+    if(this.totalData.length === this.replayCommentList.length){
+      this.replayCommentList = this.totalData;
+    }else if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
     ) {
@@ -135,10 +135,8 @@ export class CommentlistPage implements OnInit {
         0,
         this.startIndex * this.pageNumber,
       );
-      this.infiniteScroll.disabled = false;
     } else {
       this.replayCommentList = this.totalData;
-      this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
   }
@@ -374,6 +372,11 @@ export class CommentlistPage implements OnInit {
         this.initOwnCommentObj();
         event.target.complete();
       } else {
+        if(this.totalData.length === this.replayCommentList.length){
+          event.target.complete();
+          clearTimeout(sId);
+          return;
+        }
         arr = this.totalData.slice(
           this.startIndex * this.pageNumber,
           this.totalData.length,
@@ -381,7 +384,6 @@ export class CommentlistPage implements OnInit {
         this.zone.run(() => {
           this.replayCommentList = this.replayCommentList.concat(arr);
         });
-        this.infiniteScroll.disabled = true;
         this.initOwnCommentObj();
         event.target.complete();
         clearTimeout(sId);

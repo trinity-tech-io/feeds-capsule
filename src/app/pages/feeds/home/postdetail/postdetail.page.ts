@@ -192,10 +192,8 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData.slice(0, this.pageNumber);
 
       this.startIndex++;
-      this.infiniteScroll.disabled = false;
     } else {
       this.captainCommentList = this.totalData;
-      this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
     this.refreshLikeAndComment();
@@ -216,7 +214,9 @@ export class PostdetailPage implements OnInit {
 
   async refreshCommentList() {
     this.totalData = await this.sortCommentList();
-    if (
+    if(this.totalData.length === this.captainCommentList.length){
+      this.captainCommentList = this.totalData;
+    }else if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
     ) {
@@ -224,10 +224,8 @@ export class PostdetailPage implements OnInit {
         0,
         this.startIndex * this.pageNumber,
       );
-      this.infiniteScroll.disabled = false;
     } else {
       this.captainCommentList = this.totalData;
-      this.infiniteScroll.disabled = true;
     }
     this.initOwnCommentObj();
     this.refreshLikeAndComment();
@@ -743,6 +741,12 @@ export class PostdetailPage implements OnInit {
         this.initOwnCommentObj();
         event.target.complete();
       } else {
+         //上拉加载到底
+         if(this.totalData.length === this.captainCommentList.length){
+          event.target.complete();
+          clearTimeout(sId);
+            return;
+        }
         arr = this.totalData.slice(
           this.startIndex * this.pageNumber,
           this.totalData.length,
@@ -750,7 +754,6 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
-        this.infiniteScroll.disabled = true;
         this.initOwnCommentObj();
         event.target.complete();
         clearTimeout(sId);

@@ -247,7 +247,6 @@ export class ProfilePage implements OnInit {
       this.isInitComment = {};
       this.refreshImage();
       this.startIndex++;
-      this.infiniteScroll.disabled = false;
     } else {
       this.likeList = this.totalLikeList;
       this.isLoadimage = {};
@@ -257,7 +256,6 @@ export class ProfilePage implements OnInit {
       this.isInitLikeStatus = {};
       this.isInitComment = {};
       this.refreshImage();
-      this.infiniteScroll.disabled = true;
     }
   }
 
@@ -269,12 +267,12 @@ export class ProfilePage implements OnInit {
 
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
-    if (this.totalLikeList.length - this.pageNumber * this.startIndex > 0) {
+    if(this.totalLikeList.length === this.likeList.length){
+      this.likeList = this.totalLikeList;
+    }else if (this.totalLikeList.length - this.pageNumber * this.startIndex > 0) {
       this.likeList = this.likeList.slice(0, this.startIndex * this.pageNumber);
-      this.infiniteScroll.disabled = false;
     } else {
       this.likeList = this.totalLikeList;
-      this.infiniteScroll.disabled = true;
     }
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
@@ -725,6 +723,11 @@ export class ProfilePage implements OnInit {
             this.refreshImage();
             event.target.complete();
           } else {
+            if(this.totalLikeList.length === this.likeList.length){
+               event.target.complete();
+               clearTimeout(sId);
+               return;
+            }
             arr = this.totalLikeList.slice(
               this.startIndex * this.pageNumber,
               this.totalLikeList.length,
@@ -733,8 +736,6 @@ export class ProfilePage implements OnInit {
               this.likeList = this.likeList.concat(arr);
             });
             this.refreshImage();
-            this.infiniteScroll.disabled = true;
-
             event.target.complete();
             clearTimeout(sId);
           }
