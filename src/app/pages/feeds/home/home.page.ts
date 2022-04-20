@@ -831,6 +831,9 @@ export class HomePage implements OnInit {
       case 'feeds':
         //TODO
         try {
+          this.dataHelper.cleanCachedComment();
+          this.dataHelper.cleanCacheLikeNum();
+          this.dataHelper.cleanCachedLikeStatus();
           await this.hiveVaultController.syncAllPost();
           await this.hiveVaultController.syncAllComments();
           await this.hiveVaultController.syncAllLikeData();

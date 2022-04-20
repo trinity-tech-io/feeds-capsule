@@ -157,14 +157,13 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did
+
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
-      await this.hiveVaultController.getPostListByChannel(
-        userDid, this.channelId);
-
+      await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.initRefresh();
       this.followStatus = true;
       this.native.hideLoading();
@@ -565,15 +564,11 @@ export class ChannelsPage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-      this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId).then(() => {
-        this.init();
-        event.target.complete();
-        this.refreshImage();
-      }).catch(() => {
-        event.target.complete();
-      });
-      this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
-      this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+      this.init();
+      event.target.complete();
     } catch (error) {
       event.target.complete();
     }

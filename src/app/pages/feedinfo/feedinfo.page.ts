@@ -203,7 +203,9 @@ export class FeedinfoPage implements OnInit {
     await this.native.showLoading('common.waitMoment');
     try {
       await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
-      await this.hiveVaultController.getPostListByChannel(userDid, this.channelId);
+      await this.hiveVaultController.syncPostFromChannel(userDid, this.channelId);
+      await this.hiveVaultController.syncCommentFromChannel(userDid, this.channelId);
+      await this.hiveVaultController.syncLikeDataFromChannel(userDid, this.channelId);
       this.followStatus = true;
       this.native.hideLoading();
     } catch (error) {
