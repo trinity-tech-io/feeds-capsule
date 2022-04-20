@@ -243,7 +243,6 @@ export class HomePage implements OnInit {
         return item.status != 1;
       });
     }
-    console.log("============this.totalData0",postList.length);
     return postList;
   }
 
@@ -254,9 +253,9 @@ export class HomePage implements OnInit {
     }
     this.isPostLoading = false;
     this.totalData = await this.sortPostList();
-    if(this.totalData.length === this.postList.length){
+    if (this.totalData.length === this.postList.length) {
       this.postList = this.totalData;
-    }else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+    } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
       this.postList = this.totalData.slice(
         0,
         this.startIndex * this.pageNumber,
@@ -751,8 +750,6 @@ export class HomePage implements OnInit {
       case 'feeds':
         let sId = setTimeout(() => {
           let arr = [];
-          console.log("============this.totalData1",this.totalData.length - this.pageNumber * this.startIndex);
-
           if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
             arr = this.totalData.slice(
               this.startIndex * this.pageNumber,
@@ -766,12 +763,11 @@ export class HomePage implements OnInit {
               event.target.complete();
             });
           } else {
-            console.log("============this.totalData2",this.totalData.length,this.postList.length);
             //上拉加载到底
-            if(this.totalData.length === this.postList.length){
+            if (this.totalData.length === this.postList.length) {
               event.target.complete();
               clearTimeout(sId);
-                return;
+              return;
             }
             arr = this.totalData.slice(
               this.startIndex * this.pageNumber,
@@ -837,6 +833,7 @@ export class HomePage implements OnInit {
         try {
           await this.hiveVaultController.syncAllPost();
           await this.hiveVaultController.syncAllComments();
+          await this.hiveVaultController.syncAllLikeData();
 
           await this.initPostListData(true);
           if (event != null) event.target.complete();
@@ -1015,7 +1012,7 @@ export class HomePage implements OnInit {
           let fileName: string = avatarUri.split("@")[0];
           this.avatarImageMap[id] = avatarUri;//存储相同头像的Post的Map
           let isDown = this.downPostAvatarMap[fileName] || "";
-          if(isDown != ''){
+          if (isDown != '') {
             return;
           }
           this.downPostAvatarMap[fileName] = "down";
@@ -1026,43 +1023,43 @@ export class HomePage implements OnInit {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.downPostAvatarMap[fileName] = "";
-                for(let key in this.avatarImageMap){
+                for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if(uri === avatarUri){
+                  if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                     if(newPostAvatar != null){
+                    if (newPostAvatar != null) {
                       newPostAvatar.setAttribute('src', realImage);
-                     }
-                     this.isLoadAvatarImage[key] = "13";
-                     delete this.avatarImageMap[key];
+                    }
+                    this.isLoadAvatarImage[key] = "13";
+                    delete this.avatarImageMap[key];
                   }
                 }
               } else {
                 this.downPostAvatarMap[fileName] = "";
-                for(let key in this.avatarImageMap){
+                for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if(uri === avatarUri){
+                  if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                    if(newPostAvatar != null ){
+                    if (newPostAvatar != null) {
                       newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
                     }
-                     this.isLoadAvatarImage[key] = "13";
-                     delete this.avatarImageMap[key];
+                    this.isLoadAvatarImage[key] = "13";
+                    delete this.avatarImageMap[key];
                   }
                 }
               }
             })
             .catch(reason => {
               this.downPostAvatarMap[fileName] = "";
-              for(let key in this.avatarImageMap){
+              for (let key in this.avatarImageMap) {
                 let uri = this.avatarImageMap[key] || "";
-                if(uri === avatarUri){
+                if (uri === avatarUri) {
                   let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                  if(newPostAvatar != null ){
-                   newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
+                  if (newPostAvatar != null) {
+                    newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
                   }
-                   this.isLoadAvatarImage[key] = '13';
-                   delete this.avatarImageMap[key];
+                  this.isLoadAvatarImage[key] = '13';
+                  delete this.avatarImageMap[key];
                 }
               }
               Logger.error(TAG,

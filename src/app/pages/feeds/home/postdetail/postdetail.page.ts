@@ -135,7 +135,7 @@ export class PostdetailPage implements OnInit {
   private userNameMap: any = {};
   private isloadingLikeMap: any = {};
   private isLoadingLike = false;
-  public  channelOwnerName: string = '';
+  public channelOwnerName: string = '';
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -214,9 +214,9 @@ export class PostdetailPage implements OnInit {
 
   async refreshCommentList() {
     this.totalData = await this.sortCommentList();
-    if(this.totalData.length === this.captainCommentList.length){
+    if (this.totalData.length === this.captainCommentList.length) {
       this.captainCommentList = this.totalData;
-    }else if (
+    } else if (
       this.startIndex != 0 &&
       this.totalData.length - this.pageNumber * this.startIndex > 0
     ) {
@@ -368,13 +368,13 @@ export class PostdetailPage implements OnInit {
             let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
 
             let index = _.findIndex(cachedCommentList, (item: FeedsData.CommentV3) => {
-            return item.destDid === newComment.destDid &&
-            item.channelId === newComment.channelId &&
-            item.postId === newComment.postId &&
-            item.commentId === newComment.commentId;
+              return item.destDid === newComment.destDid &&
+                item.channelId === newComment.channelId &&
+                item.postId === newComment.postId &&
+                item.commentId === newComment.commentId;
             });
             if (index > -1) {
-               cachedCommentList[index] = newComment;
+              cachedCommentList[index] = newComment;
             }
             this.startIndex = 0;
             await this.initData(false);
@@ -482,9 +482,9 @@ export class PostdetailPage implements OnInit {
     } else {
       this.refcommentId = comment.commentId;
       this.commentName = this.userNameMap[comment.createrDid];
-      if(this.destDid === comment.createrDid){
+      if (this.destDid === comment.createrDid) {
         this.commentAvatar = this.channelAvatarUri;
-      }else{
+      } else {
         this.commentAvatar = '';
       }
     }
@@ -521,7 +521,7 @@ export class PostdetailPage implements OnInit {
             this.dataHelper.cacheLikeStatus(this.postId, '0', false);
             let likedNum = this.dataHelper.getCachedLikeNum(this.postId, '0') || 0;
             if (likedNum > 0) {
-            likedNum = likedNum - 1;
+              likedNum = likedNum - 1;
             }
             this.dataHelper.cacheLikeNum(this.postId, '0', likedNum);
             this.isLoadingLike = false;
@@ -545,11 +545,11 @@ export class PostdetailPage implements OnInit {
       this.hiveVaultController.like(
         this.destDid, this.channelId, this.postId, '0').
         then(() => {
-           //update cached
-           this.dataHelper.cacheLikeStatus(this.postId, '0', true);
-           let likedNum = this.dataHelper.getCachedLikeNum(this.postId, '0') || 0;
-           likedNum = likedNum + 1;
-           this.dataHelper.cacheLikeNum(this.postId, '0', likedNum);
+          //update cached
+          this.dataHelper.cacheLikeStatus(this.postId, '0', true);
+          let likedNum = this.dataHelper.getCachedLikeNum(this.postId, '0') || 0;
+          likedNum = likedNum + 1;
+          this.dataHelper.cacheLikeNum(this.postId, '0', likedNum);
           this.isLoadingLike = false;
         }).catch((err) => {
           this.isLoadingLike = false;
@@ -719,6 +719,7 @@ export class PostdetailPage implements OnInit {
       this.dataHelper.cleanCachedLikeStatus();
       await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
       await this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
+      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.initData(true);
       event.target.complete();
     } catch (error) {
@@ -741,11 +742,11 @@ export class PostdetailPage implements OnInit {
         this.initOwnCommentObj();
         event.target.complete();
       } else {
-         //上拉加载到底
-         if(this.totalData.length === this.captainCommentList.length){
+        //上拉加载到底
+        if (this.totalData.length === this.captainCommentList.length) {
           event.target.complete();
           clearTimeout(sId);
-            return;
+          return;
         }
         arr = this.totalData.slice(
           this.startIndex * this.pageNumber,
