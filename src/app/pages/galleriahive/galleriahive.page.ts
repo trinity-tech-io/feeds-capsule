@@ -61,8 +61,17 @@ export class GalleriahivePage implements OnInit {
         } catch (error) {
         }
 
+        // await this.hiveVaultController.getSubscriptionChannelById();
+
+        const did = (await this.dataHelper.getSigninData()).did;
+
         this.description = this.translate.instant('GalleriahivePage.synchronizingChannelData');
-        await this.hiveVaultController.syncSelfChannel();
+        const myChannelList = await this.hiveVaultController.syncSelfChannel(did);
+
+        for (let index = 0; index < myChannelList.length; index++) {
+          const channel = myChannelList[index];
+          await this.hiveVaultController.syncSubscribedChannel(channel.destDid, channel.channelId, did)
+        }
 
         this.description = this.translate.instant('GalleriahivePage.synchronizingPostData');
         await this.hiveVaultController.syncAllPost();
@@ -84,7 +93,7 @@ export class GalleriahivePage implements OnInit {
   }
 
   openHomePage() {
-    this.dataHelper.saveData("feeds.initHive","1");
+    this.dataHelper.saveData("feeds.initHive", "1");
     this.native.setRootRouter('/tabs/home');
   }
 }

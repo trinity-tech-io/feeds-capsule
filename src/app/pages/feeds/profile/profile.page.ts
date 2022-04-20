@@ -214,19 +214,19 @@ export class ProfilePage implements OnInit {
 
   async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
     try {
-      let newChannels =  channels || null;
+      let newChannels = channels || null;
       if (newChannels != null) {
-         channels  =  _.uniqWith(newChannels, _.isEqual) || [];
-         newChannels = _.sortBy(newChannels, (item: FeedsData.ChannelV3) => {
+        channels = _.uniqWith(newChannels, _.isEqual) || [];
+        newChannels = _.sortBy(newChannels, (item: FeedsData.ChannelV3) => {
           return -item.createdAt;
         });
-         this.channels = newChannels;
+        this.channels = newChannels;
       } else {
-       let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
-        newSelfChannels  = _.sortBy(newSelfChannels , (item: FeedsData.ChannelV3) => {
+        let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
+        newSelfChannels = _.sortBy(newSelfChannels, (item: FeedsData.ChannelV3) => {
           return -item.createdAt;
         });
-       this.channels  = _.uniqWith(newSelfChannels,_.isEqual) || [];
+        this.channels = _.uniqWith(newSelfChannels, _.isEqual) || [];
       }
 
       this.myFeedsSum = this.channels.length;
@@ -282,9 +282,9 @@ export class ProfilePage implements OnInit {
 
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
-    if(this.totalLikeList.length === this.likeList.length){
+    if (this.totalLikeList.length === this.likeList.length) {
       this.likeList = this.totalLikeList;
-    }else if (this.totalLikeList.length - this.pageNumber * this.startIndex > 0) {
+    } else if (this.totalLikeList.length - this.pageNumber * this.startIndex > 0) {
       this.likeList = this.likeList.slice(0, this.startIndex * this.pageNumber);
     } else {
       this.likeList = this.totalLikeList;
@@ -303,16 +303,16 @@ export class ProfilePage implements OnInit {
   async sortLikeList() {
     let likeList = [];
     try {
-     let likes: FeedsData.LikeV3[] = await this.dataHelper.getSelfAllLikeV3Data() || [];
-        for(let likeIndex = 0; likeIndex < likes.length; likeIndex++){
-            let item = likes[likeIndex];
-            if(item.commentId === '0' && item.status === FeedsData.PostCommentStatus.available){
-              let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
-              if(post != null){
-                likeList.push(post);
-              }
-            }
+      let likes: FeedsData.LikeV3[] = await this.dataHelper.getSelfAllLikeV3Data() || [];
+      for (let likeIndex = 0; likeIndex < likes.length; likeIndex++) {
+        let item = likes[likeIndex];
+        if (item.commentId === '0' && item.status === FeedsData.PostCommentStatus.available) {
+          let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
+          if (post != null) {
+            likeList.push(post);
+          }
         }
+      }
     } catch (error) {
 
     }
@@ -495,7 +495,7 @@ export class ProfilePage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
       let refcommentId = comment.refcommentId;
       let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
-       cachedCommentList.push(comment);
+      cachedCommentList.push(comment);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
@@ -624,7 +624,7 @@ export class ProfilePage implements OnInit {
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
-    CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage,'myFeedsAvatar')
+    CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage, 'myFeedsAvatar')
     this.removeImages();
     this.removeAllVideo();
     this.isLoadimage = {};
@@ -683,7 +683,8 @@ export class ProfilePage implements OnInit {
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
-          const selfchannels = await this.hiveVaultController.syncSelfChannel();
+          const did = (await this.dataHelper.getSigninData()).did;
+          const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {
@@ -702,7 +703,7 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.myLikes':
         try {
-         await this.hiveVaultController.syncAllLikeData();
+          await this.hiveVaultController.syncAllLikeData();
           this.startIndex = 0;
           this.initLike();
           event.target.complete();
@@ -748,10 +749,10 @@ export class ProfilePage implements OnInit {
             this.refreshImage();
             event.target.complete();
           } else {
-            if(this.totalLikeList.length === this.likeList.length){
-               event.target.complete();
-               clearTimeout(sId);
-               return;
+            if (this.totalLikeList.length === this.likeList.length) {
+              event.target.complete();
+              clearTimeout(sId);
+              return;
             }
             arr = this.totalLikeList.slice(
               this.startIndex * this.pageNumber,
@@ -866,7 +867,7 @@ export class ProfilePage implements OnInit {
 
             this.myFeedsAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
             let isDown = this.downMyFeedsAvatarMap[fileName] || "";
-            if(isDown != ''){
+            if (isDown != '') {
               continue;
             }
             this.downMyFeedsAvatarMap[fileName] = fileName;
@@ -875,23 +876,23 @@ export class ProfilePage implements OnInit {
                 this.downMyFeedsAvatarMap[fileName] = '';
                 let srcData = data || "";
                 if (srcData != "") {
-                  for(let key in this.myFeedsAvatarImageMap){
+                  for (let key in this.myFeedsAvatarImageMap) {
                     let uri = this.myFeedsAvatarImageMap[key] || "";
-                    if(uri === avatarUri){
+                    if (uri === avatarUri) {
                       this.myFeedsIsLoadimage[key] = '13';
                       let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
-                       if(newAvatarImage != null){
+                      if (newAvatarImage != null) {
                         newAvatarImage.setAttribute("src", data);
-                       }
-                       delete this.myFeedsAvatarImageMap[key];
+                      }
+                      delete this.myFeedsAvatarImageMap[key];
                     }
                   }
-                }else{
-                  for(let key in this.myFeedsAvatarImageMap){
+                } else {
+                  for (let key in this.myFeedsAvatarImageMap) {
                     let uri = this.myFeedsAvatarImageMap[key] || "";
-                    if(uri === avatarUri){
-                       this.myFeedsIsLoadimage[key] = '13';
-                       delete this.myFeedsAvatarImageMap[key];
+                    if (uri === avatarUri) {
+                      this.myFeedsIsLoadimage[key] = '13';
+                      delete this.myFeedsAvatarImageMap[key];
                     }
                   }
                 }
@@ -899,15 +900,15 @@ export class ProfilePage implements OnInit {
             }).catch((err) => {
               this.downMyFeedsAvatarMap[fileName] = '';
               if (this.myFeedsIsLoadimage[id] === '13') {
-                for(let key in this.myFeedsAvatarImageMap){
+                for (let key in this.myFeedsAvatarImageMap) {
                   let uri = this.myFeedsAvatarImageMap[key] || "";
-                  if(uri === avatarUri){
+                  if (uri === avatarUri) {
                     let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
-                    if(newAvatarImage != null){
-                      newAvatarImage.setAttribute("src",'./assets/icon/reserve.svg');
+                    if (newAvatarImage != null) {
+                      newAvatarImage.setAttribute("src", './assets/icon/reserve.svg');
                     }
-                     this.myFeedsIsLoadimage[id] = '';
-                     this.myFeedsAvatarImageMap[key] = '';
+                    this.myFeedsIsLoadimage[id] = '';
+                    this.myFeedsAvatarImageMap[key] = '';
                   }
                 }
               }
@@ -928,7 +929,7 @@ export class ProfilePage implements OnInit {
         if (this.profileCollectiblesisLoadimage[id] === '13') {
           this.myFeedsIsLoadimage[id] = '';
           delete this.myFeedsAvatarImageMap[id];
-          if(avatarImage != null){
+          if (avatarImage != null) {
             avatarImage.setAttribute('src', './assets/icon/reserve.svg');
           }
         }
@@ -1088,18 +1089,18 @@ export class ProfilePage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
-         //post like status
-         CommonPageService.handlePostLikeStatusData(
-          id, srcId, postgridindex,postgridList[postgridindex],
+        //post like status
+        CommonPageService.handlePostLikeStatusData(
+          id, srcId, postgridindex, postgridList[postgridindex],
           this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-          this.likeMap,this.isLoadingLikeMap)
-          //处理post like number
-          CommonPageService.handlePostLikeNumData(
+          this.likeMap, this.isLoadingLikeMap)
+        //处理post like number
+        CommonPageService.handlePostLikeNumData(
           id, srcId, postgridindex, postgridList[postgridindex],
           this.clientHeight, this.hiveVaultController,
           this.likeNumMap, this.isInitLikeNum);
-          //处理post comment
-          CommonPageService.handlePostCommentData(
+        //处理post comment
+        CommonPageService.handlePostCommentData(
           id, srcId, postgridindex, postgridList[postgridindex],
           this.clientHeight, this.hiveVaultController,
           this.isInitComment, this.commentNumMap);
@@ -1227,13 +1228,13 @@ export class ProfilePage implements OnInit {
           if (channel != null) {
             avatarUri = channel.avatar;
             this.channelNameMap[postId] = channel.name || '';
-          }else{
+          } else {
             this.channelNameMap[postId] = "";
           }
           let fileName: string = avatarUri.split("@")[0];
           this.avatarImageMap[id] = avatarUri;//存储相同头像的Post的Map
           let isDown = this.downPostAvatarMap[fileName] || "";
-          if(isDown != ''){
+          if (isDown != '') {
             return;
           }
           this.downPostAvatarMap[fileName] = "down";
@@ -1244,28 +1245,28 @@ export class ProfilePage implements OnInit {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.downPostAvatarMap[fileName] = "";
-                for(let key in this.avatarImageMap){
+                for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if(uri === avatarUri){
+                  if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
-                     if(newPostAvatar != null ){
-                       newPostAvatar.setAttribute('src', realImage);
-                     }
-                     this.isLoadAvatarImage[key] = "13";
-                     delete this.avatarImageMap[key];
+                    if (newPostAvatar != null) {
+                      newPostAvatar.setAttribute('src', realImage);
+                    }
+                    this.isLoadAvatarImage[key] = "13";
+                    delete this.avatarImageMap[key];
                   }
                 }
               } else {
                 this.downPostAvatarMap[fileName] = "";
-                for(let key in this.avatarImageMap){
+                for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if(uri === avatarUri){
+                  if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
-                     if(newPostAvatar != null ){
+                    if (newPostAvatar != null) {
                       newPostAvatar.setAttribute('src', "./assets/icon/reserve.svg");
-                     }
-                     this.isLoadAvatarImage[key] = "13";
-                     delete this.avatarImageMap[key];
+                    }
+                    this.isLoadAvatarImage[key] = "13";
+                    delete this.avatarImageMap[key];
                   }
                 }
               }
@@ -1273,15 +1274,15 @@ export class ProfilePage implements OnInit {
             .catch(reason => {
 
               this.downPostAvatarMap[fileName] = "";
-              for(let key in this.avatarImageMap){
+              for (let key in this.avatarImageMap) {
                 let uri = this.avatarImageMap[key] || "";
-                if(uri === avatarUri){
+                if (uri === avatarUri) {
                   let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
-                  if(newPostAvatar != null){
+                  if (newPostAvatar != null) {
                     newPostAvatar.setAttribute('src', "./assets/icon/reserve.svg");
                   }
-                   this.isLoadAvatarImage[key] = '13';
-                   delete this.avatarImageMap[key];
+                  this.isLoadAvatarImage[key] = '13';
+                  delete this.avatarImageMap[key];
                 }
               }
               Logger.error(TAG,
@@ -1962,8 +1963,8 @@ export class ProfilePage implements OnInit {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
 
     this.clearData();

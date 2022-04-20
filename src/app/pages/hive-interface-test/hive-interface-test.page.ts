@@ -220,8 +220,9 @@ export class HiveInterfaceTestPage implements OnInit {
     alert('uploadMediaData');
   }
 
-  syncSelfChannel() {
-    this.hiveVaultController.syncSelfChannel();
+  async syncSelfChannel() {
+    const did = (await this.dataHelper.getSigninData()).did;
+    this.hiveVaultController.syncSelfChannel(did);
   }
 
   syncSelfPost() {
