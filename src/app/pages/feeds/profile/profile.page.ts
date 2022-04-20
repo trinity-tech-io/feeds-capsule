@@ -175,6 +175,11 @@ export class ProfilePage implements OnInit {
   private commentNumMap: any = {};
   private channelNameMap: any = {};
   public isLoadingLikeMap: any = {};
+  private downPostAvatarMap: any = {};
+  private avatarImageMap: any = {};
+  private downMyFeedsAvatarMap: any = {};
+  private myFeedsAvatarImageMap: any = {};
+
   constructor(
     public theme: ThemeService,
     private events: Events,
@@ -212,9 +217,15 @@ export class ProfilePage implements OnInit {
       let newChannels =  channels || null;
       if (newChannels != null) {
          channels  =  _.uniqWith(newChannels, _.isEqual) || [];
+         newChannels = _.sortBy(newChannels, (item: FeedsData.ChannelV3) => {
+          return -item.createdAt;
+        });
          this.channels = newChannels;
       } else {
        let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
+        newSelfChannels  = _.sortBy(newSelfChannels , (item: FeedsData.ChannelV3) => {
+          return -item.createdAt;
+        });
        this.channels  = _.uniqWith(newSelfChannels,_.isEqual) || [];
       }
 
@@ -242,6 +253,8 @@ export class ProfilePage implements OnInit {
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
       this.isLoadAvatarImage = {};
+      this.avatarImageMap = {};
+      this.downPostAvatarMap = {};
       this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
       this.isInitComment = {};
@@ -252,6 +265,8 @@ export class ProfilePage implements OnInit {
       this.isLoadimage = {};
       this.isLoadVideoiamge = {};
       this.isLoadAvatarImage = {};
+      this.avatarImageMap = {};
+      this.downPostAvatarMap = {};
       this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
       this.isInitComment = {};
@@ -277,6 +292,8 @@ export class ProfilePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
@@ -299,7 +316,11 @@ export class ProfilePage implements OnInit {
     } catch (error) {
 
     }
-    console.log("=======likes1=====",likeList);
+
+    likeList = _.sortBy(likeList, (item: any) => {
+      return -item.createdAt;
+    });
+
     this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
@@ -609,10 +630,14 @@ export class ProfilePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.myFeedsIsLoadimage = {};
+    this.downMyFeedsAvatarMap = {};
+    this.myFeedsAvatarImageMap = {};
     this.curItem = {};
     this.curPostId = '';
   }
@@ -838,36 +863,74 @@ export class ProfilePage implements OnInit {
               avatarUri = channel.avatar;
             }
             let fileName: string = avatarUri.split("@")[0];
+
+            this.myFeedsAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
+            let isDown = this.downMyFeedsAvatarMap[fileName] || "";
+            if(isDown != ''){
+              continue;
+            }
+            this.downMyFeedsAvatarMap[fileName] = fileName;
             this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
               this.zone.run(() => {
-                this.myFeedsIsLoadimage[id] = '13';
+                this.downMyFeedsAvatarMap[fileName] = '';
                 let srcData = data || "";
                 if (srcData != "") {
-                  avatarImage.setAttribute("src", data);
+                  for(let key in this.myFeedsAvatarImageMap){
+                    let uri = this.myFeedsAvatarImageMap[key] || "";
+                    if(uri === avatarUri){
+                      this.myFeedsIsLoadimage[key] = '13';
+                      let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
+                       if(newAvatarImage != null){
+                        newAvatarImage.setAttribute("src", data);
+                       }
+                       delete this.myFeedsAvatarImageMap[key];
+                    }
+                  }
+                }else{
+                  for(let key in this.myFeedsAvatarImageMap){
+                    let uri = this.myFeedsAvatarImageMap[key] || "";
+                    if(uri === avatarUri){
+                       this.myFeedsIsLoadimage[key] = '13';
+                       delete this.myFeedsAvatarImageMap[key];
+                    }
+                  }
                 }
               });
             }).catch((err) => {
+              this.downMyFeedsAvatarMap[fileName] = '';
               if (this.myFeedsIsLoadimage[id] === '13') {
-                this.myFeedsIsLoadimage[id] = '';
-                avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+                for(let key in this.myFeedsAvatarImageMap){
+                  let uri = this.myFeedsAvatarImageMap[key] || "";
+                  if(uri === avatarUri){
+                    let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
+                    if(newAvatarImage != null){
+                      newAvatarImage.setAttribute("src",'./assets/icon/reserve.svg');
+                    }
+                     this.myFeedsIsLoadimage[id] = '';
+                     this.myFeedsAvatarImageMap[key] = '';
+                  }
+                }
               }
             });
           }
         } else {
           srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
-            avatarImage.getBoundingClientRect().top < -100 &&
             this.myFeedsIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
             this.myFeedsIsLoadimage[id] = '';
+            delete this.myFeedsAvatarImageMap[id];
             avatarImage.setAttribute('src', './assets/icon/reserve.svg');
           }
         }
       } catch (error) {
         if (this.profileCollectiblesisLoadimage[id] === '13') {
           this.myFeedsIsLoadimage[id] = '';
-          avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+          delete this.myFeedsAvatarImageMap[id];
+          if(avatarImage != null){
+            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+          }
         }
       }
 
@@ -958,6 +1021,8 @@ export class ProfilePage implements OnInit {
     if (this.selectType === "ProfilePage.myFeeds") {
       let sid = setTimeout(() => {
         this.myFeedsIsLoadimage = {};
+        this.downMyFeedsAvatarMap = {};
+        this.myFeedsAvatarImageMap = {};
         this.setMyFeedsVisibleareaImage();
         clearTimeout(sid);
       }, 100);
@@ -1157,30 +1222,68 @@ export class ProfilePage implements OnInit {
           let destDid: string = arr[0];
           let channelId: string = arr[1];
           let postId: string = arr[2];
-          const key = UtilService.getKey(destDid, channelId);
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
           let avatarUri = "";
           if (channel != null) {
             avatarUri = channel.avatar;
             this.channelNameMap[postId] = channel.name || '';
+          }else{
+            this.channelNameMap[postId] = "";
           }
           let fileName: string = avatarUri.split("@")[0];
+          this.avatarImageMap[id] = avatarUri;//存储相同头像的Post的Map
+          let isDown = this.downPostAvatarMap[fileName] || "";
+          if(isDown != ''){
+            return;
+          }
+          this.downPostAvatarMap[fileName] = "down";
           //头像
           this.hiveVaultController.
             getV3Data(destDid, avatarUri, fileName, "0",)
             .then(imagedata => {
               let realImage = imagedata || '';
               if (realImage != '') {
-                this.isLoadAvatarImage[id] = '13';
-                postAvatar.setAttribute('src', realImage);
+                this.downPostAvatarMap[fileName] = "";
+                for(let key in this.avatarImageMap){
+                  let uri = this.avatarImageMap[key] || "";
+                  if(uri === avatarUri){
+                    let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
+                     if(newPostAvatar != null ){
+                       newPostAvatar.setAttribute('src', realImage);
+                     }
+                     this.isLoadAvatarImage[key] = "13";
+                     delete this.avatarImageMap[key];
+                  }
+                }
               } else {
-                this.isLoadAvatarImage[id] = '13';
-                postAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+                this.downPostAvatarMap[fileName] = "";
+                for(let key in this.avatarImageMap){
+                  let uri = this.avatarImageMap[key] || "";
+                  if(uri === avatarUri){
+                    let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
+                     if(newPostAvatar != null ){
+                      newPostAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+                     }
+                     this.isLoadAvatarImage[key] = "13";
+                     delete this.avatarImageMap[key];
+                  }
+                }
               }
             })
             .catch(reason => {
-              this.isLoadAvatarImage[id] = '13';
-              postAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+
+              this.downPostAvatarMap[fileName] = "";
+              for(let key in this.avatarImageMap){
+                let uri = this.avatarImageMap[key] || "";
+                if(uri === avatarUri){
+                  let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
+                  if(newPostAvatar != null){
+                    newPostAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+                  }
+                   this.isLoadAvatarImage[key] = '13';
+                   delete this.avatarImageMap[key];
+                }
+              }
               Logger.error(TAG,
                 "Excute 'handlePostAvatar' in home page is error , get image data error, error msg is ",
                 reason
@@ -1190,16 +1293,17 @@ export class ProfilePage implements OnInit {
       } else {
         let postAvatarSrc = postAvatar.getAttribute('src') || '';
         if (
-          postAvatar.getBoundingClientRect().top < -100 &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != ''
         ) {
-          this.isLoadAvatarImage[id] = '';
+          delete this.isLoadAvatarImage[id];
+          delete this.avatarImageMap[id];
           postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
         }
       }
     } catch (error) {
-      this.isLoadAvatarImage[id] = '';
+      delete this.isLoadAvatarImage[id];
+      delete this.avatarImageMap[id];
       postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
     }
   }
@@ -1285,7 +1389,7 @@ export class ProfilePage implements OnInit {
     let sid = setTimeout(() => {
       this.setVisibleareaImage();
       clearTimeout(sid);
-    }, 0);
+    }, 100);
   }
 
   pauseVideo(id: string) {

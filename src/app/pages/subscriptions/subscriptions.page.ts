@@ -33,6 +33,8 @@ export class SubscriptionsPage implements OnInit {
   public hideSharMenuComponent: boolean = false;
   private followingIsLoadimage: any = {};
   private clientHeight: number = 0;
+  private followingAvatarImageMap: any = {};
+  private downFollowingAvatarMap: any = {};
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -96,6 +98,8 @@ export class SubscriptionsPage implements OnInit {
 
   ionViewWillLeave() {
     this.followingIsLoadimage = {};
+    this.followingAvatarImageMap = {};
+    this.downFollowingAvatarMap = {};
     this.hideSharMenuComponent = false;
     this.removeEvents();
     this.native.handleTabsEvents();
@@ -145,6 +149,10 @@ export class SubscriptionsPage implements OnInit {
         list.push(channel);
       }
     }
+
+    list = _.sortBy(list, (item: any) => {
+      return -item.createdAt;
+    });
     return list;
   }
 
@@ -332,17 +340,48 @@ export class SubscriptionsPage implements OnInit {
               avatarUri = channel.avatar;
             }
             let fileName: string = avatarUri.split("@")[0];
+            this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
+            let isDown = this.downFollowingAvatarMap[fileName] || "";
+            if(isDown != ''){
+              continue;
+            }
+            this.downFollowingAvatarMap[fileName] = fileName;
             this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
               this.zone.run(() => {
-                this.followingIsLoadimage[id] = '13';
+                this.downFollowingAvatarMap[fileName] = '';
                 let srcData = data || "";
                 if (srcData != "") {
-                  avatarImage.setAttribute("src", data);
+                  for(let key in this.followingAvatarImageMap){
+                    let uri = this.followingAvatarImageMap[key] || "";
+                    if(uri === avatarUri){
+                      this.followingIsLoadimage[key] = '13';
+                      let newAvatarImage = document.getElementById(key + '-followingAvatar') || null;
+                       if(newAvatarImage != null){
+                        newAvatarImage.setAttribute("src", data);
+                       }
+                       delete this.followingAvatarImageMap[key];
+                    }
+                  }
+                }else{
+                  for(let key in this.followingAvatarImageMap){
+                    let uri = this.followingAvatarImageMap[key] || "";
+                    if(uri === avatarUri){
+                      this.followingIsLoadimage[key] = '13';
+                      delete this.followingAvatarImageMap[key];
+                    }
+                  }
                 }
               });
             }).catch((err) => {
+              this.downFollowingAvatarMap[fileName] = '';
+              for(let key in this.followingAvatarImageMap){
+                let uri = this.followingAvatarImageMap[key] || "";
+                if(uri === avatarUri){
+                  this.followingIsLoadimage[key] = '13';
+                  delete this.followingAvatarImageMap[key];
+                }
+              }
               if (this.followingIsLoadimage[id] === '13') {
-                this.followingIsLoadimage[id] = '';
                 avatarImage.setAttribute('src', './assets/icon/reserve.svg');
               }
             });
@@ -350,17 +389,18 @@ export class SubscriptionsPage implements OnInit {
         } else {
           srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
-            avatarImage.getBoundingClientRect().top < -100 &&
             this.followingIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
             this.followingIsLoadimage[id] = '';
+            delete this.followingAvatarImageMap[id];
             avatarImage.setAttribute('src', './assets/icon/reserve.svg');
           }
         }
       } catch (error) {
         if (this.followingIsLoadimage[id] === '13') {
           this.followingIsLoadimage[id] = '';
+          delete this.followingAvatarImageMap[id];
           avatarImage.setAttribute('src', './assets/icon/reserve.svg');
         }
       }
@@ -371,6 +411,8 @@ export class SubscriptionsPage implements OnInit {
   refreshFollowingVisibleareaImage() {
     let sid = setTimeout(() => {
       this.followingIsLoadimage = {};
+      this.followingAvatarImageMap = {};
+      this.downFollowingAvatarMap = {};
       this.setFollowingVisibleareaImage();
       clearTimeout(sid);
     }, 100);

@@ -19,8 +19,8 @@
             <ion-label  *ngIf="channelNameMap[post.postId] === '' || channelNameMap[post.postId] === undefined">
               ......
             </ion-label>
-            <ion-label  *ngIf="channelNameMap[post.postId] === '' && channelNameMap[post.postId] === undefined">
-              {{ hannelNameMap[post.postId] }}
+            <ion-label  *ngIf="channelNameMap[post.postId] != '' && channelNameMap[post.postId] != undefined">
+              {{ handleName(post) }}
               <span> {{ handleDisplayTime(post.createdAt) }}</span>
             </ion-label>
           </ion-col>

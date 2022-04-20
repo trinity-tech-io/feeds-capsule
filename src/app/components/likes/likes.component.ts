@@ -311,4 +311,12 @@ export class LikesComponent implements OnInit {
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress);
   }
+
+  handleName(post: FeedsData.PostV3){
+     let postId: string = post.postId;
+     let name = this.channelNameMap[postId] || '';
+     if(name != ''){
+       return name;
+     }
+  }
 }

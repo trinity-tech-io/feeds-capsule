@@ -166,6 +166,8 @@ export class HomePage implements OnInit {
   public isPostLoading: boolean = true;
   private hannelNameMap: any = {};
   private isLoadingLikeMap: any = {};
+  private downPostAvatarMap: any = {};
+  private avatarImageMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -221,6 +223,8 @@ export class HomePage implements OnInit {
     }
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -239,6 +243,7 @@ export class HomePage implements OnInit {
         return item.status != 1;
       });
     }
+    console.log("============this.totalData0",postList.length);
     return postList;
   }
 
@@ -263,6 +268,8 @@ export class HomePage implements OnInit {
     }
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -536,6 +543,8 @@ export class HomePage implements OnInit {
     this.removeAllVideo();
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -742,6 +751,8 @@ export class HomePage implements OnInit {
       case 'feeds':
         let sId = setTimeout(() => {
           let arr = [];
+          console.log("============this.totalData1",this.totalData.length - this.pageNumber * this.startIndex);
+
           if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
             arr = this.totalData.slice(
               this.startIndex * this.pageNumber,
@@ -755,6 +766,7 @@ export class HomePage implements OnInit {
               event.target.complete();
             });
           } else {
+            console.log("============this.totalData2",this.totalData.length,this.postList.length);
             //上拉加载到底
             if(this.totalData.length === this.postList.length){
               event.target.complete();
@@ -986,7 +998,7 @@ export class HomePage implements OnInit {
           let postId: string = arr[2];
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
 
-          // this.hiveVaultController.checkPostIsLast();
+          //this.hiveVaultController.checkPostIsLast();
 
           const post = _.find(this.postList, item => {
             return (
@@ -1001,22 +1013,58 @@ export class HomePage implements OnInit {
             avatarUri = channel.avatar;
           }
           let fileName: string = avatarUri.split("@")[0];
+          this.avatarImageMap[id] = avatarUri;//存储相同头像的Post的Map
+          let isDown = this.downPostAvatarMap[fileName] || "";
+          if(isDown != ''){
+            return;
+          }
+          this.downPostAvatarMap[fileName] = "down";
           //头像
           this.hiveVaultController.
             getV3Data(destDid, avatarUri, fileName, "0")
             .then(imagedata => {
               let realImage = imagedata || '';
               if (realImage != '') {
-                this.isLoadAvatarImage[id] = '13';
-                postAvatar.setAttribute('src', realImage);
+                this.downPostAvatarMap[fileName] = "";
+                for(let key in this.avatarImageMap){
+                  let uri = this.avatarImageMap[key] || "";
+                  if(uri === avatarUri){
+                    let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
+                     if(newPostAvatar != null){
+                      newPostAvatar.setAttribute('src', realImage);
+                     }
+                     this.isLoadAvatarImage[key] = "13";
+                     delete this.avatarImageMap[key];
+                  }
+                }
               } else {
-                this.isLoadAvatarImage[id] = '13';
-                postAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+                this.downPostAvatarMap[fileName] = "";
+                for(let key in this.avatarImageMap){
+                  let uri = this.avatarImageMap[key] || "";
+                  if(uri === avatarUri){
+                    let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
+                    if(newPostAvatar != null ){
+                      newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
+                    }
+                     this.isLoadAvatarImage[key] = "13";
+                     delete this.avatarImageMap[key];
+                  }
+                }
               }
             })
             .catch(reason => {
-              this.isLoadAvatarImage[id] = '13';
-              postAvatar.setAttribute('src', "./assets/icon/reserve.svg");
+              this.downPostAvatarMap[fileName] = "";
+              for(let key in this.avatarImageMap){
+                let uri = this.avatarImageMap[key] || "";
+                if(uri === avatarUri){
+                  let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
+                  if(newPostAvatar != null ){
+                   newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
+                  }
+                   this.isLoadAvatarImage[key] = '13';
+                   delete this.avatarImageMap[key];
+                }
+              }
               Logger.error(TAG,
                 "Excute 'handlePostAvatar' in home page is error , get image data error, error msg is ",
                 reason
@@ -1026,15 +1074,18 @@ export class HomePage implements OnInit {
       } else {
         let postAvatarSrc = postAvatar.getAttribute('src') || '';
         if (
-          this.isLoadAvatarImage[id] === '13' &&
+          this.isLoadAvatarImage[id] != '13' &&
           postAvatarSrc != ''
         ) {
-          this.isLoadAvatarImage[id] = '';
+
+          delete this.isLoadAvatarImage[id];
+          delete this.avatarImageMap[id];
           postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
         }
       }
     } catch (error) {
-      this.isLoadAvatarImage[id] = '';
+      delete this.isLoadAvatarImage[id];
+      delete this.avatarImageMap[id];
       postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
     }
   }
