@@ -3510,12 +3510,49 @@ export class DataHelper {
     });
   }
 
-  //liveV3
-  async addLikeV3(like: FeedsData.LikeV3) {
-    await this.sqliteHelper.insertLike(like)
+  addLike(newLike: FeedsData.LikeV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let originLike: FeedsData.LikeV3 = await this.getLikeV3ByUser(newLike.postId, newLike.commentId, newLike.createrDid) || null;
+        if (!originLike) {
+          await this.addLikeV3(newLike);
+        } else {
+          const isEqual = _.isEqual(newLike, originLike);
+          if (isEqual) {
+            resolve('FINISH');
+            return;
+          }
+          await this.updateLikeV3(newLike);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add Like error', error);
+        reject(error);
+      }
+    });
   }
 
-  async addLikesV3(likes: FeedsData.LikeV3[]) {
+  addLikes(likeList: FeedsData.LikeV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for (let index = 0; index < likeList.length; index++) {
+          const like = likeList[index];
+          await this.addLike(like);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add likes error', error);
+        reject(error);
+      }
+    });
+  }
+
+  //liveV3
+  private addLikeV3(like: FeedsData.LikeV3) {
+    return this.sqliteHelper.insertLike(like)
+  }
+
+  private addLikesV3(likes: FeedsData.LikeV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!likes) {
@@ -3535,7 +3572,7 @@ export class DataHelper {
     });
   }
 
-  updateLikeV3(like: FeedsData.LikeV3): Promise<string> {
+  private updateLikeV3(like: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!like) {
@@ -3553,7 +3590,7 @@ export class DataHelper {
     });
   }
 
-  updateLikesV3(likes: FeedsData.LikeV3[]): Promise<string> {
+  private updateLikesV3(likes: FeedsData.LikeV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!likes) {

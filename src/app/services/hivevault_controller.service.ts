@@ -841,12 +841,7 @@ export class HiveVaultController {
             status: FeedsData.PostCommentStatus.available
           }
 
-          const localResult = await this.dataHelper.getLikeV3ByUser(postId, commentId, createrDid);
-          if (localResult) {
-            await this.dataHelper.updateLikeV3(like);
-          } else {
-            await this.dataHelper.addLikeV3(like);
-          }
+          await this.dataHelper.addLike(like);
           resolve(like);
 
         } else {
@@ -862,27 +857,22 @@ export class HiveVaultController {
   removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-
         const createrDid = (await this.dataHelper.getSigninData()).did;
         const like = await this.dataHelper.getLikeV3ByUser(postId, commentId, createrDid);
         if (!like) {
           resolve(null);
           return;
         }
-
         const result = await this.updateLike(destDid, channelId, postId, commentId, FeedsData.PostCommentStatus.deleted);
-
         Logger.log('Remove like result', result);
-        if (result) {
-          like.updatedAt = result.updatedAt;
-          like.status = FeedsData.PostCommentStatus.deleted;
-          await this.dataHelper.updateLikeV3(like);
-          resolve(like);
-        } else {
-          const errorMsg = 'Remove like error';
-          reject(errorMsg);
+        if (!result) {
+          resolve(null);
+          return
         }
-
+        like.updatedAt = result.updatedAt;
+        like.status = FeedsData.PostCommentStatus.deleted;
+        await this.dataHelper.addLike(like);
+        resolve(like);
       } catch (error) {
         Logger.error(TAG, 'Remove like data error', error);
         reject(error);
@@ -1062,23 +1052,13 @@ export class HiveVaultController {
           return;
         }
 
-        const likesResult = HiveVaultResultParse.parseLikeResult(destDid, result);
-        if (!likesResult || likesResult.length == 0) {
+        const likeList = HiveVaultResultParse.parseLikeResult(destDid, result);
+        if (!likeList || likeList.length == 0) {
           resolve([]);
           return;
         }
 
-        let likeList = [];
-        for (let index = 0; index < likesResult.length; index++) {
-          const element = likesResult[index];
-          const localLike = await this.dataHelper.getLikeV3ByUser(element.postId, element.commentId, element.createrDid);
-          if (localLike) {
-            await this.dataHelper.updateLikeV3(element);
-          } else {
-            await this.dataHelper.addLikeV3(element);
-          }
-          likeList.push(element);
-        }
+        await this.dataHelper.addLikes(likeList);
         resolve(likeList);
       } catch (error) {
         Logger.error(TAG, 'Handle like result error', error);
