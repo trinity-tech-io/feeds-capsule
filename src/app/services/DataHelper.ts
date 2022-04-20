@@ -3184,12 +3184,49 @@ export class DataHelper {
     });
   }
 
-  //postV3
-  async addPostV3(post: FeedsData.PostV3) {
-    await this.sqliteHelper.insertPostData(post)
+  addPost(newPost: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let originPost: FeedsData.PostV3 = await this.getPostV3ById(newPost.destDid, newPost.postId) || null;
+        if (!originPost) {
+          await this.addPostV3(newPost);
+        } else {
+          const isEqual = _.isEqual(originPost, newPost);
+          if (isEqual) {
+            resolve('FINISH');
+            return;
+          }
+          await this.updatePostV3(newPost);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add post error', error);
+        reject(error);
+      }
+    });
   }
 
-  addPostsV3(posts: FeedsData.PostV3[]): Promise<string> {
+  addPosts(postList: FeedsData.PostV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for (let index = 0; index < postList.length; index++) {
+          const post = postList[index];
+          await this.addPost(post);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add posts error', error);
+        reject(error);
+      }
+    });
+  }
+
+  //postV3
+  private addPostV3(post: FeedsData.PostV3) {
+    return this.sqliteHelper.insertPostData(post)
+  }
+
+  private addPostsV3(posts: FeedsData.PostV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!posts) {
@@ -3209,15 +3246,15 @@ export class DataHelper {
     });
   }
 
-  async updatePostV3(post: FeedsData.PostV3) {
+  private updatePostV3(post: FeedsData.PostV3) {
     // const key = UtilService.getKey(post.destDid, post.postId);
     // this.postMapV3[key] = post;
     // await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
 
-    await this.sqliteHelper.updatePostData(post)
+    return this.sqliteHelper.updatePostData(post)
   }
 
-  updatePostsV3(posts: FeedsData.PostV3[]) {
+  private updatePostsV3(posts: FeedsData.PostV3[]) {
     return new Promise(async (resolve, reject) => {
       try {
         if (!posts) {
@@ -3293,6 +3330,7 @@ export class DataHelper {
       }
     })
   }
+
   // 废弃
   loadPostV3Map(): Promise<{ [key: string]: FeedsData.PostV3 }> {
     return new Promise(async (resolve, reject) => {

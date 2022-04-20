@@ -245,20 +245,13 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId);
         Logger.log(TAG, 'Query post by id result is', result);
-        if (result) {
-          const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-
-          const localPost = await this.dataHelper.getPostV3ById(targetDid, postId);
-          if (!localPost) {
-            this.dataHelper.addPostV3(posts[0]);
-          } else {
-            this.dataHelper.updatePostV3(posts[0]);
-          }
-
-          resolve(posts[0]);
-        } else {
+        if (!result) {
           resolve(null);
+          return;
         }
+        const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+        await this.dataHelper.addPost(posts[0]);
+        resolve(posts[0]);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error)
@@ -271,23 +264,13 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryPostByChannelId(targetDid, channelId);
         Logger.log(TAG, 'Get post from channel result is', result);
-        if (result) {
-          const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-          for (let postIndex = 0; postIndex < postList.length; postIndex++) {
-            let postId = postList[postIndex].postId;
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(targetDid, postId) || null;
-            if (!post) {
-              await this.dataHelper.addPostV3(postList[postIndex]);
-            } else {
-              await this.dataHelper.updatePostV3(postList[postIndex]);
-            }
-          }
-          resolve(postList);
-        } else {
-          const errorMsg = 'Get post from channel error';
-          Logger.error(TAG, errorMsg);
-          reject(errorMsg);
+        if (!result) {
+          resolve([]);
+          return;
         }
+        const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+        await this.dataHelper.addPosts(postList);
+        resolve(postList);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
@@ -346,29 +329,27 @@ export class HiveVaultController {
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
         Logger.log(TAG, "Publish new post , result is", result);
-
-        if (result) {
-          let postV3: FeedsData.PostV3 = {
-            destDid: result.targetDid,
-            postId: result.postId,
-            channelId: channelId,
-            createdAt: result.createdAt,
-            updatedAt: result.updatedAt,
-            content: content,
-            status: FeedsData.PostCommentStatus.available,
-            type: type,
-            tag: tag,
-            proof: proof,
-            memo: memo
-          }
-
-          await this.dataHelper.addPostV3(postV3);
-          resolve(postV3);
-        } else {
+        if (!result) {
           const errorMsg = 'Publish new post error';
           Logger.error(TAG, errorMsg);
           reject(errorMsg)
+          return;
         }
+        let postV3: FeedsData.PostV3 = {
+          destDid: result.targetDid,
+          postId: result.postId,
+          channelId: channelId,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+          content: content,
+          status: FeedsData.PostCommentStatus.available,
+          type: type,
+          tag: tag,
+          proof: proof,
+          memo: memo
+        }
+        await this.dataHelper.addPost(postV3);
+        resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);
         reject(error);
@@ -381,26 +362,26 @@ export class HiveVaultController {
       try {
         const newUpdateAt = UtilService.getCurrentTimeNum();
         const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, newUpdateAt, newMemo, newProof);
-        if (result) {
-          let postV3: FeedsData.PostV3 = {
-            destDid: originPost.destDid,
-            postId: originPost.postId,
-            channelId: originPost.channelId,
-            createdAt: originPost.createdAt,
-            updatedAt: newUpdateAt,
-            content: newContent,
-            status: newStatus,
-            type: newType,
-            tag: newTag,
-            proof: newProof,
-            memo: newMemo
-          };
-
-          await this.dataHelper.updatePostV3(postV3);
-          resolve(postV3);
-        } else {
-          resolve(null);
+        if (!result) {
+          const errorMsg = 'Update post error';
+          Logger.error(TAG, errorMsg);
+          reject(errorMsg);
         }
+        let postV3: FeedsData.PostV3 = {
+          destDid: originPost.destDid,
+          postId: originPost.postId,
+          channelId: originPost.channelId,
+          createdAt: originPost.createdAt,
+          updatedAt: newUpdateAt,
+          content: newContent,
+          status: newStatus,
+          type: newType,
+          tag: newTag,
+          proof: newProof,
+          memo: newMemo
+        };
+        await this.dataHelper.addPost(postV3);
+        resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Update post error', error);
         reject(error);
@@ -743,15 +724,13 @@ export class HiveVaultController {
         const did = (await this.dataHelper.getSigninData()).did;
         const postResult = await this.hiveVaultApi.querySelfPosts();
         Logger.log('Query self posts result', postResult);
-
-        if (postResult) {
-          const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
-          await this.dataHelper.updatePostsV3(parseResult);
-          console.log('parseResult', parseResult);
-          resolve(parseResult);
-        } else {
-          reject('Sync self posts error');
+        if (!postResult) {
+          resolve([]);
+          return;
         }
+        const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
+        await this.dataHelper.addPosts(parseResult);
+        resolve(parseResult);
       } catch (error) {
         Logger.error(TAG, 'Sync self post', error);
         reject(error);
@@ -765,26 +744,17 @@ export class HiveVaultController {
         const did = (await this.dataHelper.getSigninData()).did;
         const postResult = await this.hiveVaultApi.querySelfPostsByChannel(channelId);
         Logger.log('Query self post result', postResult);
-        if (postResult) {
-          const parseResult = HiveVaultResultParse.parsePostResult(did, postResult);
-          for (let postIndex = 0; postIndex < parseResult.length; postIndex++) {
-            let item: FeedsData.PostV3 = parseResult[postIndex];
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
-            if (!post) {
-              await this.dataHelper.addPostV3(item);
-            } else {
-              await this.dataHelper.updatePostV3(item);
-            }
-          }
-          console.log('parseResult', parseResult);
-          resolve(parseResult);
-        } else {
-          reject('Sync self posts by channel error');
+        if (!postResult) {
+          resolve([]);
+          return;
         }
-
+        const postList = HiveVaultResultParse.parsePostResult(did, postResult);
+        await this.dataHelper.addPosts(postList);
+        resolve(postList);
+        return;
       } catch (error) {
         Logger.error(TAG, 'Sync self post by channel', error);
-        reject([]);
+        reject(error);
       }
     });
   }
@@ -1386,8 +1356,6 @@ export class HiveVaultController {
         const postList = HiveVaultResultParse.parsePostResult(destDid, result.find_message.items);
         for (let postIndex = 0; postIndex < postList.length; postIndex++) {
           const newPost = postList[postIndex];
-          let postId = newPost.postId;
-          let originPost: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
 
           console.log('oldestPost', oldestPost);
           console.log('newPost', newPost);
@@ -1396,22 +1364,9 @@ export class HiveVaultController {
             oldestPost = _.cloneDeep<FeedsData.PostV3>(newPost);
             console.log('clone oldestPost', oldestPost);
           }
-
-          if (!originPost) {
-            await this.dataHelper.addPostV3(newPost);
-          } else {
-            const isEqual = _.isEqual(originPost, newPost)
-            if (isEqual)
-              continue;
-            await this.dataHelper.updatePostV3(newPost);
-          }
-
-
+          await this.dataHelper.addPost(newPost);
         }
-
-
         this.dataHelper.updateOldestPostV3(destDid, channelId, oldestPost);
-
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Handle post result error', error);
