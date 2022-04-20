@@ -748,7 +748,7 @@ export class HiveVaultController {
           createrDid: result.createrDid
         }
 
-        this.dataHelper.addComment(comment);
+        await this.dataHelper.addComment(comment);
         resolve(comment);
       } catch (error) {
         Logger.error(TAG, 'Create comment error', error);
