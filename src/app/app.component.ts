@@ -433,10 +433,11 @@ export class MyApp {
     }
   }
 
-  confirm(that: any) {
+  async confirm(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
     }
+    await that.dataHelper.removeData("feeds.initHive");
     that.clearData();
     that.disconnectWallet();
   }

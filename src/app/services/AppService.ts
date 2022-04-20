@@ -8,8 +8,8 @@ import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { IPFSService } from 'src/app/services/ipfs.service';
 import { UtilService } from './utilService';
+import { Events } from 'src/app/services/events.service';
 const TAG: string = 'AppService';
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class AppService {
     public popupProvider: PopupProvider,
     private languageService: LanguageService, // private titleBarService: TitleBarService
     private dataHelper: DataHelper,
-    private ipfsService: IPFSService
+    private events: Events
   ) { }
 
   init() {
@@ -73,9 +73,19 @@ export class AppService {
       return;
     }
 
-    this.carrierService.init(signInData.did);
-    this.native.setRootRouter(['/tabs/home']);
-    this.feedService.updateSignInDataExpTime(signInData);
+    this.dataHelper.loadData("feeds.initHive").then((result)=>{
+          let isInitHive =  result || null;
+          if(isInitHive === null){
+              //此处切换成galleriahive 页面
+              this.events.publish(FeedsEvent.PublishType.signinSuccess);
+              this.native.setRootRouter('galleriahive');
+              return;
+          }else{
+            //this.carrierService.init(signInData.did);
+            this.native.setRootRouter(['/tabs/home']);
+            this.feedService.updateSignInDataExpTime(signInData);
+          }
+    });
   }
 
   async createDialog() {

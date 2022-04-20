@@ -2328,6 +2328,10 @@ export class DataHelper {
     return this.storageService.get(key);
   }
 
+  removeData(key: string): Promise<any> {
+    return this.storageService.remove(key);
+  }
+
   updateCachedUpdateServer(nodeId: string, cachedServer: FeedsData.Server) {
     if (this.cachedUpdateServer == null || this.cachedUpdateServer == undefined)
       this.cachedUpdateServer = {};

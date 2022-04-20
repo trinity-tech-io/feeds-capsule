@@ -84,6 +84,7 @@ export class GalleriahivePage implements OnInit {
   }
 
   openHomePage() {
+    this.dataHelper.saveData("feeds.initHive","1");
     this.native.setRootRouter('/tabs/home');
   }
 }

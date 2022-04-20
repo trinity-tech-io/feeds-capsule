@@ -6141,8 +6141,8 @@ export class FeedService {
       this.storeService
         .remove('signInData')
         .then(() => {
-          this.resetConnectionStatus();
-          this.destroyCarrier();
+          //this.resetConnectionStatus();
+          //this.destroyCarrier();
           isSuccess = true;
           this.storeService.set(FeedsData.PersistenceKey.isSignOut, isSuccess);
           resolve(isSuccess);
