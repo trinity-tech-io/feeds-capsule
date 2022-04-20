@@ -207,14 +207,8 @@ export class HiveVaultController {
             resolve(null);
             return;
           }
-
-          const subscribedChannel: FeedsData.SubscribedChannelV3 = await this.dataHelper.getSubscribedChannelV3ByKey(targetDid, channelId);
-
-          if (!subscribedChannel) {
-            this.dataHelper.addSubscribedChannelV3(subscriptions[0]);
-          }
-
-          resolve(subscribedChannel);
+          this.dataHelper.addSubscribedChannel(subscriptions[0]);
+          resolve(subscriptions[0]);
         } else {
           resolve(null);
         }
@@ -280,18 +274,9 @@ export class HiveVaultController {
   getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId)
-        const channelList = HiveVaultResultParse.parseChannelResult(targetDid, result['find_message']['items']);
-        let channel: FeedsData.ChannelV3 = channelList[0] || null;
-        if (channel != null) {
-          let newChannel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(channel.destDid, channel.channelId) || null;
-          if (newChannel === null) {
-            await this.dataHelper.addChannelV3(channel);
-          } else {
-            await this.dataHelper.updateChannelV3(channel);
-          }
-        }
-        resolve(channel);
+        const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId);
+        const channelList = await this.handleChannelResult(targetDid, result);
+        resolve(channelList[0]);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
@@ -442,7 +427,7 @@ export class HiveVaultController {
           memo: memo,
         }
 
-        await this.dataHelper.addChannelV3(channelV3);
+        await this.dataHelper.addChannel(channelV3);
         resolve(channelV3.channelId)
       } catch (error) {
         reject(error)
@@ -519,6 +504,11 @@ export class HiveVaultController {
         }
         const result = await this.hiveVaultApi.updateChannel(channelId, finalName, finalIntro, avatarHiveURL, finalType, finalMemo, finalTippingAddress, finalNft);
 
+        if (!result) {
+          resolve(null);
+          return;
+        }
+
         let channelV3: FeedsData.ChannelV3 = {
           destDid: signinDid,
           channelId: channelId,
@@ -535,13 +525,8 @@ export class HiveVaultController {
           memo: finalMemo,
         }
 
-        if (result) {
-          await this.dataHelper.updateChannelV3(channelV3);
-          resolve(channelV3);
-        } else {
-          reject('Update channel error');
-        }
-
+        await this.dataHelper.addChannel(channelV3);
+        resolve(channelV3);
       } catch (error) {
         Logger.error(TAG, 'Update channel error', error);
         reject(error)
@@ -561,22 +546,17 @@ export class HiveVaultController {
         }
         const updatedAt = UtilService.getCurrentTimeNum();
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName, updatedAt);
-        if (result) {
-          let subscribedChannel: FeedsData.SubscribedChannelV3 = {
-            destDid: targetDid,
-            channelId: channelId
-          }
-          const localResult = await this.dataHelper.getSubscribedChannelV3ByKey(targetDid, channelId);
-          if (!localResult) {
-            await this.dataHelper.addSubscribedChannelV3(subscribedChannel);
-          }
-
-          resolve(subscribedChannel);
-        } else {
+        if (!result) {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;
           Logger.error(TAG, errorMsg);
           reject(errorMsg);
         }
+        let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+          destDid: targetDid,
+          channelId: channelId
+        }
+        await this.dataHelper.addSubscribedChannel(subscribedChannel);
+        resolve(subscribedChannel);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
@@ -684,23 +664,14 @@ export class HiveVaultController {
         const did = (await this.dataHelper.getSigninData()).did;
         const channelsResult = await this.hiveVaultApi.querySelfChannels();
         Logger.log(TAG, 'Query self channels result', channelsResult);
-        if (channelsResult) {
-          const parseResult = HiveVaultResultParse.parseChannelResult(did, channelsResult);
-          console.log('parseResult', parseResult);
-          for (let channelIndex = 0; channelIndex < parseResult.length; channelIndex++) {
-            let item = parseResult[channelIndex];
-            let channel = await this.dataHelper.getChannelV3ById(item.destDid, item.channelId) || null;
-            if (channel === null) {
-              await this.dataHelper.addChannelV3(item);
-            } else {
-              await this.dataHelper.updateChannelV3(item);
-            }
-            await this.getSubscriptionChannelById(item.destDid, item.channelId);
-          }
-          resolve(parseResult);
-        } else {
+
+        if (!channelsResult) {
           resolve([]);
+          return;
         }
+
+        const channelList = await this.handleChannelResult(did, channelsResult);
+        resolve(channelList);
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);
         resolve([]);
@@ -1018,6 +989,29 @@ export class HiveVaultController {
   }
 
   restoreSubscriptions() {
+  }
+
+  handleChannelResult(targetDid: string, result: any): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!result) {
+          resolve([]);
+          return;
+        }
+
+        const channelList = HiveVaultResultParse.parseChannelResult(targetDid, result);
+        if (!channelList || channelList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        await this.dataHelper.addChannels(channelList);
+        resolve(channelList);
+      } catch (error) {
+        Logger.error(TAG, 'Handle comment result error', error);
+        reject(error);
+      }
+    });
   }
 
   handleCommentResult(targetDid: string, result: any): Promise<FeedsData.CommentV3[]> {

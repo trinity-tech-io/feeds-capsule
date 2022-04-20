@@ -2878,6 +2878,35 @@ export class DataHelper {
     return await this.sqliteHelper.createTables()
   }
   //// New data type
+
+  addSubscribedChannel(newSubscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!newSubscribedChannel) {
+          resolve('FINISH');
+          return;
+        }
+        let originSubscribedChannel: FeedsData.SubscribedChannelV3 = await this.getSubscribedChannelV3ByKey(newSubscribedChannel.destDid, newSubscribedChannel.channelId);
+        if (!originSubscribedChannel) {
+          await this.addSubscribedChannelV3(newSubscribedChannel);
+        } else {
+          const isEqual = _.isEqual(newSubscribedChannel, originSubscribedChannel);
+          if (isEqual) {
+            resolve('FINISH');
+            return;
+          }
+
+          await this.removeSubscribedChannelV3(originSubscribedChannel);
+          await this.addSubscribedChannelV3(newSubscribedChannel)
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add Like error', error);
+        reject(error);
+      }
+    });
+  }
+
   // subscribedChannelV3 本地存储订阅列表
   async addSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
     return await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel);
@@ -2957,7 +2986,7 @@ export class DataHelper {
 
   //subscriptionV3
   //暂不缓存这部分数据
-  addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
+  private addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.sqliteHelper.insertSubscriptionData(subscription)
@@ -2970,7 +2999,7 @@ export class DataHelper {
   }
 
   //暂不缓存这部分数据
-  addSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
+  private addSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!subscriptions) {
@@ -2991,7 +3020,7 @@ export class DataHelper {
   }
 
   //暂不缓存这部分数据
-  updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
+  private updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.sqliteHelper.updateSubscriptionData(subscription);
@@ -3005,7 +3034,7 @@ export class DataHelper {
   }
 
   //暂不缓存这部分数据
-  updateSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
+  private updateSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!subscriptions) {
@@ -3088,12 +3117,50 @@ export class DataHelper {
     });
    * @returns
    */
+
+  addChannel(newChannel: FeedsData.ChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let originChannel: FeedsData.ChannelV3 = await this.getChannelV3ById(newChannel.destDid, newChannel.channelId) || null;
+        if (!originChannel) {
+          await this.addChannelV3(newChannel);
+        } else {
+          const isEqual = _.isEqual(newChannel, originChannel);
+          if (isEqual) {
+            resolve('FINISH');
+            return;
+          }
+          await this.updateChannelV3(newChannel);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  addChannels(channelList: FeedsData.ChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for (let index = 0; index < channelList.length; index++) {
+          const channel = channelList[index];
+          await this.addChannel(channel);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add likes error', error);
+        reject(error);
+      }
+    });
+  }
+
   //ChannelV3
-  addChannelV3(channel: FeedsData.ChannelV3) {
+  private addChannelV3(channel: FeedsData.ChannelV3) {
     return this.sqliteHelper.insertChannelData(channel)
   }
 
-  addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
+  private addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!channels) {
@@ -3112,12 +3179,12 @@ export class DataHelper {
     });
   }
 
-  async updateChannelV3(channel: FeedsData.ChannelV3) {
+  private async updateChannelV3(channel: FeedsData.ChannelV3) {
     // update 的时候更新updateTime
     return await this.sqliteHelper.updateChannelData(channel)
   }
 
-  updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
+  private updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!channels) {
@@ -3513,6 +3580,10 @@ export class DataHelper {
   addLike(newLike: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        if (!newLike) {
+          resolve('FINISH');
+          return;
+        }
         let originLike: FeedsData.LikeV3 = await this.getLikeV3ByUser(newLike.postId, newLike.commentId, newLike.createrDid) || null;
         if (!originLike) {
           await this.addLikeV3(newLike);
