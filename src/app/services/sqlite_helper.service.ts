@@ -72,8 +72,19 @@ export class FeedsSqliteHelper {
           reject('Excutesql error, result is' + result);
         }
       } catch (error) {
-        Logger.error(TAG, 'Excutesql error', error);
-        reject(error);
+        try {
+          if (error.message.includes("UNIQUE")) {
+            Logger.log(error.message);
+            resolve(null);
+          } else {
+            Logger.error(TAG, 'Excutesql error', error);
+            reject(error);
+          }
+        } catch (error) {
+          Logger.error(TAG, 'Excutesql error', error);
+          reject(error);
+        }
+
       } finally {
         // try {
         //   if (db) {
@@ -875,6 +886,9 @@ export class FeedsSqliteHelper {
 
   parsePostData(result: any): FeedsData.PostV3[] {
     Logger.log(TAG, 'Parse post result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
@@ -930,6 +944,9 @@ export class FeedsSqliteHelper {
 
   parseChannelData(result: any): FeedsData.ChannelV3[] {
     Logger.log(TAG, 'Parse channel result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
@@ -957,6 +974,9 @@ export class FeedsSqliteHelper {
 
   parseCommentData(result: any): FeedsData.CommentV3[] {
     Logger.log(TAG, 'Parse comment result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
@@ -982,6 +1002,9 @@ export class FeedsSqliteHelper {
 
   parseLikeData(result: any): FeedsData.LikeV3[] {
     Logger.log(TAG, 'Parse like result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
@@ -1008,6 +1031,9 @@ export class FeedsSqliteHelper {
 
   parseNum(result: any): number {
     Logger.log(TAG, 'Parse like count result from sql, result is', result);
+    if (!result) {
+      return 0;
+    }
     let num = 0;
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
@@ -1019,6 +1045,9 @@ export class FeedsSqliteHelper {
 
   parseSubscriptionChannelData(result: any): FeedsData.SubscribedChannelV3[] {
     Logger.log(TAG, 'Parse subscription channel result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
@@ -1034,6 +1063,9 @@ export class FeedsSqliteHelper {
 
   parseSubscriptionData(result: any): FeedsData.SubscriptionV3[] {
     Logger.log(TAG, 'Parse subscription result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
