@@ -100,20 +100,11 @@ export class HiveVaultController {
     });
   }
 
-  syncCommentFromPost(destDid: string, channelId: string, postId: string): Promise<any> {
+  syncCommentFromPost(destDid: string, channelId: string, postId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
-        const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
-        for (let commentIndex = 0; commentIndex < commentList.length; commentIndex++) {
-          let item = commentList[commentIndex];
-          let comment = await this.dataHelper.getCommentV3ById(postId, item.commentId) || '';
-          if (comment === '') {
-            await this.dataHelper.addCommentV3(item);
-          } else {
-            await this.dataHelper.updateCommentV3(item);
-          }
-        }
+        const commentList = await this.handleCommentResult(destDid, result);
         resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'Sync comment from post error', error);
@@ -765,29 +756,29 @@ export class HiveVaultController {
         const result = await this.hiveVaultApi.createComment(destDid, channelId, postId, refcommentId, content);
         Logger.log('createComment result', result);
 
-        if (result) {
-          const comment: FeedsData.CommentV3 = {
-            destDid: destDid,
-            commentId: result.commentId,
-
-            channelId: channelId,
-            postId: postId,
-            refcommentId: refcommentId,
-            content: content,
-            status: FeedsData.PostCommentStatus.available,
-            updatedAt: result.createdAt,
-            createdAt: result.createdAt,
-            proof: '',
-            memo: '',
-
-            createrDid: result.createrDid
-          }
-
-          this.dataHelper.addCommentV3(comment);
-          resolve(comment);
-        } else {
-          reject('Create comment error');
+        if (!result) {
+          resolve(null);
+          return;
         }
+        const comment: FeedsData.CommentV3 = {
+          destDid: destDid,
+          commentId: result.commentId,
+
+          channelId: channelId,
+          postId: postId,
+          refcommentId: refcommentId,
+          content: content,
+          status: FeedsData.PostCommentStatus.available,
+          updatedAt: result.createdAt,
+          createdAt: result.createdAt,
+          proof: '',
+          memo: '',
+
+          createrDid: result.createrDid
+        }
+
+        this.dataHelper.addComment(comment);
+        resolve(comment);
       } catch (error) {
         Logger.error(TAG, 'Create comment error', error);
         reject(error);
@@ -799,28 +790,8 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const commentResult = await this.hiveVaultApi.queryCommentByPostId(destDid, channelId, postId);
-
-        Logger.log('Query comment by id result is', commentResult);
-        if (commentResult) {
-          const comments = HiveVaultResultParse.parseCommentResult(destDid, commentResult);
-          console.log('getCommentsByPost parseResult', comments);
-
-          //TODO
-          //1.query
-          //2.if null add else update ,toast warn
-          for (let commentIndex = 0; commentIndex < comments.length; commentIndex++) {
-            let item = comments[commentIndex];
-            let comment = await this.dataHelper.getCommentV3ById(postId, item.commentId) || '';
-            if (comment === '') {
-              await this.dataHelper.addCommentV3(item);
-            } else {
-              await this.dataHelper.updateCommentV3(item);
-            }
-          }
-          resolve(comments);
-        } else {
-          reject('Query comment by post error');
-        }
+        const commentList = await this.handleCommentResult(destDid, commentResult);
+        resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'Query comments by post error', error);
         reject(error);
@@ -999,29 +970,30 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.updateComment(originComment.destDid, originComment.channelId, originComment.postId, originComment.commentId, content);
         Logger.log(TAG, 'Update comment result', result);
-        if (result) {
-          const comment: FeedsData.CommentV3 = {
-            destDid: originComment.destDid,
-            commentId: originComment.commentId,
-
-            channelId: originComment.channelId,
-            postId: originComment.postId,
-            refcommentId: originComment.refcommentId,
-            content: content,
-            status: FeedsData.PostCommentStatus.edited,
-            updatedAt: result.updatedAt,
-            createdAt: originComment.createdAt,
-            proof: '',
-            memo: originComment.memo,
-
-            createrDid: originComment.createrDid
-          }
-
-          this.dataHelper.updateCommentV3(comment);
-          resolve(comment);
-        } else {
-          reject('Update comment error');
+        if (!result) {
+          resolve(null);
+          return;
         }
+
+        const comment: FeedsData.CommentV3 = {
+          destDid: originComment.destDid,
+          commentId: originComment.commentId,
+
+          channelId: originComment.channelId,
+          postId: originComment.postId,
+          refcommentId: originComment.refcommentId,
+          content: content,
+          status: FeedsData.PostCommentStatus.edited,
+          updatedAt: result.updatedAt,
+          createdAt: originComment.createdAt,
+          proof: '',
+          memo: originComment.memo,
+
+          createrDid: originComment.createrDid
+        }
+
+        await this.dataHelper.addComment(comment);
+        resolve(comment);
       } catch (error) {
         Logger.error(TAG, 'Update comment data error', error);
         reject(error);
@@ -1062,30 +1034,18 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         if (!result) {
-          reject('Query comment error, result null');
+          resolve([]);
           return;
         }
 
         const commentList = HiveVaultResultParse.parseCommentResult(targetDid, result);
-
         if (!commentList || commentList.length == 0) {
           resolve([]);
           return;
         }
 
-        let commentsResult = [];
-        for (let index = 0; index < commentList.length; index++) {
-          const comment = commentList[index];
-          const localComment = await this.dataHelper.getCommentV3ById(comment.postId, comment.commentId);
-
-          if (!localComment) {
-            this.dataHelper.addCommentV3(comment);
-          } else {
-            this.dataHelper.updateCommentV3(comment);
-          }
-          commentsResult.push(comment);
-        }
-        resolve(commentsResult);
+        await this.dataHelper.addComments(commentList);
+        resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'Handle comment result error', error);
         reject(error);
@@ -1146,15 +1106,8 @@ export class HiveVaultController {
       try {
         const result = await this.hiveVaultApi.queryCommentByID(destDid, channelId, postId, commentId);
         Logger.log(TAG, 'Get comment by id result', result)
-
-        if (result) {
-          const commentList = HiveVaultResultParse.parseCommentResult(destDid, result);
-          await this.dataHelper.updateCommentsV3(commentList);
-          resolve(commentList);
-        } else {
-          Logger.error(TAG, 'Get comment by id error');
-          reject('Get comment by id error');
-        }
+        const commentList = await this.handleCommentResult(destDid, result);
+        resolve(commentList);
       } catch (error) {
         Logger.error(TAG, 'Get comment by id data error', error);
         reject(error);

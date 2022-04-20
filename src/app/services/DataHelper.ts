@@ -3191,7 +3191,7 @@ export class DataHelper {
         if (!originPost) {
           await this.addPostV3(newPost);
         } else {
-          const isEqual = _.isEqual(originPost, newPost);
+          const isEqual = _.isEqual(newPost, originPost);
           if (isEqual) {
             resolve('FINISH');
             return;
@@ -3344,12 +3344,51 @@ export class DataHelper {
     })
   }
 
+
+  addComment(newComment: FeedsData.CommentV3) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let originComment = await this.getCommentV3ById(newComment.postId, newComment.commentId);
+        if (!originComment) {
+          await this.addCommentV3(newComment);
+        } else {
+          const isEqual = _.isEqual(newComment, originComment);
+          if (isEqual) {
+            resolve('FINISH');
+            return;
+          }
+          await this.updateCommentV3(newComment);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add comment error', error);
+        reject(error);
+      }
+    });
+  }
+
+
+  addComments(commentList: FeedsData.CommentV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        for (let index = 0; index < commentList.length; index++) {
+          const comment = commentList[index];
+          await this.addCommentV3(comment);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add comments error', error);
+        reject(error);
+      }
+    });
+  }
+
   //commentV3
-  async addCommentV3(comment: FeedsData.CommentV3) {
+  private async addCommentV3(comment: FeedsData.CommentV3) {
     await this.sqliteHelper.insertCommentData(comment)
   }
 
-  addCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
+  private addCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!comments) {
@@ -3369,7 +3408,7 @@ export class DataHelper {
     });
   }
 
-  updateCommentV3(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
+  private updateCommentV3(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.sqliteHelper.updateCommentData(comment)
@@ -3381,7 +3420,7 @@ export class DataHelper {
     });
   }
 
-  updateCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
+  private updateCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!comments) {
