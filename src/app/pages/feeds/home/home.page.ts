@@ -987,7 +987,6 @@ export class HomePage implements OnInit {
         postAvatar.getBoundingClientRect().top >= -100 &&
         postAvatar.getBoundingClientRect().bottom <= this.clientHeight
       ) {
-
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
           postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
@@ -1030,7 +1029,7 @@ export class HomePage implements OnInit {
                   let uri = this.avatarImageMap[key] || "";
                   if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                    if (newPostAvatar != null) {
+                    if (newPostAvatar != null && this.isLoadAvatarImage[key]=== "11") {
                       newPostAvatar.setAttribute('src', realImage);
                     }
                     this.isLoadAvatarImage[key] = "13";
@@ -1041,11 +1040,7 @@ export class HomePage implements OnInit {
                 this.downPostAvatarMap[fileName] = "";
                 for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if (uri === avatarUri) {
-                    let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                    if (newPostAvatar != null) {
-                      newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
-                    }
+                  if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
                   }
@@ -1056,11 +1051,7 @@ export class HomePage implements OnInit {
               this.downPostAvatarMap[fileName] = "";
               for (let key in this.avatarImageMap) {
                 let uri = this.avatarImageMap[key] || "";
-                if (uri === avatarUri) {
-                  let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                  if (newPostAvatar != null) {
-                    newPostAvatar.setAttribute('src', './assets/icon/reserve.svg');
-                  }
+                if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
                   this.isLoadAvatarImage[key] = '13';
                   delete this.avatarImageMap[key];
                 }
@@ -1072,21 +1063,19 @@ export class HomePage implements OnInit {
             });
         }
       } else {
-        let postAvatarSrc = postAvatar.getAttribute('src') || '';
+        let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
-          this.isLoadAvatarImage[id] != '13' &&
-          postAvatarSrc != ''
+          this.isLoadAvatarImage[id] === '13' &&
+          postAvatarSrc != './assets/icon/reserve.svg'
         ) {
-
+          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           delete this.isLoadAvatarImage[id];
           delete this.avatarImageMap[id];
-          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
         }
       }
     } catch (error) {
       delete this.isLoadAvatarImage[id];
       delete this.avatarImageMap[id];
-      postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
     }
   }
 

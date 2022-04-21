@@ -167,21 +167,21 @@ export class FeedService {
     return this.selsectIndex;
   }
 
-  public setProfileIamge(url: string) {
-    this.profileIamge = url;
-  }
+  // public setProfileIamge(url: string) {
+  //   this.profileIamge = url;
+  // }
 
-  public getProfileIamge() {
-    return this.profileIamge;
-  }
+  // public getProfileIamge() {
+  //   return this.profileIamge;
+  // }
 
-  public setClipProfileIamge(clipProfileIamge: string) {
-    return (this.clipProfileIamge = clipProfileIamge);
-  }
+  // public setClipProfileIamge(clipProfileIamge: string) {
+  //   return (this.clipProfileIamge = clipProfileIamge);
+  // }
 
-  public getClipProfileIamge() {
-    return this.clipProfileIamge;
-  }
+  // public getClipProfileIamge() {
+  //   return this.clipProfileIamge;
+  // }
 
   loadPostData() {
     return this.dataHelper.loadPostMap();

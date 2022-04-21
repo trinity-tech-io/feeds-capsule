@@ -209,7 +209,7 @@ export class ProfilenftimagePage implements OnInit {
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       }
       this.native.navigateForward(['editimage'], { replaceUrl: true });
-      this.feedService.setClipProfileIamge(imgUri);
+      this.dataHelper.setClipProfileIamge(imgUri);
     }
 
   }

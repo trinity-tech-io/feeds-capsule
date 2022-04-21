@@ -353,7 +353,7 @@ export class SubscriptionsPage implements OnInit {
                 if (srcData != "") {
                   for(let key in this.followingAvatarImageMap){
                     let uri = this.followingAvatarImageMap[key] || "";
-                    if(uri === avatarUri){
+                    if(uri === avatarUri  && this.followingIsLoadimage[key] === '11'){
                       this.followingIsLoadimage[key] = '13';
                       let newAvatarImage = document.getElementById(key + '-followingAvatar') || null;
                        if(newAvatarImage != null){
@@ -365,7 +365,7 @@ export class SubscriptionsPage implements OnInit {
                 }else{
                   for(let key in this.followingAvatarImageMap){
                     let uri = this.followingAvatarImageMap[key] || "";
-                    if(uri === avatarUri){
+                    if(uri === avatarUri && this.followingIsLoadimage[key] === '11'){
                       this.followingIsLoadimage[key] = '13';
                       delete this.followingAvatarImageMap[key];
                     }
@@ -376,13 +376,10 @@ export class SubscriptionsPage implements OnInit {
               this.downFollowingAvatarMap[fileName] = '';
               for(let key in this.followingAvatarImageMap){
                 let uri = this.followingAvatarImageMap[key] || "";
-                if(uri === avatarUri){
+                if(uri === avatarUri && this.followingIsLoadimage[key] === '11'){
                   this.followingIsLoadimage[key] = '13';
                   delete this.followingAvatarImageMap[key];
                 }
-              }
-              if (this.followingIsLoadimage[id] === '13') {
-                avatarImage.setAttribute('src', './assets/icon/reserve.svg');
               }
             });
           }
@@ -398,11 +395,8 @@ export class SubscriptionsPage implements OnInit {
           }
         }
       } catch (error) {
-        if (this.followingIsLoadimage[id] === '13') {
           this.followingIsLoadimage[id] = '';
           delete this.followingAvatarImageMap[id];
-          avatarImage.setAttribute('src', './assets/icon/reserve.svg');
-        }
       }
 
     }

@@ -16,6 +16,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { UtilService } from 'src/app/services/utilService';
 import _ from 'lodash';
+import SparkMD5 from 'spark-md5';
 
 @Component({
   selector: 'app-createnewfeed',

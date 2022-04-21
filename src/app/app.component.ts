@@ -524,6 +524,7 @@ export class MyApp {
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
     this.events.unsubscribe(FeedsEvent.PublishType.openPayPrompt);
+    this.events.unsubscribe(FeedsEvent.PublishType.signinSuccess);
   }
 
   profiledetail() {

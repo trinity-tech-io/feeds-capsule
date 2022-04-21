@@ -369,7 +369,6 @@ export class CommonPageService {
       hiveVaultController.getCommentList(
         postId, '0'
       ).then((result: any) => {
-        console.log("=======result=======" + JSON.stringify(result));
         isInitComment[postId] = "13";
         commentNumMap[postId] = result.length;
       }).catch((err) => {

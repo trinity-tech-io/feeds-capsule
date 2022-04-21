@@ -53,9 +53,9 @@ export class EditprofileimagePage implements OnInit {
       this.isOPenRightMenu = true;
     });
     this.initTitle();
-    this.headPortrait = this.feedService.getClipProfileIamge();
+    this.headPortrait = this.dataHelper.getClipProfileIamge();
 
-    this.croppedImage = this.feedService.getClipProfileIamge();
+    this.croppedImage = this.dataHelper.getClipProfileIamge();
     if (this.croppedImage != '')
       this.avatar = this.croppedImage;
   }
@@ -70,9 +70,9 @@ export class EditprofileimagePage implements OnInit {
       null,
       null,
     );
-    this.croppedImage = this.feedService.getClipProfileIamge();
+    this.croppedImage = this.dataHelper.getClipProfileIamge();
     if (this.headPortrait === this.croppedImage && !this.isOPenRightMenu) {
-      this.feedService.setClipProfileIamge('');
+        this.dataHelper.setClipProfileIamge('');
     }
 
     if (this.pictureMenu != null) {
@@ -127,7 +127,7 @@ export class EditprofileimagePage implements OnInit {
       0,
       (imageUrl: any) => {
         that.native.navigateForward(['editimage'], '');
-        that.feedService.setClipProfileIamge(imageUrl);
+        that.dataHelper.setClipProfileIamge(imageUrl);
       },
       err => {},
     );
@@ -140,7 +140,7 @@ export class EditprofileimagePage implements OnInit {
       1,
       (imageUrl: any) => {
         that.native.navigateForward(['editimage'], '');
-        that.feedService.setClipProfileIamge(imageUrl);
+        that.dataHelper.setClipProfileIamge(imageUrl);
       },
       err => {},
     );

@@ -90,7 +90,7 @@ export class FeedinfoPage implements OnInit {
     this.des = channelInfo['des'] || '';
     this.ownerDid = channelInfo["ownerDid"] || "";
     this.qrcodeString = "feeds://v3/" + this.ownerDid + "/" + this.channelId + '/' + encodeURIComponent(this.name);
-    this.oldChannelAvatar = this.feedService.getProfileIamge();
+    this.oldChannelAvatar = this.dataHelper.getProfileIamge();
     this.followStatus = channelInfo['followStatus'] || null;
     if (this.followStatus == null) this.followStatus = false;
 
@@ -102,7 +102,7 @@ export class FeedinfoPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initChannelInfo();
     this.initTitle();
-    this.channelAvatar = this.feedService.getProfileIamge();
+    this.channelAvatar = this.dataHelper.getProfileIamge();
     let avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
     document.getElementById("feedsInfoAvatar").setAttribute("src", avatar);
     this.addEvents();

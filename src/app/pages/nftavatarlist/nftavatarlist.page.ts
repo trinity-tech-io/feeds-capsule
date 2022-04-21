@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { IonRefresher } from '@ionic/angular';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
+import { DataHelper } from 'src/app/services/DataHelper';
 const TAG: string = 'NftavatarlistPage';
 @Component({
   selector: 'app-nftavatarlist',
@@ -43,6 +44,7 @@ export class NftavatarlistPage implements OnInit {
     private feedService: FeedService,
     private nftContractHelperService: NFTContractHelperService,
     private fileHelperService: FileHelperService,
+    private dataHelper: DataHelper,
     public theme: ThemeService,
   ) { }
 
@@ -144,7 +146,7 @@ export class NftavatarlistPage implements OnInit {
     if (parseInt(size) > 5 * 1024 * 1024) {
       imgUri = item['thumbnail'];
     }
-    this.feedService.setClipProfileIamge(imgUri);
+    this.dataHelper.setClipProfileIamge(imgUri);
     this.native.pop();
   }
 

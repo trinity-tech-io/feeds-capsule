@@ -9,6 +9,8 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { CameraService } from '../../../services/CameraService';
+
 @Component({
   selector: 'app-profileimage',
   templateUrl: './profileimage.page.html',
@@ -71,7 +73,8 @@ export class ProfileimagePage implements OnInit {
     private dataHelper: DataHelper,
     private menuService: MenuService,
     private titleBarService: TitleBarService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private camera: CameraService,
   ) {}
 
   ngOnInit() {}
@@ -177,7 +180,7 @@ export class ProfileimagePage implements OnInit {
       0,
       (imageUrl: any) => {
         that.native.navigateForward(['editimage'], '');
-        that.feedService.setClipProfileIamge(imageUrl);
+        that.dataHelper.setClipProfileIamge(imageUrl);
       },
       err => {},
     );
@@ -190,7 +193,7 @@ export class ProfileimagePage implements OnInit {
       1,
       (imageUrl: any) => {
         that.native.navigateForward(['editimage'], '');
-        that.feedService.setClipProfileIamge(imageUrl);
+        that.dataHelper.setClipProfileIamge(imageUrl);
       },
       err => {},
     );

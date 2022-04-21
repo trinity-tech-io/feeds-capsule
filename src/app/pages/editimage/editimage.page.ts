@@ -5,6 +5,7 @@ import { NativeService } from '../../services/NativeService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-editimage',
@@ -21,6 +22,7 @@ export class EditimagePage implements OnInit {
     private nativeService: NativeService,
     private events: Events,
     private titleBarService: TitleBarService,
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {}
@@ -34,7 +36,7 @@ export class EditimagePage implements OnInit {
       this.isOPenRightMenu = true;
     });
     this.initTitle();
-    this.headPortrait = this.feedService.getClipProfileIamge();
+    this.headPortrait = this.dataHelper.getClipProfileIamge();
   }
 
   initTitle() {
@@ -54,9 +56,9 @@ export class EditimagePage implements OnInit {
       null,
       null,
     );
-    let croppedImage = this.feedService.getClipProfileIamge();
+    let croppedImage = this.dataHelper.getClipProfileIamge();
     if (this.headPortrait === croppedImage && !this.isOPenRightMenu) {
-      this.feedService.setClipProfileIamge('');
+      this.dataHelper.setClipProfileIamge('');
     }
   }
 
@@ -65,7 +67,7 @@ export class EditimagePage implements OnInit {
   }
 
   finish() {
-    this.feedService.setClipProfileIamge(this.croppedImage);
+    this.dataHelper.setClipProfileIamge(this.croppedImage);
     this.nativeService.pop();
   }
 }

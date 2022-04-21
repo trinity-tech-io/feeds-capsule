@@ -878,7 +878,7 @@ export class ProfilePage implements OnInit {
                 if (srcData != "") {
                   for (let key in this.myFeedsAvatarImageMap) {
                     let uri = this.myFeedsAvatarImageMap[key] || "";
-                    if (uri === avatarUri) {
+                    if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
                       this.myFeedsIsLoadimage[key] = '13';
                       let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
                       if (newAvatarImage != null) {
@@ -890,7 +890,7 @@ export class ProfilePage implements OnInit {
                 } else {
                   for (let key in this.myFeedsAvatarImageMap) {
                     let uri = this.myFeedsAvatarImageMap[key] || "";
-                    if (uri === avatarUri) {
+                    if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
                       this.myFeedsIsLoadimage[key] = '13';
                       delete this.myFeedsAvatarImageMap[key];
                     }
@@ -899,19 +899,14 @@ export class ProfilePage implements OnInit {
               });
             }).catch((err) => {
               this.downMyFeedsAvatarMap[fileName] = '';
-              if (this.myFeedsIsLoadimage[id] === '13') {
-                for (let key in this.myFeedsAvatarImageMap) {
-                  let uri = this.myFeedsAvatarImageMap[key] || "";
-                  if (uri === avatarUri) {
-                    let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
-                    if (newAvatarImage != null) {
-                      newAvatarImage.setAttribute("src", './assets/icon/reserve.svg');
-                    }
-                    this.myFeedsIsLoadimage[id] = '';
-                    this.myFeedsAvatarImageMap[key] = '';
-                  }
+              for (let key in this.myFeedsAvatarImageMap) {
+                let uri = this.myFeedsAvatarImageMap[key] || "";
+                if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
+                  this.myFeedsIsLoadimage[key] = '13';
+                  delete this.myFeedsAvatarImageMap[key];
                 }
               }
+
             });
           }
         } else {
@@ -920,19 +915,14 @@ export class ProfilePage implements OnInit {
             this.myFeedsIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
+            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
             this.myFeedsIsLoadimage[id] = '';
             delete this.myFeedsAvatarImageMap[id];
-            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
           }
         }
       } catch (error) {
-        if (this.profileCollectiblesisLoadimage[id] === '13') {
           this.myFeedsIsLoadimage[id] = '';
           delete this.myFeedsAvatarImageMap[id];
-          if (avatarImage != null) {
-            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
-          }
-        }
       }
 
     }
@@ -1247,7 +1237,7 @@ export class ProfilePage implements OnInit {
                 this.downPostAvatarMap[fileName] = "";
                 for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if (uri === avatarUri) {
+                  if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
                     let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
                     if (newPostAvatar != null) {
                       newPostAvatar.setAttribute('src', realImage);
@@ -1261,10 +1251,6 @@ export class ProfilePage implements OnInit {
                 for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
                   if (uri === avatarUri) {
-                    let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
-                    if (newPostAvatar != null) {
-                      newPostAvatar.setAttribute('src', "./assets/icon/reserve.svg");
-                    }
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
                   }
@@ -1272,15 +1258,10 @@ export class ProfilePage implements OnInit {
               }
             })
             .catch(reason => {
-
               this.downPostAvatarMap[fileName] = "";
               for (let key in this.avatarImageMap) {
                 let uri = this.avatarImageMap[key] || "";
-                if (uri === avatarUri) {
-                  let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
-                  if (newPostAvatar != null) {
-                    newPostAvatar.setAttribute('src', "./assets/icon/reserve.svg");
-                  }
+                if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
                   this.isLoadAvatarImage[key] = '13';
                   delete this.avatarImageMap[key];
                 }
@@ -1292,20 +1273,19 @@ export class ProfilePage implements OnInit {
             });
         }
       } else {
-        let postAvatarSrc = postAvatar.getAttribute('src') || '';
+        let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
           this.isLoadAvatarImage[id] === '13' &&
-          postAvatarSrc != ''
+          postAvatarSrc != './assets/icon/reserve.svg'
         ) {
+          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           delete this.isLoadAvatarImage[id];
           delete this.avatarImageMap[id];
-          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
         }
       }
     } catch (error) {
       delete this.isLoadAvatarImage[id];
       delete this.avatarImageMap[id];
-      postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
     }
   }
 

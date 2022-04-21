@@ -75,7 +75,7 @@ export class EidtchannelPage implements OnInit {
     this.channelSubscribes = channelInfo['channelSubscribes'] || '';
     this.tippingAddress = await this.getChannelTipAddress();
     this.followStatus = channelInfo['followStatus'] || false;
-    this.oldChannelAvatar = this.feedService.getProfileIamge();
+    this.oldChannelAvatar = this.dataHelper.getProfileIamge();
   }
 
  async getChannelTipAddress() {
@@ -90,7 +90,7 @@ export class EidtchannelPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.channelAvatar = this.feedService.getProfileIamge();
+    this.channelAvatar = this.dataHelper.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
   }
 
@@ -111,7 +111,7 @@ export class EidtchannelPage implements OnInit {
       this.popoverController.dismiss();
     }
     if (!this.isClickConfirm) {
-      this.feedService.setProfileIamge(this.oldChannelAvatar);
+      this.dataHelper.setProfileIamge(this.oldChannelAvatar);
     }
     this.native.handleTabsEvents();
   }

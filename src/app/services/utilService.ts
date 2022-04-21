@@ -22,6 +22,22 @@ export class UtilService {
   public static getDefaultAvatar(fileName: string) {
     return this.defaultAvatar[fileName];
   }
+
+  private static defaultAvatarHash = {
+    "d30054aa1d08abfb41c7225eb61f18e4": "assets/images/profile-1.svg",
+    "4aec59f63ae3a3084585d8a37d13a3ac": "assets/images/profile-2.svg",
+    "2bca1cbf62c5c9c4a6921d40e33576bd": "assets/images/profile-3.svg",
+    "412379d958af1a0c6f324513d27eb819": "assets/images/profile-4.svg",
+    "1699ce616b30b9a0e96ed57e8612cd2a": "assets/images/profile-5.svg",
+    "09cefab6366106a67704ccb372a0ff02": "assets/images/profile-6.svg",
+    "f34122590b5d7dd8964a2aba36450bd7": "assets/images/profile-7.svg",
+    "ed1e6281b462480c0500a25504891085": "assets/images/profile-8.svg",
+    "99068fec50cf629a690a09e6561a7446": "assets/images/profile-9.svg"
+  }
+
+  public static getDefaultAvatarHash(fileName: string) {
+    return this.defaultAvatarHash[fileName];
+  }
   /**
    * 格式化日期
    * sFormat：日期格式:默认为yyyy-MM-dd     年：y，月：M，日：d，时：h，分：m，秒：s
