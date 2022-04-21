@@ -56,7 +56,6 @@ export class GalleriahivePage implements OnInit {
         let regist_scripting = false
         try {
           let result = await this.hiveVaultController.queryFeedsScripting()
-          let custome_avatar = result[0]["custome_avatar"]// 待用
           regist_scripting = result[0]["regist_scripting"]
         }
         catch (error) {

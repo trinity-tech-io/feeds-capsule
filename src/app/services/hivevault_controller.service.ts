@@ -1300,8 +1300,7 @@ export class HiveVaultController {
         const lasterVersion = '1.0'
         const preVersion = '0'
         const registScripting = false
-        const customeAvatar = false
-        await this.hiveVaultApi.createFeedsScripting(lasterVersion, preVersion, registScripting, customeAvatar);
+        await this.hiveVaultApi.createFeedsScripting(lasterVersion, preVersion, registScripting);
         resolve("SUCCESS")
       } catch (error) {
         reject(error)

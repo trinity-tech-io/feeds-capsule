@@ -117,13 +117,12 @@ export class HiveVaultHelper {
     }
 
     /** 存储feeds 信息 ： 版本号 等 star */
-    private insertDataToFeedsScriptingDB(lasterVersion: string, preVersion: string, registScripting: boolean = false, customeAvatar = false): Promise<any> {
+    private insertDataToFeedsScriptingDB(lasterVersion: string, preVersion: string, registScripting: boolean = false): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const doc = {
                 "laster_version": lasterVersion,
                 "pre_version": preVersion,
                 "regist_scripting": registScripting,
-                "custome_avatar": customeAvatar,
             }
 
             try {
@@ -137,8 +136,8 @@ export class HiveVaultHelper {
         })
     }
 
-    createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false, customeAvatar = false) {
-        return this.insertDataToFeedsScriptingDB(lasterVersion, preVersion, registScripting, customeAvatar);
+    createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
+        return this.insertDataToFeedsScriptingDB(lasterVersion, preVersion, registScripting);
     }
 
     private updateDataToFeedsScriptingDB(lasterVersion: string, preVersion: string, registScripting: boolean = false): Promise<UpdateResult> {

@@ -22,8 +22,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.registeScripting();
   }
 
-  createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false, customeAvatar = false): Promise<string> {
-    return this.hiveVaultHelper.createFeedsScripting(lasterVersion, preVersion, registScripting, customeAvatar);
+  createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false): Promise<string> {
+    return this.hiveVaultHelper.createFeedsScripting(lasterVersion, preVersion, registScripting);
   }
 
   updateFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
