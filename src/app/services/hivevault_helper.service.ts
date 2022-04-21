@@ -18,7 +18,7 @@ const TAG = 'HiveVaultHelper';
 
 @Injectable()
 export class HiveVaultHelper {
-    public static readonly TABLE_FEEDS_SCRIPTING = "feeds_scripting";
+    public static readonly TABLE_FEEDS_SCRIPTING = "feeds_scripting2";
 
     public static readonly TABLE_CHANNELS = "channels";
     public static readonly TABLE_POSTS = "posts";
@@ -114,6 +114,77 @@ export class HiveVaultHelper {
         });
     }
 
+    /** 存储feeds 信息 ： 版本号 等 star */
+    private insertDataToFeedsScriptingDB(lasterVersion: string, preVersion: string, registScripting: boolean = false, customeAvatar = false): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            const doc = {
+                "laster_version": lasterVersion,
+                "pre_version": preVersion,
+                "regist_scripting": registScripting,
+                "custome_avatar": customeAvatar,
+            }
+
+            try {
+                const insertResult = this.hiveService.insertDBData(HiveVaultHelper.TABLE_FEEDS_SCRIPTING, doc);
+                Logger.log(TAG, 'Insert feeds scripting db result', insertResult)
+                resolve(doc)
+            } catch (error) {
+                Logger.error(TAG, 'Insert feeds scripting db error', error)
+                reject(error)
+            }
+        })
+    }
+
+    createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false, customeAvatar = false) {
+        return this.insertDataToFeedsScriptingDB(lasterVersion, preVersion, registScripting, customeAvatar);
+    }
+
+    private updateDataToFeedsScriptingDB(lasterVersion: string, preVersion: string, registScripting: boolean = false): Promise<UpdateResult> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const doc =
+                {
+                    "laster_version": lasterVersion,
+                    "pre_version": preVersion,
+                    "regist_scripting": registScripting,
+                }
+                const option = new UpdateOptions(false, true)
+                let filter = {};
+                let update = { "$set": doc };
+
+                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_FEEDS_SCRIPTING, filter, update, option);
+                Logger.log(TAG, 'update feeds scripting result', updateResult)
+                resolve(updateResult)
+            } catch (error) {
+                Logger.error(TAG, 'updateDataToFeedsScriptingDB error', error)
+                reject(error)
+            }
+        })
+    }
+
+    updateFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
+        return this.updateDataToFeedsScriptingDB(lasterVersion, preVersion, registScripting);
+    }
+
+    private queryFeedsScriptingFromDB(): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const filter = {};
+                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_FEEDS_SCRIPTING, filter);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query Feeds scripting from DB', error);
+                reject(error);
+            }
+        });
+    }
+
+    queryFeedsScripting(): Promise<any> {
+        return this.queryFeedsScriptingFromDB();
+    }
+
+/** 存储feeds 信息结束*/
+
     private createCollection(collectName: string): Promise<void> {
         return this.hiveService.createCollection(collectName);
     }
@@ -121,6 +192,7 @@ export class HiveVaultHelper {
     createAllCollections(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
+                await this.createCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING)
                 await this.createCollection(HiveVaultHelper.TABLE_CHANNELS);
                 await this.createCollection(HiveVaultHelper.TABLE_POSTS);
                 await this.createCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
@@ -146,6 +218,7 @@ export class HiveVaultHelper {
                 await this.deleteCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_COMMENTS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
+                await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);

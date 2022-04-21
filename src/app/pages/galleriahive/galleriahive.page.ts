@@ -53,14 +53,29 @@ export class GalleriahivePage implements OnInit {
 
         this.description = this.translate.instant('GalleriahivePage.preparingData');
         this.sqliteHelper.createTables();
-
-
+        let regist_scripting = false
         try {
-          this.description = this.translate.instant('GalleriahivePage.creatingScripting');
-          await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-        } catch (error) {
+          let result = await this.hiveVaultController.queryFeedsScripting()
+          let custome_avatar = result[0]["custome_avatar"]// 待用
+          regist_scripting = result[0]["regist_scripting"]
         }
-
+        catch (error) {
+          let errString = JSON.stringify(error)
+          let err = JSON.parse(errString)
+          let errorCode = err["code"]
+          if (errorCode === 404) {
+            regist_scripting = true
+          }
+        }
+        if (regist_scripting) {
+          try {
+            this.description = this.translate.instant('GalleriahivePage.creatingScripting');
+            await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+            await this.hiveVaultController.creatFeedsScripting()
+          } catch (error) {
+            console.log(error)
+          }
+        }
         // await this.hiveVaultController.getSubscriptionChannelById();
 
         const did = (await this.dataHelper.getSigninData()).did;

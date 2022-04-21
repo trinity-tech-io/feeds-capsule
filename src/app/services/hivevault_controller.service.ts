@@ -19,7 +19,7 @@ export class HiveVaultController {
     private dataHelper: DataHelper,
     private postHelperService: PostHelperService,
     private fileHelperService: FileHelperService,
-    private eventBus: Events
+    private eventBus: Events,
   ) {
   }
 
@@ -1276,6 +1276,29 @@ export class HiveVaultController {
         reject([]);
       }
     });
+  }
+
+  creatFeedsScripting(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const lasterVersion = '1.0'
+        const preVersion = '0'
+        const registScripting = false
+        const customeAvatar = false
+        await this.hiveVaultApi.createFeedsScripting(lasterVersion, preVersion, registScripting, customeAvatar);
+        resolve("SUCCESS")
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  updateFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
+    return this.hiveVaultApi.updateFeedsScripting(lasterVersion, preVersion, registScripting);
+  }
+
+  queryFeedsScripting(): Promise<any> {
+    return this.hiveVaultApi.queryFeedsScripting();
   }
 
   prepareConnection(): Promise<string> {

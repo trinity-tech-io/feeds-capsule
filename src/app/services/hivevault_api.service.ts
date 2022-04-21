@@ -22,6 +22,18 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.registeScripting();
   }
 
+  createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false, customeAvatar = false): Promise<string> {
+    return this.hiveVaultHelper.createFeedsScripting(lasterVersion, preVersion, registScripting, customeAvatar);
+  }
+
+  updateFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
+    return this.hiveVaultHelper.updateFeedsScripting(lasterVersion, preVersion, registScripting);
+  }
+
+  queryFeedsScripting(): Promise<any> {
+    return this.hiveVaultHelper.queryFeedsScripting();
+  }
+
   createAllCollections(): Promise<string> {
     return this.hiveVaultHelper.createAllCollections();
   }
