@@ -18,6 +18,8 @@ const TAG = 'HiveVaultHelper';
 
 @Injectable()
 export class HiveVaultHelper {
+    public static readonly TABLE_FEEDS_SCRIPTING = "feeds_scripting";
+
     public static readonly TABLE_CHANNELS = "channels";
     public static readonly TABLE_POSTS = "posts";
     public static readonly TABLE_SUBSCRIPTIONS = "subscriptions";
@@ -67,40 +69,45 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 //channel
-                await this.registerQueryChannelInfoScripting();
+                const p1 = this.registerQueryChannelInfoScripting()
 
                 //post
-                await this.registerQueryPostByChannelIdScripting();
-                await this.registerQueryPostRangeOfTimeScripting();
-                await this.registerQueryPostByIdScripting();
+                const p2 = this.registerQueryPostByChannelIdScripting();
+                const p3 = this.registerQueryPostRangeOfTimeScripting();
+                const p4 = this.registerQueryPostByIdScripting();
 
                 //subscription
-                await this.registerSubscribeScripting();
-                await this.registerQuerySubscriptionInfoByChannelIdScripting();
-                await this.registerQuerySubscriptionInfoByUserDIDScripting();
-                await this.registerUnsubscribeScripting();
-                await this.registerUpdateSubscription()
+                const p5 = this.registerSubscribeScripting();
+                const p6 = this.registerQuerySubscriptionInfoByChannelIdScripting();
+                const p7 = this.registerQuerySubscriptionInfoByUserDIDScripting();
+                const p8 = this.registerUnsubscribeScripting()
+                const p9 = this.registerUpdateSubscription();
 
                 //comment
-                await this.registerCreateCommentScripting();
-                await this.registerFindCommentByIdScripting();
-                await this.registerQueryCommentByPostIdScripting();
-                await this.registerUpdateCommentScripting();
-                await this.registerDeleteCommentScripting();
-                await this.registerQueryCommentByChannelScripting();
+                const p10 = this.registerCreateCommentScripting();
+                const p11 = this.registerFindCommentByIdScripting();
+                const p12 = this.registerQueryCommentByPostIdScripting();
+                const p13 = this.registerUpdateCommentScripting();
+                const p14 = this.registerDeleteCommentScripting();
+                const p15 = this.registerQueryCommentByChannelScripting();
 
                 // //like
-                await this.registerCreateLikeScripting();
-                await this.registerQueryLikeByIdScripting();
-                await this.registerRemoveLikeScripting();
-                await this.registerQueryLikeByChannelScripting();
-                await this.registerQueryLikeByPostScripting();
-                await this.registerUpdateLike()
+                const p16 = this.registerCreateLikeScripting();
+                const p17 = this.registerQueryLikeByIdScripting();
+                const p18 = this.registerRemoveLikeScripting();
+                const p19 = this.registerQueryLikeByChannelScripting();
+                const p20 = this.registerQueryLikeByPostScripting();
+                const p21 = this.registerUpdateLike()
 
                 //DisplayName
-                await this.registerQueryDisplayNameScripting();
+                const p22 = this.registerQueryDisplayNameScripting();
 
-                resolve('FINISH');
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22] as const 
+                Promise.all(array).then(values => {
+                    resolve('FINISH');
+                }, reason => {
+                    reject(reason)
+                })
             } catch (error) {
                 Logger.error(error);
             }
@@ -250,11 +257,19 @@ export class HiveVaultHelper {
     /** update channel end */
 
     /** query channel info start*/
-    private registerQueryChannelInfoScripting(): Promise<void> {
-        let executablefilter = { "channel_id": "$params.channel_id", "type": "public" }
-        let options = { "projection": { "_id": false }, "limit": 100 }
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
+    private registerQueryChannelInfoScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+            let executablefilter = { "channel_id": "$params.channel_id", "type": "public" }
+            let options = { "projection": { "_id": false }, "limit": 100 }
+            const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryChannelInfo(targetDid: string, channelId: string) {
@@ -425,16 +440,24 @@ export class HiveVaultHelper {
     /** delete post end */
 
     /** query post data by id start*/
-    private registerQueryPostByIdScripting(): Promise<void> {
-        let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id" }
-        let options = { "projection": { "_id": false }, "limit": 100 }
-        let conditionfilter1 = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-        let conditionfilter2 = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": "public" }
-        let queryCondition1 = new QueryHasResultCondition("subscription_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter1, null)
-        let queryCondition2 = new QueryHasResultCondition("post_permission", HiveVaultHelper.TABLE_POSTS, conditionfilter2, null)
-        let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
-        let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
+    private registerQueryPostByIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id" }
+                let options = { "projection": { "_id": false }, "limit": 100 }
+                let conditionfilter1 = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+                let conditionfilter2 = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": "public" }
+                let queryCondition1 = new QueryHasResultCondition("subscription_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter1, null)
+                let queryCondition2 = new QueryHasResultCondition("post_permission", HiveVaultHelper.TABLE_POSTS, conditionfilter2, null)
+                let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
@@ -456,13 +479,21 @@ export class HiveVaultHelper {
     /** query post data by id end*/
 
     /** query post data by channel id start */
-    private registerQueryPostByChannelIdScripting(): Promise<void> {
-        let executablefilter = { "channel_id": "$params.channel_id" }
-        let options = { "projection": { "_id": false }, "limit": 100 }
-        let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-        let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
-        let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
+    private registerQueryPostByChannelIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = { "channel_id": "$params.channel_id" }
+                let options = { "projection": { "_id": false }, "limit": 100 }
+                let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+                let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryPostByChannelId(targetDid: string, channelId: string) {
@@ -482,15 +513,23 @@ export class HiveVaultHelper {
     }
     /** query post data by channel id end */
 
-    /** query post data range of time start */
-    private registerQueryPostRangeOfTimeScripting() {
-        let executablefilter =
-            { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
-        let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } }
-        let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
-        let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
-        let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
+/** query post data range of time start */
+    private registerQueryPostRangeOfTimeScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter =
+                { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
+                let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } }
+                let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+                let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number) {
@@ -533,12 +572,12 @@ export class HiveVaultHelper {
 
                 const executable = new InsertExecutable("database_insert", HiveVaultHelper.TABLE_SUBSCRIPTIONS, document, options);
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
-                resolve('SUCCESS');
+                resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error);
-                reject(error);
+                Logger.error(error)
+                reject(error)
             }
-        });
+        })
     }
 
     private callSubscribeScripting(targetDid: string, channelId: string, userDisplayName: string, updatedAt: number, status: number): Promise<any> {
@@ -564,24 +603,32 @@ export class HiveVaultHelper {
         return this.callSubscribeScripting(targetDid, channelId, displayName, updatedAt, status);
     }
 
-    registerUpdateSubscription() {
-        const conditionfilter = {
-            "channel_id": "$params.channel_id",
-        };
-
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
-        let set = {
-            "status": "$params.status",
-            "updated_at": "$params.updated_at",
-        };
-        const filter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did",
-        };
-        let update = { "$set": set };
-        let options = { "bypass_document_validation": false, "upsert": true };
-        const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_SUBSCRIPTIONS, filter, update, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
+    registerUpdateSubscription(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                };
+        
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
+                let set = {
+                    "status": "$params.status",
+                    "updated_at": "$params.updated_at",
+                };
+                const filter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+                let update = { "$set": set };
+                let options = { "bypass_document_validation": false, "upsert": true };
+                const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_SUBSCRIPTIONS, filter, update, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callUpdateSubscription(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
@@ -620,12 +667,12 @@ export class HiveVaultHelper {
 
                 const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_SUBSCRIPTIONS, filter);
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, executable, null);
-                resolve('SUCCESS');
+                resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error);
-                reject(error);
+                Logger.error(error)
+                reject(error)
             }
-        });
+        })
     }
 
     private callUnsubscribeScripting(targetDid: string, channelId: string): Promise<any> {
@@ -650,15 +697,23 @@ export class HiveVaultHelper {
     /** unsubscribe channel end */
 
     /** query subscription info by channelId start */
-    private registerQuerySubscriptionInfoByChannelIdScripting() {
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "status": "$params.status"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
+    private registerQuerySubscriptionInfoByChannelIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "status": "$params.status"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQuerySubscriptionInfoByChannelId(targetDid: string, channelId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
@@ -684,14 +739,22 @@ export class HiveVaultHelper {
     /** query subscription info by channelId end */
 
     /** query subscription info by userDid start */
-    private registerQuerySubscriptionInfoByUserDIDScripting() {
-        const executableFilter = {
-            "user_did": "$params.user_did"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
+    private registerQuerySubscriptionInfoByUserDIDScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const executableFilter = {
+                    "user_did": "$params.user_did"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQuerySubscriptionByUserDID(targetDid: string, userDid: string): Promise<any> {
@@ -716,22 +779,30 @@ export class HiveVaultHelper {
     /** query subscription info by userDid end */
 
     /** query comment by postId start */
-    private registerQueryCommentByPostIdScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
-
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
+    private registerQueryCommentByPostIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
+        
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryCommentByPostIdScripting(targetDid: string, channelId: string, postId: string): Promise<any> {
@@ -757,23 +828,31 @@ export class HiveVaultHelper {
     /** query comment by postId end */
 
     /** query comment by id start */
-    private registerFindCommentByIdScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
-
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
+    private registerFindCommentByIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
+        
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryCommentByID(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
@@ -800,21 +879,29 @@ export class HiveVaultHelper {
     /** query comment by id end */
 
     /** query comment by channel start */
-    private registerQueryCommentByChannelScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
-
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
+    private registerQueryCommentByChannelScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
+        
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryCommentByChannel(targetDid: string, channelId: string): Promise<any> {
@@ -839,34 +926,42 @@ export class HiveVaultHelper {
     /** query comment by channel end */
 
     /** create comment start */
-    private registerCreateCommentScripting() {
-        let conditionfilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
-
-        let executablefilter = {
-            "comment_id": "$params.comment_id",
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "refcomment_id": "$params.refcomment_id",
-            "content": "$params.content",
-            "status": FeedsData.PostCommentStatus.available,
-            "created_at": "$params.created_at",
-            "updated_at": "$params.created_at",
-            "creater_did": "$caller_did"
-        }
-
-        let options = {
-            "projection":
-            {
-                "_id": false
+    private registerCreateCommentScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
+        
+                let executablefilter = {
+                    "comment_id": "$params.comment_id",
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "refcomment_id": "$params.refcomment_id",
+                    "content": "$params.content",
+                    "status": FeedsData.PostCommentStatus.available,
+                    "created_at": "$params.created_at",
+                    "updated_at": "$params.created_at",
+                    "creater_did": "$caller_did"
+                }
+        
+                let options = {
+                    "projection":
+                    {
+                        "_id": false
+                    }
+                };
+                const executable = new InsertExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, executablefilter, options).setOutput(true)
+        
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
             }
-        };
-        const executable = new InsertExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, executablefilter, options).setOutput(true)
-
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
+        })
     }
 
     private callCreateComment(targetDid: string, commentId: string, channelId: string, postId: string, refcommentId: string, content: string, createdAt: number) {
@@ -907,32 +1002,40 @@ export class HiveVaultHelper {
     /** create comment end */
 
     /** update comment start */
-    private registerUpdateCommentScripting() {
-        let conditionfilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id",
-            "creater_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_COMMENTS, conditionfilter, null);
-
-        const filter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id"
-        };
-
-        let set = {
-            "status": FeedsData.PostCommentStatus.edited,
-            "content": "$params.content",
-            "updated_at": `$params.updated_at`,
-            "creater_did": "$caller_did"
-        };
-        let update = { "$set": set };
-        let options = { "bypass_document_validation": false, "upsert": true };
-
-        const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
+    private registerUpdateCommentScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id",
+                    "creater_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_COMMENTS, conditionfilter, null);
+        
+                const filter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id"
+                };
+        
+                let set = {
+                    "status": FeedsData.PostCommentStatus.edited,
+                    "content": "$params.content",
+                    "updated_at": `$params.updated_at`,
+                    "creater_did": "$caller_did"
+                };
+                let update = { "$set": set };
+                let options = { "bypass_document_validation": false, "upsert": true };
+        
+                const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callUpdateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
@@ -962,29 +1065,37 @@ export class HiveVaultHelper {
     /** update comment end */
 
     /** delte comment start */
-    private registerDeleteCommentScripting() {
-        let conditionfilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id",
-            "creater_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_COMMENTS, conditionfilter, null);
-
-        const filter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id"
-        };
-
-        let set = {
-            "status": FeedsData.PostCommentStatus.deleted,
-        };
-        let update = { "$set": set };
-        let options = { "bypass_document_validation": false, "upsert": true };
-
-        const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
+    private registerDeleteCommentScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id",
+                    "creater_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_COMMENTS, conditionfilter, null);
+        
+                const filter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id"
+                };
+        
+                let set = {
+                    "status": FeedsData.PostCommentStatus.deleted,
+                };
+                let update = { "$set": set };
+                let options = { "bypass_document_validation": false, "upsert": true };
+        
+                const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callDeleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
@@ -1010,24 +1121,32 @@ export class HiveVaultHelper {
     }
     /** delte comment end */
 
-    /** query like by id start */
-    private registerQueryLikeByIdScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did",
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id",
-            "status": "$params.status"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
+/** query like by id start */
+    private registerQueryLikeByIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id",
+                    "status": "$params.status"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryLikeById(targetDid: string, channelId: string, postId: string, commentId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
@@ -1055,21 +1174,29 @@ export class HiveVaultHelper {
     /** query like by id end */
 
     /** query like by channel start */
-    private registerQueryLikeByChannelScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did",
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "status": "$params.status"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
+    private registerQueryLikeByChannelScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "status": "$params.status"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryLikeByChannel(targetDid: string, channelId: string) {
@@ -1095,22 +1222,30 @@ export class HiveVaultHelper {
     /** query like by channel end */
 
     /** query like by post start */
-    private registerQueryLikeByPostScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did",
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "status": "$params.status"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
+    private registerQueryLikeByPostScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "status": "$params.status"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryLikeByPost(targetDid: string, channelId: string, postId: string) {
@@ -1136,33 +1271,41 @@ export class HiveVaultHelper {
     }
     /** query like by post end */
 
-    /** add like start */
-    private registerCreateLikeScripting() {
-        let conditionfilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
-
-        let executablefilter = {
-            "like_id": "$params.like_id",
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id",
-            "created_at": "$params.created_at",
-            "creater_did": "$caller_did",
-            "updated_at": "$params.updated_at",
-            "status": "$params.status"
-        }
-
-        let options = {
-            "projection":
-            {
-                "_id": false
+/** add like start */
+    private registerCreateLikeScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
+        
+                let executablefilter = {
+                    "like_id": "$params.like_id",
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id",
+                    "created_at": "$params.created_at",
+                    "creater_did": "$caller_did",
+                    "updated_at": "$params.updated_at",
+                    "status": "$params.status"
+                }
+        
+                let options = {
+                    "projection":
+                    {
+                        "_id": false
+                    }
+                };
+                const executable = new InsertExecutable("database_insert", HiveVaultHelper.TABLE_LIKES, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
             }
-        };
-        const executable = new InsertExecutable("database_insert", HiveVaultHelper.TABLE_LIKES, executablefilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
+        })
     }
 
     private callAddLike(targetDid: string, likeId: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
@@ -1194,22 +1337,30 @@ export class HiveVaultHelper {
     /** add like end */
 
     /** remove like start */
-    private registerRemoveLikeScripting() {
-        let conditionfilter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id",
-            "creater_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
-
-        const filter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id"
-        };
-        const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_LIKES, filter).setOutput(true);
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
+    private registerRemoveLikeScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id",
+                    "creater_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
+        
+                const filter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id"
+                };
+                const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_LIKES, filter).setOutput(true);
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callRemoveLike(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {
@@ -1236,26 +1387,34 @@ export class HiveVaultHelper {
     /** remove like end */
 
     /** update like start */
-    registerUpdateLike() {
-        const conditionfilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did",
-        };
-
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
-        let set = {
-            "status": "$params.status",
-            "updated_at": "$params.updated_at",
-        };
-        const filter = {
-            "channel_id": "$params.channel_id",
-            "post_id": "$params.post_id",
-            "comment_id": "$params.comment_id",
-        };
-        let update = { "$set": set };
-        let options = { "bypass_document_validation": false, "upsert": true };
-        const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_LIKES, filter, update, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
+    registerUpdateLike(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const conditionfilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+        
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
+                let set = {
+                    "status": "$params.status",
+                    "updated_at": "$params.updated_at",
+                };
+                const filter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "comment_id": "$params.comment_id",
+                };
+                let update = { "$set": set };
+                let options = { "bypass_document_validation": false, "upsert": true };
+                const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_LIKES, filter, update, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callUpdateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
@@ -1471,21 +1630,29 @@ export class HiveVaultHelper {
 
 
     /** query user displayName start */
-    private registerQueryDisplayNameScripting() {
-        let conditionFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$caller_did"
-        };
-        const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-
-        const executableFilter = {
-            "channel_id": "$params.channel_id",
-            "user_did": "$params.user_did"
-        };
-
-        let options = { "projection": { "_id": false }, "limit": 100 };
-        const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-        return this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
+    private registerQueryDisplayNameScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did"
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+        
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$params.user_did"
+                };
+        
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
     }
 
     private callQueryUserDisplayName(targetDid: string, channelId: string, userDid: string) {
