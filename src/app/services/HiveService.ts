@@ -9,9 +9,10 @@ import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 // import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
 import { } from '@elastosfoundation/hive-js-sdk'
-import { isEqual, isNil, reject, values } from 'lodash';
+import { isEqual, isNil, reject } from 'lodash';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
+import { on } from 'process';
 
 @Injectable()
 export class HiveService {
@@ -28,7 +29,7 @@ export class HiveService {
   private tarDID: string
   private tarAppDID: string
   private avatarParam: string
-  private vaults: { [key: string]: VaultServices } = {}
+  private values: { [key: string]: VaultServices } = {}
 
   constructor(
     private standardAuthService: StandardAuthService,
@@ -97,7 +98,7 @@ export class HiveService {
       const userDIDDocument = await userDID.resolve()
       this.parseUserDIDDocument(userDid, userDIDDocument)
 
-      this.vaults[userDid] = vault
+      this.values[userDid] = vault
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
       return vault
     }
@@ -146,7 +147,8 @@ export class HiveService {
   }
 
   async getVault(userDid: string): VaultServices {
-    let vault = values[userDid]
+    let vault = this.values[userDid]
+
     if (vault == undefined) {
       vault = await this.creatVault(userDid)
     }
@@ -158,13 +160,14 @@ export class HiveService {
     return new Promise(async (resolve, reject) => {
       try {
         const userDid = (await this.dataHelper.getSigninData()).did
-        let vault = values[userDid]
+        let vault = this.values[userDid]
         if (vault == undefined) {
           vault = await this.creatVault(userDid)
         }
         Logger.log(TAG, 'Create vault is', this.vault);
         resolve(vault);
       } catch (error) {
+        reject(error)
         Logger.error(TAG, 'Create vault error', error);
       }
     });
