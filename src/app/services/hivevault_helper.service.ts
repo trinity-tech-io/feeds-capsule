@@ -1816,12 +1816,12 @@ export class HiveVaultHelper {
 
 
     /** query subscribed_channel start */
-    private queryDataFromBackupSCDB(): Promise<string> {
+    private queryDataFromBackupSCDB(): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL, {});
                 Logger.log(TAG, 'Query bsc db result', result);
-                resolve('FINISH');
+                resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query bsc db error', error);
                 reject(error);
@@ -1829,7 +1829,7 @@ export class HiveVaultHelper {
         })
     }
 
-    queryBackupData(): Promise<string> {
+    queryBackupData(): Promise<any> {
         return this.queryDataFromBackupSCDB();
     }
     /** remove subscribed_channel end */

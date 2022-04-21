@@ -301,7 +301,7 @@ export class HiveVaultResultParse {
       *]
       *}
       */
-      const subscribedChannels = result.items;
+      const subscribedChannels = result;
       let parseResult: FeedsData.SubscribedChannelV3[] = [];
       console.log('result', subscribedChannels);
       if (!subscribedChannels || subscribedChannels.length == 0) {

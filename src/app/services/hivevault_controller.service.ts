@@ -23,6 +23,7 @@ export class HiveVaultController {
   ) {
   }
 
+  /** sync data doRefresh use */
   syncAllPost(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -320,7 +321,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        const channelList = await this.handleChannelResult(targetDid, result);
+        const channelList = await this.handleChannelResult(targetDid, result.find_message.items);
         if (!channelList || channelList.length == 0) {
           resolve(null);
           return;
@@ -1394,12 +1395,15 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryBackupData();
+        console.log(TAG, 'Query backup subscribed channel result is', result);
         if (!result) {
           resolve([])
           return;
         }
 
+
         const subscribedList = HiveVaultResultParse.parseBackupSubscribedChannelResult(result);
+        console.log(TAG, '111111111111111', subscribedList);
         if (!subscribedList && subscribedList.length == 0) {
           resolve([]);
           return;
@@ -1407,7 +1411,7 @@ export class HiveVaultController {
 
         for (let index = 0; index < subscribedList.length; index++) {
           const subscibedChannel = subscribedList[index];
-          this.dataHelper.addSubscribedChannel(subscibedChannel);
+          await this.dataHelper.addSubscribedChannel(subscibedChannel);
         }
 
         resolve(subscribedList);

@@ -209,7 +209,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.backupSubscribedChannel(targetDid, channelId);
   }
 
-  queryBackupData() {
+  queryBackupData(): Promise<any> {
     return this.hiveVaultHelper.queryBackupData();
   }
 

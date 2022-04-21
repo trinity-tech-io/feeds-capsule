@@ -76,21 +76,11 @@ export class GalleriahivePage implements OnInit {
             console.log(error)
           }
         }
-        // await this.hiveVaultController.getSubscriptionChannelById();
-
-        const did = (await this.dataHelper.getSigninData()).did;
 
         this.description = this.translate.instant('GalleriahivePage.synchronizingChannelData');
-        this.hiveVaultController.queryBackupSubscribedChannel();
-        this.hiveVaultController.syncAllChannelInfo();
-        // const myChannelList = await this.hiveVaultController.syncSelfChannel(did);
+        await this.hiveVaultController.queryBackupSubscribedChannel();
 
-        // for (let index = 0; index < myChannelList.length; index++) {
-        //   const channel = myChannelList[index];
-        //   await this.hiveVaultController.syncSubscribedChannel(channel.destDid, channel.channelId, did)
-        // }
-
-
+        await this.hiveVaultController.syncAllChannelInfo();
 
         this.description = this.translate.instant('GalleriahivePage.synchronizingPostData');
         await this.hiveVaultController.syncAllPost();
