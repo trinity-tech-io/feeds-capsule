@@ -25,6 +25,8 @@ export class HiveVaultHelper {
     public static readonly TABLE_SUBSCRIPTIONS = "subscriptions";
     public static readonly TABLE_COMMENTS = "comments";
     public static readonly TABLE_LIKES = "likes";
+    public static readonly TABLE_BACKUP_SUBSCRIBEDCHANNEL = "backup_subscribed_channel";
+
 
     // public static readonly SCRIPT_ALLPOST = "script_allpost_name";
     public static readonly SCRIPT_SPECIFIED_POST = "script_specified_post_name";
@@ -102,7 +104,7 @@ export class HiveVaultHelper {
                 //DisplayName
                 const p22 = this.registerQueryDisplayNameScripting();
 
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22] as const 
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -183,7 +185,7 @@ export class HiveVaultHelper {
         return this.queryFeedsScriptingFromDB();
     }
 
-/** 存储feeds 信息结束*/
+    /** 存储feeds 信息结束*/
 
     private createCollection(collectName: string): Promise<void> {
         return this.hiveService.createCollection(collectName);
@@ -198,6 +200,7 @@ export class HiveVaultHelper {
                 await this.createCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
                 await this.createCollection(HiveVaultHelper.TABLE_COMMENTS);
                 await this.createCollection(HiveVaultHelper.TABLE_LIKES);
+                await this.createCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'create Collections error', error);
@@ -219,6 +222,7 @@ export class HiveVaultHelper {
                 await this.deleteCollection(HiveVaultHelper.TABLE_COMMENTS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
                 await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+                await this.deleteCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
@@ -333,9 +337,9 @@ export class HiveVaultHelper {
     private registerQueryChannelInfoScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-            let executablefilter = { "channel_id": "$params.channel_id", "type": "public" }
-            let options = { "projection": { "_id": false }, "limit": 100 }
-            const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
+                let executablefilter = { "channel_id": "$params.channel_id", "type": "public" }
+                let options = { "projection": { "_id": false }, "limit": 100 }
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
                 resolve("SUCCESS")
             } catch (error) {
@@ -586,12 +590,12 @@ export class HiveVaultHelper {
     }
     /** query post data by channel id end */
 
-/** query post data range of time start */
+    /** query post data range of time start */
     private registerQueryPostRangeOfTimeScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
                 let executablefilter =
-                { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
+                    { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
                 let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } }
                 let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
                 let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
@@ -682,7 +686,7 @@ export class HiveVaultHelper {
                 const conditionfilter = {
                     "channel_id": "$params.channel_id",
                 };
-        
+
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
                 let set = {
                     "status": "$params.status",
@@ -777,7 +781,7 @@ export class HiveVaultHelper {
                     "channel_id": "$params.channel_id",
                     "status": "$params.status"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
@@ -818,7 +822,7 @@ export class HiveVaultHelper {
                 const executableFilter = {
                     "user_did": "$params.user_did"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
@@ -860,15 +864,15 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
-        
+
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
@@ -909,16 +913,16 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
                     "comment_id": "$params.comment_id"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
-        
+
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
@@ -960,14 +964,14 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
-        
+
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
@@ -1007,7 +1011,7 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
-        
+
                 let executablefilter = {
                     "comment_id": "$params.comment_id",
                     "channel_id": "$params.channel_id",
@@ -1019,7 +1023,7 @@ export class HiveVaultHelper {
                     "updated_at": "$params.created_at",
                     "creater_did": "$caller_did"
                 }
-        
+
                 let options = {
                     "projection":
                     {
@@ -1027,7 +1031,7 @@ export class HiveVaultHelper {
                     }
                 };
                 const executable = new InsertExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, executablefilter, options).setOutput(true)
-        
+
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
@@ -1085,13 +1089,13 @@ export class HiveVaultHelper {
                     "creater_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_COMMENTS, conditionfilter, null);
-        
+
                 const filter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
                     "comment_id": "$params.comment_id"
                 };
-        
+
                 let set = {
                     "status": FeedsData.PostCommentStatus.edited,
                     "content": "$params.content",
@@ -1100,7 +1104,7 @@ export class HiveVaultHelper {
                 };
                 let update = { "$set": set };
                 let options = { "bypass_document_validation": false, "upsert": true };
-        
+
                 const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
@@ -1148,19 +1152,19 @@ export class HiveVaultHelper {
                     "creater_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_COMMENTS, conditionfilter, null);
-        
+
                 const filter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
                     "comment_id": "$params.comment_id"
                 };
-        
+
                 let set = {
                     "status": FeedsData.PostCommentStatus.deleted,
                 };
                 let update = { "$set": set };
                 let options = { "bypass_document_validation": false, "upsert": true };
-        
+
                 const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
@@ -1194,7 +1198,7 @@ export class HiveVaultHelper {
     }
     /** delte comment end */
 
-/** query like by id start */
+    /** query like by id start */
     private registerQueryLikeByIdScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1203,14 +1207,14 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did",
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
                     "comment_id": "$params.comment_id",
                     "status": "$params.status"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
@@ -1255,12 +1259,12 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did",
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
                     "status": "$params.status"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
@@ -1303,13 +1307,13 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did",
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
                     "status": "$params.status"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
@@ -1344,7 +1348,7 @@ export class HiveVaultHelper {
     }
     /** query like by post end */
 
-/** add like start */
+    /** add like start */
     private registerCreateLikeScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -1353,7 +1357,7 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null);
-        
+
                 let executablefilter = {
                     "like_id": "$params.like_id",
                     "channel_id": "$params.channel_id",
@@ -1364,7 +1368,7 @@ export class HiveVaultHelper {
                     "updated_at": "$params.updated_at",
                     "status": "$params.status"
                 }
-        
+
                 let options = {
                     "projection":
                     {
@@ -1420,7 +1424,7 @@ export class HiveVaultHelper {
                     "creater_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
-        
+
                 const filter = {
                     "channel_id": "$params.channel_id",
                     "post_id": "$params.post_id",
@@ -1467,7 +1471,7 @@ export class HiveVaultHelper {
                     "channel_id": "$params.channel_id",
                     "user_did": "$caller_did",
                 };
-        
+
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
                 let set = {
                     "status": "$params.status",
@@ -1711,12 +1715,12 @@ export class HiveVaultHelper {
                     "user_did": "$caller_did"
                 };
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
-        
+
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
                     "user_did": "$params.user_did"
                 };
-        
+
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
@@ -1761,4 +1765,72 @@ export class HiveVaultHelper {
             }
         });
     }
+
+    /** backup subscribed_channel start */
+    private insertDataToBackupSCDB(targetDid: string, channelId: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            const doc = {
+                "target_did": targetDid,
+                "channel_id": channelId
+            }
+
+            try {
+                const insertResult = this.hiveService.insertDBData(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL, doc);
+                Logger.log(TAG, 'Insert bsc db result', insertResult);
+                resolve('FINISH');
+            } catch (error) {
+                Logger.error(TAG, 'Insert bsc db error', error);
+                reject(error);
+            }
+        })
+    }
+
+    backupSubscribedChannel(targetDid: string, channelId: string): Promise<string> {
+        return this.insertDataToBackupSCDB(targetDid, channelId);
+    }
+    /** backup subscribed_channel end */
+
+    /** remove subscribed_channel start */
+    private removeDataFromBackupSCDB(targetDid: string, channelId: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            const doc = {
+                "target_did": targetDid,
+                "channel_id": channelId
+            };
+
+            try {
+                const result = this.hiveService.deleateOneDBData(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL, doc);
+                Logger.log(TAG, 'Remove bsc db result', result);
+                resolve('FINISH');
+            } catch (error) {
+                Logger.error(TAG, 'Remove bsc db error', error);
+                reject(error);
+            }
+        })
+    }
+
+    removeBackupData(targetDid: string, channelId: string): Promise<string> {
+        return this.removeDataFromBackupSCDB(targetDid, channelId);
+    }
+    /** remove subscribed_channel end */
+
+
+    /** query subscribed_channel start */
+    private queryDataFromBackupSCDB(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL, {});
+                Logger.log(TAG, 'Query bsc db result', result);
+                resolve('FINISH');
+            } catch (error) {
+                Logger.error(TAG, 'Query bsc db error', error);
+                reject(error);
+            }
+        })
+    }
+
+    queryBackupData(): Promise<string> {
+        return this.queryDataFromBackupSCDB();
+    }
+    /** remove subscribed_channel end */
 }

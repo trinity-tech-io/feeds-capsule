@@ -204,4 +204,16 @@ export class HiveVaultApi {
   prepareConnection() {
     return this.hiveVaultHelper.prepareConnection();
   }
+
+  backupSubscribedChannel(targetDid: string, channelId: string) {
+    return this.hiveVaultHelper.backupSubscribedChannel(targetDid, channelId);
+  }
+
+  queryBackupData() {
+    return this.hiveVaultHelper.queryBackupData();
+  }
+
+  removeBackupData(targetDid: string, channelId: string) {
+    return this.hiveVaultHelper.removeBackupData(targetDid, channelId);
+  }
 }

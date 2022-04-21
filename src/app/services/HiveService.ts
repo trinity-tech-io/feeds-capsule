@@ -362,6 +362,7 @@ export class HiveService {
       }
     })
   }
+
   newInsertOptions() {
     return new InsertOptions(false, true);
   }

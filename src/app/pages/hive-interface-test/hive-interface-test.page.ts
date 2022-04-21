@@ -359,4 +359,15 @@ export class HiveInterfaceTestPage implements OnInit {
     this.hiveVaultApi.queryPostByRangeOfTime(this.destDid, "0999ede0515410e8f7716c708868fde605ef25289fd2a7502e5f1982748bd41b", 0, 1650210408911);
   }
 
+  backupSubscribedChannel() {
+    return this.hiveVaultApi.backupSubscribedChannel('123', '456');
+  }
+
+  queryBackupData() {
+    return this.hiveVaultApi.queryBackupData();
+  }
+
+  removeBackupData() {
+    return this.hiveVaultApi.removeBackupData('123', '456');
+  }
 }

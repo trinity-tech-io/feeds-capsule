@@ -277,4 +277,49 @@ export class HiveVaultResultParse {
     }
   }
   /** parse subscription result end */
+
+
+  /** parse backup subscribed channel result start */
+  public static parseBackupSubscribedChannelResult(result: any): FeedsData.SubscribedChannelV3[] {
+    try {
+      /**
+      *{
+      * "items": [
+      *  {
+      *   "_id": {
+      *    "$oid": "6260ee81c095d03f8f571c8a"
+      *  },
+      * "target_did": "123",
+      * "channel_id": "456",
+      * "created": {
+      *  "$date": 1650519681158
+      * },
+      *  "modified": {
+      *   "$date": 1650519681158
+      *  }
+      * }
+      *]
+      *}
+      */
+      const subscribedChannels = result.items;
+      let parseResult: FeedsData.SubscribedChannelV3[] = [];
+      console.log('result', subscribedChannels);
+      if (!subscribedChannels || subscribedChannels.length == 0) {
+        return [];
+      }
+
+      subscribedChannels.forEach(subscribedChannel => {
+        const subscribed: FeedsData.SubscribedChannelV3 = {
+          destDid: subscribedChannel.target_did,
+          channelId: subscribedChannel.channel_id,
+        }
+        parseResult.push(subscribed);
+      });
+
+      return parseResult;
+    } catch (error) {
+      Logger.error(TAG, 'Parse backup subscribed channel data result error', error);
+    }
+  }
+  /** parse backup subscribed channel result end */
 }

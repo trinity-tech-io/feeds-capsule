@@ -316,7 +316,16 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId);
+        if (!result) {
+          resolve(null);
+          return;
+        }
         const channelList = await this.handleChannelResult(targetDid, result);
+        if (!channelList || channelList.length == 0) {
+          resolve(null);
+          return;
+        }
+
         resolve(channelList[0]);
       } catch (error) {
         Logger.error(TAG, error);
@@ -597,6 +606,7 @@ export class HiveVaultController {
           channelId: channelId
         }
         await this.dataHelper.addSubscribedChannel(subscribedChannel);
+        this.backupSubscribedChannel(targetDid, channelId);//async
         resolve(subscribedChannel);
       } catch (error) {
         Logger.error(TAG, error);
@@ -912,7 +922,7 @@ export class HiveVaultController {
           //1.query
           //2.remove
           await this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
-
+          this.removeBackupSubscribedChannel(destDid, channelId);
           resolve(subscribedChannel);
         } else {
           const errorMsg = 'Unsubscribe channel error';
@@ -1362,6 +1372,59 @@ export class HiveVaultController {
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Handle post result error', error);
+        reject(error);
+      }
+    });
+  }
+
+
+  backupSubscribedChannel(targetDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.hiveVaultApi.backupSubscribedChannel(targetDid, channelId);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Backup subscribed channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryBackupSubscribedChannel(): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryBackupData();
+        if (!result) {
+          resolve([])
+          return;
+        }
+
+        const subscribedList = HiveVaultResultParse.parseBackupSubscribedChannelResult(result);
+        if (!subscribedList && subscribedList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        for (let index = 0; index < subscribedList.length; index++) {
+          const subscibedChannel = subscribedList[index];
+          this.dataHelper.addSubscribedChannel(subscibedChannel);
+        }
+
+        resolve(subscribedList);
+      } catch (error) {
+        Logger.error(TAG, 'Query backup subscribed channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  removeBackupSubscribedChannel(targetDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.hiveVaultApi.removeBackupData(targetDid, channelId);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Remove backup subscribed channel error', error);
         reject(error);
       }
     });
