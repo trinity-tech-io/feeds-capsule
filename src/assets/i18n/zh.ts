@@ -494,7 +494,8 @@ export const zh = {
     synchronizingCommentData: '正在同步comment数据',
     synchronizingOtherData: '正在同步其他数据',
 
-    synchronizingComplete: '同步完成，开始使用'
+    synchronizingComplete: '同步完成，开始使用',
+    buttonTitle1: '重试',
   },
   ErrorInfo: {
     alreadyExists: '内容已经存在',

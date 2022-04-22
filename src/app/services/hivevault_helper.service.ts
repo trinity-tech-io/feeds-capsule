@@ -225,7 +225,11 @@ export class HiveVaultHelper {
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
-                reject(error)
+                if(error["code"] === 404 ){
+                    resolve("true")
+                }else{
+                  reject(error)
+                }
             }
         });
     }

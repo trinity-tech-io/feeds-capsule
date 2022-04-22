@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger, LogLevel } from 'src/app/services/logger';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { PopupProvider } from 'src/app/services/popup';
+import { GlobalService } from 'src/app/services/global.service';
 
 @Component({
   selector: 'app-developer',
@@ -27,7 +28,8 @@ export class DeveloperPage implements OnInit {
     private zone: NgZone,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
-    public popupProvider: PopupProvider
+    public popupProvider: PopupProvider,
+    private globalService: GlobalService
   ) { }
 
   ngOnInit() {
@@ -100,8 +102,13 @@ export class DeveloperPage implements OnInit {
    try {
    let reslut  = await that.hiveVaultController.deleteAllCollections();
    if(reslut === "true"){
+        await that.dataHelper.removeData("feeds.initHive");
+        const signinData = await this.dataHelper.getSigninData();
+        let userDid = signinData.did
+        localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
         that.native.hideLoading();
         alert("sucess");
+        that.globalService.restartApp();
    }else{
      that.native.hideLoading();
     alert("fail");

@@ -491,7 +491,9 @@ export const en = {
     synchronizingCommentData: 'Synchronizing comment data',
     synchronizingOtherData: 'Synchronizing other data',
 
-    synchronizingComplete: "The synchronization is complete, Let's go"
+    synchronizingComplete: "The synchronization is complete, Let's go",
+    buttonTitle1: 'Try',
+
   },
   ErrorInfo: {
     alreadyExists: 'Entity Already Exists',

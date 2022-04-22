@@ -8,9 +8,14 @@
     </p>
     <img src="./assets/images/connect.svg" />
     <ion-row class="btn-row">
-      <ion-button class="nextButton" disabled={{buttonDisabled}} (click)="openHomePage()">
+      <ion-button *ngIf="!isShowTryButton" class="nextButton" disabled={{buttonDisabled}} (click)="openHomePage()">
         <ion-label>{{ 'GalleriahivePage.buttonTitle' | translate }}</ion-label>
       </ion-button>
+
+      <ion-button *ngIf="isShowTryButton" class="nextButton" disabled={{trybuttonDisabled}}  (click)="TryButton()">
+        <ion-label>{{ 'GalleriahivePage.buttonTitle1' | translate }}</ion-label>
+      </ion-button>
+
     </ion-row>
   </ion-grid>
 </ion-content>

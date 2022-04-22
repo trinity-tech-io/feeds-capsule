@@ -377,12 +377,10 @@ export class StandardAuthService {
   async getAppId(): Promise<string> {
     let userDid = (await this.dataHelper.getSigninData()).did
     let appid = await this.storeService.get(userDid + 'appDid');
-    console.log("appid ================== ", appid)
-
     return appid
   }
   generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
-    let self = this ; 
+    let self = this ;
     return new Promise(async (resolver, reject) => {
 
       Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', challeng)

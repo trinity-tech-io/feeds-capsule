@@ -38,7 +38,6 @@ export class TransportService {
     this.events.subscribe(
       FeedsEvent.PublishType.carrierFriendBinaryMessage,
       event => {
-        console.log("FeedsEvent.PublishType.transportReceiveMessage + carrierFriendBinaryMessage");
         eventBus.publish(FeedsEvent.PublishType.transportReceiveMessage, event);
       },
     );
