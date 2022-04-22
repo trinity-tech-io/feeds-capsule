@@ -276,7 +276,7 @@ export class SubscriptionsPage implements OnInit {
       this.dataHelper.setProfileIamge(feedAvatar);
     }
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    this.feedService.setChannelInfo({
+    this.dataHelper.setChannelInfo({
       destDid: destDid,
       channelId: channelId,
       name: channelName,

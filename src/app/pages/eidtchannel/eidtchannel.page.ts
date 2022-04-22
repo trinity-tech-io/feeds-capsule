@@ -117,7 +117,7 @@ export class EidtchannelPage implements OnInit {
   }
 
   profileimage() {
-    this.feedService.setChannelInfo({
+    this.dataHelper.setChannelInfo({
       destDid: this.destDid,
       channelId: this.channelId,
       name: this.channelName,
@@ -187,7 +187,7 @@ export class EidtchannelPage implements OnInit {
         channelInfo["name"] = this.channelName;
         channelInfo["des"] = this.channelDes;
         channelInfo["tippingAddress"] = tippingAddress;
-        this.feedService.setChannelInfo(channelInfo);
+        this.dataHelper.setChannelInfo(channelInfo);
         this.isClickConfirm = true;
         this.native.hideLoading();
         this.native.pop();

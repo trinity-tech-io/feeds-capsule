@@ -4815,13 +4815,13 @@ export class FeedService {
     );
   }
 
-  setChannelInfo(obj: any) {
-    this.channelInfo = obj;
-  }
+  // setChannelInfo(obj: any) {
+  //   this.channelInfo = obj;
+  // }
 
-  getChannelInfo() {
-    return this.channelInfo || {};
-  }
+  // getChannelInfo() {
+  //   return this.channelInfo || {};
+  // }
 
   setCurTab(curtab: string) {
     this.curtab = curtab;

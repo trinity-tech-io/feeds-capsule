@@ -282,7 +282,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     let destDid = this.feedInfo['nodeId'];
     let feedUrl = this.feedInfo['url'];
     let channelId = feedUrl.split('/')[4];
-    this.feedService.setChannelInfo({
+    this.dataHelper.setChannelInfo({
       ownerDid: this.feedInfo['ownerDid'],
       did: this.feedInfo['did'],
       destDid: destDid,

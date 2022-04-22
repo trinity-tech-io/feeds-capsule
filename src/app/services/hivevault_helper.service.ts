@@ -215,12 +215,12 @@ export class HiveVaultHelper {
     deleteAllCollections(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
+                await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
                 await this.deleteCollection(HiveVaultHelper.TABLE_CHANNELS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_POSTS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_COMMENTS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
-                await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
                 await this.deleteCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
                 resolve("true")
             } catch (error) {
