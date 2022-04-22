@@ -108,7 +108,6 @@ export class DeveloperPage implements OnInit {
         localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
         that.native.hideLoading();
         alert("sucess");
-        that.globalService.restartApp();
    }else{
      that.native.hideLoading();
     alert("fail");
