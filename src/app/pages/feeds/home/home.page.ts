@@ -163,11 +163,14 @@ export class HomePage implements OnInit {
   private likeMap: any = {};
   private likeNumMap: any = {};
   private commentNumMap: any = {};
-  public isPostLoading: boolean = true;
+  public isPostLoading: boolean = false;
   private hannelNameMap: any = {};
   private isLoadingLikeMap: any = {};
   private downPostAvatarMap: any = {};
   private avatarImageMap: any = {};
+  private syncHiveDataStatus: number = null;
+  private syncHiveDataDes: string  = null;
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -287,6 +290,10 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.initTitleBar();
+    let syncHiveData = this.dataHelper.getSyncHiveData();
+    this.syncHiveDataStatus = syncHiveData.status;
+    this.syncHiveDataDes = syncHiveData.describe;
     this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
@@ -307,17 +314,34 @@ export class HomePage implements OnInit {
 
     switch (this.tabType) {
       case 'feeds':
-        //if (this.isInitPostList) {
-        this.refreshPostList();
-        //}
+        if(this.syncHiveDataStatus === 6){
+          this.handleRefresherInfinite(false);
+          this.isPostLoading = true;
+          this.refreshPostList();
+        }else{
+          this.handleRefresherInfinite(true);
+        }
         break;
       case 'pasar':
+        this.handleRefresherInfinite(false);
         if (this.searchText != "" || this.searchText != null) {
           return;
         }
         await this.refreshLocalPasarData();
         break;
     }
+
+
+
+    this.events.subscribe(FeedsEvent.PublishType.updateSyncHiveData, (syncHiveData :any) => {
+          Logger.log(TAG, "FeedsEvent.PublishType.updateSyncHiveData");
+          this.syncHiveDataStatus = syncHiveData.status;
+          this.syncHiveDataDes = syncHiveData.describe;
+          if(this.syncHiveDataStatus === 6){
+            this.isPostLoading = true;
+            this.refreshPostList();
+          }
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents, () => {
       this.addCommonEvents();
@@ -350,6 +374,7 @@ export class HomePage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
       this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
+      this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
       this.clearData();
       this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
     });
@@ -578,6 +603,7 @@ export class HomePage implements OnInit {
   ionViewDidLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
     this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
   }
 
   ionViewWillUnload() { }
@@ -1080,7 +1106,7 @@ export class HomePage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.initTitleBar();
+
   }
 
   initTitleBar() {
@@ -1760,7 +1786,11 @@ export class HomePage implements OnInit {
     switch (type) {
       case 'feeds':
         await this.content.scrollToTop(0);
-        this.handleRefresherInfinite(false);
+        if(this.syncHiveDataStatus === 6){
+          this.handleRefresherInfinite(false);
+        }else{
+          this.handleRefresherInfinite(true);
+        }
         this.isShowSearchField = false;
         this.refreshPostList();
         break;
@@ -2263,5 +2293,12 @@ export class HomePage implements OnInit {
   navigateForwardBidPage(assetItem: FeedsData.NFTItem) {
     this.dataHelper.setBidPageAssetItem(assetItem);
     this.native.navigateForward(['bid'], { queryParams: assetItem });
+  }
+
+  tryButton() {
+   this.syncHiveDataStatus = 0;
+   this.syncHiveDataDes = "GalleriahivePage.preparingData";
+   this.dataHelper.setSyncHiveData({status:  this.syncHiveDataStatus, describe: this.syncHiveDataDes});
+   this.events.publish(FeedsEvent.PublishType.initHiveData);
   }
 }

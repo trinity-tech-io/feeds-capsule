@@ -13,6 +13,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"};
   // TODO new add
   private selsectIndex = 1;
   private collectibleStatus: any = {};
@@ -3971,4 +3972,14 @@ export class DataHelper {
   cleanOldestPostV3() {
     this.lastPostMap = {};
   }
+
+  setSyncHiveData(syncHiveData :any) {
+    this.syncHiveData = syncHiveData;
+    this.saveData("feeds.syncHiveData", this.syncHiveData);
+  }
+
+  getSyncHiveData() {
+    return this.syncHiveData;
+  }
+
 }

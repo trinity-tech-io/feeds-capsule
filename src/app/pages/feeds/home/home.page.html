@@ -37,8 +37,27 @@
   </ion-refresher>
  <!-- feeds timeTime-->
 <div *ngIf="tabType==='feeds'">
+
+  <!-- synchronizingData -->
+  <ion-row *ngIf="syncHiveDataStatus != null && syncHiveDataStatus != 6 && syncHiveDataStatus != 7" style="margin-top:5px;">
+    <ion-col size="12" class="loading">
+    <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+    <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+    </ion-col>
+    <ion-col size="12" class="loading">
+    <p>{{ syncHiveDataDes | translate}}</p>
+    </ion-col>
+  </ion-row>
+
+  <!-- synchronizingData fail -->
+  <ion-row class="btn-row" *ngIf="syncHiveDataStatus != null && syncHiveDataStatus === 7" style="margin-top:5px;">
+    <ion-button  class="nextButton" disabled={{trybuttonDisabled}}  (click)="tryButton()">
+      <ion-label>{{ 'GalleriahivePage.buttonTitle1' | translate }}</ion-label>
+    </ion-button>
+  </ion-row>
+
   <!-- first loading -->
-  <ion-row *ngIf="isPostLoading">
+  <ion-row *ngIf="isPostLoading && syncHiveDataStatus === 6" style="margin-top:5px;">
     <ion-col size="12" class="loading">
     <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
     <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
@@ -48,7 +67,7 @@
     </ion-col>
   </ion-row>
   <!-- NO POSTS -->
-  <div *ngIf="postList.length === 0 && !this.isPostLoading" class="empty-container" style="margin-top:159px;">
+  <div *ngIf="postList.length === 0 && !this.isPostLoading && syncHiveDataStatus === 6" class="empty-container" style="margin-top:159px;">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'HomePage.allempty' | translate }}</h1>
     <p>{{ "HomePage.emptyDes"| translate }}</p>
@@ -62,7 +81,7 @@
   </div>
 
   <!-- HAS POSTS  -->
-  <div *ngIf="postList.length > 0 && !this.isPostLoading">
+  <div *ngIf="postList.length > 0 && !this.isPostLoading && syncHiveDataStatus === 6">
     <div  *ngFor="let post of postList let i=index" >
     <ion-grid class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"

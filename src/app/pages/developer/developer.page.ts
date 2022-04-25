@@ -103,6 +103,7 @@ export class DeveloperPage implements OnInit {
    let reslut  = await that.hiveVaultController.deleteAllCollections();
    if(reslut === "true"){
         await that.dataHelper.removeData("feeds.initHive");
+        await that.dataHelper.removeData("feeds.syncHiveData");
         const signinData = await this.dataHelper.getSigninData();
         let userDid = signinData.did
         localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);

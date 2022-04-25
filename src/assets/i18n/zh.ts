@@ -496,6 +496,7 @@ export const zh = {
 
     synchronizingComplete: '同步完成，开始使用',
     buttonTitle1: '重试',
+    welcomeHive: '开始使用'
   },
   ErrorInfo: {
     alreadyExists: '内容已经存在',

@@ -107,7 +107,7 @@ export class MyApp {
       } catch (error) {
         Logger.error(TAG, error)
       }
-    })
+    });
 
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
@@ -130,6 +130,10 @@ export class MyApp {
       let amount: string = obj.amount;
       let memo: string = obj.memo;
       this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.initHiveData,async ()=>{
+         await this.initScript();
     });
   }
 
@@ -525,6 +529,7 @@ export class MyApp {
     this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
     this.events.unsubscribe(FeedsEvent.PublishType.openPayPrompt);
     this.events.unsubscribe(FeedsEvent.PublishType.signinSuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.initHiveData);
   }
 
   profiledetail() {
@@ -691,5 +696,84 @@ export class MyApp {
     }).catch((err) => {
 
     });
+  }
+
+  async initScript() {
+
+    try {
+      await this.hiveVaultController.downloadEssAvatar();
+      await this.hiveVaultController.downloadCustomeAvatar("custome");
+    } catch(error) {
+    }
+
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did;
+
+    let syncHiveData0 = {status: 0, describe: "GalleriahivePage.preparingData"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData0);
+    this.dataHelper.setSyncHiveData(syncHiveData0);
+    this.sqliteHelper.createTables();
+    let regist_scripting = false;
+    try {
+      let result = await this.hiveVaultController.queryFeedsScripting();
+      regist_scripting = result[0]["regist_scripting"];
+    }
+    catch (error) {
+      if (error["code"] === 404) {
+        localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
+        regist_scripting = true
+      }
+    }
+    if (regist_scripting) {
+      try {
+        //this.description = this.translate.instant('GalleriahivePage.creatingScripting');
+        let syncHiveData1 = {status: 1,describe: "GalleriahivePage.creatingScripting"}
+        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
+        this.dataHelper.setSyncHiveData(syncHiveData1);
+        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+        await this.hiveVaultController.creatFeedsScripting()
+      } catch (error) {
+        console.log(error)
+      }
+    }
+   try {
+
+    let syncHiveData2 = {status: 1, describe: "GalleriahivePage.synchronizingChannelData"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData2);
+    this.dataHelper.setSyncHiveData(syncHiveData2);
+
+    await this.hiveVaultController.queryBackupSubscribedChannel();
+
+    let syncHiveData3 = {status: 3, describe: "GalleriahivePage.synchronizingPostData"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData3);
+    this.dataHelper.setSyncHiveData(syncHiveData3);
+
+    await this.hiveVaultController.syncAllChannelInfo();
+    await this.hiveVaultController.syncAllPost();
+
+    let syncHiveData4 = {status: 4, describe: "GalleriahivePage.synchronizingCommentData"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData4);
+    this.dataHelper.setSyncHiveData(syncHiveData4);
+
+    await this.hiveVaultController.syncAllComments();
+
+    let syncHiveData5 = {status: 5, describe: "GalleriahivePage.synchronizingOtherData"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData5);
+    this.dataHelper.setSyncHiveData(syncHiveData5);
+
+    await this.hiveVaultController.syncAllLikeData();
+
+    let syncHiveData6 = {status: 6, describe: "GalleriahivePage.synchronizingComplete"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
+    this.dataHelper.setSyncHiveData(syncHiveData6);
+
+  } catch (error) {
+    if (error["code"] === 404) {
+      localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
+    }
+    let syncHiveData7 = {status: 7, describe: "GalleriahivePage.synchronizingComplete"}
+    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData7)
+    this.dataHelper.setSyncHiveData(syncHiveData7);
+  }
   }
 }

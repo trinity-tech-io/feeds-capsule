@@ -493,7 +493,7 @@ export const en = {
 
     synchronizingComplete: "The synchronization is complete, Let's go",
     buttonTitle1: 'Try',
-
+    welcomeHive: "Let's go"
   },
   ErrorInfo: {
     alreadyExists: 'Entity Already Exists',

@@ -81,9 +81,28 @@ export class AppService {
               this.native.setRootRouter('galleriahive');
               return;
           }else{
-            //this.carrierService.init(signInData.did);
-            this.native.setRootRouter(['/tabs/home']);
-            this.feedService.updateSignInDataExpTime(signInData);
+            this.dataHelper.loadData("feeds.syncHiveData").then((syncHiveData: any)=>{
+                  if(syncHiveData === null){
+                     this.events.publish(FeedsEvent.PublishType.initHiveData);
+                     let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
+                     this.dataHelper.setSyncHiveData(syncHiveData);
+                     this.native.setRootRouter(['/tabs/home']);
+                     this.feedService.updateSignInDataExpTime(signInData);
+                  }else{
+                     if(syncHiveData.status === 6) {
+                      this.dataHelper.setSyncHiveData(syncHiveData);
+                      this.native.setRootRouter(['/tabs/home']);
+                      this.feedService.updateSignInDataExpTime(signInData);
+                     }else {
+                      let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
+                      this.dataHelper.setSyncHiveData(syncHiveData);
+                      this.events.publish(FeedsEvent.PublishType.initHiveData);
+                      this.native.setRootRouter(['/tabs/home']);
+                      this.feedService.updateSignInDataExpTime(signInData);
+                     }
+                  }
+            })
+
           }
     });
   }

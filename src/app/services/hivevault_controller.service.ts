@@ -1324,6 +1324,7 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
+        reject(error);
       }
     });
   }
