@@ -162,6 +162,9 @@ export class HomePage implements OnInit {
   public isAutoGet: string = 'unAuto';
   public thumbImageName: string = "homeImg";
   private sortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
+  private oneClickMigrationDialog: any = null;
+  private upgradeAppDialog: any = null;
+  private migrationDataDialog: any = null;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -351,6 +354,7 @@ export class HomePage implements OnInit {
           return;
         }
         this.refreshPostList();
+        this.handleOneClickMigration();
       });
     });
 
@@ -755,6 +759,7 @@ export class HomePage implements OnInit {
 
     this.hideFullScreen();
     this.native.hideLoading();
+    this.cancelOneClickMigration(this);
   }
 
   ionViewDidLeave() {
@@ -1155,6 +1160,7 @@ export class HomePage implements OnInit {
 
   ionViewDidEnter() {
     this.initTitleBar();
+    this.handleOneClickMigration();
   }
 
   initTitleBar() {
@@ -2712,6 +2718,114 @@ export class HomePage implements OnInit {
   navigateForwardBidPage(assetItem: FeedsData.NFTItem) {
     this.dataHelper.setBidPageAssetItem(assetItem);
     this.native.navigateForward(['bid'], { queryParams: assetItem });
+  }
+
+  async showUpgradeAppDialog() {
+
+    this.upgradeAppDialog = await this.popupProvider.ionicAlert(
+      this,
+      'upgradeAppDialog.title',
+      'upgradeAppDialog.message',
+      this.cancelUpgradeAppDialog,
+      'tskth.svg',
+    );
+
+  }
+
+  async cancelUpgradeAppDialog(that: any){
+    if (that.upgradeAppDialog != null) {
+      await that.upgradeAppDialog.dismiss();
+      that.upgradeAppDialog = null;
+      navigator['app'].exitApp();
+    }
+  }
+
+  async showMigrationDataDialog() {
+    this.migrationDataDialog = await this.popupProvider.ionicConfirm(
+      this,
+      'migrationDataDialog.title',
+      'migrationDataDialog.message',
+      this.cancelMigrationDataDialog,
+      this.confirmMigrationDataDialog,
+      './assets/images/tskth.svg',
+      'migrationDataDialog.confirm',
+      'migrationDataDialog.cancel'
+    );
+  }
+
+  async cancelMigrationDataDialog(that: any) {
+    if (that.migrationDataDialog != null) {
+      await that.migrationDataDialog.dismiss();
+      that.migrationDataDialog = null;
+    }
+  }
+
+  async confirmMigrationDataDialog(that: any) {
+    if (that.migrationDataDialog!= null) {
+      await that.migrationDataDialog.dismiss();
+      that.migrationDataDialog = null;
+
+      let textObj = {
+        "isLoading":true,
+        "loadingTitle":"migrationDataDialog.loadingTitle",
+        "loadingText":"migrationDataDialog.loadingText",
+        "loadingCurNumber":"",
+        "loadingMaxNumber":""
+         }
+      that.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText,textObj);
+       //todo 添加同步函数
+      let sid = setTimeout(()=>{
+        let textObj = {
+          "isLoading":false,
+           }
+        that.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText,textObj);
+        that.dataHelper.setMigrationDataStatus(1);
+        that.showUpgradeAppDialog();
+        clearTimeout(sid);
+      },6000)
+    }
+
+  }
+
+  async showOneClickMigrationDialog() {
+    this.oneClickMigrationDialog = await this.popupProvider.ionicConfirm(
+      this,
+      'oneClickMigrationDialog.title',
+      'oneClickMigrationDialog.message',
+      this.cancelOneClickMigration,
+      this.confirmOneClickMigration,
+      './assets/images/tskth.svg',
+      'oneClickMigrationDialog.confirm',
+      'oneClickMigrationDialog.cancel',
+    );
+  }
+
+  async cancelOneClickMigration(that: any) {
+
+    if (that.oneClickMigrationDialog != null) {
+        await that.oneClickMigrationDialog.dismiss();
+        that.oneClickMigrationDialog = null;
+        navigator['app'].exitApp();
+    }
+
+  }
+
+  async confirmOneClickMigration(that: any){
+
+    if (that.oneClickMigrationDialog != null) {
+      await that.oneClickMigrationDialog.dismiss();
+      that.oneClickMigrationDialog = null;
+      that.showMigrationDataDialog();
+     }
+  }
+
+  handleOneClickMigration() {
+   let migrationDataStatus = this.dataHelper.getMigrationDataStatus();
+   if(migrationDataStatus === 0){
+     this.showOneClickMigrationDialog();
+   }else if(migrationDataStatus === 1){
+     this.showUpgradeAppDialog();
+   }
   }
 }
 

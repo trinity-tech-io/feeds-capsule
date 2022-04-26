@@ -12,6 +12,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private migrationDataStatus: number = 0;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
   private isShowAdult: boolean = true;
@@ -2822,5 +2823,14 @@ export class DataHelper {
 
   getPublishedActivePanelList() {
     return this.publishedActivePanelList;
+  }
+
+  setMigrationDataStatus(migrationDataStatus: number) {
+      this.migrationDataStatus = migrationDataStatus;
+      this.saveData("feeds.migrationDataStatus",migrationDataStatus);
+  }
+
+  getMigrationDataStatus() {
+    return this.migrationDataStatus;
   }
 }

@@ -940,5 +940,10 @@ export const en = {
     noQrErr: 'No QR code was detected in the selected picture. Please try again.',
     scanErr: 'Something went wrong while scanning your selected picture. Please try again.',
     galleryErr: 'Something went wrong while accessing your photo library. Please try again.',
+  },
+  oneClickMigrationDialog: {
+    title: "Migrate data",
+    message: "Whether to migrate data with one click",
+    loading: "Your data is being migrated, please wait...."
   }
 };
