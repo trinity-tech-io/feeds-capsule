@@ -236,6 +236,7 @@ export class MyApp {
         this.initFeedsSortType();
         this.initHideAdult();
         this.initPublishedActivePanelList();
+        this.initMigrationDataStatus();
         this.native.addNetworkListener(
           () => {
             this.events.publish(FeedsEvent.PublishType.networkStatusChanged, 1);
@@ -264,6 +265,22 @@ export class MyApp {
     // To let users use Essentials for his operations:
     connectivity.registerConnector(this.essentialsConnector);
     connectivity.setApplicationDID(Config.APPLICATION_DID);
+  }
+
+  initMigrationDataStatus() {
+    this.dataHelper
+      .loadData('feeds.migrationDataStatus')
+      .then(migrationDataStatus => {
+        if (migrationDataStatus === null) {
+          this.dataHelper.setMigrationDataStatus(0);
+          return;
+        }
+        if(migrationDataStatus === 3){
+          migrationDataStatus = 0;
+        }
+        this.dataHelper.setMigrationDataStatus(migrationDataStatus);
+      })
+      .catch(err => { });
   }
 
   initDiscoverfeeds() {

@@ -941,16 +941,10 @@ export const en = {
     noQrErr: 'No QR code was detected in the selected picture. Please try again.',
     scanErr: 'Something went wrong while scanning your selected picture. Please try again.',
     galleryErr: 'Something went wrong while accessing your photo library. Please try again.',
-    title: "Channel Collections",
-    publicGallericaFailed: "Failed to publish to Explore Feeds",
-    mintingData: 'Channel Collectible is being created',
-    settingApproval: 'Waiting for authorization to delegate Collectible to Galleria',
-    creatingOrder: 'Sale order for the Collectible is now being created',
-    createOrderSuccess: 'Failed to create a sale order for the Collectible',
-    createOrderFail: 'Failed to create a sale order for the Collectible',
-    checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
-    mintSuccess: 'Channel NFT Collectible created',
-    mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
-    mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
+  },
+  oneClickMigrationDialog: {
+    title: "Migrate data",
+    message: "Whether to migrate data with one click",
+    loading: "Your data is being migrated, please wait...."
   }
 };

@@ -22,6 +22,7 @@ export class DataHelper {
 
   private localSignInData: SignInData = null;
   private openBarcodeScanner: boolean = false;
+  private migrationDataStatus: number = 0;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
   private isShowAdult: boolean = true;
@@ -3161,5 +3162,14 @@ export class DataHelper {
         reject(error)
       }
     })
+  }
+
+  setMigrationDataStatus(migrationDataStatus: number) {
+    this.migrationDataStatus = migrationDataStatus;
+    this.saveData("feeds.migrationDataStatus", migrationDataStatus);
+  }
+
+  getMigrationDataStatus() {
+    return this.migrationDataStatus;
   }
 }

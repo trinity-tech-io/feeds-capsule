@@ -945,5 +945,32 @@ export const zh = {
     noQrErr: '在所选图片中未检测到二维码。 请再试一次。',
     scanErr: '扫描您选择的照片时出了点问题。 请再试一次。',
     galleryErr: '访问图库时出了点问题。 请再试一次。',
+  },
+  oneClickMigrationDialog: {
+    title: "迁移数据",
+    message: "此版本已不再进行维护，请下载新版本继续体验更多功能",
+    cancel: "现在退出",
+    confirm: "继续使用",
+  },
+  migrationSucessDialog: {
+    title: "迁移数据",
+    message: "恭喜你，您的数据已经迁移成功",
+  },
+  oneClickMigrationFinishDialog: {
+    title: "迁移数据",
+    message: "恭喜你，您的数据已经迁移成功,是否继续使用",
+  },
+  upgradeAppDialog: {
+    title: "迁移数据",
+    message: "此版本已不再进行维护，请下载新版本继续体验更多功能",
+  },
+  migrationDataDialog: {
+    title: "迁移数据",
+    message: "新版本应用支持数据迁移，现在就可以进行数据迁移，是否进行数据迁移",
+    loadingTitle: "迁移数据",
+    loadingText: "您的数据正在迁移中，请稍后....",
+    cancel: "取消",
+    confirm: "迁移数据",
   }
+
 };
