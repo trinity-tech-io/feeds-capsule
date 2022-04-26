@@ -186,8 +186,9 @@ export class HiveInterfaceTestPage implements OnInit {
     // this.hiveVaultApi.findLikeById();
     this.hiveVaultApi.queryLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'b473b33e385f4a4dea1d4ed55eaa1d57c70888b43432cd1c63bddbd605d6a8a9');
 
+    const selfDid = (await this.dataHelper.getSigninData()).did;
     console.log('......');
-    const list = await this.sqliteHelper.queryLikeData();
+    const list = await this.sqliteHelper.queryLikeData(selfDid);
     console.log('......queryLikeData = ', list);
 
 
@@ -274,23 +275,26 @@ export class HiveInterfaceTestPage implements OnInit {
   async createTables() {
     console.log('createTables');
     try {
-      await this.sqliteHelper.createTables();
+      const selfDid = (await this.dataHelper.getSigninData()).did;
+      await this.sqliteHelper.createTables(selfDid);
     } catch (error) {
 
     }
   }
 
-  queryPostData() {
+  async queryPostData() {
     console.log('queryPostData');
-    this.sqliteHelper.queryPostData();
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    this.sqliteHelper.queryPostData(selfDid);
   }
 
-  queryPostDataByID() {
+  async queryPostDataByID() {
     console.log('queryPostDataByID');
-    this.sqliteHelper.queryPostDataByID('testPostId');
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    this.sqliteHelper.queryPostDataByID(selfDid, 'testPostId');
   }
 
-  insertPostData() {
+  async insertPostData() {
     console.log('insertPostData');
     const mediaDataV3: FeedsData.mediaDataV3 = {
       kind: 'kind',           //"image/video/audio"
@@ -323,14 +327,14 @@ export class HiveInterfaceTestPage implements OnInit {
       proof: 'string',
       memo: 'string'
     }
-    this.sqliteHelper.insertPostData(post)
-
-    // this.sqliteHelper.test();
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    this.sqliteHelper.insertPostData(selfDid, post)
   }
 
-  queryPostDataByTime() {
+  async queryPostDataByTime() {
     console.log('queryPostDataByTime');
-    this.sqliteHelper.queryPostDataByTime(1648801128610, 1648803967893)
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    this.sqliteHelper.queryPostDataByTime(selfDid, 1648801128610, 1648803967893)
   }
 
 

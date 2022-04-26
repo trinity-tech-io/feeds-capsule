@@ -13,7 +13,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
-  private syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"};
+  private syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" };
   // TODO new add
   private selsectIndex = 1;
   private collectibleStatus: any = {};
@@ -2879,8 +2879,17 @@ export class DataHelper {
     return this.publishedActivePanelList;
   }
 
-  async createTables() {
-    return await this.sqliteHelper.createTables()
+  createSQLTables(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.createTables(selfDid);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Create sql tables error', error);
+        reject(error);
+      }
+    });
   }
   //// New data type
 
@@ -2916,21 +2925,41 @@ export class DataHelper {
   }
 
   // subscribedChannelV3 本地存储订阅列表
-  async addSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
-    return await this.sqliteHelper.insertSubscribedChannelData(subscribedChannel);
+  addSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertSubscribedChannelData(selfDid, subscribedChannel);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Add subscribed channel error', error);
+        reject(error);
+      }
+    });
   }
 
-  async removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
-    return this.sqliteHelper.deleteSubscribedChannelData(subscribedChannel);
+  removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.deleteSubscribedChannelData(selfDid, subscribedChannel);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Remove subscribed channel error', error);
+        reject(error);
+      }
+    });
   }
 
   getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        let subscribedList = await this.sqliteHelper.querySubscribedChannelData();
+        const selfDid = (await this.getSigninData()).did;
+        let subscribedList = await this.sqliteHelper.querySubscribedChannelData(selfDid);
         const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
-        resolve(resultList)
+        resolve(resultList);
       } catch (error) {
+        Logger.error(TAG, 'Get subscribed channel list error', error);
         reject(error)
       }
     })
@@ -2969,7 +2998,8 @@ export class DataHelper {
   getSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        let queryList = await this.sqliteHelper.querySubscribedChannelDataByChannelId(channelId)
+        const selfDid = (await this.getSigninData()).did;
+        let queryList = await this.sqliteHelper.querySubscribedChannelDataByChannelId(selfDid, channelId)
         resolve(queryList[0])
       } catch (error) {
         reject(error);
@@ -2997,7 +3027,8 @@ export class DataHelper {
   private addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.sqliteHelper.insertSubscriptionData(subscription)
+        const selfDid = (await this.getSigninData()).did;
+        await this.sqliteHelper.insertSubscriptionData(selfDid, subscription)
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Add subscription error', error);
@@ -3031,7 +3062,8 @@ export class DataHelper {
   private updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.sqliteHelper.updateSubscriptionData(subscription);
+        const selfDid = (await this.getSigninData()).did;
+        await this.sqliteHelper.updateSubscriptionData(selfDid, subscription);
         resolve('FINISH');
       }
       catch (error) {
@@ -3066,7 +3098,8 @@ export class DataHelper {
   getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.querySubscriptionNumByChannelId(channelId);
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.querySubscriptionNumByChannelId(selfDid, channelId);
         resolve(result);
       }
       catch (error) {
@@ -3080,7 +3113,8 @@ export class DataHelper {
   getSubscriptionV3DataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.querySubscriptionDataByChannelId(channelId) || [];
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.querySubscriptionDataByChannelId(selfDid, channelId) || [];
 
         if (result) {
           resolve(result[0]);
@@ -3094,37 +3128,6 @@ export class DataHelper {
       }
     })
   }
-  // 废弃
-  loadSubscriptionsV3Map(): Promise<{ [key: string]: Promise<FeedsData.SubscriptionV3> }> {
-    return new Promise(async (resolve, reject) => {
-      try {
-
-      }
-      catch (error) {
-        Logger.error(TAG, 'Update subscriptions error', error);
-        reject(error)
-      }
-    })
-  }
-  //TODO later
-  // getSubscriptionListByUserDid(userDid: string): FeedsData.SubscriptionV3[] {
-  //   return null;
-  // }
-
-
-  /**
-   *
-   * @param channel
-   * return new Promise(async (resolve, reject) => {
-      try {
-        await this.sqliteHelper.insertChannelData(channel)
-      } catch (error) {
-        Logger.error(TAG, 'Add channels erorr', error);
-        reject(error);
-      }
-    });
-   * @returns
-   */
 
   addChannel(newChannel: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -3167,8 +3170,17 @@ export class DataHelper {
   }
 
   //ChannelV3
-  private addChannelV3(channel: FeedsData.ChannelV3) {
-    return this.sqliteHelper.insertChannelData(channel)
+  private addChannelV3(channel: FeedsData.ChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = this.sqliteHelper.insertChannelData(selfDid, channel);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Add channel error', error);
+        reject(error);
+      }
+    });
   }
 
   private addChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
@@ -3190,9 +3202,12 @@ export class DataHelper {
     });
   }
 
-  private async updateChannelV3(channel: FeedsData.ChannelV3) {
-    // update 的时候更新updateTime
-    return await this.sqliteHelper.updateChannelData(channel)
+  private async updateChannelV3(channel: FeedsData.ChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const selfDid = (await this.getSigninData()).did;
+      // update 的时候更新updateTime
+      return await this.sqliteHelper.updateChannelData(selfDid, channel);
+    });
   }
 
   private updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
@@ -3218,7 +3233,8 @@ export class DataHelper {
   getChannelV3ById(destDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryChannelDataByChannelId(channelId)
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryChannelDataByChannelId(selfDid, channelId)
         resolve(result[0]);
       } catch (error) {
         reject(error);
@@ -3253,7 +3269,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const selfChannelList = await this.sqliteHelper.queryChannelWithDid(selfDid) || [];
+        const selfChannelList = await this.sqliteHelper.queryChannelWithDid(selfDid, selfDid) || [];
         resolve(selfChannelList);
       } catch (error) {
         reject(error)
@@ -3302,8 +3318,17 @@ export class DataHelper {
   }
 
   //postV3
-  private addPostV3(post: FeedsData.PostV3) {
-    return this.sqliteHelper.insertPostData(post)
+  private addPostV3(post: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertPostData(selfDid, post);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Add post error,', error);
+        reject(error);
+      }
+    });
   }
 
   private addPostsV3(posts: FeedsData.PostV3[]): Promise<string> {
@@ -3329,12 +3354,17 @@ export class DataHelper {
     });
   }
 
-  private updatePostV3(post: FeedsData.PostV3) {
-    // const key = UtilService.getKey(post.destDid, post.postId);
-    // this.postMapV3[key] = post;
-    // await this.saveData(FeedsData.PersistenceKey.postsMapV3, this.postMapV3);
-
-    return this.sqliteHelper.updatePostData(post)
+  private updatePostV3(post: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = this.sqliteHelper.updatePostData(selfDid, post)
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Update post error', error);
+        reject(error);
+      }
+    });
   }
 
   private updatePostsV3(posts: FeedsData.PostV3[]) {
@@ -3357,24 +3387,22 @@ export class DataHelper {
     });
   }
 
-  deletePostV3(posts: FeedsData.PostV3) {
-
+  deletePostV3(posts: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      // this.sqliteHelper.deletePostData(postId);
       try {
         await this.updatePostV3(posts);
         resolve('FINISH');
       } catch (error) {
         resolve('FINISH');
       }
-
     });
   }
 
   getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryPostDataByID(postId)
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryPostDataByID(selfDid, postId)
         resolve(result[0]);
       } catch (error) {
         reject(error);
@@ -3385,7 +3413,8 @@ export class DataHelper {
   getPostListV3FromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryPostDataByChannelId(channelId)
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryPostDataByChannelId(selfDid, channelId)
         let sortList = [];
         sortList = _.sortBy(result, (item: any) => {
           return -item.createdAt;
@@ -3401,8 +3430,9 @@ export class DataHelper {
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        const selfDid = (await this.getSigninData()).did;
         let list = [];
-        list = await this.sqliteHelper.queryPostData()
+        list = await this.sqliteHelper.queryPostData(selfDid)
         let sortList = [];
         sortList = _.sortBy(list, (item: any) => {
           return -item.createdAt;
@@ -3413,20 +3443,6 @@ export class DataHelper {
       }
     })
   }
-
-  // 废弃
-  loadPostV3Map(): Promise<{ [key: string]: FeedsData.PostV3 }> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        this.postMapV3 =
-          await this.loadData(FeedsData.PersistenceKey.postsMapV3) || {};
-        resolve(this.postMapV3)
-      } catch (error) {
-        reject(error)
-      }
-    })
-  }
-
 
   addComment(newComment: FeedsData.CommentV3) {
     return new Promise(async (resolve, reject) => {
@@ -3470,8 +3486,17 @@ export class DataHelper {
   }
 
   //commentV3
-  private async addCommentV3(comment: FeedsData.CommentV3) {
-    await this.sqliteHelper.insertCommentData(comment)
+  private async addCommentV3(comment: FeedsData.CommentV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertCommentData(selfDid, comment)
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add comments error', error);
+        reject(error);
+      }
+    });
   }
 
   private addCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
@@ -3497,7 +3522,8 @@ export class DataHelper {
   private updateCommentV3(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.updateCommentData(comment)
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.updateCommentData(selfDid, comment)
         resolve(comment);
       } catch (error) {
         Logger.error(TAG, 'Update comment error', error);
@@ -3529,7 +3555,8 @@ export class DataHelper {
   getCommentV3ById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryCommentById(postId, commentId);
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryCommentById(selfDid, postId, commentId);
         resolve(result);
       } catch (error) {
         reject(error);
@@ -3540,7 +3567,8 @@ export class DataHelper {
   getCommentsV3ByRefId(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryCommentByRefId(postId, refCommentId);
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryCommentByRefId(selfDid, postId, refCommentId);
         resolve(result);
       } catch (error) {
         reject(error);
@@ -3575,7 +3603,8 @@ export class DataHelper {
   getCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const num = this.sqliteHelper.queryCommentNum(commentId);
+        const selfDid = (await this.getSigninData()).did;
+        const num = this.sqliteHelper.queryCommentNum(selfDid, commentId);
         resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Query comment num error', error);
@@ -3641,8 +3670,17 @@ export class DataHelper {
   }
 
   //liveV3
-  private addLikeV3(like: FeedsData.LikeV3) {
-    return this.sqliteHelper.insertLike(like)
+  private addLikeV3(like: FeedsData.LikeV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = this.sqliteHelper.insertLike(selfDid, like)
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Add like error', error);
+        reject(error);
+      }
+    });
   }
 
   private addLikesV3(likes: FeedsData.LikeV3[]): Promise<string> {
@@ -3672,8 +3710,8 @@ export class DataHelper {
           resolve('FINISH');
           return;
         }
-
-        this.sqliteHelper.updateLike(like);
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.updateLike(selfDid, like);
 
         resolve('FINISH');
       } catch (error) {
@@ -3706,7 +3744,8 @@ export class DataHelper {
   removeLikeV3(like: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.sqliteHelper.deleteLike(like)
+        const selfDid = (await this.getSigninData()).did;
+        await this.sqliteHelper.deleteLike(selfDid, like)
         resolve('FINISH')
       }
       catch (error) {
@@ -3719,7 +3758,8 @@ export class DataHelper {
   getLikeV3ById(postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryLikeDataById(postId, commentId)
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryLikeDataById(selfDid, postId, commentId)
         resolve(result)
       }
       catch (error) {
@@ -3732,7 +3772,8 @@ export class DataHelper {
   getLikeV3ByUser(postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.sqliteHelper.queryUserLikeData(postId, commentId, userDid);
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryUserLikeData(selfDid, postId, commentId, userDid);
         resolve(result[0]);
       } catch (error) {
         Logger.error(TAG, 'remove likes error', error);
@@ -3744,8 +3785,8 @@ export class DataHelper {
   getSelfAllLikeV3Data(): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const did = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.queryUserAllLikeData(did) || [];
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryUserAllLikeData(selfDid, selfDid) || [];
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'remove likes error', error);
@@ -3757,8 +3798,8 @@ export class DataHelper {
   getSelfLikeV3(postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const did = (await this.getSigninData()).did;
-        const result = await this.getLikeV3ByUser(postId, commentId, did);
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.getLikeV3ByUser(postId, commentId, selfDid);
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'remove likes error', error);
@@ -3782,7 +3823,8 @@ export class DataHelper {
   getLikeNum(postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const num = this.sqliteHelper.queryLikeNum(postId, commentId);
+        const selfDid = (await this.getSigninData()).did;
+        const num = await this.sqliteHelper.queryLikeNum(selfDid, postId, commentId);
         resolve(num);
       } catch (error) {
         Logger.error(TAG, 'Query like num error', error);
@@ -3800,8 +3842,17 @@ export class DataHelper {
   }
 
   //postV3
-  async deletePostData(postId: string) {
-    await this.sqliteHelper.deletePostData(postId);
+  deletePostData(postId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.deletePostData(selfDid, postId);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Delete post data error', error);
+        reject(error);
+      }
+    });
   }
 
   setElaUsdPrice(elaUsdPrice: string) {
@@ -3973,7 +4024,7 @@ export class DataHelper {
     this.lastPostMap = {};
   }
 
-  setSyncHiveData(syncHiveData :any) {
+  setSyncHiveData(syncHiveData: any) {
     this.syncHiveData = syncHiveData;
     this.saveData("feeds.syncHiveData", this.syncHiveData);
   }

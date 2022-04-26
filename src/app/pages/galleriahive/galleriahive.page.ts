@@ -27,8 +27,8 @@ export class GalleriahivePage implements OnInit {
     private dataHelper: DataHelper,
     private zone: NgZone,
   ) {
-       this.title = this.translate.instant('GalleriahivePage.title');
-       this.description = this.translate.instant('GalleriahivePage.description');
+    this.title = this.translate.instant('GalleriahivePage.title');
+    this.description = this.translate.instant('GalleriahivePage.description');
   }
 
   ngOnInit() {
@@ -41,7 +41,7 @@ export class GalleriahivePage implements OnInit {
         this.title = this.translate.instant('GalleriahivePage.titleSuccess');
         this.description = this.translate.instant('GalleriahivePage.welcomeHive');
         this.buttonDisabled = false;
-     });
+      });
     });
   }
 
@@ -58,27 +58,27 @@ export class GalleriahivePage implements OnInit {
     }
 
     this.dataHelper.loadData("feeds.syncHiveData").
-    then((syncHiveData: any)=>{
-      if(syncHiveData === null){
-        this.dataHelper.saveData("feeds.initHive", "1");
-        this.events.publish(FeedsEvent.PublishType.initHiveData);
-        let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
-        this.dataHelper.setSyncHiveData(syncHiveData);
-        this.native.setRootRouter('/tabs/home');
-      }else{
-         if(syncHiveData.status === 6){
-          this.dataHelper.setSyncHiveData(syncHiveData);
-          this.dataHelper.saveData("feeds.initHive", "1");
-          this.native.setRootRouter('/tabs/home');
-         }else{
-          let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
-          this.dataHelper.setSyncHiveData(syncHiveData);
+      then((syncHiveData: any) => {
+        if (syncHiveData === null) {
           this.dataHelper.saveData("feeds.initHive", "1");
           this.events.publish(FeedsEvent.PublishType.initHiveData);
+          let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
+          this.dataHelper.setSyncHiveData(syncHiveData);
           this.native.setRootRouter('/tabs/home');
-         }
-      }
-    });
+        } else {
+          if (syncHiveData.status === 6) {
+            this.dataHelper.setSyncHiveData(syncHiveData);
+            this.dataHelper.saveData("feeds.initHive", "1");
+            this.native.setRootRouter('/tabs/home');
+          } else {
+            let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
+            this.dataHelper.setSyncHiveData(syncHiveData);
+            this.dataHelper.saveData("feeds.initHive", "1");
+            this.events.publish(FeedsEvent.PublishType.initHiveData);
+            this.native.setRootRouter('/tabs/home');
+          }
+        }
+      });
   }
 
 }

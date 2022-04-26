@@ -13,20 +13,22 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION_CHANNEL: string = 'subscriptionchannel';
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
 
-  private readonly LIMIT: number = 2;
   public isOpen: boolean = false;
 
-  private sqliteObject: SQLiteObject = null;
+  // private sqliteObject: SQLiteObject = null;
+  private sqliteMap: { [did: string]: SQLiteObject } = {};
   constructor(private sqlite: SQLite) {
   }
 
-  private createSqlite(): Promise<SQLiteObject> {
+  private createSqlite(dbUserDid: string): Promise<SQLiteObject> {
     return new Promise(async (resolve, reject) => {
       try {
+        const dbName = dbUserDid + '_feedsdata.db';
         const sqliteObject = await this.sqlite.create({
-          name: 'feedsdata.db',
+          name: dbName,
           location: 'default'
         });
+        Logger.log(TAG, 'Create sql', sqliteObject);
         resolve(sqliteObject);
       } catch (error) {
         Logger.error(TAG, 'Create sqlite obj error', error);
@@ -35,13 +37,16 @@ export class FeedsSqliteHelper {
     });
   }
 
-  private getSqliteObj(): Promise<SQLiteObject> {
+  private getSqliteObj(dbUserDid: string): Promise<SQLiteObject> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!this.sqliteObject)
-          this.sqliteObject = await this.createSqlite();
+        if (!this.sqliteMap)
+          this.sqliteMap = {};
 
-        resolve(this.sqliteObject);
+        if (!this.sqliteMap[dbUserDid])
+          this.sqliteMap[dbUserDid] = await this.createSqlite(dbUserDid);
+
+        resolve(this.sqliteMap[dbUserDid]);
       } catch (error) {
         Logger.error(TAG, 'Get sqlite obj error', error);
         reject(error);
@@ -49,13 +54,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  private executeSql(statement: string, params?: any[]): Promise<any> {
+  private executeSql(dbUserDid: string, statement: string, params?: any[]): Promise<any> {
     return new Promise(async (resolve, reject) => {
       let db: SQLiteObject = null;
       try {
         Logger.log(TAG, 'Exec sql statement is ', statement);
         Logger.log(TAG, 'Exec sql params is ', params);
-        db = await this.getSqliteObj();
+        db = await this.getSqliteObj(dbUserDid);
 
         if (this.isOpen == false) {
           await db.open();
@@ -96,15 +101,15 @@ export class FeedsSqliteHelper {
     });
   }
 
-  createTables(): Promise<string> {
+  createTables(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.cretePostTable();
-        await this.createChannelTable();
-        await this.createSubscribedChannelTable();
-        await this.createSubscriptionTable();
-        await this.createCommentTable();
-        await this.createLikeTable();
+        await this.cretePostTable(dbUserDid);
+        await this.createChannelTable(dbUserDid);
+        await this.createSubscribedChannelTable(dbUserDid);
+        await this.createSubscriptionTable(dbUserDid);
+        await this.createCommentTable(dbUserDid);
+        await this.createLikeTable(dbUserDid);
 
         resolve('SUCCESS');
       } catch (error) {
@@ -115,7 +120,7 @@ export class FeedsSqliteHelper {
   }
 
   // Post
-  private cretePostTable(): Promise<any> {
+  private cretePostTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_POST
@@ -124,7 +129,7 @@ export class FeedsSqliteHelper {
           + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT'
           + ')';
 
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'crete post table result: ', result)
         resolve('SUCCESS');
       } catch (error) {
@@ -134,11 +139,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryPostData(): Promise<FeedsData.PostV3[]> {
+  queryPostData(dbUserDid: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_POST;
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
@@ -148,11 +153,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryPostDataByTime(start: number, end: number): Promise<FeedsData.PostV3[]> {
+  queryPostDataByTime(dbUserDid: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE updated_at>=? and updated_at<=?';
-        const result = await this.executeSql(statement, [start, end]);
+        const result = await this.executeSql(dbUserDid, statement, [start, end]);
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
@@ -162,12 +167,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryPostDataByID(postId: string): Promise<FeedsData.PostV3[]> {
+  queryPostDataByID(dbUserDid: string, postId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE post_id=?';
         const params = [postId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const postList = this.parsePostData(result);
         Logger.log(TAG, 'query post data by id result: ', postList)
         resolve(postList);
@@ -178,12 +183,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryPostDataByChannelId(channelId: string): Promise<FeedsData.PostV3[]> {
+  queryPostDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE channel_id=?';
         const params = [channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const postList = this.parsePostData(result);
 
         Logger.log(TAG, 'query post data by channel id result: ', postList)
@@ -195,7 +200,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertPostData(postV3: FeedsData.PostV3): Promise<string> {
+  insertPostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_POST
@@ -204,7 +209,7 @@ export class FeedsSqliteHelper {
         const params = [postV3.postId, postV3.destDid, postV3.channelId, postV3.createdAt, postV3.updatedAt
           , JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'InsertData result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -214,13 +219,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updatePostData(postV3: FeedsData.PostV3) {
+  updatePostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_POST
           + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=? WHERE post_id=?';
         const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, postV3.postId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'update post data result: ', result)
         resolve('SUCCESS');
@@ -231,12 +236,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deletePostData(postId: string) {
+  deletePostData(dbUserDid: string, postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_POST + ' WHERE post_id=?'
         const params = [postId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'delete post data result: ', result)
         resolve('SUCCESS');
@@ -249,7 +254,7 @@ export class FeedsSqliteHelper {
   }
 
   // channel
-  private createChannelTable(): Promise<any> {
+  private createChannelTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_CHANNEL
@@ -257,7 +262,7 @@ export class FeedsSqliteHelper {
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64) UNIQUE, channel_name VARCHAR(64), intro TEXT, created_at REAL(64), updated_at REAL(64),'
           + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT'
           + ')';
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
 
         Logger.log(TAG, 'create cahnnel table result: ', result)
         resolve('SUCCESS');
@@ -268,7 +273,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertChannelData(channelV3: FeedsData.ChannelV3): Promise<string> {
+  insertChannelData(dbUserDid: string, channelV3: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
@@ -278,7 +283,7 @@ export class FeedsSqliteHelper {
         const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
           , channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert channel Data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -288,11 +293,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryChannelData(): Promise<FeedsData.ChannelV3[]> {
+  queryChannelData(dbUserDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL;
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         const channelList = this.parseChannelData(result);
         resolve(channelList);
       } catch (error) {
@@ -304,12 +309,12 @@ export class FeedsSqliteHelper {
 
 
 
-  queryChannelDataByChannelId(channelId: string): Promise<FeedsData.ChannelV3[]> {
+  queryChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + ' WHERE channel_id=?';
         const params = [channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const channelList = this.parseChannelData(result);
 
         Logger.log(TAG, 'query channel data by channel id result is', channelList);
@@ -321,11 +326,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryChannelWithDid(userDid: string): Promise<FeedsData.ChannelV3[]> {
+  queryChannelWithDid(dbUserDid: string, userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + ' WHERE dest_did=?'
-        const result = await this.executeSql(statement, [userDid]);
+        const result = await this.executeSql(dbUserDid, statement, [userDid]);
         const channelList = this.parseChannelData(result)
         Logger.log(TAG, 'query self channel with userDid result is', channelList);
         resolve(channelList);
@@ -336,13 +341,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateChannelData(channelV3: FeedsData.ChannelV3) {
+  updateChannelData(dbUserDid: string, channelV3: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_CHANNEL
           + ' SET channel_name=?, intro=?, created_at=?, updated_at=?, avatar_address=?, tipping_address=?, type=?, proof=?, nft=?, memo=?, category=? WHERE channel_id=?';
         const params = [channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt, channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, channelV3.channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'update channel data result is', result);
         resolve('SUCCESS');
@@ -353,12 +358,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteChannelData(channelId: string) {
+  deleteChannelData(dbUserDid: string, channelId: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_CHANNEL + ' WHERE channel_id=?'
         const params = [channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'delete channel data result is', result);
         resolve('SUCCESS');
@@ -371,14 +376,14 @@ export class FeedsSqliteHelper {
   }
 
   // subscription channel 本地存储使用
-  private createSubscribedChannelTable(): Promise<any> {
+  private createSubscribedChannelTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_SUBSCRIPTION_CHANNEL
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64)'
           + ')';
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'Create subscribed channel table result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -388,7 +393,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertSubscribedChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  insertSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -397,7 +402,7 @@ export class FeedsSqliteHelper {
 
         const params = [subscribedChannelV3.destDid, subscribedChannelV3.channelId];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert subscription Data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -407,11 +412,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelData(): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelData(dbUserDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         const subscribedChannelList = this.parseSubscriptionChannelData(result);
         resolve(subscribedChannelList);
       } catch (error) {
@@ -421,12 +426,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelDataByChannelId(channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?';
         const params = [channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const subscriptionChannelList = this.parseSubscriptionChannelData(result);
 
         Logger.log(TAG, 'query subscribed channel data by channel id result is', subscriptionChannelList);
@@ -438,12 +443,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscribedChannelData(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  deleteSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?'
         const params = [subscribedChannelV3.channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'remove subscription channel result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -454,7 +459,7 @@ export class FeedsSqliteHelper {
   }
 
   // SubscriptionV3
-  private createSubscriptionTable(): Promise<any> {
+  private createSubscriptionTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_SUBSCRIPTION
@@ -462,7 +467,7 @@ export class FeedsSqliteHelper {
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64), user_did VARCHAR(64), created_at REAL(64), display_name VARCHAR(64), updated_at REAL(64), status INTEGER'
           + ')';
 
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'Create subscribed  table result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -472,7 +477,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
+  insertSubscriptionData(dbUserDid: string, subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION
@@ -481,7 +486,7 @@ export class FeedsSqliteHelper {
 
         const params = [subscriptionV3.destDid, subscriptionV3.channelId, subscriptionV3.userDid, subscriptionV3.createdAt, subscriptionV3.displayName, subscriptionV3.updatedAt, subscriptionV3.status];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert subscription Data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -491,11 +496,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionList(): Promise<FeedsData.SubscriptionV3[]> {
+  querySubscriptionList(dbUserDid: string): Promise<FeedsData.SubscriptionV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION;
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         const subscriptionList = this.parseSubscriptionData(result);
         resolve(subscriptionList);
       } catch (error) {
@@ -505,12 +510,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionDataByChannelId(channelId: string): Promise<FeedsData.SubscriptionV3[]> {
+  querySubscriptionDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.SubscriptionV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?';
         const params = [channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const subscriptionList = this.parseSubscriptionData(result);
 
         Logger.log(TAG, 'query subscription data by channel id result is', result);
@@ -522,12 +527,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscriptionNumByChannelId(channelId: string): Promise<number> {
+  querySubscriptionNumByChannelId(dbUserDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?'
         const params = [channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const num = this.parseNum(result);
 
         Logger.log(TAG, 'query subscription Num by channel id result is', num);
@@ -539,13 +544,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3) {
+  updateSubscriptionData(dbUserDid: string, subscriptionV3: FeedsData.SubscriptionV3) {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_SUBSCRIPTION
           + ' SET display_name=? WHERE channel_id=?';
         const params = [subscriptionV3.displayName, subscriptionV3.channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'update subscription data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -555,12 +560,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscriptionData(subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
+  deleteSubscriptionData(dbUserDid: string, subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?'
         const params = [subscriptionV3.channelId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'remove subscription result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -571,14 +576,14 @@ export class FeedsSqliteHelper {
   }
 
   // comment
-  private createCommentTable(): Promise<any> {
+  private createCommentTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_COMMENT
           + '('
           + 'dest_did VARCHAR(64), comment_id VARCHAR(64) UNIQUE, channel_id VARCHAR(64), post_id VARCHAR(64), refcomment_id VARCHAR(64), content TEXT, status INTEGER, created_at REAL(64), updated_at REAL(64), proof TEXT, memo TEXT, creater_did VARCHAR(64)'
           + ')';
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'create Comment table result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -588,7 +593,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertCommentData(commentV3: FeedsData.CommentV3): Promise<string> {
+  insertCommentData(dbUserDid: string, commentV3: FeedsData.CommentV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_COMMENT
@@ -598,7 +603,7 @@ export class FeedsSqliteHelper {
         const params = [commentV3.destDid, commentV3.commentId, commentV3.channelId, commentV3.postId, commentV3.refcommentId, commentV3.content
           , commentV3.status, commentV3.createdAt, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.createrDid];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert comment Data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -608,14 +613,14 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateCommentData(commentV3: FeedsData.CommentV3): Promise<string> {
+  updateCommentData(dbUserDid: string, commentV3: FeedsData.CommentV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_COMMENT
           + ' SET content=?, status=?, updated_at=?, proof=?, memo=? WHERE comment_id=?'; // 条件是否使用refcomment_id
         const params = [commentV3.content, commentV3.status, commentV3.updatedAt, commentV3.proof, commentV3.memo, commentV3.commentId];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'update comment data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -625,12 +630,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentByCommentId(commentId: string): Promise<FeedsData.CommentV3[]> {
+  queryCommentByCommentId(dbUserDid: string, commentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?';
         const params = [commentId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const commentList = this.parseCommentData(result);
 
         Logger.log(TAG, 'query comment by commentId result is', commentList);
@@ -642,12 +647,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
+  queryCommentById(dbUserDid: string, postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?';
         const params = [commentId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const commentList = this.parseCommentData(result);
 
         Logger.log(TAG, 'query comment by Id result is', commentList);
@@ -659,12 +664,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentByRefId(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
+  queryCommentByRefId(dbUserDid: string, postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=? and refcomment_id=?';
         const params = [postId, refCommentId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const commentList = this.parseCommentData(result);
 
         Logger.log(TAG, 'query comment by ref Id result is', commentList);
@@ -676,11 +681,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentData(): Promise<FeedsData.CommentV3[]> {
+  queryCommentData(dbUserDid: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_COMMENT;
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         const commentList = this.parseCommentData(result);
         resolve(commentList);
       } catch (error) {
@@ -690,12 +695,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteCommentData(commentId: string): Promise<string> {
+  deleteCommentData(dbUserDid: string, commentId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?'
         const params = [commentId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Remove comment data result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -705,12 +710,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentNum(commentId: string): Promise<number> {
+  queryCommentNum(dbUserDid: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?'
         const params = [commentId];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const num = this.parseNum(result);
 
         resolve(num);
@@ -722,14 +727,14 @@ export class FeedsSqliteHelper {
   }
 
   // like
-  private createLikeTable(): Promise<any> {
+  private createLikeTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_LIKE
           + '('
           + 'like_id VARCHAR(64) UNIQUE, dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64), comment_id VARCHAR(64), created_at REAL(64), creater_did VARCHAR(64), proof TEXT, memo TEXT,updated_at REAL(64), status INTEGER'
           + ')';
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'create like table result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -739,7 +744,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertLike(likeV3: FeedsData.LikeV3): Promise<string> {
+  insertLike(dbUserDid: string, likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_LIKE
@@ -747,7 +752,7 @@ export class FeedsSqliteHelper {
           + '(?,?,?,?,?,?,?,?,?,?,?)';
         const params = [likeV3.likeId, likeV3.destDid, likeV3.channelId, likeV3.postId, likeV3.commentId, likeV3.createdAt, likeV3.createrDid, likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert like result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -757,11 +762,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryLikeData(): Promise<FeedsData.LikeV3[]> {
+  queryLikeData(dbUserDid: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_LIKE;
-        const result = await this.executeSql(statement);
+        const result = await this.executeSql(dbUserDid, statement);
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
@@ -771,13 +776,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryLikeDataById(postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
+  queryLikeDataById(dbUserDid: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and status=?'
         const params = [postId, commentId, FeedsData.PostCommentStatus.available];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
@@ -787,13 +792,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryLikeDataById2(likeId: string): Promise<FeedsData.LikeV3[]> {
+  queryLikeDataById2(dbUserDid: string, likeId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE like_id=? and status=?'
         const params = [likeId, FeedsData.PostCommentStatus.available];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
@@ -803,12 +808,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryLikeNum(postId: string, commentId: string): Promise<number> {
+  queryLikeNum(dbUserDid: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and status=?'
         const params = [postId, commentId, FeedsData.PostCommentStatus.available];
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const num = this.parseNum(result)
         resolve(num);
       } catch (error) {
@@ -818,13 +823,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryUserLikeData(postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3[]> {
+  queryUserLikeData(dbUserDid: string, postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE post_id=? and comment_id=? and creater_did=? '
         const params = [postId, commentId, userDid];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
@@ -834,13 +839,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryUserAllLikeData(userDid: string): Promise<FeedsData.LikeV3[]> {
+  queryUserAllLikeData(dbUserDid: string, userDid: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_LIKE + ' WHERE creater_did=? and status=?'
         const params = [userDid, FeedsData.PostCommentStatus.available];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const likeList = this.parseLikeData(result);
         resolve(likeList);
       } catch (error) {
@@ -850,13 +855,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteLike(likeV3: FeedsData.LikeV3): Promise<string> {
+  deleteLike(dbUserDid: string, likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_LIKE + ' WHERE like_id=?'
         const params = [likeV3.likeId];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'delete like result is', result);
         resolve('SUCCESS');
       } catch (error) {
@@ -866,14 +871,14 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateLike(likeV3: FeedsData.LikeV3): Promise<string> {
+  updateLike(dbUserDid: string, likeV3: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_LIKE
           + ' SET proof=?, memo=?, updated_at=?, status=? WHERE like_id=?';
         const params = [likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status, likeV3.likeId];
 
-        const result = await this.executeSql(statement, params);
+        const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'update comment data result is', result);
         resolve('SUCCESS');
       }

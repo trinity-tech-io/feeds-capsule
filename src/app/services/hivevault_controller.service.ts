@@ -684,7 +684,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let defaultAvatar = UtilService.getDefaultAvatarHash(fileName) || "";
-        if(defaultAvatar != ""){
+        if (defaultAvatar != "") {
           resolve(defaultAvatar);
           return;
         }
