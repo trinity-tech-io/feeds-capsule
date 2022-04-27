@@ -194,7 +194,9 @@ export const en = {
     editedContentDes1: "Confirm",
     editedContentDes2: "Cancel",
     migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault',
-    Subscribing: 'Subscribing...'
+    Subscribing: 'Subscribing...',
+    subscribeSuccess: 'Subscription succeeded',
+    subscribeFail: 'Subscription failed'
   },
   app: {
     profileDetails: 'Profile Details',

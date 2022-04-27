@@ -1113,7 +1113,7 @@ export class SearchPage implements OnInit {
     this.confirmdialog = await this.popupProvider.showConfirmdialog(
       this,
       'common.confirmDialog',
-      this.translate.instant('SearchPage.follow') + channelName + '?',
+      this.translate.instant('SearchPage.follow')+" "+ channelName + '?',
       this.cancelButton,
       this.okButton,
       './assets/images/finish.svg',
