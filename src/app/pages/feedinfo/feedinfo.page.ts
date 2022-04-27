@@ -177,6 +177,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   clickEdit() {
+
     if (!this.isMine) {
       return;
     }
@@ -187,7 +188,7 @@ export class FeedinfoPage implements OnInit {
       return;
     }
 
-    this.native.go('/eidtchannel');
+    this.native.navigateForward(['/eidtchannel'],{});
   }
 
   async subscribe() {

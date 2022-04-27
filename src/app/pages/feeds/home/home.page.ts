@@ -39,6 +39,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { CommonPageService } from 'src/app/services/common.page.service';
+import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -2295,9 +2296,13 @@ export class HomePage implements OnInit {
     this.native.navigateForward(['bid'], { queryParams: assetItem });
   }
 
-  tryButton() {
+  async tryButton() {
    this.syncHiveDataStatus = 0;
    this.syncHiveDataDes = "GalleriahivePage.preparingData";
+   await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+   const signinData = await this.dataHelper.getSigninData();
+   let userDid = signinData.did
+   localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
    this.dataHelper.setSyncHiveData({status:  this.syncHiveDataStatus, describe: this.syncHiveDataDes});
    this.events.publish(FeedsEvent.PublishType.initHiveData);
   }

@@ -91,7 +91,6 @@ export class ProfileimagePage implements OnInit {
       this.selectedAvatar =
         this.dataHelper.getProfileIamge() || 'assets/images/profile-1.svg';
     }
-
     // Check if an uploaded avatar exists. If so, select it and have it displayed
     if (this.selectedAvatar.indexOf('data:image') === -1 &&
         this.selectedAvatar.indexOf('feeds:imgage:') === -1 &&

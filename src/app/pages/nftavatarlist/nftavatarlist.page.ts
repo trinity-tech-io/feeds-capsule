@@ -139,13 +139,33 @@ export class NftavatarlistPage implements OnInit {
   }
 
   async clickItem(item: any) {
-    let size = item["originAssetSize"];
-    if (!size)
-      size = '0';
-    let imgUri = item['asset'];
-    if (parseInt(size) > 5 * 1024 * 1024) {
+
+    let version = item['version'] || "1";
+    let imgUri = "";
+    let kind = "";
+    let size = "";
+    if(version === "1"){
+       size = item["originAssetSize"];
+       if (!size)
+       size = '0';
+       imgUri = item['asset'] || "";
+      if(parseInt(size) > 5 * 1024 * 1024) {
       imgUri = item['thumbnail'];
+      }
+    }else if(version === "2"){
+      let jsonData = item['data'] || "";
+       kind = jsonData["kind"];
+        size = jsonData["size"];
+        if (!size)
+        size = '0';
+      if (jsonData != "") {
+        imgUri  = jsonData['image'] || "";
+      }
+      if(parseInt(size) > 5 * 1024 * 1024) {
+        imgUri = item['thumbnail'];
+      }
     }
+
     this.dataHelper.setClipProfileIamge(imgUri);
     this.native.pop();
   }

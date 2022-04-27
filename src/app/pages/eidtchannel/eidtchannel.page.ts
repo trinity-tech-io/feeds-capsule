@@ -117,15 +117,6 @@ export class EidtchannelPage implements OnInit {
   }
 
   profileimage() {
-    this.dataHelper.setChannelInfo({
-      destDid: this.destDid,
-      channelId: this.channelId,
-      name: this.channelName,
-      des: this.channelDes,
-      channelOwner: this.channelOwner,
-      channelSubscribes: this.channelSubscribes,
-      followStatus: this.followStatus,
-    });
     this.native.navigateForward(['/profileimage'], '');
   }
 

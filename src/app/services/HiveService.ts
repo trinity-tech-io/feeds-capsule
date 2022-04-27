@@ -42,7 +42,8 @@ export class HiveService {
   public async creatAppContext(appInstanceDocumentString: string, userDidString: string): Promise<AppContext> {
     return new Promise(async (resolve, reject) => {
       try {
-        const currentNet = this.dataHelper.getDevelopNet().toLowerCase()
+        //const currentNet = this.dataHelper.getDevelopNet().toLowerCase();
+        const currentNet = "MainNet".toLowerCase();
         HiveLogger.setDefaultLevel(HiveLogger.TRACE)
         DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
         try {
