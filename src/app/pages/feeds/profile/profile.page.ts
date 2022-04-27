@@ -1828,7 +1828,6 @@ export class ProfilePage implements OnInit {
         this.native.toast('common.comingSoon');
         break;
       case 'info':
-        this.clearData();
         this.clickAvatar(destDid, channelId);
         break;
       case 'preferences':
@@ -1921,6 +1920,7 @@ export class ProfilePage implements OnInit {
       ownerDid: ownerDid,
       tippingAddress: channel.tipping_address
     });
+    this.clearData();
     this.native.navigateForward(['/feedinfo'], '');
   }
 
