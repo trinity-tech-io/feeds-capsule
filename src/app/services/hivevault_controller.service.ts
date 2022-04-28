@@ -1340,7 +1340,7 @@ export class HiveVaultController {
     return post;
   }
 
-  queryPostWithTime(destDid: string, channelId: string, endTime: number) {
+  queryPostWithTime(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
@@ -1406,7 +1406,6 @@ export class HiveVaultController {
           return;
         }
 
-
         const subscribedList = HiveVaultResultParse.parseBackupSubscribedChannelResult(result);
         console.log(TAG, '111111111111111', subscribedList);
         if (!subscribedList && subscribedList.length == 0) {
@@ -1434,6 +1433,18 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Remove backup subscribed channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryCommentsFromPosts(targetDid: string, postIds: string[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.hiveVaultApi.queryCommentsFromPosts(targetDid, postIds);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Query comments from posts error', error);
         reject(error);
       }
     });

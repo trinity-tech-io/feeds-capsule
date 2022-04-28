@@ -3,7 +3,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, AggregatedExecutable, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
 import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
 import { base64ImageToBuffer } from 'src/app/services/picture.helpers';
@@ -60,6 +60,9 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_USER_DISPLAYNAME = "script_query_user_displayname";
     public static readonly SCRIPT_UPDATE_LIKE = "script_update_like";
 
+    public static readonly SCRIPT_QUERY_COMMENT_FROM_POSTS = "script_query_comment_from_posts";
+    public static readonly SCRIPT_QUERY_COMMENT_COUNTS = "script_query_comment_counts";
+
     constructor(
         private hiveService: HiveService,
         private dataHelper: DataHelper,
@@ -104,7 +107,9 @@ export class HiveVaultHelper {
                 //DisplayName
                 const p22 = this.registerQueryDisplayNameScripting();
 
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22] as const
+                const p23 = this.registerQueryCommentsFromPostsScripting();
+
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -225,10 +230,10 @@ export class HiveVaultHelper {
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
-                if(error["code"] === 404 ){
+                if (error["code"] === 404) {
                     resolve("true")
-                }else{
-                  reject(error)
+                } else {
+                    reject(error)
                 }
             }
         });
@@ -1836,4 +1841,49 @@ export class HiveVaultHelper {
         return this.queryDataFromBackupSCDB();
     }
     /** remove subscribed_channel end */
+
+    /** query subscription info by channelId start */
+    private registerQueryCommentsFromPostsScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+                const executableFilter = {
+                    "post_id": { "$in": "$params.post_ids" }
+                };
+
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true);
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_FROM_POSTS, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        });
+    }
+
+    private callQueryCommentsFromPosts(targetDid: string, postIds: string[]): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "post_ids": postIds
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_FROM_POSTS, params);
+                Logger.log("Query comments counts from posts , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query comments from posts, error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    queryCommentsFromPosts(targetDid: string, postIds: string[]): Promise<any> {
+        return this.callQueryCommentsFromPosts(targetDid, postIds);
+    }
 }

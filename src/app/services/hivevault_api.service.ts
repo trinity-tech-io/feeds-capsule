@@ -216,4 +216,8 @@ export class HiveVaultApi {
   removeBackupData(targetDid: string, channelId: string) {
     return this.hiveVaultHelper.removeBackupData(targetDid, channelId);
   }
+
+  queryCommentsFromPosts(targetDid: string, postIds: string[]): Promise<any> {
+    return this.hiveVaultHelper.queryCommentsFromPosts(targetDid, postIds);
+  }
 }

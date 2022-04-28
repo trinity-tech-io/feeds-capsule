@@ -374,4 +374,15 @@ export class HiveInterfaceTestPage implements OnInit {
   removeBackupData() {
     return this.hiveVaultApi.removeBackupData('123', '456');
   }
+
+  async queryCommentsFromPosts() {
+    const postList = await this.hiveVaultController.queryPostWithTime(this.destDid, "fea825439f895b3d6773eddd9c7af80a9ad29c3de54aa526f186852b94e5aa74", UtilService.getCurrentTimeNum());
+    let list = [];
+    for (let index = 0; index < postList.length; index++) {
+      const post = postList[index];
+      list.push(post.postId);
+
+    }
+    await this.hiveVaultController.queryCommentsFromPosts(this.destDid, list);
+  }
 }
