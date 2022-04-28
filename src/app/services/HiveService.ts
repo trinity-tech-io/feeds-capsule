@@ -147,7 +147,7 @@ export class HiveService {
     return provider
   }
 
-  async getVault(userDid: string): VaultServices {
+  async getVault(userDid: string): Promise<VaultServices> {
     let vault = this.values[userDid]
 
     if (vault == undefined) {
