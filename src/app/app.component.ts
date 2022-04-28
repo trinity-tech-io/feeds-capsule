@@ -99,11 +99,6 @@ export class MyApp {
 
       try {
         await this.hiveVaultController.prepareConnection();
-
-        // await this.downloadEssAvatar()
-        // this.downloadCustomeAvatar()
-
-        // this.initProfileData();
       } catch (error) {
         Logger.error(TAG, error)
       }

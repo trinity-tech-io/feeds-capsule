@@ -180,7 +180,8 @@ declare namespace FeedsEvent {
     // hive
     authEssentialSuccess = 'feeds:authEssentialSuccess',
     initHiveData = 'feeds:initHiveData',
-    updateSyncHiveData = 'feeds:updateSyncHiveData'
+    updateSyncHiveData = 'feeds:updateSyncHiveData',
+    authEssentialFail = 'feeds:authEssentialFail'
   }
 
   type TipDialogData = {

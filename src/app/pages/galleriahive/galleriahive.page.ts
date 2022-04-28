@@ -19,6 +19,7 @@ export class GalleriahivePage implements OnInit {
   public title = '';
   public isShowTryButton: boolean = false;
   public trybuttonDisabled: boolean = false;
+  public autoShowTryButton: any = null;
   constructor(
     public titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -27,8 +28,17 @@ export class GalleriahivePage implements OnInit {
     private dataHelper: DataHelper,
     private zone: NgZone,
   ) {
-    this.title = this.translate.instant('GalleriahivePage.title');
-    this.description = this.translate.instant('GalleriahivePage.description');
+
+    this.createAutoShowTryButton();
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+        this.title = this.translate.instant('GalleriahivePage.titleFail');
+        this.description = this.translate.instant('common.connectionError');
+        this.isShowTryButton = true;
+    }else{
+      this.title = this.translate.instant('GalleriahivePage.title');
+      this.description = this.translate.instant('GalleriahivePage.description');
+    }
   }
 
   ngOnInit() {
@@ -40,13 +50,53 @@ export class GalleriahivePage implements OnInit {
       this.zone.run(async () => {
         this.title = this.translate.instant('GalleriahivePage.titleSuccess');
         this.description = this.translate.instant('GalleriahivePage.welcomeHive');
+        this.isShowTryButton = false;
         this.buttonDisabled = false;
+        this.clearAutoShowTryButton();
       });
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.authEssentialFail,(data: any)=>{
+        this.isShowTryButton = true;
+        switch(data.type){
+          case 0:
+            this.title = this.translate.instant('GalleriahivePage.titleFail');
+            this.description = this.translate.instant('common.connectionError');
+            break;
+          case 1:
+            this.title = this.translate.instant('GalleriahivePage.titleFail');
+            this.description = this.translate.instant('GalleriahivePage.failDes1');
+            break;
+        }
+        this.clearAutoShowTryButton();
     });
   }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.authEssentialSuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.authEssentialFail);
+    this.clearAutoShowTryButton();
+
+  }
+
+  createAutoShowTryButton() {
+    if(this.autoShowTryButton === null){
+      this.autoShowTryButton = setTimeout(()=>{
+        if(this.buttonDisabled){
+          this.title = this.translate.instant('GalleriahivePage.title');
+          this.description = this.translate.instant('GalleriahivePage.failDes1');
+          this.isShowTryButton = true;
+        }
+        this.clearAutoShowTryButton();
+      },30*1000);
+    }
+  }
+
+  clearAutoShowTryButton() {
+    if(this.autoShowTryButton != null){
+      clearTimeout(this.autoShowTryButton);
+      this.autoShowTryButton = null;
+    }
   }
 
   openHomePage() {
@@ -79,6 +129,21 @@ export class GalleriahivePage implements OnInit {
           }
         }
       });
+  }
+
+  TryButton() {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    this.createAutoShowTryButton();
+    this.isShowTryButton = false;
+    this.title = this.translate.instant('GalleriahivePage.title');
+    this.description = this.translate.instant('GalleriahivePage.description');
+    this.events.publish(FeedsEvent.PublishType.signinSuccess);
+
   }
 
 }

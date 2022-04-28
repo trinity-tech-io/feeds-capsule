@@ -3,6 +3,7 @@ import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Events } from 'src/app/services/events.service';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = 'StandardAuthService';
@@ -19,6 +20,7 @@ export class StandardAuthService {
   constructor(
     private storeService: StorageService,
     private dataHelper: DataHelper,
+    private events: Events
   ) {}
 
   getCredentials(): Promise<any> {
@@ -162,6 +164,7 @@ export class StandardAuthService {
       this.appIdCredential = await this.getAppIdCredentialFromStorage(
         this.appIdCredential,
       );
+
       this.appIdCredential = await this.checkAppIdCredentialStatus(
         this.appIdCredential,
       );
@@ -346,7 +349,7 @@ export class StandardAuthService {
           resolve(mAppIdCredential);
           return;
         }
-
+        this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
         let error =
           'Get app identity credential error, credential is ' +
           JSON.stringify(mAppIdCredential);

@@ -1407,7 +1407,6 @@ export class HiveVaultController {
         }
 
         const subscribedList = HiveVaultResultParse.parseBackupSubscribedChannelResult(result);
-        console.log(TAG, '111111111111111', subscribedList);
         if (!subscribedList && subscribedList.length == 0) {
           resolve([]);
           return;

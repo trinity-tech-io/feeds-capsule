@@ -6158,13 +6158,14 @@ export class FeedService {
       let res = await this.credaccess();
       if (!res) {
         Logger.error(TAG, 'SignIn error, credaccess result is ', res);
-        reject('credaccess error');
+        reject('common.didSigninError1');
         return;
       }
 
       let did = await this.decodeSignInData(res);
       if (!did) {
         Logger.log(TAG, 'Use didManager VerifiablePresentationBuilder error, did result is ', did);
+        reject('common.didSigninError2');
         return;
       }
       resolve(did);
@@ -6297,10 +6298,10 @@ export class FeedService {
 
         let error = 'Credaccess error, response is ' + JSON.stringify(response);
         Logger.error(TAG, error);
-        reject(error);
+        reject(null);
       } catch (error) {
         Logger.error(TAG, error);
-        reject(error);
+        reject(null);
       }
     });
   }

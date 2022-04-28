@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
 import { LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
@@ -12,9 +12,7 @@ import {
 } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { localization } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { LanguageService } from 'src/app/services/language.service';
-import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { IPFSService } from 'src/app/services/ipfs.service';
 const TAG: string = 'SigninPage';
 @Component({
   selector: 'app-signin',
@@ -30,15 +28,13 @@ export class SigninPage implements OnInit {
   public lightThemeType: number = 2;
   constructor(
     private native: NativeService,
-    private zone: NgZone,
     private feedService: FeedService,
     public loadingController: LoadingController,
     public theme: ThemeService,
     public appService: AppService,
     private titleBarService: TitleBarService,
     private languageService: LanguageService,
-    private dataHelper: DataHelper,
-    private ipfsService: IPFSService
+    private dataHelper: DataHelper
   ) {}
 
   ngOnInit() {}
@@ -69,23 +65,32 @@ export class SigninPage implements OnInit {
   }
 
   signIn() {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
     connectivity.setActiveConnector(null).then(() => {
       this.doSignin();
     }).catch((err)=>{
     });
   }
 
-  doSignin() {
-    this.zone.run(async () => {
-    await  this.native.showLoading('common.waitMoment', isDismiss => {}, 2000);
-    });
-    this.feedService.signIn().then(isSuccess => {
-      if (isSuccess) {
-        //此处切换成galleriahive 页面
-        this.native.hideLoading();
-        this.native.setRootRouter('galleriahive');
-        return;
-      }
-    });
+  async doSignin() {
+    await  this.native.showLoading('common.waitMoment');
+    try {
+      this.feedService.signIn().then(isSuccess => {
+        if (isSuccess) {
+          //此处切换成galleriahive 页面
+          this.native.hideLoading();
+          this.native.setRootRouter('galleriahive');
+          return;
+        }
+      }).catch((err)=>{
+        this.native.toastWarn(err);
+      });
+    } catch (error) {
+      this.native.hideLoading();
+    }
   }
 }

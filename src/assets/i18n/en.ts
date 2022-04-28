@@ -196,7 +196,9 @@ export const en = {
     migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault',
     Subscribing: 'Subscribing...',
     subscribeSuccess: 'Subscription succeeded',
-    subscribeFail: 'Subscription failed'
+    subscribeFail: 'Subscription failed',
+    didSigninError1: 'credaccess error',
+    didSigninError2: 'Use didManager VerifiablePresentationBuilder error'
   },
   app: {
     profileDetails: 'Profile Details',
@@ -495,7 +497,10 @@ export const en = {
 
     synchronizingComplete: "The synchronization is complete, Let's go",
     buttonTitle1: 'Try',
-    welcomeHive: "Let's go"
+    welcomeHive: "Let's go",
+    titleFail: 'Failed to log in to hive',
+    failDes0: 'Essential authorization login hive failed',
+    failDes1: 'Please check the mobile network (scientific Internet access is recommended)'
   },
   ErrorInfo: {
     alreadyExists: 'Entity Already Exists',

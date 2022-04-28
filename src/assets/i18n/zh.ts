@@ -196,7 +196,9 @@ export const zh = {
     migrateFeedsServiceData: '迁移 Feeds Service 数据到 Hive Vault',
     subscribing: '正在订阅...',
     subscribeSuccess: '订阅成功',
-    subscribeFail: '订阅失败'
+    subscribeFail: '订阅失败',
+    didSigninError1: 'credaccess error',
+    didSigninError2: 'Use didManager VerifiablePresentationBuilder error'
   },
   app: {
     profileDetails: '档案详情',
@@ -496,7 +498,10 @@ export const zh = {
 
     synchronizingComplete: '同步完成，开始使用',
     buttonTitle1: '重试',
-    welcomeHive: '开始使用'
+    welcomeHive: '开始使用',
+    titleFail: '登陆hive失败',
+    failDes0: 'Essential授权登录Hive失败',
+    failDes1: '请检查手机网络（建议科学上网尝试）'
   },
   ErrorInfo: {
     alreadyExists: '内容已经存在',
