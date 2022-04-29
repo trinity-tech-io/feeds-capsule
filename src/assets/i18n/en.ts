@@ -949,7 +949,7 @@ export const en = {
   },
   upgradeAppDialog: {
    title: "Migrate data",
-   message: "Congratulations, your data has been successfully migrated. Do you want to continue using it",
+   message: "This version is no longer maintained, please download the new version to continue to experience more functions",
   },
   migrationDataDialog: {
    title: "Migrate data",
