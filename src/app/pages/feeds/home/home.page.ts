@@ -1436,7 +1436,7 @@ export class HomePage implements OnInit {
       if (value === '13') {
         let videoElement: any = document.getElementById(id + 'video') || '';
         if (videoElement != '') {
-          videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
+          videoElement.setAttribute('poster', "assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'source') || '';
         if (source != '') {
@@ -1485,7 +1485,7 @@ export class HomePage implements OnInit {
       if (value === '13') {
         let imgElement: any = document.getElementById(id + 'post-img') || '';
         if (imgElement != '') {
-          imgElement.removeAttribute('src'); // empty source
+          imgElement.setAttribute('src','assets/images/loading.png'); // empty source
         }
       }
     }

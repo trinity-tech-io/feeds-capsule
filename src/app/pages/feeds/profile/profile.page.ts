@@ -1404,7 +1404,7 @@ export class ProfilePage implements OnInit {
       if (value === '13') {
         let videoElement: any = document.getElementById(id + 'videolike') || '';
         if (videoElement != '') {
-          //videoElement.removeAttribute('poster',"assets/images/loading.gif"); // empty source
+            videoElement.setAttribute('poster',"./assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'sourcelike') || '';
         let sourcesrc = '';
@@ -1446,7 +1446,7 @@ export class ProfilePage implements OnInit {
       if (value === '13') {
         let imgElement: any = document.getElementById(id + 'postimglike') || '';
         if (imgElement != '') {
-          imgElement.removeAttribute('src'); // empty source
+          imgElement.setAttribute('src','assets/images/loading.png');
         }
       }
     }

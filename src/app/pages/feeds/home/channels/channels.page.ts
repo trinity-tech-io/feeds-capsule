@@ -972,7 +972,7 @@ export class ChannelsPage implements OnInit {
         let videoElement: any =
           document.getElementById(id + 'videochannel') || '';
         if (videoElement != '') {
-          //videoElement.setAttribute('poster',"assets/images/loading.png"); // empty source
+            videoElement.setAttribute('poster',"./assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'sourcechannel') || '';
         let sourcesrc = source.getAttribute('src') || '';
@@ -1012,7 +1012,7 @@ export class ChannelsPage implements OnInit {
         let imgElement: any =
           document.getElementById(id + 'postimgchannel') || '';
         if (imgElement != '') {
-          imgElement.removeAttribute('src'); // empty source
+          imgElement.setAttribute('src','assets/images/loading.png')
         }
       }
     }
