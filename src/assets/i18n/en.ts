@@ -943,7 +943,20 @@ export const en = {
   },
   oneClickMigrationDialog: {
     title: "Migrate data",
-    message: "Whether to migrate data with one click",
-    loading: "Your data is being migrated, please wait...."
+    message: "This version is no longer maintained, please download the new version to continue to experience more functions",
+    cancel: "Quit now",
+    confirm: "Continue to use",
+  },
+  upgradeAppDialog: {
+   title: "Migrate data",
+   message: "Congratulations, your data has been successfully migrated. Do you want to continue using it",
+  },
+  migrationDataDialog: {
+   title: "Migrate data",
+   message: "The new application supports data migration. You can perform data migration now and decide whether to perform data migration",
+   loadingTitle: "Migrate data",
+   loadingText: "Your data is being migrated, please wait....",
+   cancel: "cancel",
+   confirm: "Migrating data",
   }
 };
