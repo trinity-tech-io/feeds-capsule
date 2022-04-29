@@ -952,14 +952,6 @@ export const zh = {
     cancel: "现在退出",
     confirm: "继续使用",
   },
-  migrationSucessDialog: {
-    title: "迁移数据",
-    message: "恭喜你，您的数据已经迁移成功",
-  },
-  oneClickMigrationFinishDialog: {
-    title: "迁移数据",
-    message: "恭喜你，您的数据已经迁移成功,是否继续使用",
-  },
   upgradeAppDialog: {
     title: "迁移数据",
     message: "此版本已不再进行维护，请下载新版本继续体验更多功能",
