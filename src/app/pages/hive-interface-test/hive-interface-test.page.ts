@@ -356,7 +356,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
   querySubscription() {
     console.log('querySubscription');
-    this.hiveVaultApi.querySubscription(this.destDid, '7fdb0f185e7d8c412e7208f25b5a4b380566b463a8b4f32c8859561e399fe1d1');
+    this.hiveVaultApi.querySubscription('did:elastos:imZgAo9W38Vzo1pJQfHp6NJp9LZsrnRPRr', 'f049be478ae2e7af538088ceb4f2163f4e088df8312d9627928d4012724c5e52');
   }
 
   queryRemotePostByTime() {
@@ -376,7 +376,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async queryCommentsFromPosts() {
-    const postList = await this.hiveVaultController.queryPostWithTime(this.destDid, "fea825439f895b3d6773eddd9c7af80a9ad29c3de54aa526f186852b94e5aa74", UtilService.getCurrentTimeNum());
+    const postList = await this.hiveVaultController.queryRemotePostWithTime(this.destDid, "fea825439f895b3d6773eddd9c7af80a9ad29c3de54aa526f186852b94e5aa74", UtilService.getCurrentTimeNum());
     let list = [];
     for (let index = 0; index < postList.length; index++) {
       const post = postList[index];

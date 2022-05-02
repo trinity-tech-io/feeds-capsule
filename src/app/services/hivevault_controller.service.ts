@@ -23,6 +23,35 @@ export class HiveVaultController {
   ) {
   }
 
+  syncAllPostWithTime(endTime: number): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        if (subscribedChannels.length === 0) {
+          resolve([]);
+          return;
+        }
+
+        let postList = [];
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const channelId = subscribedChannel.channelId
+          const destDid = subscribedChannel.destDid
+
+          this.dataHelper.cleanOldestPostV3();
+
+          const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime);
+
+          postList.push(posts);
+        }
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Get all subscribed channel post error', error);
+        reject(error);
+      }
+    });
+  }
+
   /** sync data doRefresh use */
   syncAllPost(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
@@ -41,7 +70,7 @@ export class HiveVaultController {
 
           this.dataHelper.cleanOldestPostV3();
 
-          const posts = await this.queryPostWithTime(destDid, channelId, UtilService.getCurrentTimeNum());
+          const posts = await this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum());
 
           postList.push(posts);
         }
@@ -1336,16 +1365,33 @@ export class HiveVaultController {
     }
 
     //TODO sync post by time
-    this.queryPostWithTime(post.destDid, post.channelId, post.updatedAt);
+    this.queryRemotePostWithTime(post.destDid, post.channelId, post.updatedAt);
     return post;
   }
 
-  queryPostWithTime(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
+  queryRemotePostWithTime(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
         const postList = await this.handleSyncPostResult(destDid, channelId, result);
+
+        this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
         resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Query post with time error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryLocalPostWithTime() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // const result = await this.dataHelper.getPostV3List .queryPostByRangeOfTime(destDid, channelId, 0, endTime);
+        // const postList = await this.handleSyncPostResult(destDid, channelId, result);
+
+        this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
+        // resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Query post with time error', error);
         reject(error);
@@ -1444,6 +1490,25 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Query comments from posts error', error);
+        reject(error);
+      }
+    });
+  }
+
+  loadPostMoreData(postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let endTime = UtilService.getCurrentTimeNum();
+        if (postList && postList.length > 0) {
+          const minUpdatePost = _.minBy(postList, (item) => {
+            return item.updatedAt;
+          });
+          endTime = minUpdatePost.updatedAt || endTime;
+        }
+
+        const list = await this.syncAllPostWithTime(endTime) || [];
+        resolve(list);
+      } catch (error) {
         reject(error);
       }
     });

@@ -3444,6 +3444,22 @@ export class DataHelper {
     })
   }
 
+  queryPostDataByTime() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        let list = [];
+        list = await this.sqliteHelper.queryPostData(selfDid)
+
+        // this.sqliteHelper.queryPostDataByTime(selfDid, start, end);
+
+        // resolve(sortList)
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
   addComment(newComment: FeedsData.CommentV3) {
     return new Promise(async (resolve, reject) => {
       try {

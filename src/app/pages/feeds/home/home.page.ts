@@ -170,7 +170,8 @@ export class HomePage implements OnInit {
   private downPostAvatarMap: any = {};
   private avatarImageMap: any = {};
   private syncHiveDataStatus: number = null;
-  private syncHiveDataDes: string  = null;
+  private syncHiveDataDes: string = null;
+  private useRemoteData: boolean = false;
 
   constructor(
     private platform: Platform,
@@ -202,11 +203,9 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
-
   }
 
   async initPostListData(scrollToTop: boolean) {
-
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
 
@@ -233,7 +232,7 @@ export class HomePage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
-    this.refreshImage(0);
+    this.refreshImage();
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
     //this.isInitPostList = false;
@@ -277,7 +276,7 @@ export class HomePage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
-    this.refreshImage(0);
+    this.refreshImage();
     this.dataHelper.resetNewPost();
     //this.isInitPostList = false;
   }
@@ -291,6 +290,7 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.useRemoteData = false;
     this.initTitleBar();
     let syncHiveData = this.dataHelper.getSyncHiveData();
     this.syncHiveDataStatus = syncHiveData.status;
@@ -315,11 +315,11 @@ export class HomePage implements OnInit {
 
     switch (this.tabType) {
       case 'feeds':
-        if(this.syncHiveDataStatus === 6){
+        if (this.syncHiveDataStatus === 6) {
           this.handleRefresherInfinite(false);
           this.isPostLoading = true;
           this.refreshPostList();
-        }else{
+        } else {
           this.handleRefresherInfinite(true);
         }
         break;
@@ -334,14 +334,14 @@ export class HomePage implements OnInit {
 
 
 
-    this.events.subscribe(FeedsEvent.PublishType.updateSyncHiveData, (syncHiveData :any) => {
-          Logger.log(TAG, "FeedsEvent.PublishType.updateSyncHiveData");
-          this.syncHiveDataStatus = syncHiveData.status;
-          this.syncHiveDataDes = syncHiveData.describe;
-          if(this.syncHiveDataStatus === 6){
-            this.isPostLoading = true;
-            this.refreshPostList();
-          }
+    this.events.subscribe(FeedsEvent.PublishType.updateSyncHiveData, (syncHiveData: any) => {
+      Logger.log(TAG, "FeedsEvent.PublishType.updateSyncHiveData");
+      this.syncHiveDataStatus = syncHiveData.status;
+      this.syncHiveDataDes = syncHiveData.describe;
+      if (this.syncHiveDataStatus === 6) {
+        this.isPostLoading = true;
+        this.refreshPostList();
+      }
     });
 
     this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents, () => {
@@ -607,7 +607,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
   }
 
-  ionViewWillUnload() { }
+
 
   getContentText(content: string): string {
     return this.feedsServiceApi.parsePostContentText(content);
@@ -775,43 +775,34 @@ export class HomePage implements OnInit {
     this.refreshEvent = event;
     switch (this.tabType) {
       case 'feeds':
-        let sId = setTimeout(() => {
-          let arr = [];
-          if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
-            arr = this.totalData.slice(
-              this.startIndex * this.pageNumber,
-              (this.startIndex + 1) * this.pageNumber,
-            );
-            this.startIndex++;
-            this.zone.run(() => {
-              let len = this.postList.length - 1;
-              this.postList = this.postList.concat(arr);
-              this.refreshImage(len);
-              event.target.complete();
+        this.zone.run(() => {
+          if (this.useRemoteData) {
+            this.hiveVaultController.loadPostMoreData(this.postList).then((postList: FeedsData.PostV3[]) => {
+              let timer = setTimeout(() => {
+                if (postList.length > 0) {
+                  this.postList = postList;
+                  this.refreshPasarGridVisibleareaImage();
+                }
+                event.target.complete();
+                clearTimeout(timer);
+              }, 500);
             });
           } else {
-            //上拉加载到底
-            if (this.totalData.length === this.postList.length) {
-              event.target.complete();
-              clearTimeout(sId);
-              return;
-            }
-            arr = this.totalData.slice(
-              this.startIndex * this.pageNumber,
-              this.totalData.length,
-            );
-            this.zone.run(() => {
-              let len = this.postList.length - 1;
-              this.postList = this.postList.concat(arr);
-              this.refreshImage(len);
-              event.target.complete();
+            //TODO load local data
+            this.hiveVaultController.loadPostMoreData(this.postList).then((postList: FeedsData.PostV3[]) => {
+              let timer = setTimeout(() => {
+                if (postList.length > 0) {
+                  this.postList = postList;
+                  this.refreshPasarGridVisibleareaImage();
+                }
+                event.target.complete();
+                clearTimeout(timer);
+              }, 500);
             });
           }
-          clearTimeout(sId);
-        }, 500);
+        });
         break;
       case 'pasar':
-        // this.scrollToTop(1);
         this.zone.run(() => {
           this.elaPrice = this.dataHelper.getElaUsdPrice();
           this.loadMoreData().then((list) => {
@@ -832,17 +823,12 @@ export class HomePage implements OnInit {
   loadMoreData(): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        // const list = await this.nftContractHelperService.loadMoreDataFromContract('onSale', SortType.CREATE_TIME, this.pasarListCount, this.pasarListPage);
-        // const list = await this.nftContractHelperService.loadMoreData('onSale', SortType.CREATE_TIME, this.pasarListPage);
-
         const list = await this.nftContractHelperService.loadMorePasarListFromAssist(this.sortType, this.pasarListPage) || [];
         let pasarList: FeedsData.NFTItem[] = [];
         if (list && list.length > 0) {
           this.pasarListPage++;
-          // this.pasarList = _.concat(this.pasarList, list);
           pasarList = _.unionWith(this.pasarList, list, _.isEqual);
           pasarList = this.nftContractHelperService.sortData(pasarList, this.sortType);
-          // this.nftPersistenceHelper.setPasarList(this.pasarList);
         }
         resolve(pasarList);
       } catch (error) {
@@ -854,6 +840,7 @@ export class HomePage implements OnInit {
   async doRefresh(event) {
     this.refreshEvent = event;
     this.isPostLoading = false;
+    this.useRemoteData = true;
     switch (this.tabType) {
       case 'feeds':
         //TODO
@@ -960,7 +947,7 @@ export class HomePage implements OnInit {
     this.hideComment = true;
   }
 
-  setVisibleareaImage(startPos: number) {
+  setVisibleareaImage() {
 
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
@@ -1031,7 +1018,7 @@ export class HomePage implements OnInit {
               item.postId === postId
             );
           });
-          this.hiveVaultController.checkPostIsLast(post);
+          // this.hiveVaultController.checkPostIsLast(post);
 
           let avatarUri = "";
           if (channel != null) {
@@ -1056,7 +1043,7 @@ export class HomePage implements OnInit {
                   let uri = this.avatarImageMap[key] || "";
                   if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                    if (newPostAvatar != null && this.isLoadAvatarImage[key]=== "11") {
+                    if (newPostAvatar != null && this.isLoadAvatarImage[key] === "11") {
                       newPostAvatar.setAttribute('src', realImage);
                     }
                     this.isLoadAvatarImage[key] = "13";
@@ -1067,7 +1054,7 @@ export class HomePage implements OnInit {
                 this.downPostAvatarMap[fileName] = "";
                 for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
+                  if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
                   }
@@ -1078,7 +1065,7 @@ export class HomePage implements OnInit {
               this.downPostAvatarMap[fileName] = "";
               for (let key in this.avatarImageMap) {
                 let uri = this.avatarImageMap[key] || "";
-                if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
+                if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
                   this.isLoadAvatarImage[key] = '13';
                   delete this.avatarImageMap[key];
                 }
@@ -1104,10 +1091,6 @@ export class HomePage implements OnInit {
       delete this.isLoadAvatarImage[id];
       delete this.avatarImageMap[id];
     }
-  }
-
-  ionViewDidEnter() {
-
   }
 
   initTitleBar() {
@@ -1383,7 +1366,7 @@ export class HomePage implements OnInit {
     this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
-        this.native.throttle(this.setVisibleareaImage(this.postgridindex), 200, this, true);
+        this.native.throttle(this.setVisibleareaImage(), 200, this, true);
         break;
       case 'pasar':
         if (this.styleType === 'grid') {
@@ -1397,11 +1380,9 @@ export class HomePage implements OnInit {
     }
   }
 
-  refreshImage(startPos: number) {
+  refreshImage() {
     let sid = setTimeout(() => {
-      this.postgridindex = startPos;
-      this.setVisibleareaImage(startPos);
-      clearTimeout(sid);
+      this.setVisibleareaImage();
     }, 100);
   }
 
@@ -1787,9 +1768,9 @@ export class HomePage implements OnInit {
     switch (type) {
       case 'feeds':
         await this.content.scrollToTop(0);
-        if(this.syncHiveDataStatus === 6){
+        if (this.syncHiveDataStatus === 6) {
           this.handleRefresherInfinite(false);
-        }else{
+        } else {
           this.handleRefresherInfinite(true);
         }
         this.isShowSearchField = false;
@@ -2297,13 +2278,13 @@ export class HomePage implements OnInit {
   }
 
   async tryButton() {
-   this.syncHiveDataStatus = 0;
-   this.syncHiveDataDes = "GalleriahivePage.preparingData";
-   await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
-   const signinData = await this.dataHelper.getSigninData();
-   let userDid = signinData.did
-   localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
-   this.dataHelper.setSyncHiveData({status:  this.syncHiveDataStatus, describe: this.syncHiveDataDes});
-   this.events.publish(FeedsEvent.PublishType.initHiveData);
+    this.syncHiveDataStatus = 0;
+    this.syncHiveDataDes = "GalleriahivePage.preparingData";
+    await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did
+    localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
+    this.dataHelper.setSyncHiveData({ status: this.syncHiveDataStatus, describe: this.syncHiveDataDes });
+    this.events.publish(FeedsEvent.PublishType.initHiveData);
   }
 }
