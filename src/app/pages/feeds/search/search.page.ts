@@ -26,6 +26,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FeedsUrl, ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
 import { Logger } from 'src/app/services/logger';
+import { FeedsPage } from '../feeds.page';
 
 const TAG: string = 'SearchPage';
 @Component({
@@ -106,7 +107,8 @@ export class SearchPage implements OnInit {
     private fileHelperService: FileHelperService,
     private pasarAssistService: PasarAssistService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private feedspage: FeedsPage
   ) { }
 
   ngOnInit() {
@@ -1139,6 +1141,8 @@ export class SearchPage implements OnInit {
         await that.hiveVaultController.subscribeChannel(that.toBeSubscribeddestDid, that.toBeSubscribedChannelId, that.displayName);
         that.native.hideLoading();
         that.native.toast('common.subscribeSuccess');
+        that.native.setRootRouter(['/tabs/profile']);
+        that.feedspage.profile();
 
       } catch (error) {
         that.native.hideLoading();
