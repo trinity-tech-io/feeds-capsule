@@ -1375,7 +1375,7 @@ export class HiveVaultController {
         const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
         const postList = await this.handleSyncPostResult(destDid, channelId, result);
 
-        this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
+        //this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Query post with time error', error);

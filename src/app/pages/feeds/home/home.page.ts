@@ -778,26 +778,20 @@ export class HomePage implements OnInit {
         this.zone.run(() => {
           if (this.useRemoteData) {
             this.hiveVaultController.loadPostMoreData(this.postList).then((postList: FeedsData.PostV3[]) => {
-              let timer = setTimeout(() => {
                 if (postList.length > 0) {
                   this.postList = postList;
-                  this.refreshPasarGridVisibleareaImage();
+                  this.refreshImage();
                 }
                 event.target.complete();
-                clearTimeout(timer);
-              }, 500);
             });
           } else {
             //TODO load local data
             this.hiveVaultController.loadPostMoreData(this.postList).then((postList: FeedsData.PostV3[]) => {
-              let timer = setTimeout(() => {
                 if (postList.length > 0) {
                   this.postList = postList;
-                  this.refreshPasarGridVisibleareaImage();
+                  this.refreshImage();
                 }
                 event.target.complete();
-                clearTimeout(timer);
-              }, 500);
             });
           }
         });
@@ -806,14 +800,11 @@ export class HomePage implements OnInit {
         this.zone.run(() => {
           this.elaPrice = this.dataHelper.getElaUsdPrice();
           this.loadMoreData().then((list) => {
-            let timer = setTimeout(() => {
               if (list.length > 0) {
                 this.pasarList = list;
                 this.refreshPasarGridVisibleareaImage();
               }
               event.target.complete();
-              clearTimeout(timer);
-            }, 500);
           });
         });
         break;
@@ -1383,6 +1374,8 @@ export class HomePage implements OnInit {
   refreshImage() {
     let sid = setTimeout(() => {
       this.setVisibleareaImage();
+      clearTimeout(sid);
+      sid = null;
     }, 100);
   }
 
