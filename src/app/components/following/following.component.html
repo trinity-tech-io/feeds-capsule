@@ -25,11 +25,11 @@
         class="middle-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
-        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channel.name }}</ion-label>
-        <ion-row>
+        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ channel.name }}</ion-label>
+        <!-- <ion-row>
           <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
           <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
-        </ion-row>
+        </ion-row> -->
       </ion-col>
       <ion-col size="1.5" class="right-col" (click)="menuMore(channel)">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
