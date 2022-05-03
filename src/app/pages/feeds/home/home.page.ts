@@ -783,6 +783,8 @@ export class HomePage implements OnInit {
                   this.refreshImage();
                 }
                 event.target.complete();
+            }).catch(err=>{
+              event.target.complete();
             });
           } else {
             //TODO load local data
@@ -792,6 +794,8 @@ export class HomePage implements OnInit {
                   this.refreshImage();
                 }
                 event.target.complete();
+            }).catch(err=>{
+              event.target.complete();
             });
           }
         });

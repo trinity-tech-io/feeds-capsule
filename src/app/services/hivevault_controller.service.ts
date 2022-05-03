@@ -41,8 +41,7 @@ export class HiveVaultController {
           this.dataHelper.cleanOldestPostV3();
 
           const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime);
-
-          postList.push(posts);
+          postList = _.differenceWith(postList,posts);
         }
         resolve(postList);
       } catch (error) {
