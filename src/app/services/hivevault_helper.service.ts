@@ -428,7 +428,7 @@ export class HiveVaultHelper {
                 resolve({ targetDid: signinDid, postId: postId, createdAt: createdAt, updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(error);
-                reject()
+                reject(error);
             }
         });
     }
