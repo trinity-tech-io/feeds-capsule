@@ -51,6 +51,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_COMMENT_BY_POSTID = "script_query_comment_by_postid";
     public static readonly SCRIPT_QUERY_COMMENT_BY_COMMENTID = "script_query_comment_by_commentid";
     public static readonly SCRIPT_QUERY_COMMENT_BY_CHANNELID = "script_query_comment_by_channelid";
+    public static readonly SCRIPT_SOMETIME_COMMENT = "script_sometime_comment";
 
     public static readonly SCRIPT_CREATE_LIKE = "script_add_like";
     public static readonly SCRIPT_REMOVE_LIKE = "script_remove_like";
@@ -59,6 +60,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_LIKE_BY_CHANNEL = "script_query_like_by_channel";
     public static readonly SCRIPT_QUERY_USER_DISPLAYNAME = "script_query_user_displayname";
     public static readonly SCRIPT_UPDATE_LIKE = "script_update_like";
+    public static readonly SCRIPT_SOMETIME_LIKE = "script_sometime_like";
 
     public static readonly SCRIPT_QUERY_COMMENT_FROM_POSTS = "script_query_comment_from_posts";
     public static readonly SCRIPT_QUERY_COMMENT_COUNTS = "script_query_comment_counts";
@@ -963,6 +965,40 @@ export class HiveVaultHelper {
     }
     /** query comment by id end */
 
+    private registerQueryCommentRangeOfTimeScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter =
+                    { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
+                let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } }
+                let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+                let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_COMMENT, findExe, queryCondition, false, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
+    }
+
+    queryCommentRangeOfTimeScripting(targetDid: string, channelId: string, postId: string, start: number, end: number): Promise<any> {
+        return this.callQueryCommentRangeOfTimeScripting(targetDid, channelId, postId, start, end);
+    }
+
+    private callQueryCommentRangeOfTimeScripting(targetDid: string, channelId: string, postId: string, start: number, end: number) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SOMETIME_COMMENT, { "channel_id": channelId, "post_id": postId, "start": start, "end": end })
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'callQueryCommentRangeOfTimeScripting error:', error)
+                reject(error)
+            }
+        })
+    }
+
     /** query comment by channel start */
     private registerQueryCommentByChannelScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
@@ -1355,6 +1391,40 @@ export class HiveVaultHelper {
         return this.callQueryLikeByPost(targetDid, channelId, postId);
     }
     /** query like by post end */
+
+    private registerLikeRangeOfTimeScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter =
+                    { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" } }
+                let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } }
+                let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
+                let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_LIKE, findExe, queryCondition, false, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
+    }
+
+    queryLikeRangeOfTimeScripting(targetDid: string, channelId: string, postId: string, start: number, end: number): Promise<any> {
+        return this.callQueryLikeRangeOfTimeScripting(targetDid, channelId, postId, start, end);
+    }
+
+    private callQueryLikeRangeOfTimeScripting(targetDid: string, channelId: string, postId: string, start: number, end: number) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_SOMETIME_LIKE, { "channel_id": channelId, "post_id": postId, "start": start, "end": end })
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'callQueryLikeRangeOfTimeScripting error:', error)
+                reject(error)
+            }
+        })
+    }
 
     /** add like start */
     private registerCreateLikeScripting(): Promise<string> {

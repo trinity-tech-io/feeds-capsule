@@ -1512,4 +1512,13 @@ export class HiveVaultController {
       }
     });
   }
+
+  queryLikeByRangeOfTime(targetDid: string, channelId: string, postId: string, star: number, end: number) {
+    return this.hiveVaultApi.queryLikeByRangeOfTime(targetDid, channelId, postId, star, end)
+  }
+
+  queryCommentByRangeOfTime(targetDid: string, channelId: string, postId: string, star: number, end: number) {
+    return this.hiveVaultApi.queryCommentByRangeOfTime(targetDid, channelId, postId, star, end)
+  }
+
 }

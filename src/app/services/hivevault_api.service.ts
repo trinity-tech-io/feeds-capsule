@@ -129,6 +129,10 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryCommentByChannel(targetDid, channelId);
   }
 
+  queryCommentByRangeOfTime(targetDid: string, channelId: string, postId: string, star: number, end: number) {
+    return this.hiveVaultHelper.queryCommentRangeOfTimeScripting(targetDid, channelId, postId, star, end)
+  }
+
   /** Like */
   queryLikeByChannel(targetDid: string, channelId: string): Promise<any> {
     return this.hiveVaultHelper.queryLikeByChannel(targetDid, channelId);
@@ -145,6 +149,10 @@ export class HiveVaultApi {
 
   queryLikeByPost(targetDid: string, channelId: string, postId: string): Promise<any> {
     return this.hiveVaultHelper.queryLikeByPost(targetDid, channelId, postId);
+  }
+
+  queryLikeByRangeOfTime(targetDid: string, channelId: string, postId: string, star: number, end: number) {
+    return this.hiveVaultHelper.queryLikeRangeOfTimeScripting(targetDid, channelId, postId, star, end)
   }
 
   addLike(targetDid: string, likeId: string, channelId: string, postId: string, commentId: string): Promise<{ createdAt: number }> {
