@@ -2277,7 +2277,11 @@ export class HomePage implements OnInit {
   async tryButton() {
     this.syncHiveDataStatus = 0;
     this.syncHiveDataDes = "GalleriahivePage.preparingData";
-    await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+    try {
+      await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+    } catch (error) {
+
+    }
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
     localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);

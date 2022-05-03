@@ -13,7 +13,7 @@ import { trace } from 'console';
 import { R3TargetBinder } from '@angular/compiler';
 import { JSONObject } from '@elastosfoundation/did-js-sdk/typings';
 import { registerLocaleData } from '@angular/common';
-
+import { Events } from 'src/app/services/events.service';
 const TAG = 'HiveVaultHelper';
 
 @Injectable()
@@ -68,7 +68,8 @@ export class HiveVaultHelper {
     constructor(
         private hiveService: HiveService,
         private dataHelper: DataHelper,
-        private fileHelperService: FileHelperService
+        private fileHelperService: FileHelperService,
+        private events: Events
     ) {
     }
 
@@ -408,7 +409,7 @@ export class HiveVaultHelper {
                 Logger.log(TAG, 'insert postData result', insertResult)
                 resolve(insertResult)
             } catch (error) {
-                Logger.error(TAG, 'insertDataToPostDB error', error)
+                Logger.error(TAG, 'insertDataToPostDB error', error);
                 reject(error)
             }
         })

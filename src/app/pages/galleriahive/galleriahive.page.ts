@@ -29,7 +29,6 @@ export class GalleriahivePage implements OnInit {
     private zone: NgZone,
   ) {
 
-    this.createAutoShowTryButton();
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
         this.title = this.translate.instant('GalleriahivePage.titleFail');
@@ -52,7 +51,6 @@ export class GalleriahivePage implements OnInit {
         this.description = this.translate.instant('GalleriahivePage.welcomeHive');
         this.isShowTryButton = false;
         this.buttonDisabled = false;
-        this.clearAutoShowTryButton();
       });
     });
 
@@ -68,35 +66,12 @@ export class GalleriahivePage implements OnInit {
             this.description = this.translate.instant('GalleriahivePage.failDes1');
             break;
         }
-        this.clearAutoShowTryButton();
     });
   }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.authEssentialSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.authEssentialFail);
-    this.clearAutoShowTryButton();
-
-  }
-
-  createAutoShowTryButton() {
-    if(this.autoShowTryButton === null){
-      this.autoShowTryButton = setTimeout(()=>{
-        if(this.buttonDisabled){
-          this.title = this.translate.instant('GalleriahivePage.title');
-          this.description = this.translate.instant('GalleriahivePage.failDes1');
-          this.isShowTryButton = true;
-        }
-        this.clearAutoShowTryButton();
-      },30*1000);
-    }
-  }
-
-  clearAutoShowTryButton() {
-    if(this.autoShowTryButton != null){
-      clearTimeout(this.autoShowTryButton);
-      this.autoShowTryButton = null;
-    }
   }
 
   openHomePage() {
@@ -138,7 +113,6 @@ export class GalleriahivePage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.createAutoShowTryButton();
     this.isShowTryButton = false;
     this.title = this.translate.instant('GalleriahivePage.title');
     this.description = this.translate.instant('GalleriahivePage.description');

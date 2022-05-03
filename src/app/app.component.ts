@@ -765,10 +765,14 @@ export class MyApp {
     } catch (error) {
       if (error["code"] === 404) {
         localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
+        let syncHiveData7 = { status: 7, describe: "GalleriahivePage.synchronizingComplete" }
+        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData7)
+        this.dataHelper.setSyncHiveData(syncHiveData7);
+      }else{
+        let syncHiveData6 = { status: 6, describe: "GalleriahivePage.synchronizingComplete" }
+        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
+        this.dataHelper.setSyncHiveData(syncHiveData6);
       }
-      let syncHiveData7 = { status: 7, describe: "GalleriahivePage.synchronizingComplete" }
-      this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData7)
-      this.dataHelper.setSyncHiveData(syncHiveData7);
     }
   }
 }

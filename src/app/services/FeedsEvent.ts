@@ -30,6 +30,7 @@ declare namespace FeedsEvent {
     clearHomeEvent = 'feeds:clearHomeEvent',
     hideDeletedPosts = 'feeds:hideDeletedPosts',
     createpost = 'feeds:createpost',
+    insertError = 'feeds:insertError',
 
     tipdialogCancel = 'tipdialog-cancel',
     tipdialogConfirm = 'tipdialog-confirm',

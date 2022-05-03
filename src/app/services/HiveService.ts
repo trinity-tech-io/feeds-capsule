@@ -105,6 +105,7 @@ export class HiveService {
     }
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
+      this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:1});
     }
   }
 
@@ -322,7 +323,8 @@ export class HiveService {
         const insertResult = await dbService.insertOne(collectName, doc, new InsertOptions(false, true));
         resolve(insertResult)
       } catch (error) {
-        Logger.error(TAG, 'Insert error:', error)
+        Logger.error(TAG, 'Insert error:', error);
+        this.events.publish(FeedsEvent.PublishType.insertError);
         reject(error)
       }
     })
