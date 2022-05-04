@@ -77,12 +77,10 @@ export class SigninPage implements OnInit {
   }
 
   async doSignin() {
-    await  this.native.showLoading('common.waitMoment');
     try {
       this.feedService.signIn().then(isSuccess => {
         if (isSuccess) {
           //此处切换成galleriahive 页面
-          this.native.hideLoading();
           this.native.setRootRouter('galleriahive');
           return;
         }
@@ -90,7 +88,6 @@ export class SigninPage implements OnInit {
         this.native.toastWarn(err);
       });
     } catch (error) {
-      this.native.hideLoading();
     }
   }
 }

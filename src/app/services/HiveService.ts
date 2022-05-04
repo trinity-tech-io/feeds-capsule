@@ -223,6 +223,7 @@ export class HiveService {
         resolve()
       } catch (error) {
         Logger.error(TAG, 'register error:', error)
+        this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
         reject(error)
       }
     })

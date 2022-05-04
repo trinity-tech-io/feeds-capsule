@@ -2002,7 +2002,7 @@ export class HomePage implements OnInit {
       }
     } else {
       this.homeTittleBar.style.display = "block";
-      this.homeTab.setAttribute("style", "top:36px;height:34px;");
+      this.homeTab.setAttribute("style", "top:31px;height:34px;");
       let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
       if (sort != null) {
         sort.setAttribute("style", "top:132px;");
