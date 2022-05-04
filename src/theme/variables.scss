@@ -155,7 +155,7 @@
   --ion-color-light-shade: #1e2023;
   --ion-color-light-tint: #383a3e;
 
-  --ion-background-color: #191a2f;
+  --ion-background-color: #161C24;
   --ion-background-color-rgb: 0,0,0;
 
   --ion-text-color: #ffffff;
@@ -171,7 +171,8 @@
  */
 
 .ios body.dark {
-  --ion-background-color: #191a2f;
+  --ion-background-color: #161C24;
+
   --ion-background-color-rgb: 0,0,0;
 
   --ion-text-color: #ffffff;
@@ -191,7 +192,7 @@
  */
 
 .md body.dark {
-  --ion-background-color: #191a2f;
+  --ion-background-color: #161C24;
   --ion-background-color-rgb: 18,18,18;
 
   --ion-text-color: #ffffff;
@@ -337,12 +338,23 @@ ion-row {
 /********************** GLOBAL BUTTONS **********************/
 .btn-row {
   ion-button{
-    --background:#7624fe;
-    --background-activated:#7624fe;
+    --background:linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+    --border-radius: 17.9916px;;
+    --background-activated:linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+
+    ion-label {
+      text-transform: none;
+      letter-spacing: -.43px;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 13.4937px;
+    }
   }
+
   margin:0 auto;
   margin-top: 55px;
-  width: 85%;
+  width: 240px;
+  height: 54.87px;
   display: flex;
   justify-content: center;
 }

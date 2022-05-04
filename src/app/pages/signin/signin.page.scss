@@ -14,66 +14,62 @@ ion-slides{
     justify-content: center;
     padding: 0 30px;
 
-    p {
-      // margin: 5px 0 0;
-      font-size: 20px;
-      font-weight:bold;
-      font-stretch: normal;
-      font-style: normal;
-      text-align: center;
-      color:#7624fe;
-    }
-
     .header-row {
-      margin-top: 20px;
+      margin-top: 100px;
       ion-col {
         img {
-          width: 301px;
-          height: 266px;
+          display: flex;
+          width: 166.56px;
+          height: 112px;
           margin: 0 auto;
         }
 
-        h1 {
-          font-size: 20px;
-          font-weight: bold;
-          font-stretch: normal;
+        p {
+          margin-top: 50px;
           font-style: normal;
+          font-weight: 700;
+          font-size: 25px;
           text-align: center;
-          color:#7624fe;
+          color: #FFFFFF;
         }
       }
     }
 
-    .intro-row {
-      margin-top: 30px;
-    }
-
-    .btn-row {
-      margin-top: 100px;
-      width: 100%;
-    }
   }
 
-  .learnmore-row{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 15px;
+}
 
-    ion-label {
-      font-size: 14px;
-      font-weight: bold;
-      font-stretch: normal;
-      font-style: normal;
-      color: #7624fe;
-    }
-  }
-
+.btn-row-bottom{
+  margin-bottom: 115.13px
 }
 
 .darkSlides {
-  p, h1 {
-    color:#7624fe !important;
+  ion-grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 30px;
+
+    .header-row {
+      margin-top: 100px;
+      ion-col {
+        img {
+          display: flex;
+          width: 166.56px;
+          height: 112px;
+          margin: 0 auto;
+        }
+
+        p {
+          margin-top: 50px;
+          font-style: normal;
+          font-weight: 700;
+          font-size: 25px;
+          text-align: center;
+          color: #ffffff;
+        }
+      }
+    }
+
   }
-}
+  }

@@ -215,10 +215,10 @@ export class SettingsPage implements OnInit {
   }
 
   setDarkMode() {
-    this.zone.run(() => {
-      this.theme.darkMode = !this.theme.darkMode;
-      this.theme.setTheme(this.theme.darkMode);
-    });
+    // this.zone.run(() => {
+    //   this.theme.darkMode = !this.theme.darkMode;
+    //   this.theme.setTheme(this.theme.darkMode);
+    // });
   }
 
   navElastosApiProvider() {

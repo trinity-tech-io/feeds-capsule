@@ -1,32 +1,24 @@
 <app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
 <ion-content [class.content]="!theme.darkMode">
-  <div class="slide">
+  <div [class.slide]="!theme.darkMode" [class.darkSlides]="theme.darkMode">
    <ion-grid>
      <ion-row class="header-row">
-       <ion-col size="12"><h1>{{'SigninPage.welcome'|translate}}</h1></ion-col>
        <ion-col size="12">
          <img src="./assets/images/Feeds-logo-signin.svg"/>
+         <p>{{'SigninPage.des10'| translate}}</p>
        </ion-col>
-     </ion-row>
-
-     <ion-row class="intro-row">
-         <ion-col size="12">
-           <p class="desktop white" style="margin-bottom:-12px;">{{ "SigninPage.des" | translate }}</p>
-           <p class="desktop white">{{ "SigninPage.des1" | translate }}</p>
-         </ion-col>
      </ion-row>
 </ion-grid>
 </div>
-<ion-grid class="slide">
- <ion-row class="btn-row" (click)="signIn()">
-  <ion-button>
-    <ion-label>
-       {{ "SigninPage.signIn"| translate }}
-    </ion-label>
-  </ion-button>
-</ion-row>
-<ion-row class="learnmore-row" (click)="learnMore()">
-   <ion-label>{{"SigninPage.learnMore"|translate}}</ion-label>
-</ion-row>
-</ion-grid>
 </ion-content>
+<ion-footer class="ion-no-border">
+  <ion-grid class="slide">
+    <ion-row class="btn-row btn-row-bottom" (click)="signIn()">
+     <ion-button>
+       <ion-label>
+          {{ "SigninPage.signIn"| translate }}
+       </ion-label>
+     </ion-button>
+   </ion-row>
+   </ion-grid>
+</ion-footer>

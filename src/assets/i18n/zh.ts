@@ -228,6 +228,7 @@ export const zh = {
     secure: '#安全',
     freemarket: '#自由市场',
     learnMore: '了解更多',
+    des10: 'Web3社交网络'
   },
   FeedsPage: {
     tabTitle1: '主页',

@@ -58,39 +58,32 @@ export class SigninPage implements OnInit {
 
   ionViewWillLeave() {}
 
-  learnMore() {
-    this.native.navigateForward('learnmore', {
-      queryParams: { showBack: 'back' },
-    });
-  }
-
-  signIn() {
+  async signIn() {
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    connectivity.setActiveConnector(null).then(() => {
-      this.doSignin();
+
+    connectivity.setActiveConnector(null).then(async () => {
+       await this.doSignin();
     }).catch((err)=>{
     });
   }
 
   async doSignin() {
-    await  this.native.showLoading('common.waitMoment');
     try {
       this.feedService.signIn().then(isSuccess => {
         if (isSuccess) {
           //此处切换成galleriahive 页面
-          this.native.hideLoading();
           this.native.setRootRouter('galleriahive');
           return;
+        }else{
         }
       }).catch((err)=>{
         this.native.toastWarn(err);
       });
     } catch (error) {
-      this.native.hideLoading();
     }
   }
 }

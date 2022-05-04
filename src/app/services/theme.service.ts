@@ -16,13 +16,14 @@ export class ThemeService {
   }
 
   getTheme() {
-    let isDrakMode =
-      localStorage.getItem('org.elastos.dapp.feeds.isDrakMode') || '';
-    if (isDrakMode === '') {
-      this.getSystemMode();
-      return;
-    }
-    this.setTheme(JSON.parse(isDrakMode));
+    // let isDrakMode =
+    //   localStorage.getItem('org.elastos.dapp.feeds.isDrakMode') || '';
+    // if (isDrakMode === '') {
+    //   this.getSystemMode();
+    //   return;
+    // }
+    // this.setTheme(JSON.parse(isDrakMode));
+    this.setTheme(true);
   }
 
   getSystemMode() {
@@ -60,7 +61,7 @@ export class ThemeService {
       // Set dark mode globally
       document.body.classList.add('dark');
       this.statusBar.styleLightContent();
-      this.statusBar.backgroundColorByHexString("#ff191a2f");
+      this.statusBar.backgroundColorByHexString("#ff161C24");
     } else {
       // Remove dark mode globally
       this.statusBar.backgroundColorByHexString("#ffffffff");

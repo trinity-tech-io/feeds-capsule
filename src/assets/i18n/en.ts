@@ -227,7 +227,8 @@ export const en = {
     decentralized: '#decentralized',
     secure: '#secure',
     freemarket: '#freemarket',
-    learnMore: 'Learn more'
+    learnMore: 'Learn more',
+    des10: 'Web3 Social Network'
   },
   FeedsPage: {
     tabTitle1: 'Home',
