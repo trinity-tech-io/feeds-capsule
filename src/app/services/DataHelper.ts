@@ -3444,16 +3444,12 @@ export class DataHelper {
     })
   }
 
-  queryPostDataByTime() {
+  queryPostDataByTime(start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        let list = [];
-        list = await this.sqliteHelper.queryPostData(selfDid)
-
-        // this.sqliteHelper.queryPostDataByTime(selfDid, start, end);
-
-        // resolve(sortList)
+        let list = await this.sqliteHelper.queryPostDataByTime(selfDid, start, end) || [];
+        resolve(list);
       } catch (error) {
         reject(error)
       }

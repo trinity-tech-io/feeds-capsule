@@ -14,6 +14,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
 
   public isOpen: boolean = false;
+  private limitNum: number = 30;
 
   // private sqliteObject: SQLiteObject = null;
   private sqliteMap: { [did: string]: SQLiteObject } = {};
@@ -156,7 +157,7 @@ export class FeedsSqliteHelper {
   queryPostDataByTime(dbUserDid: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE updated_at>=? and updated_at<=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
         const result = await this.executeSql(dbUserDid, statement, [start, end]);
         const postList = this.parsePostData(result);
         resolve(postList);

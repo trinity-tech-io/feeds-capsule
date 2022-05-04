@@ -776,46 +776,52 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.zone.run(() => {
-          if (this.useRemoteData) {
-            this.hiveVaultController.loadPostMoreData(this.postList).then((postList: FeedsData.PostV3[]) => {
-                if (postList.length > 0) {
-                  this.postList = postList;
-                  this.refreshImage();
-                }
-                event.target.complete();
-            }).catch(err=>{
-              event.target.complete();
-            });
-          } else {
-            //TODO load local data
-            this.hiveVaultController.loadPostMoreData(this.postList).then((postList: FeedsData.PostV3[]) => {
-                if (postList.length > 0) {
-                  this.postList = postList;
-                  this.refreshImage();
-                }
-                event.target.complete();
-            }).catch(err=>{
-              event.target.complete();
-            });
-          }
+          this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
+            if (postList.length > 0) {
+              this.postList = postList;
+              this.refreshImage();
+            }
+            event.target.complete();
+          }).catch(err => {
+            event.target.complete();
+          });
         });
         break;
       case 'pasar':
         this.zone.run(() => {
           this.elaPrice = this.dataHelper.getElaUsdPrice();
-          this.loadMoreData().then((list) => {
-              if (list.length > 0) {
-                this.pasarList = list;
-                this.refreshPasarGridVisibleareaImage();
-              }
-              event.target.complete();
+          this.loadMorePasarData().then((list) => {
+            if (list.length > 0) {
+              this.pasarList = list;
+              this.refreshPasarGridVisibleareaImage();
+            }
+            event.target.complete();
           });
         });
         break;
     }
   }
 
-  loadMoreData(): Promise<FeedsData.NFTItem[]> {
+  loadMorePostData(): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const list = await this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList) || [];
+        let postList: FeedsData.PostV3[] = [];
+        if (list && list.length > 0) {
+          postList = _.unionWith(this.postList, list, _.isEqual);
+
+          postList = _.sortBy(list, (item: FeedsData.PostV3) => {
+            return -Number(item.updatedAt);
+          });
+        }
+        resolve(postList);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  loadMorePasarData(): Promise<FeedsData.NFTItem[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const list = await this.nftContractHelperService.loadMorePasarListFromAssist(this.sortType, this.pasarListPage) || [];
@@ -1463,7 +1469,7 @@ export class HomePage implements OnInit {
       if (value === '13') {
         let imgElement: any = document.getElementById(id + 'post-img') || '';
         if (imgElement != '') {
-          imgElement.setAttribute('src','assets/images/loading.png'); // empty source
+          imgElement.setAttribute('src', 'assets/images/loading.png'); // empty source
         }
       }
     }

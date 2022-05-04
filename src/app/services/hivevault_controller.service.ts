@@ -41,7 +41,7 @@ export class HiveVaultController {
           this.dataHelper.cleanOldestPostV3();
 
           const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime);
-          postList = _.differenceWith(postList,posts);
+          postList = _.differenceWith(postList, posts);
         }
         resolve(postList);
       } catch (error) {
@@ -1494,7 +1494,7 @@ export class HiveVaultController {
     });
   }
 
-  loadPostMoreData(postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
+  loadPostMoreData(useRemoteData: boolean, postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let endTime = UtilService.getCurrentTimeNum();
@@ -1505,7 +1505,12 @@ export class HiveVaultController {
           endTime = minUpdatePost.updatedAt || endTime;
         }
 
-        const list = await this.syncAllPostWithTime(endTime) || [];
+        let list = [];
+        if (useRemoteData) {
+          list = await this.syncAllPostWithTime(endTime) || [];
+        } else {
+          list = await this.loadMoreLocalData(endTime) || [];
+        }
         resolve(list);
       } catch (error) {
         reject(error);
@@ -1521,4 +1526,7 @@ export class HiveVaultController {
     return this.hiveVaultApi.queryCommentByRangeOfTime(targetDid, channelId, postId, star, end)
   }
 
+  loadMoreLocalData(end: number): Promise<FeedsData.PostV3[]> {
+    return this.dataHelper.queryPostDataByTime(0, end);
+  }
 }

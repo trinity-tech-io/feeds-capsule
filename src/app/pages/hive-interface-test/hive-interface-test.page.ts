@@ -12,7 +12,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { UtilService } from 'src/app/services/utilService';
-
+import _ from 'lodash';
 
 @Component({
   selector: 'app-hive-interface-test',
@@ -26,6 +26,7 @@ export class HiveInterfaceTestPage implements OnInit {
   public openLog: boolean = false;
   public selectedNetwork: any = "MainNet";
   private destDid = 'did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D';
+  private tmpPostList = [];
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -384,5 +385,19 @@ export class HiveInterfaceTestPage implements OnInit {
 
     }
     await this.hiveVaultController.queryCommentsFromPosts(this.destDid, list);
+  }
+
+  async loadMoreLocalData() {
+    const list = await this.hiveVaultController.loadPostMoreData(false, this.tmpPostList) || [];
+    let postList: FeedsData.PostV3[] = [];
+    if (list && list.length > 0) {
+      postList = _.unionWith(this.tmpPostList, list, _.isEqual);
+
+      postList = _.sortBy(list, (item: FeedsData.PostV3) => {
+        return -Number(item.updatedAt);
+      });
+    }
+
+    this.tmpPostList = postList;
   }
 }
