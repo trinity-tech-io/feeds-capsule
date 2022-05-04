@@ -209,18 +209,18 @@ export class HomePage implements OnInit {
     this.infiniteScroll.disabled = false;
     this.startIndex = 0;
 
-    this.totalData = await this.sortPostList();
-    if (this.totalData.length - this.pageNumber > 0) {
-      this.postList = this.totalData.slice(0, this.pageNumber);
+    this.postList = this.totalData = await this.sortPostList();
+    // if (this.totalData.length - this.pageNumber > 0) {
+    //   this.postList = this.totalData.slice(0, this.pageNumber);
 
 
-      this.startIndex++;
-      //this.infiniteScroll.disabled = false;
-    } else {
+    //   this.startIndex++;
+    //   //this.infiniteScroll.disabled = false;
+    // } else {
 
-      this.postList = this.totalData;
-      //this.infiniteScroll.disabled = true;
-    }
+    //   this.postList = this.totalData;
+    //   //this.infiniteScroll.disabled = true;
+    // }
     if (scrollToTop) {
       this.scrollToTop(1);
     }
@@ -255,19 +255,19 @@ export class HomePage implements OnInit {
       return;
     }
     this.isPostLoading = false;
-    this.totalData = await this.sortPostList();
-    if (this.totalData.length === this.postList.length) {
-      this.postList = this.totalData;
-    } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
-      this.postList = this.totalData.slice(
-        0,
-        this.startIndex * this.pageNumber,
-      );
-      // this.infiniteScroll.disabled = false;
-    } else {
-      this.postList = this.totalData;
-      // this.infiniteScroll.disabled = true;
-    }
+    this.postList = this.totalData = await this.sortPostList();
+    // if (this.totalData.length === this.postList.length) {
+    //   this.postList = this.totalData;
+    // } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+    //   this.postList = this.totalData.slice(
+    //     0,
+    //     this.startIndex * this.pageNumber,
+    //   );
+    //   // this.infiniteScroll.disabled = false;
+    // } else {
+    //   this.postList = this.totalData;
+    //   // this.infiniteScroll.disabled = true;
+    // }
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.avatarImageMap = {};
@@ -776,7 +776,7 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.zone.run(() => {
-          this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
+          this.loadMorePostData().then((postList: FeedsData.PostV3[]) => {
             if (postList.length > 0) {
               this.postList = postList;
               this.refreshImage();
@@ -805,15 +805,18 @@ export class HomePage implements OnInit {
   loadMorePostData(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log('this.useRemoteData', this.useRemoteData);
         const list = await this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList) || [];
         let postList: FeedsData.PostV3[] = [];
         if (list && list.length > 0) {
           postList = _.unionWith(this.postList, list, _.isEqual);
 
-          postList = _.sortBy(list, (item: FeedsData.PostV3) => {
+          postList = _.sortBy(postList, (item: FeedsData.PostV3) => {
             return -Number(item.updatedAt);
           });
         }
+
+        console.log('=================', postList);
         resolve(postList);
       } catch (error) {
         reject(error);
@@ -844,7 +847,8 @@ export class HomePage implements OnInit {
     this.useRemoteData = true;
     switch (this.tabType) {
       case 'feeds':
-        //TODO
+        this.useRemoteData = true;
+        //TODO use loadMoreData
         try {
           this.dataHelper.cleanCachedComment();
           this.dataHelper.cleanCacheLikeNum();
