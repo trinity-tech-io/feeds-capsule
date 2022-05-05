@@ -502,7 +502,11 @@ export const zh = {
     welcomeHive: '开始使用',
     titleFail: '登陆hive失败',
     failDes0: 'Essential授权登录Hive失败',
-    failDes1: '请检查手机网络（建议科学上网尝试）'
+    failDes1: '请检查手机网络（建议科学上网尝试）',
+    authorization: '授权',
+    description1: '正在连接 Hive node...',
+    authorized: '已授权',
+    description2: '成功登录到 to Hive node!'
   },
   ErrorInfo: {
     alreadyExists: '内容已经存在',

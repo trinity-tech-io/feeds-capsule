@@ -6,6 +6,7 @@ import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
+import { ThemeService } from 'src/app/services/theme.service';
 let TAG: string = 'Galleria-Hive';
 @Component({
   selector: 'app-galleriahive',
@@ -14,12 +15,7 @@ let TAG: string = 'Galleria-Hive';
 })
 export class GalleriahivePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public buttonDisabled = true
-  public description = ''
-  public title = '';
-  public isShowTryButton: boolean = false;
-  public trybuttonDisabled: boolean = false;
-  public autoShowTryButton: any = null;
+  public authorizationStatus: number = null;
   constructor(
     public titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -27,16 +23,14 @@ export class GalleriahivePage implements OnInit {
     private native: NativeService,
     private dataHelper: DataHelper,
     private zone: NgZone,
+    public theme: ThemeService
   ) {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
-        this.title = this.translate.instant('GalleriahivePage.titleFail');
-        this.description = this.translate.instant('common.connectionError');
-        this.isShowTryButton = true;
+        this.authorizationStatus = 2;
     }else{
-      this.title = this.translate.instant('GalleriahivePage.title');
-      this.description = this.translate.instant('GalleriahivePage.description');
+        this.authorizationStatus = 0;
     }
   }
 
@@ -47,23 +41,17 @@ export class GalleriahivePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
       Logger.log(TAG, "revice authEssentialSuccess event");
       this.zone.run(async () => {
-        this.title = this.translate.instant('GalleriahivePage.titleSuccess');
-        this.description = this.translate.instant('GalleriahivePage.welcomeHive');
-        this.isShowTryButton = false;
-        this.buttonDisabled = false;
+        this.authorizationStatus = 1;
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.authEssentialFail,(data: any)=>{
-        this.isShowTryButton = true;
         switch(data.type){
           case 0:
-            this.title = this.translate.instant('GalleriahivePage.titleFail');
-            this.description = this.translate.instant('common.connectionError');
+            this.authorizationStatus = 3;
             break;
           case 1:
-            this.title = this.translate.instant('GalleriahivePage.titleFail');
-            this.description = this.translate.instant('GalleriahivePage.failDes1');
+            this.authorizationStatus = 2;
             break;
         }
     });
@@ -113,9 +101,7 @@ export class GalleriahivePage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.isShowTryButton = false;
-    this.title = this.translate.instant('GalleriahivePage.title');
-    this.description = this.translate.instant('GalleriahivePage.description');
+    this.authorizationStatus = 0;
     this.events.publish(FeedsEvent.PublishType.signinSuccess);
 
   }

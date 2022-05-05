@@ -149,13 +149,19 @@ export class HiveService {
   }
 
   async getVault(userDid: string): Promise<VaultServices> {
-    let vault = this.values[userDid]
-
-    if (vault == undefined) {
-      vault = await this.creatVault(userDid)
-    }
-    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
-    return vault
+    return new Promise(async (resolve, reject) => {
+         try {
+          let vault = this.values[userDid]
+          if (vault == undefined) {
+            vault = await this.creatVault(userDid)
+          }
+          Logger.log(TAG, 'Create vault is', this.vault);
+          resolve(vault);
+         } catch (error) {
+          reject(error)
+          Logger.error(TAG, 'Create vault error', error);
+         }
+    });
   }
 
   getMyVault(): Promise<VaultServices> {
