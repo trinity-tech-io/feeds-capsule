@@ -200,19 +200,21 @@ export class HiveVaultHelper {
 
     createAllCollections(): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            try {
-                await this.createCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING)
-                await this.createCollection(HiveVaultHelper.TABLE_CHANNELS);
-                await this.createCollection(HiveVaultHelper.TABLE_POSTS);
-                await this.createCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
-                await this.createCollection(HiveVaultHelper.TABLE_COMMENTS);
-                await this.createCollection(HiveVaultHelper.TABLE_LIKES);
-                await this.createCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
-                resolve("true")
-            } catch (error) {
-                Logger.error(TAG, 'create Collections error', error);
-                reject(error)
-            }
+            const p1 = this.createCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING)
+            const p2 = this.createCollection(HiveVaultHelper.TABLE_CHANNELS);
+            const p3 = this.createCollection(HiveVaultHelper.TABLE_POSTS);
+            const p4 = this.createCollection(HiveVaultHelper.TABLE_SUBSCRIPTIONS);
+            const p5 = this.createCollection(HiveVaultHelper.TABLE_COMMENTS);
+            const p6 = this.createCollection(HiveVaultHelper.TABLE_LIKES);
+            const p7 = this.createCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
+
+            const array = [p1, p2, p3, p4, p5, p6, p7] as const
+            Promise.all(array).then(values => {
+                resolve('true');
+            }, reason => {
+                Logger.error(TAG, 'create Collections error', reason);
+                reject(reason)
+            })
         });
     }
 

@@ -63,6 +63,7 @@ export class MyApp {
   public loadingText: string = null;
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
+  private localVersion = "1.0"
 
   constructor(
     private actionSheetController: ActionSheetController,
@@ -709,24 +710,33 @@ export class MyApp {
     this.dataHelper.setSyncHiveData(syncHiveData0);
     this.sqliteHelper.createTables(userDid);
     let regist_scripting = false;
+    let lasterVersion = '';
+    let preVersion = '';
+
     try {
       let result = await this.hiveVaultController.queryFeedsScripting();
       regist_scripting = result[0]["regist_scripting"];
+      lasterVersion = result[0]["laster_version"];
+      preVersion = result[0]["pre_version"];
     }
     catch (error) {
       if (error["code"] === 404) {
-        localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
         regist_scripting = true
       }
     }
-    if (regist_scripting) {
+    if (this.localVersion !== lasterVersion) {
+
       try {
         //this.description = this.translate.instant('GalleriahivePage.creatingScripting');
         let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
         this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
         this.dataHelper.setSyncHiveData(syncHiveData1);
         await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-        await this.hiveVaultController.creatFeedsScripting()
+        preVersion = lasterVersion
+        lasterVersion = this.localVersion
+        regist_scripting = false
+        //update
+        await this.hiveVaultController.updateFeedsScripting(lasterVersion, preVersion, regist_scripting)
       } catch (error) {
         console.log(error)
       }

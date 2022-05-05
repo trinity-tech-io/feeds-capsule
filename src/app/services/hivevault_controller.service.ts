@@ -458,17 +458,12 @@ export class HiveVaultController {
   }
 
   async createCollectionAndRregisteScript(callerDid: string) {
-    let isCreateAllCollections = localStorage.getItem(callerDid + HiveVaultController.CREATEALLCollECTION) || ''
-    if (isCreateAllCollections === '') {
       try {
         await this.hiveVaultApi.createAllCollections()
-        await this.hiveVaultApi.registeScripting()
-        localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
       } catch (error) {
-        await this.hiveVaultApi.registeScripting()
-        localStorage.setItem(callerDid + HiveVaultController.CREATEALLCollECTION, "true")
+        // ignore
       }
-    }
+    await this.hiveVaultApi.registeScripting()
   }
 
   createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = ''): Promise<string> {
