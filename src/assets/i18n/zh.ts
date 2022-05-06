@@ -234,7 +234,7 @@ export const zh = {
     tabTitle1: '主页',
     tabTitle2: '档案',
     tabTitle3: '消息通知',
-    tabTitle4: '探索Feeds',
+    tabTitle4: '探索',
     tabTitle5: '时间线',
   },
   HomePage: {

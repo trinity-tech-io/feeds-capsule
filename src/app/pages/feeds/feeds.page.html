@@ -1,23 +1,26 @@
 <ion-tabs (ionTabsDidChange)="tabChanged($event)" [class.darkContainer]="theme.darkMode">
   <div class="tabs-line drak-line"> </div>
-
-  <ion-tab-bar class="tabs-div" >
+  <ion-tab-bar class="tabs-div">
     <ion-tab-button tab="home" (click)="home('1')">
         <img class="home-tab" [ngClass]="{'home-tab-selected': currentTab == 'home'}">
+        <ion-label class="des">{{ 'FeedsPage.tabTitle1' | translate}}</ion-label>
         <div class="totalunread1" *ngIf="newPostCount>0"></div>
     </ion-tab-button>
 
     <ion-tab-button tab="profile" (click)="profile()">
       <img  class="profile-tab" [ngClass]="{'profile-tab-selected': currentTab == 'profile'}">
+      <ion-label class="des">{{ 'FeedsPage.tabTitle2' | translate}}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="notification" (click)="notification()">
       <img class="notification-tab" [ngClass]="{'notification-tab-selected': currentTab == 'notification'}">
+      <ion-label class="des">{{ 'FeedsPage.tabTitle3' | translate}}</ion-label>
       <ion-badge class="totalunread" *ngIf="totalunread>0">{{totalunread}}</ion-badge>
     </ion-tab-button>
 
     <ion-tab-button tab="search" (click)="search()">
       <img class="search-tab" [ngClass]="{'search-tab-selected': currentTab == 'search'}">
+      <ion-label class="des">{{ 'FeedsPage.tabTitle4' | translate}}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
