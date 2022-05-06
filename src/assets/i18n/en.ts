@@ -238,8 +238,8 @@ export const en = {
     tabTitle5: 'Timeline',
   },
   HomePage: {
-    allempty: 'No Subscriptions Yet',
-    emptyDes: 'Go and subscribe to channels you find exciting',
+    allempty: 'Your timeline is empty',
+    emptyDes: 'Add new channel or find new channels to subscribe!',
     subscribeToChannels: 'Subscribe to Channels',
     minutesAgo: 'm',
     hoursAgo: 'h',

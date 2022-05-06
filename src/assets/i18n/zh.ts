@@ -238,8 +238,8 @@ export const zh = {
     tabTitle5: '时间线',
   },
   HomePage: {
-    allempty: '空空如也',
-    emptyDes: '去订阅有趣的频道吧',
+    allempty: '你的时间线是空的',
+    emptyDes: '添加新频道或查找要订阅的新频道！',
     subscribeToChannels: '订阅频道',
     minutesAgo: '分钟前',
     hoursAgo: '小时前',
