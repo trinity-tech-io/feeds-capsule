@@ -776,7 +776,7 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.zone.run(() => {
-          this.loadMorePostData().then((postList: FeedsData.PostV3[]) => {
+          this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
             if (postList.length > 0) {
               this.postList = postList;
               this.refreshImage();
@@ -800,28 +800,6 @@ export class HomePage implements OnInit {
         });
         break;
     }
-  }
-
-  loadMorePostData(): Promise<FeedsData.PostV3[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        console.log('this.useRemoteData', this.useRemoteData);
-        const list = await this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList) || [];
-        let postList: FeedsData.PostV3[] = [];
-        if (list && list.length > 0) {
-          postList = _.unionWith(this.postList, list, _.isEqual);
-
-          postList = _.sortBy(postList, (item: FeedsData.PostV3) => {
-            return -Number(item.updatedAt);
-          });
-        }
-
-        console.log('=================', postList);
-        resolve(postList);
-      } catch (error) {
-        reject(error);
-      }
-    });
   }
 
   loadMorePasarData(): Promise<FeedsData.NFTItem[]> {

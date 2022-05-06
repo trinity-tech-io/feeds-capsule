@@ -388,16 +388,17 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async loadMoreLocalData() {
-    const list = await this.hiveVaultController.loadPostMoreData(false, this.tmpPostList) || [];
-    let postList: FeedsData.PostV3[] = [];
-    if (list && list.length > 0) {
-      postList = _.unionWith(this.tmpPostList, list, _.isEqual);
+    this.tmpPostList = await this.hiveVaultController.loadPostMoreData(false, this.tmpPostList) || [];
+    console.log('this.tmpPostList===', this.tmpPostList)
+    // let postList: FeedsData.PostV3[] = [];
+    // if (list && list.length > 0) {
+    //   postList = _.unionWith(this.tmpPostList, list, _.isEqual);
 
-      postList = _.sortBy(list, (item: FeedsData.PostV3) => {
-        return -Number(item.updatedAt);
-      });
-    }
+    //   postList = _.sortBy(list, (item: FeedsData.PostV3) => {
+    //     return -Number(item.updatedAt);
+    //   });
+    // }
 
-    this.tmpPostList = postList;
+    // this.tmpPostList = postList;
   }
 }

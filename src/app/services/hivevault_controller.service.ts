@@ -1489,7 +1489,26 @@ export class HiveVaultController {
     });
   }
 
-  loadPostMoreData(useRemoteData: boolean, postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
+  loadPostMoreData(useRemoteData: boolean, originPostList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const list = await this._loadPostMoreData(useRemoteData, originPostList) || [];
+        let postList: FeedsData.PostV3[] = [];
+        if (list && list.length > 0) {
+          postList = _.unionWith(originPostList, list, _.isEqual);
+
+          postList = _.sortBy(postList, (item: FeedsData.PostV3) => {
+            return -Number(item.updatedAt);
+          });
+        }
+        resolve(postList);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private _loadPostMoreData(useRemoteData: boolean, postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         let endTime = UtilService.getCurrentTimeNum();
