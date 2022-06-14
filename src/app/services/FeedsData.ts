@@ -1,4 +1,8 @@
 declare namespace FeedsData {
+  const enum CallbackMethod {
+    SyncFeedsServiceData = 'SyncFeedsServiceData'
+  }
+
   const enum TitleBarForegroundMode {
     /** Title bar title and icons use a light (white) color. Use this on a dark background color. */
     LIGHT = 0,
@@ -372,6 +376,14 @@ declare namespace FeedsData {
   };
 
   const enum PersistenceKey {
+    ///new Add
+    channelsMapV3 = 'channelsMapV3',
+    subscribedChannelsV3Map = 'subscribedChannelsV3Map',
+    postsMapV3 = 'postsMapV3',
+    commentsMapV3 = 'commentsMapV3',
+    likeMapV3 = 'likeMapV3',
+
+
     ///////////////////////////////
     signInData = 'signInData',
     lastSignInData = 'lastSignInData',
@@ -907,5 +919,118 @@ declare namespace FeedsData {
     url: string,
     location: string,
     version: string
+  }
+
+
+
+  ////new data type
+  type ChannelV3 = {
+    destDid: string,
+    channelId: string,
+
+    createdAt: number,
+    updatedAt: number,
+    name: string,
+    intro: string,
+    avatar: string,
+    type: string,
+    tipping_address: string,
+    nft: string,
+    category: string,
+    proof: string,
+    memo: string,
+  }
+
+  type PostV3 = {
+    destDid: string,
+    postId: string,
+
+    channelId: string,
+    createdAt: number,
+    updatedAt: number,
+    content: postContentV3,
+    status: PostCommentStatus,
+    type: string,
+    tag: string,
+    proof: string,
+    memo: string
+  }
+
+  // 新添加
+  type originMediaDataV3 = {
+    size: number,
+    type: string,
+    medaPath: string
+  }
+  // 新添加
+  type mediaDataV3 = {
+    kind: string,           //"image/video/audio"
+    originMediaPath: string,
+    type: string,           //"image/jpg",
+    size: number,           //origin file size
+    thumbnailPath: string    //"thumbnailCid"
+    duration: number,
+    imageIndex: number,
+    additionalInfo: any,
+    memo: any
+  }
+
+  // 新添加
+  type postContentV3 = {
+    version: "3.0",
+    content: string,
+    mediaData: mediaDataV3[],// 已经上传的到hive(size/type/scriptName@path)
+    mediaType: MediaType
+  }
+
+  type CommentV3 = {
+    destDid: string,
+    commentId: string,
+
+    channelId: string,
+    postId: string,
+    refcommentId: string,
+    content: string,
+    status: PostCommentStatus
+    updatedAt: number,
+    createdAt: number,
+    proof: string,
+    memo: string,
+
+    createrDid: string
+  }
+
+  type LikeV3 = {
+    likeId: string,
+
+    destDid: string,
+    postId: string,
+    commentId: string,
+
+    channelId: string,
+    createdAt: number,
+    createrDid: string,
+    proof: string,
+    memo: string
+
+    updatedAt: number,
+    status: FeedsData.PostCommentStatus.available | FeedsData.PostCommentStatus.deleted
+  }
+
+  type SubscriptionV3 = {// subscription hivenode表模型
+    destDid: string,
+    channelId: string,
+
+    userDid: string,
+    createdAt: number,
+    displayName: string,
+
+    updatedAt: number,
+    status: FeedsData.PostCommentStatus.available | FeedsData.PostCommentStatus.deleted
+  }
+
+  type SubscribedChannelV3 = {// 本地存储订阅列表模型
+    destDid: string,// 订阅channel的创建者的did
+    channelId: string
   }
 }

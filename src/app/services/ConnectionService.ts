@@ -337,6 +337,7 @@ export class ConnectionService {
     lower_bound: number,
     max_counts: number,
     accessToken: FeedsData.AccessToken,
+    memo: any = ''
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
@@ -357,7 +358,7 @@ export class ConnectionService {
       nodeId,
       request.method,
       request.params,
-      '',
+      memo,
       request.version,
       false,
     );
@@ -368,6 +369,7 @@ export class ConnectionService {
     nodeId: string,
     id: number,
     accessToken: FeedsData.AccessToken,
+    memo: any = ''
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
@@ -385,7 +387,7 @@ export class ConnectionService {
       nodeId,
       request.method,
       request.params,
-      '',
+      memo,
       request.version,
       false,
     );
@@ -473,6 +475,7 @@ export class ConnectionService {
     max_counts: number,
     isShowOfflineToast: boolean,
     accessToken: FeedsData.AccessToken,
+    memo: any
   ) {
     if (accessToken == null || accessToken == undefined) return;
 
@@ -495,7 +498,7 @@ export class ConnectionService {
       nodeId,
       request.method,
       request.params,
-      '',
+      memo,
       request.version,
       isShowOfflineToast,
     );

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FilesService, ScriptingService, QueryHasResultCondition, Executable, InsertOptions, File as HiveFile, StreamResponseParser, InsertExecutable, FileUploadExecutable, HiveException, VaultServices, AppContext, Logger as HiveLogger, Utils, File, AppContextParameters, DefaultAppContextProvider, VaultSubscriptionService, UpdateResult, UpdateOptions, HttpClient } from "@dchagastelles/elastos-hive-js-sdk";
+import { Executable, InsertOptions, File as HiveFile, ScriptRunner, Vault, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -7,46 +7,56 @@ import { resolve } from 'url';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
+// import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
+import { } from '@elastosfoundation/hive-js-sdk'
 import { isEqual, isNil, reject } from 'lodash';
-import { on } from 'process';
-
 let TAG: string = 'Feeds-HiveService';
+import { Events } from 'src/app/services/events.service';
+import { on } from 'process';
 
 @Injectable()
 export class HiveService {
+  public static CREATEALLCollECTION = "feeds_createALLCollections" // 本地标识是否创建了Collection
+  public static readonly CHANNEL = "channels"
+  public static readonly TARGETDID = "targetDid"
+  public static readonly postId = "channelId"
   private static readonly RESOLVE_CACHE = "data/didCache"
-  private static collectName = "feeds_subscription"//标识是否备份到hive
-  private static isSync = "feeds_subscription_synchronize" // 标识是否同步数据到本地
-  private static createCollection = "feeds_subscription_createCollection" // 本地标识是否创建了Collection
-  private static INSTANCE: HiveService
-  public context: AppContext
-  public vault: VaultServices
-  public tarDID: string
-  public tarAppDID: string
-  public avatarParam: string
-  public avatarScriptName: string
-  public image = null
 
-  private avatarVC: VerifiableCredential
+  public image = null
+  public appinstanceDid: string
+  private vault: Vault
+  private scriptRunner: ScriptRunner
+  private avatarScriptName: string
+  private tarDID: string
+  private tarAppDID: string
+  private avatarParam: string
+  private scriptRunners: { [key: string]: ScriptRunner } = {}
+
   constructor(
     private standardAuthService: StandardAuthService,
     private fileService: FileService,
     private dataHelper: DataHelper,
+    private events: Events,
   ) {
   }
 
-  public async creat(appInstanceDocumentString: string, userDidString: string, resolverUrl: string): Promise<AppContext> {
+  public async creatAppContext(appInstanceDocumentString: string, userDidString: string): Promise<AppContext> {
     return new Promise(async (resolve, reject) => {
       try {
+        //const currentNet = this.dataHelper.getDevelopNet().toLowerCase();
+        const currentNet = "MainNet".toLowerCase();
         HiveLogger.setDefaultLevel(HiveLogger.TRACE)
-        DIDBackend.initialize(new DefaultDIDAdapter("mainnet"))
-        AppContext.setupResolver("mainnet", HiveService.RESOLVE_CACHE)
+        DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
+        try {
+          AppContext.setupResolver(currentNet, HiveService.RESOLVE_CACHE)
+        } catch (error) {
+        }
         const rootDirEntry = await this.fileService.resolveLocalFileSystemURL()
         const path = rootDirEntry.fullPath
-
+        // auth
         let self = this
-        this.context = await AppContext.build({
+        let cachedAuthToken = '';
+        const context = await AppContext.build({
           getLocalDataDir(): string {
             return path
           },
@@ -73,403 +83,295 @@ export class HiveService {
             })
           }
         }, userDidString);
-        resolve(this.context)
+        resolve(context)
       } catch (error) {
-        Logger.error(TAG, "creat Error: ", error)
+        // Logger.error(TAG, "creat Error: ", error)
+        reject(error)
+      }
+    })
+  }
+  async creatScriptRunner(userDid: string) {
+    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    const context = await this.creatAppContext(appinstanceDocument, userDid)
+    let scriptRunner = new ScriptRunner(context)
+    this.scriptRunners[userDid] = scriptRunner
+
+    return scriptRunner
+  }
+
+  async creatVault() {
+    try {
+      const userDid = (await this.dataHelper.getSigninData()).did
+      let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+      const context = await this.creatAppContext(appinstanceDocument, userDid)
+      let scriptRunner = await this.creatScriptRunner(userDid)
+      this.scriptRunners[userDid] = scriptRunner
+      const vault = new Vault(context)
+      const userDID = DID.from(userDid)
+      const userDIDDocument = await userDID.resolve()
+
+      this.parseUserDIDDocument(userDid, userDIDDocument)
+      Logger.log(TAG, 'Create vault ', userDid, this.vault)
+      return vault
+    }
+    catch (error) {
+      Logger.error(TAG, 'Create vault error:', error);
+      this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
+      throw error
+    }
+  }
+
+  parseUserDIDDocument(userDid: string, userDIDDocument: DIDDocument) {
+    const avatarDid = userDid + "#avatar"
+    const avatarVC = userDIDDocument.getCredential(avatarDid)
+    if (avatarVC != null) { // 有头像
+      const sub = avatarVC.getSubject()
+      const pro = sub.getProperty("avatar")
+      const data: string = pro["data"]
+      const type = pro["type"]
+      const prefix = "hive://"
+      const avatarParam = data.substr(prefix.length)
+      this.avatarParam = avatarParam
+      const parts = avatarParam.split("/")
+      if (parts.length < 2) // TODO 验证parts是否大于2个 ，否则 抛出异常
+        throw "userDIDDocument 中缺少参数"
+
+      const dids = parts[0].split("@")
+      if (dids.length != 2) // TODO 验证dids是否等于2个 ，否则 抛出异常
+        throw "userDIDDocument 中缺少参数"
+
+      const star = data.length - (prefix.length + parts[0].length + 1)
+      const values = parts[1].split("?")
+      if (values.length != 2) // TODO 验证values是否等于2个 ，否则 抛出异常
+        throw "userDIDDocument 中缺少参数"
+
+      const avatarScriptName = values[0]
+      this.avatarScriptName = avatarScriptName
+      const paramStr = values[1]
+      const scriptParam = JSON.parse(paramStr.substr(7))
+      const tarDID = dids[0]
+      const tarAppDID = dids[1]
+      this.tarDID = tarDID
+      this.tarAppDID = tarAppDID
+    }
+    const serviceDid = userDid + "#hivevault"
+    const service = userDIDDocument.getService(serviceDid)
+    const provider = service.getServiceEndpoint() + ":443"
+    return provider
+  }
+
+  async getScriptRunner(userDid: string): Promise<ScriptRunner> {
+    this.scriptRunner = this.scriptRunners[userDid]
+
+    if (this.scriptRunner === undefined || this.scriptRunner === null) {
+      this.scriptRunner = await this.creatScriptRunner(userDid)
+    }
+    return this.scriptRunner
+  }
+
+  async getVault(): Promise<Vault> {
+    if (this.vault === undefined || this.vault === null) {
+      this.vault = await this.creatVault()
+    }
+    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
+    return this.vault
+  }
+
+  async getDatabaseService() {
+    return (await this.getVault()).getDatabaseService()
+  }
+
+  async getFilesService() {
+    return (await this.getVault()).getFilesService()
+  }
+
+  async getScriptingService() {
+    return (await this.getVault()).getScriptingService()
+  }
+
+  async createCollection(channelName: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const databaseService = await this.getDatabaseService()
+        const result = await databaseService.createCollection(channelName);
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'createCollection error', error);
+        reject(error);
+      }
+    })
+  }
+
+  async deleteCollection(collectionName: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const databaseService = await this.getDatabaseService()
+        const result = await databaseService.deleteCollection(collectionName);
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'delete collection error', error);
+        reject(error);
+      }
+    })
+  }
+
+  registerScript(scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let scriptingService = await this.getScriptingService()
+        await scriptingService.registerScript(scriptName, executable,
+          condition, allowAnonymousUser, allowAnonymousApp)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'register error:', error)
+        this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
         reject(error)
       }
     })
   }
 
-  async creatVault() {
-    try {
-      // auth
-      let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
-      let userDid = (await this.dataHelper.getSigninData()).did
-
-      const resolverUrl = "https://api.elastos.io/eid"
-      if (this.context == null) {
-        this.context = await this.creat(appinstanceDocument, userDid, resolverUrl)
-      }
-      // userdid : "did:elastos:ikHP389FhssAADnUwM3RFF415F1wviZ8CC"
-      const userDID = DID.from(userDid)
-      const userDiddocument = await userDID.resolve()
-      const ccount = userDiddocument.getCredentialCount()
-      const avatarDid = userDid + "#avatar"
-      this.avatarVC = userDiddocument.getCredential(avatarDid)
-      if (this.avatarVC != null) { // 有头像
-        const sub = this.avatarVC.getSubject()
-        const pro = sub.getProperty("avatar")
-        const data: string = pro["data"]
-        const type = pro["type"]
-        const prefix = "hive://"
-        this.avatarParam = data.substr(prefix.length)
-        const parts = this.avatarParam.split("/")
-        // TODO 验证parts是否大于2个 ，否则 抛出异常
-        const dids = parts[0].split("@")
-        // TODO 验证dids是否等于2个 ，否则 抛出异常
-        const star = data.length - (prefix.length + parts[0].length + 1)
-        const values = parts[1].split("?")
-        // TODO 验证values是否等于2个 ，否则 抛出异常
-        this.avatarScriptName = values[0]
-        const paramStr = values[1]
-        const scriptParam = JSON.parse(paramStr.substr(7))
-        // 创建
-        this.tarDID = dids[0]
-        this.tarAppDID = dids[1]
-      }
-
-      const serviceDid = userDid + "#hivevault"
-      const service = userDiddocument.getService(serviceDid)
-      const provider = service.getServiceEndpoint() + ":443"
-
-      const vaultSubscription: VaultSubscriptionService = new VaultSubscriptionService(this.context, provider)
-      this.vault = new VaultServices(this.context, provider)
-    }
-    catch (error) {
-      Logger.error(TAG, 'Create vault error:', error);
-    }
+  async callScript(scriptName: string, document: any, targetDid: string, appid: string): Promise<any> {
+    let scriptRunner = await this.getScriptRunner(targetDid)
+    let result = await scriptRunner.callScript<any>(scriptName, document, targetDid, appid)
+    return result
   }
 
-  async getVault() {
-    try {
-      if (this.vault == null) {
-        await this.creatVault()
-      }
-      return this.vault
-    } catch (error) {
-      Logger.error(TAG, 'Get vault error:', error);
-    }
-
+  async uploadScriting(transactionId: string, data: string) {
+    let userDid = (await this.dataHelper.getSigninData()).did
+    const scriptRunner = await this.getScriptRunner(userDid)
+    return scriptRunner.uploadFile(transactionId, data)
   }
 
-  async backupSubscriptionToHive() {
+  async downloadEssAvatarTransactionId() {
     try {
-      const list = this.dataHelper.getSubscribedFeedsList()
-      let userDid = (await this.dataHelper.getSigninData()).did
-
-      const feeds_logo_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
-      const feeds_logo_createCollection = localStorage.getItem(userDid + HiveService.createCollection) || ''
-      const isSync = localStorage.getItem(userDid + HiveService.isSync) || ''
-
-      if (isSync === '' && list.length === 0 && feeds_logo_subscription === '') { // 新用户/换手机
-        let query = {}
-        const vault = await this.getVault()
-        // 容错处理： 新用户去hive端拿备份数据 会拿不到error，会有风险 // 
-        localStorage.setItem(HiveService.isSync, "true")
-        const result = await vault.getDatabaseService().query(HiveService.collectName, query, null)
-
-        let i = 0
-        let array = []
-        result.forEach((obj) => {
-          const nodeId = obj["nodeId"].toString()
-          const channelId = Number(obj["id"])
-          const name = obj["name"].toString()
-          const desc = obj["introduction"].toString()
-          const owner_name = obj["owner_name"].toString()
-          const owner_did = obj["owner_did"].toString()
-          const subscribers = Number(obj["subscribers"])
-          const last_update = Number(obj["last_update"])
-          const last_post = obj["last_post"].toString()
-          const avatar = obj["avatar"].toString()
-          const isSubscribed = Boolean(obj["isSubscribed"])
-          const nodeChannelId = this.dataHelper.getKey(nodeId, channelId, 0, 0)
-
-          array.push(nodeChannelId)
-          i = i + 1
-          let channel: FeedsData.Channels = {
-            nodeId: nodeId,
-            id: channelId,
-            name: name,
-            introduction: desc,
-            owner_name: owner_name,
-            owner_did: owner_did,
-            subscribers: subscribers,
-            last_update: last_update,
-            last_post: last_post,
-            avatar: avatar,
-            isSubscribed: isSubscribed,
-          }
-
-          this.dataHelper.updateChannel(nodeChannelId, channel)
-        })
-
-        const list0 = this.dataHelper.getSubscribedFeedsList() //删除
-
-        localStorage.setItem(userDid + HiveService.isSync, "true")
-        localStorage.setItem(userDid + HiveService.createCollection, "true")
-      }
-      else if (feeds_logo_subscription === '' && feeds_logo_createCollection != '' && list.length > 0) {
-        let vault = await this.getVault()
-        await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        localStorage.setItem(userDid + HiveService.collectName, "true")
-      }
-      else if (feeds_logo_createCollection === '' && list.length > 0) {
-        const status = await this.createCollection(userDid, list);
-      }
-    }
-    catch (error) {
-      Logger.error(TAG, 'Backup error', error);
-    }
-  }
-
-  async insertOne(one: any) {
-    try {
-      // 检测app启动时是否 备份成功
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
-      if (feeds_subscription === '') {
-        this.backupSubscriptionToHive()
-      }
-      else {
-        let vault = await this.getVault()
-        let result = vault.getDatabaseService().insertOne(HiveService.collectName, one, new InsertOptions(false, true))
-        Logger.log(TAG, 'Insert success', result);
-      }
-    }
-    catch (error) {
-      Logger.error(TAG, 'Insert error:', error);
-    }
-  }
-
-  async deleteOne(one: any) {
-    try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
-      if (feeds_subscription === '') {
-        // 如果本地没有本分成功，则直接返回，不做处理
-        this.backupSubscriptionToHive()
-      }
-      else {
-        let vault = await this.getVault()
-        let result = vault.getDatabaseService().deleteOne(HiveService.collectName, one)
-        Logger.log(TAG, 'Delete success', result);
-      }
-    } catch (error) {
-      Logger.error(TAG, 'Delete error', error);
-    }
-  }
-
-  async updateOne(origin: FeedsData.Channels, update: FeedsData.Channels) {
-    try {
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const feeds_subscription = localStorage.getItem(userDid + HiveService.collectName) || ''
-
-      if (feeds_subscription === '') {
-        // 如果本地没有本分成功，则直接返回，不做处理
-        this.backupSubscriptionToHive()
-      }
-      else {
-        let vault = await this.getVault()
-        let updateNode = { "$set": update }
-        let result = vault.getDatabaseService().updateOne(HiveService.collectName, origin, updateNode, new UpdateOptions(false, true))
-        Logger.log(TAG, 'Update success', result);
-      }
-    } catch (error) {
-      Logger.error(TAG, 'Update error', error);
-    }
-  }
-
-  async downloadEssAvatar() {
-    try {
-      // 检测本地是否存在
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const loadKey = userDid + "_ess_avatar"
-      let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
-      if (essavatar) {
+      const avatarParam = this.avatarParam
+      if (avatarParam === null || avatarParam === undefined) {
         return
       }
-      let scriptingService: ScriptingService
-      const vault = await this.getVault()
-      if (this.avatarVC === null) {
-        return
-      }
-      scriptingService = vault.getScriptingService()
-      const result = await scriptingService.callScript(this.avatarScriptName, this.avatarParam, this.tarDID, this.tarAppDID)
-      const transaction_id = result["download"]["transaction_id"]
-      let self = this
-      let dataBuffer = await scriptingService.downloadFile(transaction_id)
-
-      const savekey = userDid + "_ess_avatar"
-      const rawImage = await rawImageToBase64DataUrl(dataBuffer)
-      self.dataHelper.saveUserAvatar(savekey, rawImage)
-    }
-    catch (error) {
-      Logger.error(TAG, "Download Ess Avatar error: ", error);
-    }
-  }
-
-  async uploadCustomeAvatar(remotePath: string, img: any) {
-    try {
-      const vault = await this.getVault()
-      const fileService = vault.getFilesService()
-      const file = await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
-    }
-    catch (error) {
-      Logger.error(TAG, "Upload custome avatar error: ", error);
-    }
-  }
-
-  async downloadCustomeAvatar(remotePath: string) {
-    try {
-      // 检测本地是否存在
       let userDid = (await this.dataHelper.getSigninData()).did
-      let avatar = await this.dataHelper.loadUserAvatar(userDid);
-
-      if (avatar) {
-        return
-      }
-
-      const vault = await this.getVault()
-      const fileService = vault.getFilesService()
-      let self = this
-      let imgstr = ''
-      try {
-        var dataBuffer = await fileService.download(remotePath)
-        dataBuffer = dataBuffer.slice(1, -1)
-        imgstr = dataBuffer.toString()
-        self.dataHelper.saveUserAvatar(userDid, imgstr)
-      } catch (error) {
-        Logger.error(TAG, 'Download custom avatar error', error);
-      }
+      const scriptRunner = await this.getScriptRunner(userDid)
+      const avatarScriptName = this.avatarScriptName
+      const tarDID = this.tarDID
+      const tarAppDID = this.tarAppDID
+      return await scriptRunner.callScript(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
-      Logger.error(TAG, 'Download error', error);
+      Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
+      reject(error)
     }
   }
 
-  createCollection(userDid: string, list: FeedsData.Channels[]): Promise<string> {
+  async downloadScripting(targetDid: string, transaction_id: string) {
+    try {
+      const scriptRunner = await this.getScriptRunner(targetDid)
+      return await scriptRunner.downloadFile(transaction_id)
+    } catch (error) {
+      console.log("scriptingService.downloadFile error: ==== ", error)
+      throw error
+    }
+  }
+
+  async downloadFile(remotePath: string) {
+    const fileService = await this.getFilesService()
+    return await fileService.download(remotePath)
+  }
+
+  async getUploadDataFromScript(targetDid: string, transactionId: string, img: any) {
+    try {
+      const scriptRunner = await this.getScriptRunner(targetDid)
+      return scriptRunner.uploadFile(transactionId, img)
+    }
+    catch (error) {
+      Logger.error(TAG, "getUploadDataFromScript error: ", error);
+      throw error
+    }
+  }
+
+  async uploadDataFromScript(targetDid: string, transactionId: string, img: any) {
+    try {
+      const scriptRunner = await this.getScriptRunner(targetDid)
+      return scriptRunner.uploadFile(transactionId, img)
+    }
+    catch (error) {
+      Logger.error(TAG, "uploadDataFromScript error: ", error);
+      throw error
+    }
+  }
+
+  async uploadScriptWithBuffer(remotePath: string, img: Buffer) {
+    try {
+      const fileService = await this.getFilesService()
+      return await fileService.upload(remotePath, img)
+    }
+    catch (error) {
+      Logger.error(TAG, "Upload script blob error: ", error);
+      throw error
+    }
+  }
+
+  async uploadScriptWithString(remotePath: string, img: any) {
+    try {
+      const fileService = await this.getFilesService()
+      return await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
+    }
+    catch (error) {
+      Logger.error(TAG, "uploadScriptWithString error: ", error);
+      throw error
+    }
+  }
+
+  insertDBData(collectName: string, doc: any,): Promise<InsertResult> {
     return new Promise(async (resolve, reject) => {
-      let vault = await this.getVault()
-      // localStorage.setItem(userDid + HiveService.createCollection, "true")// 容错：拿不到error
-      let createCollectionFlag = localStorage.getItem(userDid + HiveService.createCollection) || ""
-
-      if (!createCollectionFlag) {
-        try {
-          await vault.getDatabaseService().createCollection(HiveService.collectName)
-          createCollectionFlag = "true";
-          localStorage.setItem(userDid + HiveService.createCollection, createCollectionFlag)
-        } catch (error) {
-        }
-      }
-
-      if (!createCollectionFlag) {
-        resolve('NotFinish');
-        return;
-      }
-
       try {
-        await vault.getDatabaseService().insertMany(HiveService.collectName, list, new InsertOptions(false, true))
-        localStorage.setItem(userDid + HiveService.collectName, "true")
-        resolve('Finish');
+        const dbService = await this.getDatabaseService()
+        const insertResult = await dbService.insertOne(collectName, doc, new InsertOptions(false, true));
+        resolve(insertResult)
       } catch (error) {
+        Logger.error(TAG, 'Insert error:', error);
+        reject(error)
       }
     })
-
-  }
-}
-
-interface Mime {
-  mime: string;
-  pattern: (number | undefined)[];
-}
-
-const imageMimes: Mime[] = [
-  {
-    mime: 'image/png',
-    pattern: [0x89, 0x50, 0x4e, 0x47]
-  },
-  {
-    mime: 'image/jpeg',
-    pattern: [0xff, 0xd8, 0xff]
-  },
-  {
-    mime: 'image/gif',
-    pattern: [0x47, 0x49, 0x46, 0x38]
-  },
-  {
-    mime: 'image/webp',
-    pattern: [0x52, 0x49, 0x46, 0x46, undefined, undefined, undefined, undefined, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50],
-  }
-];
-
-/**
- * Encodes a raw binary picture data into a base64 string.
- * Ex: âPNG   IHDR... ---> "iVe89...."
- */
-export function rawImageToBase64(rawImageData: Buffer): string {
-  if (!rawImageData)
-    return null
-
-  return Buffer.from(rawImageData).toString("base64")
-}
-
-/**
- * Converts a base64 encoded raw binary picture data into its original raw binary buffer.
- * Ex: "iVe89...." ---> âPNG   IHDR...
- */
-export function base64ImageToBuffer(base64Picture: string): Buffer {
-  return Buffer.from(base64Picture, "base64")
-}
-
-/**
- * Converts a raw binary picture data to a base64 data url usable on UI.
- * Ex: âPNG   IHDR... ---> "data:image/png;base64,iVe89...."
- */
-export async function rawImageToBase64DataUrl(rawImageData: Buffer): Promise<string> {
-  if (!rawImageData)
-    return null;
-
-  let mimeType = await pictureMimeType(rawImageData)
-  if (!mimeType) {
-    Logger.warn("picturehelper", "Unable to extract mime type from picture buffer. rawImageToBase64DataUrl() returns null picture.")
-    return null
   }
 
-  return "data:" + mimeType + ";base64," + rawImageToBase64(rawImageData)
-}
-
-/**
- * Returns a 1x1 px fully transparent picture, encoded as base64 data url.
- * Use https://png-pixel.com/ to generate.
- */
-export function transparentPixelIconDataUrl(): string {
-  return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
-}
-
-function isMime(bytes: Uint8Array, mime: Mime): boolean {
-  return mime.pattern.every((p, i) => !p || bytes[i] === p)
-}
-
-/**
- * @param rawOrBase64ImageData Raw picture buffer, or base64 encoded raw picture (not a base64 data url)
- */
-export function pictureMimeType(rawOrBase64ImageData: Buffer | string): Promise<string> {
-  if (typeof rawOrBase64ImageData === "string")
-    rawOrBase64ImageData = base64ImageToBuffer(rawOrBase64ImageData)
-
-  const numBytesNeeded = Math.max(...imageMimes.map(m => m.pattern.length))
-  const blob = new Blob([rawOrBase64ImageData.slice(0, numBytesNeeded)]) // Read the needed bytes of the file
-
-  const fileReader = new FileReader()
-  let p = new Promise<string>((resolve) => {
-    fileReader.onloadend = e => {
-      if (!e || !fileReader.result) {
-        resolve(null)
-        return
+  updateOneDBData(collectName: string, filter: JSONObject, update: JSONObject, option: UpdateOptions): Promise<UpdateResult> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const dbService = await this.getDatabaseService()
+        const result = await dbService.updateOne(collectName, filter, update, option)
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'update one error:', error)
+        reject(error)
       }
+    })
+  }
 
-      const bytes = new Uint8Array(fileReader.result as ArrayBuffer)
+  deleateOneDBData(collectName: string, fillter: JSONObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const dbService = await this.getDatabaseService()
+        await dbService.deleteOne(collectName, fillter)
+        resolve()
+      } catch (error) {
+        Logger.error(TAG, 'delete one error:', error)
+        reject(error)
+      }
+    })
+  }
 
-      const mime = imageMimes.find(mime => isMime(bytes, mime))
+  queryDBData(collectionName: string, filter: any): Promise<JSONObject[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const dbService = await this.getDatabaseService()
+        const result = dbService.findMany(collectionName, filter)
+        resolve(result)
+      } catch (error) {
+        Logger.error(TAG, 'listPostDB error:', error)
+        reject(error)
+      }
+    })
+  }
 
-      if (!mime)
-        resolve(null)
-      else
-        resolve(mime.mime)
-    };
-  });
-
-  fileReader.readAsArrayBuffer(blob)
-
-  return p
+  newInsertOptions() {
+    return new InsertOptions(false, true);
+  }
 }

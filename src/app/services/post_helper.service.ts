@@ -9,6 +9,7 @@ import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { CameraService } from 'src/app/services/CameraService';
+import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
 
 const TAG: string = 'PostHelper';
 @Injectable()
@@ -20,7 +21,8 @@ export class PostHelperService {
     public videoEditor: VideoEditor,
     private platform: Platform,
     private fileHelperService: FileHelperService,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private hiveVaultHelper: HiveVaultHelper
   ) {
   }
 
@@ -38,6 +40,57 @@ export class PostHelperService {
   //     }
   //   ]
   // }
+  prepareMediaData(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaData[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const mediaDatas: FeedsData.mediaData[] = await this.processUploadMeidas(imagesBase64, videoData);
+        // resolve(JSON.stringify(mediaDatas));
+        resolve(mediaDatas)
+      } catch (error) {
+        const errorMsg = 'Prepare publish post error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+
+    });
+  }
+
+  prepareMediaDataV3(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaDataV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const mediaDatas: FeedsData.mediaDataV3[] = await this.processUploadMeidasV3(imagesBase64, videoData);
+        // resolve(JSON.stringify(mediaDatas));
+        resolve(mediaDatas)
+      } catch (error) {
+        const errorMsg = 'Prepare publish post error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+
+    });
+  }
+
+  preparePublishPostContentV3(postText: string, mediaData: FeedsData.mediaDataV3[], mediaType: FeedsData.MediaType): FeedsData.postContentV3 {
+    // TODO mediaData 需要处理
+    const content: FeedsData.postContentV3 = {
+      version: "3.0",
+      content: postText,
+      mediaData: mediaData,
+      mediaType: mediaType
+    }
+    return content
+  }
+
+  preparePublishPostContent(postText: string, mediaData: FeedsData.mediaDataV3[]): FeedsData.postContentV3 {
+    const content: FeedsData.postContentV3 = {
+      version: "3.0",
+      content: postText,
+      mediaData: mediaData,
+      mediaType: 0
+    }
+    return content;
+  }
+
   preparePublishPost(nodeId: string, channelId: number, postText: string, imagesBase64: string[], videoData: FeedsData.videoData): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -59,6 +112,116 @@ export class PostHelperService {
       data: mediaDatas
     }
     return content;
+  }
+
+  processUploadMeidasV3(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaDataV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let mediasData: FeedsData.mediaDataV3[] = [];
+        if (imagesBase64.length > 0 && imagesBase64[0] != null && imagesBase64[0] != '') {
+          for (let index = 0; index < imagesBase64.length; index++) {
+            const element = imagesBase64[index];
+            if (!element || element == '')
+              continue;
+
+            const elementBlob = this.base64ToBlob(element);
+            //const blob2Buffer = await UtilService.blob2Buffer(elementBlob)
+            const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(element, elementBlob.type);
+            if (originMediaData) {
+              const medaPath = originMediaData.medaPath;
+              // this.fileHelperService.savePostData(medaPath, elementBuffer);
+              let fileOriginName: string = medaPath.split("@")[0];
+              await this.fileHelperService.saveV3Data(fileOriginName, element);
+            }
+
+            const thumbnail = await UtilService.compress(element);
+            const thumbnailBlob = this.base64ToBlob(thumbnail);
+            //const thumbnailBlob2Buffer = await UtilService.blob2Buffer(thumbnailBlob)
+            const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(thumbnail, thumbnailBlob.type);
+            if (thumbnailMediaData) {
+              const path = thumbnailMediaData.medaPath;
+              let fileThumbnaiName: string = path.split("@")[0];
+              await this.fileHelperService.saveV3Data(fileThumbnaiName, thumbnail);
+            }
+
+            if (originMediaData && thumbnailMediaData) {
+              const mediaData = this.createMediaDataV3("image", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, 0, 0, {}, {});
+              mediasData.push(mediaData);
+            }
+          }
+        }
+        // TODO Video data
+
+        if (videoData) {
+          const videoBlob = this.base64ToBlob(videoData.video);
+          //const videoBlob2Buffer = await UtilService.blob2Buffer(videoBlob)
+          const originMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.video, videoBlob.type);
+          if (originMediaData) {
+            const medaPath = originMediaData.medaPath;
+            let fileName: string = medaPath.split("@")[0];
+            await this.fileHelperService.saveV3Data(fileName, videoData.video);
+          }
+
+          const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
+          //const videoThumbBlob2Buffer = await UtilService.blob2Buffer(videoThumbBlob)
+          const thumbnailMediaData: FeedsData.originMediaDataV3 = await this.uploadDataToHiveWithString(videoData.thumbnail, videoThumbBlob.type);
+          if (thumbnailMediaData) {
+            const medaPath = thumbnailMediaData.medaPath;
+            let fileName: string = medaPath.split("@")[0];
+            await this.fileHelperService.saveV3Data(fileName, videoData.thumbnail);
+          }
+
+          if (originMediaData && thumbnailMediaData) {
+            const mediaData = this.createMediaDataV3("video", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, videoData.duration, 0, {}, {});
+            mediasData.push(mediaData);
+          }
+        }
+        resolve(mediasData);
+      } catch (error) {
+
+        const errorMsg = 'Upload medias error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  uploadDataToHiveWithString(elementBlob: string, type: string): Promise<FeedsData.originMediaDataV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const size = elementBlob.length;
+        const path = await this.hiveVaultHelper.uploadMediaDataWithString(elementBlob);
+        const originMediaData: FeedsData.originMediaDataV3 = {
+          size: size,
+          type: type,
+          medaPath: path
+        }
+        resolve(originMediaData);
+      } catch (error) {
+        const errorMsg = 'Upload data to hive error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  uploadDataToHiveWithBuffer(elementBuffer: Buffer, type: string): Promise<FeedsData.originMediaDataV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const size = elementBuffer.length;
+        const path = await this.hiveVaultHelper.uploadMediaDataWithBuffer(elementBuffer);
+        const originMediaData: FeedsData.originMediaDataV3 = {
+          size: size,
+          type: type,
+          medaPath: path
+        }
+        resolve(originMediaData);
+      } catch (error) {
+        const errorMsg = 'Upload data to hive error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
   }
 
   processUploadMeidas(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaData[]> {
@@ -93,7 +256,7 @@ export class PostHelperService {
             }
           }
         }
-        // TODO Video data 
+        // TODO Video data
 
         if (videoData) {
           const videoBlob = this.base64ToBlob(videoData.video);
@@ -161,6 +324,21 @@ export class PostHelperService {
     return mediaData;
   }
 
+  createMediaDataV3(kind: string, originMediaPath: string, type: string, size: number, thumbnailPath: string, duration: number, index: number, additionalInfo: any, memo: any): FeedsData.mediaDataV3 {
+    const mediaData: FeedsData.mediaDataV3 = {
+      kind: kind,
+      originMediaPath: originMediaPath,
+      type: type,
+      size: size,
+      imageIndex: index,
+      thumbnailPath: thumbnailPath,
+      duration: duration,
+      additionalInfo: additionalInfo,
+      memo: memo
+    }
+
+    return mediaData;
+  }
   // createVideoThumbnail(path: string) {
   //   this.videoEditor
   //     .createThumbnail({
@@ -463,5 +641,13 @@ export class PostHelperService {
       return null;
     }
     return UtilService.base64ToBlob(base64Data);
+  }
+
+  base64ToBuffer(base64Data: string): Buffer {
+    if (!base64Data && base64Data == '') {
+      Logger.error('Base64 data to blob error, input is null');
+      return null;
+    }
+    return UtilService.base64ToBuffer(base64Data);
   }
 }

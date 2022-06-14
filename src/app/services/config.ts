@@ -28,7 +28,7 @@ export class Config {
     }
     /** MainNet IPFS */
     public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app/';
-     /** MainNet ASSIST */
+    /** MainNet ASSIST */
     public static ASSIST_SERVER: string = 'https://assist.trinity-feeds.app/';
     /** TestNet contract */
     public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
@@ -75,7 +75,7 @@ export class Config {
             "https://ipfs0.trinity-feeds.app/",
             "https://ipfs1.trinity-feeds.app/",
             "https://ipfs2.trinity-feeds.app/",
-          ];
+        ];
         return availableIpfsNetworkTemplates[Math.floor(Math.random() * availableIpfsNetworkTemplates.length)];
     }
 
@@ -84,7 +84,7 @@ export class Config {
             "https://assist0.trinity-feeds.app/",
             "https://assist1.trinity-feeds.app/",
             "https://assist2.trinity-feeds.app/",
-          ];
+        ];
         return availableAssistNetworkTemplates[Math.floor(Math.random() * availableAssistNetworkTemplates.length)];
     }
 
@@ -114,4 +114,9 @@ export class Config {
 
 
     public static BASE_PASAR_ASSIST_TESTNET_SERVER: string = 'https://test.trinity-feeds.app/';
+
+    public static versionCode: number = 20001;
+    public static newAuthVersion: number = 10400;
+    public static newCommentVersion: number = 10400;
+    public static newMultiPropCountVersion: number = 10500;
 }

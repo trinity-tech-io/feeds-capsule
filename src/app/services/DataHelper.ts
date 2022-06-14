@@ -2826,8 +2826,8 @@ export class DataHelper {
   }
 
   setMigrationDataStatus(migrationDataStatus: number) {
-      this.migrationDataStatus = migrationDataStatus;
-      this.saveData("feeds.migrationDataStatus",migrationDataStatus);
+    this.migrationDataStatus = migrationDataStatus;
+    this.saveData("feeds.migrationDataStatus", migrationDataStatus);
   }
 
   getMigrationDataStatus() {

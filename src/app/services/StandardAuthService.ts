@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DID } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = 'StandardAuthService';
@@ -17,6 +18,7 @@ export class StandardAuthService {
   }
   constructor(
     private storeService: StorageService,
+    private dataHelper: DataHelper,
   ) {}
 
   getCredentials(): Promise<any> {
@@ -365,6 +367,13 @@ export class StandardAuthService {
     return true;
   }
 
+  async getAppId(): Promise<string> {
+    let userDid = (await this.dataHelper.getSigninData()).did
+    let appid = await this.storeService.get(userDid + 'appDid');
+    console.log("appid ================== ", appid)
+
+    return appid
+  }
   generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
     let self = this ; 
     return new Promise(async (resolver, reject) => {
@@ -433,6 +442,9 @@ export class StandardAuthService {
         resolver(null)
         return
       }
+
+      let userDid = (await this.dataHelper.getSigninData()).did
+      await this.storeService.set(userDid + 'appDid', this.appIdCredential.getSubject()["appDid"]);
 
       this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword,async presentation => {
 

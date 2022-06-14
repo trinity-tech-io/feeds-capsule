@@ -39,7 +39,7 @@ export class EditprofileimagePage implements OnInit {
     private dataHelper: DataHelper,
     private ipfsService: IPFSService,
     private hiveService: HiveService,
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.initTitle();
@@ -99,14 +99,14 @@ export class EditprofileimagePage implements OnInit {
     if (this.avatar.indexOf('feeds:imgage:') > -1) {
       imgUri = this.avatar.replace('feeds:imgage:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('feeds:image:') > -1){
+    } else if (this.avatar.indexOf('feeds:image:') > -1) {
       imgUri = this.avatar.replace('feeds:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }else if(this.avatar.indexOf('pasar:image:') > -1){
+    } else if (this.avatar.indexOf('pasar:image:') > -1) {
       imgUri = this.avatar.replace('pasar:image:', '');
       imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
     }
-    else{
+    else {
       imgUri = this.avatar;
     }
     return imgUri;
@@ -134,7 +134,7 @@ export class EditprofileimagePage implements OnInit {
         that.native.navigateForward(['editimage'], '');
         that.feedService.setClipProfileIamge(imageUrl);
       },
-      err => {},
+      err => { },
     );
   }
 
@@ -147,14 +147,14 @@ export class EditprofileimagePage implements OnInit {
         that.native.navigateForward(['editimage'], '');
         that.feedService.setClipProfileIamge(imageUrl);
       },
-      err => {},
+      err => { },
     );
   }
 
   async saveAvatar() {
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveService.uploadCustomeAvatar("custome", this.avatar)
+      await this.hiveService.uploadScriptWithString("custome", this.avatar)
       this.native.hideLoading()
       this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
       this.native.pop();

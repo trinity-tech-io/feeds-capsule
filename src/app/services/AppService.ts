@@ -9,6 +9,7 @@ import { LanguageService } from 'src/app/services/language.service';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { UtilService } from './utilService';
 const TAG: string = 'AppService';
 @Injectable({
   providedIn: 'root',
@@ -50,14 +51,14 @@ export class AppService {
       this.router.url.indexOf('/bindservice/issuecredential') > -1
     ) {
       this.createDialog();
-    }else if(this.router.url === "/tabs/search" || this.router.url === "/tabs/profile" ){
-              navigator['app'].exitApp();
-    }else if ( this.router.url === "/tabs/home" ||
-               this.router.url === "/tabs/notification" ||
-               this.router.url === "/signin" ||
-               this.router.url === "/disclaimer" ) {
-               navigator['app'].exitApp();
-    } else{
+    } else if (this.router.url === "/tabs/search" || this.router.url === "/tabs/profile") {
+      navigator['app'].exitApp();
+    } else if (this.router.url === "/tabs/home" ||
+      this.router.url === "/tabs/notification" ||
+      this.router.url === "/signin" ||
+      this.router.url === "/disclaimer") {
+      navigator['app'].exitApp();
+    } else {
       this.native.pop();
     }
   }
@@ -84,7 +85,7 @@ export class AppService {
     if (
       signInData == null ||
       signInData == undefined ||
-      this.feedService.getCurrentTimeNum() > signInData.expiresTS
+      UtilService.getCurrentTimeNum() > signInData.expiresTS
     ) {
       this.native.setRootRouter(['/signin']);
       return;

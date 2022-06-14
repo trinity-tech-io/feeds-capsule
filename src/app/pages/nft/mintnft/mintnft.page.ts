@@ -59,15 +59,15 @@ export class MintnftPage implements OnInit {
   private imageObj: any = {};
   private orderId: any = '';
   public popover: any;
-  public isLoading:boolean = false;
-  public loadingTitle:string = "common.waitMoment";
-  public loadingText:string = "";
-  public loadingCurNumber:string = "";
-  public loadingMaxNumber:string = "";
+  public isLoading: boolean = false;
+  public loadingTitle: string = "common.waitMoment";
+  public loadingText: string = "";
+  public loadingCurNumber: string = "";
+  public loadingMaxNumber: string = "";
   private realFile: any = null;
-  public  maxAvatarSize:number = 5 * 1024 * 1024;
-  public  assetType:string = "image";
-  public  adult:boolean = false;
+  public maxAvatarSize: number = 5 * 1024 * 1024;
+  public assetType: string = "image";
+  public adult: boolean = false;
   public videoIdObj: videoId = {
     videoId: '',
     sourceId: '',
@@ -76,10 +76,10 @@ export class MintnftPage implements OnInit {
     vgoverlayplayId: '',
     vgfullscreeId: ''
   };
-  public  accept: string = "image/png, image/jpeg, image/jpg, image/gif";
-  private didUri:string = null;
-  public  videoUrl: string ="";
-  private videoObj:FeedsData.FeedsVideo = {
+  public accept: string = "image/png, image/jpeg, image/jpg, image/gif";
+  private didUri: string = null;
+  public videoUrl: string = "";
+  private videoObj: FeedsData.FeedsVideo = {
     kind: '',
     video: '',
     size: '',
@@ -89,14 +89,14 @@ export class MintnftPage implements OnInit {
     height: ''
   };
 
-  private audioObj:FeedsData.FeedsAudio = {
+  private audioObj: FeedsData.FeedsAudio = {
     kind: '',
     audio: '',
     size: '',
     thumbnail: '',
     duration: '',
   };
-  private maxVideoDuration:number = 60*60*1000;
+  private maxVideoDuration: number = 60 * 60 * 1000;
   public isOpen: boolean = false;
   constructor(
     private translate: TranslateService,
@@ -190,7 +190,7 @@ export class MintnftPage implements OnInit {
 
   async doMint() {
     //Start loading
-    let sid = setTimeout(()=>{
+    let sid = setTimeout(() => {
       this.isLoading = false;
       this.nftContractControllerService
         .getSticker()
@@ -203,11 +203,11 @@ export class MintnftPage implements OnInit {
         .cancelCreateOrderProcess();
       this.showSelfCheckDialog();
       clearTimeout(sid);
-    },Config.WAIT_TIME_MINT);
+    }, Config.WAIT_TIME_MINT);
 
     this.loadingCurNumber = "1";
     this.loadingMaxNumber = "3";
-    if(this.curPublishtoPasar){
+    if (this.curPublishtoPasar) {
       this.loadingMaxNumber = "5";
     }
     this.loadingText = "common.uploadingData"
@@ -217,7 +217,7 @@ export class MintnftPage implements OnInit {
     let jsonHash = '';
     //this.native.changeLoadingDesc("common.uploadingData");
     this.uploadData()
-      .then(async(result) => {
+      .then(async (result) => {
         Logger.log(TAG, 'Upload Result', result);
         //this.native.changeLoadingDesc("common.uploadDataSuccess");
         this.loadingCurNumber = "1";
@@ -229,10 +229,10 @@ export class MintnftPage implements OnInit {
         this.loadingCurNumber = "2";
         this.loadingText = "common.mintingData";
         //let did = this.feedService.
-        let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties),10000);
+        let nftRoyalties = UtilService.accMul(parseInt(this.nftRoyalties), 10000);
 
         let didUri = await this.getDidUri();
-        return this.mintContract(tokenId, jsonHash, this.nftQuantity,nftRoyalties.toString(),didUri);
+        return this.mintContract(tokenId, jsonHash, this.nftQuantity, nftRoyalties.toString(), didUri);
       })
       .then(mintResult => {
         if (mintResult != '' && this.curPublishtoPasar) {
@@ -258,13 +258,13 @@ export class MintnftPage implements OnInit {
         return this.handleOrderResult(tokenId, orderIndex);
       })
       .then((status) => {
-        if(status === SKIP){
+        if (status === SKIP) {
           this.loadingCurNumber = "3";
           this.loadingText = "common.checkingCollectibleResult";
         }
         //Finish
-        if(!this.curPublishtoPasar){
-          this.handleCace('created',tokenId);
+        if (!this.curPublishtoPasar) {
+          this.handleCace('created', tokenId);
         }
         //this.native.hideLoading();
         this.isLoading = false;
@@ -311,13 +311,13 @@ export class MintnftPage implements OnInit {
           }
 
           let tokenId = '0x' + UtilService.SHA256(hash);
-          if(this.assetType === "video"){
-              this.videoObj.size = result['Size'];
-              this.videoObj.video = 'feeds:video:' + hash;
-          }else if(this.assetType === "audio"){
-               this.audioObj.size = result["size"];
-               this.audioObj.audio = 'feeds:audio:' + hash;
-          }else{
+          if (this.assetType === "video") {
+            this.videoObj.size = result['Size'];
+            this.videoObj.video = 'feeds:video:' + hash;
+          } else if (this.assetType === "audio") {
+            this.audioObj.size = result["size"];
+            this.audioObj.audio = 'feeds:audio:' + hash;
+          } else {
             this.imageObj['imgSize'] = result['Size'];
             this.imageObj['imgHash'] = 'feeds:image:' + hash;
           }
@@ -346,11 +346,11 @@ export class MintnftPage implements OnInit {
             return;
           }
 
-          if(this.assetType === "video"){
+          if (this.assetType === "video") {
             this.videoObj.thumbnail = 'feeds:image:' + hash;
-          }else{
-           this.thumbnail = thumbnailBase64;
-           this.imageObj['thumbnail'] = 'feeds:image:' + hash;
+          } else {
+            this.thumbnail = thumbnailBase64;
+            this.imageObj['thumbnail'] = 'feeds:image:' + hash;
           }
           resolve('');
         })
@@ -364,22 +364,22 @@ export class MintnftPage implements OnInit {
 
     return new Promise(async (resolve, reject) => {
       let type = "image";
-      let ipfsJSON:any = null;
+      let ipfsJSON: any = null;
       let thumbnail = this.imageObj['thumbnail'];
-      if(this.assetType === "avatar"){
-         type = "avatar";
-         thumbnail = this.imageObj['imgHash'];
+      if (this.assetType === "avatar") {
+        type = "avatar";
+        thumbnail = this.imageObj['imgHash'];
       }
-      if(this.assetType === "audio"){
+      if (this.assetType === "audio") {
         type = "audio";
         thumbnail = "";
-        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-      }else if(this.assetType === "video"){
-         type = "video";
-        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-       }else{
-        ipfsJSON  = this.getTokenJsonV2(type,thumbnail);
-       }
+        ipfsJSON = this.getTokenJsonV2(type, thumbnail);
+      } else if (this.assetType === "video") {
+        type = "video";
+        ipfsJSON = this.getTokenJsonV2(type, thumbnail);
+      } else {
+        ipfsJSON = this.getTokenJsonV2(type, thumbnail);
+      }
 
       let formData = new FormData();
       formData.append('', JSON.stringify(ipfsJSON));
