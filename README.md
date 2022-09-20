@@ -1,5 +1,6 @@
-feeds-dapp
+feeds-dapp (DEPRECATED)
 ========================
+***Notice: This repository has been deprecated since Feeds change to use Hive as storage server instead of standalone Feeds service***
 
 ## 1. Introduction
 
